@@ -1,10 +1,10 @@
 {
-  "created_at_utc": "2026-11-13T12:52:26.522812+00:00",
+  "created_at_utc": "2026-11-13T12:58:02.608705+00:00",
   "root": "D:\\NourAI",
   "hash_files": true,
   "summary": {
-    "artifacts": 52,
-    "bytes": 20253135508,
+    "artifacts": 54,
+    "bytes": 20253148814,
     "by_kind": {
       "incomplete_attempt": 11,
       "imported": 2,
@@ -13,13 +13,13 @@
       "raw_source": 3,
       "provenance_sidecar": 3,
       "download_fragment": 17,
-      "report": 11
+      "report": 13
     },
     "by_reproducibility": {
       "NO": 32,
       "PARTIAL": 3,
       "YES": 3,
-      "N/A": 14
+      "N/A": 16
     }
   },
   "artifacts": [
@@ -662,8 +662,8 @@
     },
     {
       "path": "data/raw/external/phase10_2/wto_en_fr_corpus_2019_EN-FR.zip.provenance.json",
-      "bytes": 523,
-      "sha256": "7d5a53660b9d826c167c2c0d65198f58b42dafe36d71c613509a6c7e2042db63",
+      "bytes": 1130,
+      "sha256": "7deca5edc687df45f79315bcf2a6c49330c5c387946ebd949f0863d82b8ae886",
       "kind": "provenance_sidecar",
       "schema_keys": null,
       "provenance_sidecar": null,
@@ -682,8 +682,8 @@
     },
     {
       "path": "reports/phase10/phase10_2/ARTIFACT_AUDIT.json",
-      "bytes": 30527,
-      "sha256": "77b60541a7f82ebd21be5e036688ed37a9644bae4fa2fd24f62be4a4b0e6f136",
+      "bytes": 30642,
+      "sha256": "9b296f293f4e5147bce00c5a2c3f352406f4f99e6abb6dba3b3f9d42284876fc",
       "kind": "report",
       "schema_keys": null,
       "provenance_sidecar": null,
@@ -692,8 +692,8 @@
     },
     {
       "path": "reports/phase10/phase10_2/ARTIFACT_AUDIT.md",
-      "bytes": 10179,
-      "sha256": "3d4144b57713b9af1fd9a296fd5688ecfd1edff477298ac4304b9621bc78d9cc",
+      "bytes": 10242,
+      "sha256": "3f3309be3cdaab1d7c36430fee4d1a617b728fa28313f331256c8ca0e1393cd3",
       "kind": "report",
       "schema_keys": null,
       "provenance_sidecar": null,
@@ -734,6 +734,26 @@
       "path": "reports/phase10/phase10_2/qnl_import_normalization_validation.json",
       "bytes": 832,
       "sha256": "79e37a8ffe8caf70525b73423441f4ce7ae318e26604ebc0a54758c1d1520e1a",
+      "kind": "report",
+      "schema_keys": null,
+      "provenance_sidecar": null,
+      "reproducible": "N/A",
+      "reason": "report/evidence file; not a generated corpus payload"
+    },
+    {
+      "path": "reports/phase10/phase10_2/REPRODUCIBILITY_STATUS.md",
+      "bytes": 7475,
+      "sha256": "021e82e7b2bff18b5c430e8a90a99542b640d9e6e1fbe236946443041b9782d2",
+      "kind": "report",
+      "schema_keys": null,
+      "provenance_sidecar": null,
+      "reproducible": "N/A",
+      "reason": "report/evidence file; not a generated corpus payload"
+    },
+    {
+      "path": "reports/phase10/phase10_2/REPRODUCTION_PLAN.json",
+      "bytes": 5046,
+      "sha256": "79a2ae314628871451724807fff24cd52250660dd863193bd804ff3d478364aa",
       "kind": "report",
       "schema_keys": null,
       "provenance_sidecar": null,

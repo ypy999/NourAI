@@ -1,0 +1,103 @@
+{
+  "created_at_utc": "2026-11-13T12:56:18.959508+00:00",
+  "root": "D:\\NourAI",
+  "output_directory": "data/processed/phase10_3",
+  "sources": [
+    {
+      "source_id": "tatoeba_cc0",
+      "format": "tatoeba_cc0_tsv_bz2",
+      "support": {
+        "source_id": "tatoeba_cc0",
+        "format": "tatoeba_cc0_tsv_bz2",
+        "support": "SUPPORTED",
+        "explanation": "corpus.importers reads the CC0 TSV tar.bz2 and keeps sentence_id and language."
+      },
+      "path": "data/raw/external/tatoeba_cc0.tar.bz2",
+      "exists": true,
+      "license_id": "CC0-1.0",
+      "sidecar": {
+        "source_id": "tatoeba_cc0",
+        "source_name": "Tatoeba sentences CC0 export",
+        "source_url": "https://downloads.tatoeba.org/exports/sentences_CC0.tar.bz2",
+        "retrieved_at": "2026-11-11T19:44:51.886312+00:00",
+        "license_id": "CC0-1.0",
+        "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "bytes": 7963537,
+        "sha256": "7e4251d06edd949db9e47cc360b472873da6c054af5dc4b9d2c9e06d024cd710",
+        "checksum_provided_by_source": false,
+        "downloaded_file": "data\\raw\\external\\tatoeba_cc0.tar.bz2",
+        "resumable_partial": false,
+        "verified_source_url_field": "source_url"
+      }
+    },
+    {
+      "source_id": "qnl_arabic_ocr_v2",
+      "format": "zip_txt_with_official_metadata_csv",
+      "support": {
+        "source_id": "qnl_arabic_ocr_v2",
+        "format": "zip_txt_with_official_metadata_csv",
+        "support": "PARTIAL",
+        "explanation": "Generic ZIP/TXT import reads text only; QNL document_id, official record number and metadata CSV fields are not derived by corpus.importers."
+      },
+      "path": "data/raw/external/phase10_2/qnl_arabic_ocr_v2.zip",
+      "exists": true,
+      "license_id": "PUBLIC_DOMAIN_TEXTS; CC0-1.0_METADATA",
+      "sidecar": {
+        "source_id": "qnl_arabic_ocr_v2",
+        "official_item_url": "https://manara.qnl.qa/articles/dataset/Arabic_OCR_Corpus_2_894_items_from_QNL_Collection_/26984785",
+        "download_url": "https://ndownloader.figshare.com/files/50403846",
+        "retrieved_at_utc": "2026-11-13T07:53:57Z",
+        "bytes": 1065878922,
+        "md5": "1e23030c19b864170b6d3c8060986021",
+        "sha256": "352d7d2e1e3c64255a52b09560da97bb0360e43a327bd70298c7fa52b2437cb9",
+        "expected_md5_from_official_metadata": "1e23030c19b864170b6d3c8060986021",
+        "license_id": "PUBLIC_DOMAIN_TEXTS; CC0-1.0_METADATA",
+        "version": "v2",
+        "verified_source_url_field": "official_item_url"
+      }
+    },
+    {
+      "source_id": "wto_public_corpus_en_fr",
+      "format": "zip_tab_delimited_parallel_corpus",
+      "support": {
+        "source_id": "wto_public_corpus_en_fr",
+        "format": "zip_tab_delimited_parallel_corpus",
+        "support": "UNSUPPORTED",
+        "explanation": "Generic TXT import would treat each tab-separated parallel line as one record and lose document/segment alignment; no WTO adapter exists."
+      },
+      "path": "data/raw/external/phase10_2/wto_en_fr_corpus_2019_EN-FR.zip",
+      "exists": true,
+      "license_id": "WTO_PUBLIC_CORPUS_TERMS",
+      "sidecar": {
+        "source_id": "wto_public_corpus_en_fr",
+        "source_url": "https://www.wto.org/english/res_e/corpus_e/corpus_e.htm",
+        "download_url": "https://www.wto.org/english/res_e/corpus_e/ENG-FRA.zip",
+        "retrieved_at_utc": "2026-11-13T08:48:51.9774979Z",
+        "bytes": 1501806179,
+        "sha256": "09f958e84a626cc294eaa0c3b87b2daa7abf1f786fc91d2978756264750545f5",
+        "official_last_modified": "2019-05-29",
+        "archive_validation": "ZIP central directory readable; selected member CRC will be verified during streaming import",
+        "source_name": "WTO Public Trilingual Corpus — English/French subset",
+        "license_id": "WTO_PUBLIC_CORPUS_TERMS",
+        "license_url": "https://www.wto.org/english/res_e/corpus_e/corpus_e.htm",
+        "license_evidence": "configs/dataset_sources.json#wto_public_corpus_en_fr; status=VERIFIED; checked_at=2026-11-13; verification_method=Official WTO corpus page reviewed",
+        "provenance_repaired_at_utc": "2026-11-13T12:54:46.369117+00:00",
+        "provenance_repair_note": "license fields added from the approved registry entry; source_url, download_url, bytes, sha256 and retrieval timestamp are unchanged",
+        "verified_source_url_field": "source_url"
+      }
+    }
+  ],
+  "approved_split_ratios": {
+    "train": 0.9,
+    "validation": 0.05,
+    "test": 0.05
+  },
+  "approved_seed": 1337,
+  "verify_hashes": true,
+  "blockers": [
+    "qnl_arabic_ocr_v2: Generic ZIP/TXT import reads text only; QNL document_id, official record number and metadata CSV fields are not derived by corpus.importers.",
+    "wto_public_corpus_en_fr: Generic TXT import would treat each tab-separated parallel line as one record and lose document/segment alignment; no WTO adapter exists."
+  ],
+  "ready": false,
+  "next_action": "resolve every blocker; do not regenerate payloads before the plan is READY"
+}

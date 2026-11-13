@@ -23,8 +23,73 @@ def sha256_file(path, chunk_size=1024 * 1024):
     return digest.hexdigest()
 
 
+def md5_file(path, chunk_size=1024 * 1024):
+    digest = hashlib.md5(usedforsecurity=False)
+    with Path(path).open("rb") as stream:
+        for chunk in iter(lambda: stream.read(chunk_size), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+# The source-page identity may be recorded under any of these names. Only the
+# registry entry's canonical `url` is accepted; missing identity is an error,
+# never silently filled from the registry.
+SOURCE_URL_FIELDS = ("source_url", "official_item_url", "landing_page_url")
+
+
+def _verify_source_identity(metadata, source):
+    present = [(field, metadata.get(field)) for field in SOURCE_URL_FIELDS if metadata.get(field) not in (None, "")]
+    if not present:
+        raise AcquisitionError(
+            "download provenance sidecar has no source identity "
+            f"(one of {', '.join(SOURCE_URL_FIELDS)} is required)"
+        )
+    for field, value in present:
+        if value != source["url"]:
+            raise AcquisitionError(f"download provenance mismatch for {field}")
+    recorded_download = metadata.get("download_url")
+    registry_download = source.get("download_url")
+    if recorded_download and registry_download and recorded_download != registry_download:
+        raise AcquisitionError("download provenance mismatch for download_url")
+    return present[0][0]
+
+
+def _verify_license_identity(metadata, source):
+    if metadata.get("license_id") in (None, ""):
+        raise AcquisitionError("download provenance sidecar is missing license_id")
+    if metadata["license_id"] != source["license_id"]:
+        raise AcquisitionError("download provenance mismatch for license_id")
+    recorded_license_url = metadata.get("license_url")
+    registry_license_url = source.get("license_url")
+    if recorded_license_url and registry_license_url and recorded_license_url != registry_license_url:
+        raise AcquisitionError("download provenance mismatch for license_url")
+
+
+def _verify_checksums(metadata, path):
+    expected_size = metadata.get("bytes")
+    if expected_size != path.stat().st_size:
+        raise AcquisitionError("downloaded file size differs from provenance sidecar")
+    recorded_md5 = metadata.get("md5")
+    if recorded_md5:
+        actual_md5 = md5_file(path)
+        if recorded_md5.casefold() != actual_md5:
+            raise AcquisitionError("downloaded file MD5 differs from provenance sidecar")
+        official_md5 = metadata.get("expected_md5_from_official_metadata")
+        if official_md5 and official_md5.casefold() != recorded_md5.casefold():
+            raise AcquisitionError("recorded MD5 differs from the official source MD5")
+    if not metadata.get("sha256"):
+        raise AcquisitionError("download provenance sidecar is missing sha256")
+    if metadata["sha256"] != sha256_file(path):
+        raise AcquisitionError("downloaded file SHA-256 differs from provenance sidecar")
+
+
 def verify_download_provenance(source_id, path):
-    """Verify local sidecar fields and content hash against an approved catalog entry."""
+    """Verify a download sidecar against the approved catalog entry.
+
+    The sidecar must state its own source identity and license; neither is
+    defaulted from the registry. Accepted source-identity aliases exist only
+    because different acquisition tools used different field names.
+    """
     source = require_approved_source(source_id)
     path = Path(path)
     sidecar = path.with_name(path.name + ".provenance.json")
@@ -32,16 +97,14 @@ def verify_download_provenance(source_id, path):
         metadata = json.loads(sidecar.read_text(encoding="utf-8"))
     except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise AcquisitionError(f"missing or invalid download provenance sidecar: {sidecar}") from exc
-    expected = {"source_id": source_id, "source_url": source["url"], "license_id": source["license_id"]}
-    for key, value in expected.items():
-        if metadata.get(key) != value:
-            raise AcquisitionError(f"download provenance mismatch for {key}")
-    if metadata.get("bytes") != path.stat().st_size:
-        raise AcquisitionError("downloaded file size differs from provenance sidecar")
-    digest = sha256_file(path)
-    if metadata.get("sha256") != digest:
-        raise AcquisitionError("downloaded file SHA-256 differs from provenance sidecar")
-    return metadata
+    if not isinstance(metadata, dict):
+        raise AcquisitionError("download provenance sidecar root must be an object")
+    if metadata.get("source_id") != source_id:
+        raise AcquisitionError("download provenance mismatch for source_id")
+    identity_field = _verify_source_identity(metadata, source)
+    _verify_license_identity(metadata, source)
+    _verify_checksums(metadata, path)
+    return {**metadata, "verified_source_url_field": identity_field}
 
 
 def download_resumable(source_id, destination, *, expected_sha256=None,

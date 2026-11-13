@@ -12,7 +12,29 @@ def _normalize(text):
     return " ".join(unicodedata.normalize("NFC", text).casefold().split())
 
 
-def validate_jsonl(path, *, require_provenance=False, approved_source_ids=("tatoeba_cc0",)):
+def _approved_registry_source_ids():
+    """Sources the active registry marks VERIFIED and approved for ingestion."""
+    from .licensing import SOURCES
+
+    return tuple(
+        source_id
+        for source_id, entry in SOURCES.items()
+        if entry.get("status") == "VERIFIED" and entry.get("approved_for_ingestion") is True
+    )
+
+
+def validate_jsonl(path, *, require_provenance=False, approved_source_ids=None):
+    """Validate records against the active registry.
+
+    When ``approved_source_ids`` is omitted, every VERIFIED source that is
+    approved for ingestion is accepted. A record must still carry the exact
+    ``license_id`` registered for its source; no permissive default is applied.
+    """
+    from .licensing import SOURCES
+
+    if approved_source_ids is None:
+        approved_source_ids = _approved_registry_source_ids()
+    approved_source_ids = tuple(approved_source_ids)
     result = {"path": str(path), "valid": True, "records": 0, "empty_records": 0,
               "duplicate_records": 0, "unknown_source_records": 0, "unknown_license_records": 0,
               "suspicious_records": 0, "errors": [], "warnings": [], "languages": {},
@@ -42,14 +64,18 @@ def validate_jsonl(path, *, require_provenance=False, approved_source_ids=("tato
                         source_id=row.get("source_id")
                         license_id=row.get("license_id")
                         provenance_errors=[]
+                        registry_entry = SOURCES.get(source_id) or {}
+                        expected_license = registry_entry.get("license_id")
                         if source_id not in approved_source_ids:
                             result["unknown_source_records"] += 1
                             if require_provenance:
-                                provenance_errors.append("source_id is unknown or not approved")
-                        if license_id != "CC0-1.0":
+                                provenance_errors.append("source_id is unknown or not approved for ingestion")
+                        if expected_license is None or license_id != expected_license:
                             result["unknown_license_records"] += 1
                             if require_provenance:
-                                provenance_errors.append("record license is not an approved CC0-1.0 source")
+                                provenance_errors.append(
+                                    "record license_id does not match the registered license for its source"
+                                )
                         if provenance_errors:
                             raise ValueError("; ".join(provenance_errors))
                         if "raw_text" in row:
