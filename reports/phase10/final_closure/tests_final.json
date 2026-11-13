@@ -1,0 +1,11 @@
+{
+  "command": ".venv/Scripts/python.exe -m pytest -q -p no:cacheprovider --basetemp=D:\\NourAI\\reports\\phase10\\pytest-temp --ignore=tests/test_training.py",
+  "passed": 153,
+  "failed": 0,
+  "skipped": 0,
+  "duration_seconds": 11.77,
+  "excluded": [
+    "tests/test_training.py (explicit no-training constraint)"
+  ],
+  "first_attempt_full_suite": "88 passed, 86 setup errors due WinError 5 accessing default pytest temp root; resolved by specifying basetemp"
+}

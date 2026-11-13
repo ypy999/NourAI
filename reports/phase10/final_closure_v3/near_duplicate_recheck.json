@@ -1,0 +1,582 @@
+{
+  "records_indexed": 55704,
+  "findings": [
+    {
+      "record_id_a": "10078340",
+      "record_id_b": "9926509",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "10078342",
+      "record_id_b": "9926508",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "10099608",
+      "record_id_b": "10903591",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "10109293",
+      "record_id_b": "12222438",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "10110672",
+      "record_id_b": "12080122",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "11185240",
+      "record_id_b": "11185241",
+      "similarity": 0.8571428571428571,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "11262920",
+      "record_id_b": "11262935",
+      "similarity": 0.8571428571428571,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "11502923",
+      "record_id_b": "9937339",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "11565143",
+      "record_id_b": "11967889",
+      "similarity": 0.875,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "11595274",
+      "record_id_b": "11595275",
+      "similarity": 0.875,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "11876665",
+      "record_id_b": "12213454",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "11911775",
+      "record_id_b": "12486780",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "11911776",
+      "record_id_b": "12486787",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "11989914",
+      "record_id_b": "7125361",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "12029157",
+      "record_id_b": "12029158",
+      "similarity": 0.875,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "12343209",
+      "record_id_b": "12343216",
+      "similarity": 0.8928571428571429,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "12700048",
+      "record_id_b": "12700265",
+      "similarity": 0.8571428571428571,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "12735943",
+      "record_id_b": "12736498",
+      "similarity": 0.875,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "12736461",
+      "record_id_b": "12736501",
+      "similarity": 0.8888888888888888,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "12736927",
+      "record_id_b": "12736960",
+      "similarity": 0.9166666666666666,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "12741196",
+      "record_id_b": "12741337",
+      "similarity": 0.8571428571428571,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "12749356",
+      "record_id_b": "12749432",
+      "similarity": 0.9,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "12749567",
+      "record_id_b": "12749656",
+      "similarity": 0.8571428571428571,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "12750038",
+      "record_id_b": "12750106",
+      "similarity": 0.8888888888888888,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "12768710",
+      "record_id_b": "12770803",
+      "similarity": 0.8571428571428571,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "12768893",
+      "record_id_b": "12768983",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "7062166",
+      "record_id_b": "7072548",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "8238849",
+      "record_id_b": "8238858",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "8508047",
+      "record_id_b": "9509070",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "8734084",
+      "record_id_b": "8734100",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "8734085",
+      "record_id_b": "8734098",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "8769885",
+      "record_id_b": "8770046",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "9764386",
+      "record_id_b": "9764387",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "9801141",
+      "record_id_b": "9841929",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "9816339",
+      "record_id_b": "9816340",
+      "similarity": 0.875,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    }
+  ],
+  "statistics": {
+    "records_indexed": 55704,
+    "probable_pairs": 35,
+    "similarity_metric": "Jaccard over normalized Unicode word trigrams",
+    "similarity_threshold": 0.85,
+    "candidate_limit": 200,
+    "records_deleted_or_excluded": 0,
+    "limitations": [
+      "LSH may miss similar pairs.",
+      "Surface similarity is not semantic equivalence.",
+      "All flagged pairs are retained for review."
+    ]
+  },
+  "elapsed_seconds": 55.9,
+  "candidate_cross_split_findings": [
+    {
+      "record_id_a": "10078340",
+      "record_id_b": "9926509",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "10078342",
+      "record_id_b": "9926508",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "10099608",
+      "record_id_b": "10903591",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "10109293",
+      "record_id_b": "12222438",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "10110672",
+      "record_id_b": "12080122",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "11185240",
+      "record_id_b": "11185241",
+      "similarity": 0.8571428571428571,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "11262920",
+      "record_id_b": "11262935",
+      "similarity": 0.8571428571428571,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "11502923",
+      "record_id_b": "9937339",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "11565143",
+      "record_id_b": "11967889",
+      "similarity": 0.875,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "11595274",
+      "record_id_b": "11595275",
+      "similarity": 0.875,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "11876665",
+      "record_id_b": "12213454",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "11911775",
+      "record_id_b": "12486780",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "11911776",
+      "record_id_b": "12486787",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "11989914",
+      "record_id_b": "7125361",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "12029157",
+      "record_id_b": "12029158",
+      "similarity": 0.875,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "12343209",
+      "record_id_b": "12343216",
+      "similarity": 0.8928571428571429,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "12700048",
+      "record_id_b": "12700265",
+      "similarity": 0.8571428571428571,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "12735943",
+      "record_id_b": "12736498",
+      "similarity": 0.875,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "12736461",
+      "record_id_b": "12736501",
+      "similarity": 0.8888888888888888,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "12736927",
+      "record_id_b": "12736960",
+      "similarity": 0.9166666666666666,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "12741196",
+      "record_id_b": "12741337",
+      "similarity": 0.8571428571428571,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "12749356",
+      "record_id_b": "12749432",
+      "similarity": 0.9,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "12749567",
+      "record_id_b": "12749656",
+      "similarity": 0.8571428571428571,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "12750038",
+      "record_id_b": "12750106",
+      "similarity": 0.8888888888888888,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "12768710",
+      "record_id_b": "12770803",
+      "similarity": 0.8571428571428571,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "12768893",
+      "record_id_b": "12768983",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "7062166",
+      "record_id_b": "7072548",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "8238849",
+      "record_id_b": "8238858",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "8508047",
+      "record_id_b": "9509070",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "8734084",
+      "record_id_b": "8734100",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "8734085",
+      "record_id_b": "8734098",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "8769885",
+      "record_id_b": "8770046",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "9764386",
+      "record_id_b": "9764387",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "9801141",
+      "record_id_b": "9841929",
+      "similarity": 1.0,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    },
+    {
+      "record_id_a": "9816339",
+      "record_id_b": "9816340",
+      "similarity": 0.875,
+      "reason": "word-trigram Jaccard similarity >= configured threshold 0.85",
+      "decision": "retain_both_pending_review",
+      "candidate_limit_hit": 0
+    }
+  ],
+  "database": "D:\\NourAI\\reports\\phase10\\final_closure_v3\\near_duplicate_recheck.sqlite3"
+}

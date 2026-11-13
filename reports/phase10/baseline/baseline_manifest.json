@@ -1,0 +1,108 @@
+{
+  "created_at": "2026-11-13T00:39:21.236814+01:00",
+  "python": "3.15.2 (tags/v3.15.2:5e58eaa, Oct 25 2026, 17:27:03) [MSC v.1951 64 bit (AMD64)]",
+  "sqlite": "3.53.4",
+  "files": [
+    {
+      "path": "data/raw/external/tatoeba_cc0.tar.bz2",
+      "size_bytes": 7963537,
+      "sha256": "7e4251d06edd949db9e47cc360b472873da6c054af5dc4b9d2c9e06d024cd710",
+      "line_count": null,
+      "mtime_filesystem": "2026-11-11T20:44:51.784664+01:00",
+      "category": "IMMUTABLE"
+    },
+    {
+      "path": "data/processed/phase8/imported/tatoeba_cc0_multilingual_v4.jsonl",
+      "size_bytes": 52065889,
+      "sha256": "00f752ca1b78d27fc717a8664bb2c7ebd0f001b2ace11685e1d36456ebb1841a",
+      "line_count": 55719,
+      "mtime_filesystem": "2026-11-11T21:38:50.780957+01:00",
+      "category": "IMMUTABLE"
+    },
+    {
+      "path": "data/processed/phase8/imported/tatoeba_cc0_multilingual_v4.jsonl.import.json",
+      "size_bytes": 1296,
+      "sha256": "4ced47d574ecbbd044871cd96e3917e2c8bf16868d3b7ea8f9d68d04b79761cc",
+      "line_count": 35,
+      "mtime_filesystem": "2026-11-11T21:38:50.966352+01:00",
+      "category": "IMMUTABLE"
+    },
+    {
+      "path": "data/processed/phase8/normalized/tatoeba_cc0_multilingual_v4.normalized.cleaned.jsonl",
+      "size_bytes": 81303011,
+      "sha256": "66fb4f80b7788ff1c236a96038edf4d649981169369f97f7aa4a21c6bbdb36d3",
+      "line_count": 55719,
+      "mtime_filesystem": "2026-11-11T21:38:56.528322+01:00",
+      "category": "IMMUTABLE"
+    },
+    {
+      "path": "data/processed/phase8/deduplicated/splits/train.jsonl",
+      "size_bytes": 11397598,
+      "sha256": "b1f11849397c39f6ca78371bd07ac6dd92cf108ea745f5f47c2f8c6c88d1e24a",
+      "line_count": 50144,
+      "mtime_filesystem": "2026-11-11T21:39:22.676971+01:00",
+      "category": "IMMUTABLE"
+    },
+    {
+      "path": "data/processed/phase8/deduplicated/splits/validation.jsonl",
+      "size_bytes": 628496,
+      "sha256": "ed41727c44ac148e8c2916852d2f82fa36be3b7f4a3b85f305fb3d1acbce7d96",
+      "line_count": 2787,
+      "mtime_filesystem": "2026-11-11T21:39:22.676971+01:00",
+      "category": "IMMUTABLE"
+    },
+    {
+      "path": "data/processed/phase8/deduplicated/splits/test.jsonl",
+      "size_bytes": 630635,
+      "sha256": "b83a834cdbf9082375d5750f642275752a99bc7d13f7df579173362acca4ec1d",
+      "line_count": 2785,
+      "mtime_filesystem": "2026-11-11T21:39:22.676971+01:00",
+      "category": "IMMUTABLE"
+    },
+    {
+      "path": "configs/phase8_corpus.json",
+      "size_bytes": 1756,
+      "sha256": "efd51aeef2c208e6912a51432c976c2c8ce382e4bd18b681d9e54884927b861f",
+      "line_count": 34,
+      "mtime_filesystem": "2026-11-11T21:37:45.815833+01:00",
+      "category": "CONFIG"
+    },
+    {
+      "path": "configs/phase9_corpus.json",
+      "size_bytes": 467,
+      "sha256": "1d9f551553c603888945c3d87325dabb5fcb88a12730a364cc13a06638c994c7",
+      "line_count": 11,
+      "mtime_filesystem": "2026-11-12T16:06:31.716316+01:00",
+      "category": "CONFIG"
+    },
+    {
+      "path": "configs/dataset_sources.json",
+      "size_bytes": 15724,
+      "sha256": "946df537880bb711f784a38a26a34cf15fb18699593a160df8cadea0f7b01185",
+      "line_count": 345,
+      "mtime_filesystem": "2026-11-12T16:20:04.871697+01:00",
+      "category": "CONFIG"
+    }
+  ],
+  "sqlite_backup": {
+    "path": "D:\\NourAI\\.backup\\phase10-execution\\corpus.sqlite3",
+    "size_bytes": 66916352,
+    "sha256": "a39210c85a6fdf205a37c8ed8782dbfedda6305b807ed68f2bb71dfdae12930e",
+    "integrity_check": [
+      [
+        "ok"
+      ]
+    ],
+    "foreign_key_check": [],
+    "table_counts": {
+      "datasets": 2,
+      "files": 6,
+      "license_current": 4,
+      "license_history": 4,
+      "operations": 3,
+      "records": 111435,
+      "sources": 1
+    },
+    "readable": true
+  }
+}

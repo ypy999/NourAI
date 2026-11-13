@@ -1,0 +1,23 @@
+{
+  "status": "SMOKE_TEST_PASSED_ON_SMALL_REAL_TEXT_SAMPLE",
+  "sample_records": 8,
+  "config_overrides_for_smoke": {
+    "context_length": 16,
+    "batch_size": 2
+  },
+  "load_seconds": 0.0228656,
+  "item_shape": [
+    16
+  ],
+  "train_batch_shape": [
+    2,
+    16
+  ],
+  "validation_batch_shape": [
+    2,
+    16
+  ],
+  "tokenizer_vocab_size": 260,
+  "provenance_metadata_rows_for_sample": 1,
+  "attention_masks": "Dataset/DataLoader interface emits shifted input/target tensors; no attention mask is produced by this causal LM loader"
+}

@@ -1,0 +1,203 @@
+{
+  "status": "SPLIT_PROVENANCE_VERIFIED_FROM_EXPLICIT_SOURCE_REFERENCES; LEGACY_SQLITE_SPLIT_IDS_UNTRUSTWORTHY; DOCUMENT_IDS_UNAVAILABLE",
+  "created_at_local": "2026-11-13T01:50:51+01:00",
+  "python": "3.15.2 (tags/v3.15.2:5e58eaa, Oct 25 2026, 17:27:03) [MSC v.1951 64 bit (AMD64)]",
+  "sqlite_version": "3.53.4",
+  "raw_to_imported_prior_evidence": {
+    "report": "D:\\NourAI\\reports\\phase10\\raw_reconciliation.json",
+    "raw_rows": 562272,
+    "imported": 55719,
+    "matched_by_source_record_id": 55719,
+    "unmatched_imported": 0,
+    "identity_method": "exact source_record_id equality; no text similarity",
+    "rerun_in_this_closure": false
+  },
+  "imported_to_normalized": {
+    "imported": 55719,
+    "normalized": 55719,
+    "duplicate_ids": 0,
+    "evidence": "D:\\NourAI\\reports\\phase10\\provenance_audit.json"
+  },
+  "splits_v2": {
+    "status": "SOURCE_RECORD_PROVENANCE_RECONSTRUCTED_FROM_EXPLICIT_SOURCE_PATH_AND_LINE_REFERENCE",
+    "created_at_local": "2026-11-13T01:10:21.773130+01:00",
+    "source_file": "D:\\NourAI\\data\\processed\\phase8\\imported\\tatoeba_cc0_multilingual_v3.jsonl",
+    "source_file_sha256": "9ab1e3bf09c2d4f7fefd619c5380e84c10df20b6867edb502dc9a5d49b735ce4",
+    "normalized_file": "D:\\NourAI\\data\\processed\\phase8\\normalized\\tatoeba_cc0_multilingual_v4.normalized.cleaned.jsonl",
+    "normalized_file_sha256": "66fb4f80b7788ff1c236a96038edf4d649981169369f97f7aa4a21c6bbdb36d3",
+    "method": "For each existing split row, used its stored absolute source path and 1-based line_number to retrieve the corresponding record from the referenced immutable v3 JSONL; validated the original source_record_id against the normalized v4 JSONL and verified that split text equals normalized text. No text/hash-only identity inference.",
+    "split_counts": {
+      "train": 50144,
+      "validation": 2787,
+      "test": 2785
+    },
+    "mapped_records": 55716,
+    "missing_origin_ids": 0,
+    "duplicate_source_line_refs": 0,
+    "duplicate_source_record_ids": 0,
+    "source_id_leakage": 0,
+    "document_id": "NOT_PRESENT_IN_SOURCE; NOT_CREATED",
+    "split_text_vs_source_v3_differences": 75,
+    "split_text_vs_normalized_v4_mismatches": 0,
+    "written_files": {
+      "train": {
+        "path": "D:\\NourAI\\reports\\phase10\\final_closure_v2\\splits_v2_verified\\train.jsonl",
+        "records": 50144,
+        "bytes": 25865478,
+        "sha256": "1f952c50ccc5479abf755c728ed00930d87981598099bf7b7cb93033dcd6f25d"
+      },
+      "validation": {
+        "path": "D:\\NourAI\\reports\\phase10\\final_closure_v2\\splits_v2_verified\\validation.jsonl",
+        "records": 2787,
+        "bytes": 1432731,
+        "sha256": "5b204306931f86703ab4bd021be03d69373227eb48cf72f93fea0b662584a6eb"
+      },
+      "test": {
+        "path": "D:\\NourAI\\reports\\phase10\\final_closure_v2\\splits_v2_verified\\test.jsonl",
+        "records": 2785,
+        "bytes": 1434348,
+        "sha256": "47e201802702ead1832140229bf8b0e457a7f964bb7153e3ec32a990b04cf010"
+      }
+    },
+    "original_split_files_modified": false
+  },
+  "sqlite": {
+    "path": "D:\\NourAI\\data\\metadata\\corpus.sqlite3",
+    "size_bytes": 66916352,
+    "sha256": "afeca442ce63c3ef7ecf09050e779110a80270cd2affe42ff49cde7526ecb0d7",
+    "tables": [
+      "datasets",
+      "files",
+      "license_current",
+      "license_history",
+      "operations",
+      "records",
+      "sources"
+    ],
+    "table_counts": {
+      "datasets": 2,
+      "files": 6,
+      "license_current": 4,
+      "license_history": 4,
+      "operations": 3,
+      "records": 111435,
+      "sources": 1
+    },
+    "integrity_check": [
+      "ok"
+    ],
+    "foreign_key_violations": [],
+    "records_by_split": {
+      "unassigned": 55719,
+      "test": 2785,
+      "train": 50144,
+      "validation": 2787
+    },
+    "records_by_source": {
+      "tatoeba_cc0": 111435
+    },
+    "license_states": {
+      "NEEDS_REVIEW": 2,
+      "UNKNOWN_LICENSE": 1,
+      "VERIFIED": 1
+    },
+    "legacy_split_fallback_ids": 55716
+  },
+  "sqlite_backup": {
+    "path": "D:\\NourAI\\.backup\\phase10-execution\\corpus.sqlite3",
+    "sha256": "a39210c85a6fdf205a37c8ed8782dbfedda6305b807ed68f2bb71dfdae12930e",
+    "integrity": [
+      "ok"
+    ],
+    "foreign_key_violations": [],
+    "table_counts_match": true
+  },
+  "legacy_sqlite_warning": {
+    "generated_split_ids": 55716,
+    "example": "train:1",
+    "database_modified": false,
+    "fix": "Missing source_record_id remains NULL in new indexing; line numbers remain metadata."
+  },
+  "field_coverage": [
+    {
+      "field": "source_id",
+      "sqlite": "join via datasets/sources",
+      "jsonl": "present in imported/normalized; absent in old splits; mapped in verified copy",
+      "manifest": "source-level",
+      "status": "PARTIALLY_AVAILABLE"
+    },
+    {
+      "field": "source_record_id",
+      "sqlite": "import IDs present; split IDs are synthetic line labels",
+      "jsonl": "present in imported/normalized; recovered for 55,716 splits by source path+line",
+      "manifest": "coverage/hash",
+      "status": "PARTIALLY_AVAILABLE"
+    },
+    {
+      "field": "source_file/source_line",
+      "sqlite": "not per-record; split metadata record_number is split-local",
+      "jsonl": "old split source path+line verified; import source_record_number alias",
+      "manifest": "file-level and split counts",
+      "status": "AVAILABLE_FOR_SPLIT_MAPPING"
+    },
+    {
+      "field": "document_id",
+      "sqlite/jsonl/manifest": "absent; none generated",
+      "status": "MISSING"
+    },
+    {
+      "field": "source_name/license_status",
+      "sqlite": "join registry/license state; not per-record",
+      "jsonl": "license_id present; source name/state absent in v4 rows",
+      "manifest": "source-level",
+      "status": "PARTIALLY_AVAILABLE"
+    },
+    {
+      "field": "original_language/detected_language",
+      "sqlite": "source_language_code metadata and language columns",
+      "jsonl": "source_language_code and language_estimate",
+      "manifest": "aggregates",
+      "status": "AVAILABLE_VIA_ALIASES"
+    },
+    {
+      "field": "raw_sha256/content_hash",
+      "sqlite": "raw_sha256",
+      "jsonl": "raw_text_sha256 and normalized_text_sha256",
+      "manifest": "file hashes",
+      "status": "PARTIALLY_AVAILABLE"
+    },
+    {
+      "field": "ingestion_timestamp",
+      "sqlite": "not per-record",
+      "jsonl": "imported_at is per-record",
+      "manifest": "import-level",
+      "status": "AVAILABLE_VIA_IMPORTED_AT"
+    },
+    {
+      "field": "normalization_version/pipeline_version",
+      "sqlite": "absent",
+      "jsonl": "normalization form/stages only; explicit pipeline version absent",
+      "manifest": "no per-record version verified",
+      "status": "PARTIALLY_AVAILABLE"
+    },
+    {
+      "field": "dataset_version",
+      "sqlite": "datasets.version",
+      "jsonl": "present",
+      "manifest": "present",
+      "status": "AVAILABLE"
+    }
+  ],
+  "no_inference": {
+    "hash_identity_used": false,
+    "document_ids_created": false,
+    "timestamps_invented": false,
+    "phase8_files_modified": false,
+    "sqlite_migration": false
+  },
+  "limitations": [
+    "Document grouping metadata does not exist in inspected Tatoeba sentence data.",
+    "Legacy SQLite split ID fallbacks remain and require a separate approved migration/corrected copy.",
+    "pipeline_version and document IDs are absent; normalization version is only partial."
+  ]
+}

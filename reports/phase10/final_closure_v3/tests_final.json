@@ -1,0 +1,33 @@
+{
+  "created_at_local": "2026-11-13T08:15:55+01:00",
+  "status": "PASS",
+  "command": ".venv/Scripts/python.exe -m pytest -p no:cacheprovider --basetemp=reports/phase10/final_closure_v3/pytest-temp -q --ignore=tests/test_training.py",
+  "passed": 159,
+  "failed": 0,
+  "skipped": 0,
+  "duration_seconds": 21.48,
+  "training_test_file": {
+    "collected": 21,
+    "executed": false,
+    "reason": "Contains Trainer.fit/weight update tests; excluded."
+  },
+  "migration_verification": {
+    "mapped": 55716,
+    "candidate_integrity": "ok",
+    "candidate_foreign_key_violations": 0,
+    "content_hashes_unchanged": true,
+    "rollback_script_tested": true
+  },
+  "review_decisions": {
+    "pairs": 15,
+    "decisions_filled": 0,
+    "application_run": false
+  },
+  "focused_phase10_v3_regression": {
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "initial_run": "2 passed, 1 failed due exact-string assertion; assertion corrected and rerun",
+    "final": "3 passed in 3.12s"
+  }
+}

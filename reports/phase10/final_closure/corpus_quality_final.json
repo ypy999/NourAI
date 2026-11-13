@@ -1,0 +1,22 @@
+{
+  "status": "STRUCTURAL_PARTIAL",
+  "actual_counts": {
+    "imported": 55719,
+    "normalized": 55719,
+    "empty_records": 0,
+    "invalid_json_utf8_schema": 0,
+    "languages": {
+      "eng": 41515,
+      "fra": 14202,
+      "ara": 2
+    }
+  },
+  "split_counts": {
+    "train": 50144,
+    "validation": 2787,
+    "test": 2785
+  },
+  "language_detection": "declared source codes measured; independent detection not rerun",
+  "semantic_quality": "NOT_EVALUATED",
+  "near_duplicates": "NOT_RUN_ON_FULL_CORPUS"
+}

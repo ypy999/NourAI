@@ -1,0 +1,88 @@
+# --- Python bytecode / caches -------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+.coverage
+.coverage.*
+htmlcov/
+
+# --- Virtual environments -----------------------------------------------------
+.venv/
+venv/
+env/
+ENV/
+.conda/
+
+# --- Packaging / build --------------------------------------------------------
+build/
+dist/
+*.egg-info/
+.eggs/
+wheels/
+
+# --- Local secrets / environment ---------------------------------------------
+.env
+.env.*
+*.pem
+*.key
+
+# --- OS / editor noise --------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*~
+
+# --- Corpus payloads ----------------------------------------------------------
+# The data/ package contains Python source that MUST be tracked. Only the
+# downloaded archives, processed corpora and SQLite metadata are excluded.
+data/raw/
+data/processed/
+data/metadata/
+data/rejected/
+data/tmp/
+data/*.sqlite3
+data/*.sqlite3-shm
+data/*.sqlite3-wal
+
+# --- Download / processing temporaries ---------------------------------------
+*.part
+*.partial
+*.resume.json
+*.tmp
+*.log
+
+# --- Reproducible-run scratch directories ------------------------------------
+# Frozen Phase 10.2 artifact tree is intentionally kept on disk and ignored.
+data/phase10_2_runs/
+
+# --- Test and audit scratch output -------------------------------------------
+reports/**/pytest-temp/
+reports/**/pytest-split-patch/
+reports/**/pytest-split-patch-*/
+reports/**/pytest-final-run/
+reports/**/pytest-*/
+reports/**/.pytest_cache/
+reports/write_test.tmp
+
+# --- Generated binaries and derived split copies ------------------------------
+# Report JSON/Markdown evidence stays tracked; SQLite databases and copied
+# train/validation/test splits are regenerable payloads and are excluded.
+reports/**/*.sqlite3
+reports/**/*.sqlite3-shm
+reports/**/*.sqlite3-wal
+reports/**/reviewed_splits/
+reports/**/restore_test/
+reports/**/splits_v2_verified/
+reports/**/migration_map.jsonl
+
+# --- Local backups ------------------------------------------------------------
+.backup/
+backups/
+*.bak
+*.orig

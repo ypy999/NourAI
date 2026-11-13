@@ -1,0 +1,455 @@
+{
+  "algorithm": "SHA-256",
+  "created_at_local": "2026-11-13T01:51:59+01:00",
+  "self_hash_excluded": true,
+  "pre_execution_baseline_checks": [
+    {
+      "path": "data/raw/external/tatoeba_cc0.tar.bz2",
+      "expected_sha256": "7e4251d06edd949db9e47cc360b472873da6c054af5dc4b9d2c9e06d024cd710",
+      "actual_sha256": "7e4251d06edd949db9e47cc360b472873da6c054af5dc4b9d2c9e06d024cd710",
+      "matches": true
+    },
+    {
+      "path": "data/processed/phase8/imported/tatoeba_cc0_multilingual_v4.jsonl",
+      "expected_sha256": "00f752ca1b78d27fc717a8664bb2c7ebd0f001b2ace11685e1d36456ebb1841a",
+      "actual_sha256": "00f752ca1b78d27fc717a8664bb2c7ebd0f001b2ace11685e1d36456ebb1841a",
+      "matches": true
+    },
+    {
+      "path": "data/processed/phase8/imported/tatoeba_cc0_multilingual_v4.jsonl.import.json",
+      "expected_sha256": "4ced47d574ecbbd044871cd96e3917e2c8bf16868d3b7ea8f9d68d04b79761cc",
+      "actual_sha256": "4ced47d574ecbbd044871cd96e3917e2c8bf16868d3b7ea8f9d68d04b79761cc",
+      "matches": true
+    },
+    {
+      "path": "data/processed/phase8/normalized/tatoeba_cc0_multilingual_v4.normalized.cleaned.jsonl",
+      "expected_sha256": "66fb4f80b7788ff1c236a96038edf4d649981169369f97f7aa4a21c6bbdb36d3",
+      "actual_sha256": "66fb4f80b7788ff1c236a96038edf4d649981169369f97f7aa4a21c6bbdb36d3",
+      "matches": true
+    },
+    {
+      "path": "data/processed/phase8/deduplicated/splits/train.jsonl",
+      "expected_sha256": "b1f11849397c39f6ca78371bd07ac6dd92cf108ea745f5f47c2f8c6c88d1e24a",
+      "actual_sha256": "b1f11849397c39f6ca78371bd07ac6dd92cf108ea745f5f47c2f8c6c88d1e24a",
+      "matches": true
+    },
+    {
+      "path": "data/processed/phase8/deduplicated/splits/validation.jsonl",
+      "expected_sha256": "ed41727c44ac148e8c2916852d2f82fa36be3b7f4a3b85f305fb3d1acbce7d96",
+      "actual_sha256": "ed41727c44ac148e8c2916852d2f82fa36be3b7f4a3b85f305fb3d1acbce7d96",
+      "matches": true
+    },
+    {
+      "path": "data/processed/phase8/deduplicated/splits/test.jsonl",
+      "expected_sha256": "b83a834cdbf9082375d5750f642275752a99bc7d13f7df579173362acca4ec1d",
+      "actual_sha256": "b83a834cdbf9082375d5750f642275752a99bc7d13f7df579173362acca4ec1d",
+      "matches": true
+    },
+    {
+      "path": "configs/phase8_corpus.json",
+      "expected_sha256": "efd51aeef2c208e6912a51432c976c2c8ce382e4bd18b681d9e54884927b861f",
+      "actual_sha256": "efd51aeef2c208e6912a51432c976c2c8ce382e4bd18b681d9e54884927b861f",
+      "matches": true
+    },
+    {
+      "path": "configs/phase9_corpus.json",
+      "expected_sha256": "1d9f551553c603888945c3d87325dabb5fcb88a12730a364cc13a06638c994c7",
+      "actual_sha256": "1d9f551553c603888945c3d87325dabb5fcb88a12730a364cc13a06638c994c7",
+      "matches": true
+    },
+    {
+      "path": "configs/dataset_sources.json",
+      "expected_sha256": "946df537880bb711f784a38a26a34cf15fb18699593a160df8cadea0f7b01185",
+      "actual_sha256": "946df537880bb711f784a38a26a34cf15fb18699593a160df8cadea0f7b01185",
+      "matches": true
+    }
+  ],
+  "changed_files_and_backups": [
+    {
+      "path": "data/storage_manager.py",
+      "sha256_after": "a4469aacc7c1e0af49395491cafee18b27ce97285d2806edeafc2b53f0a7e1d3",
+      "backup_path": "D:\\NourAI\\.backup\\phase10-final-closure\\storage_manager.py.pre",
+      "backup_sha256": "f50d8d19026983cee64871e46a8ca2a4f9836c14c6be755aa5d1778131b19aef",
+      "pre_edit_backup_verified": true
+    },
+    {
+      "path": "tests/test_phase8_storage.py",
+      "sha256_after": "58559cb0fdd11d69e1352626cb43de9a684f0a5f05e5c06f4b9d9f595105f08e",
+      "backup_path": "D:\\NourAI\\.backup\\phase10-final-closure\\test_phase8_storage.py.pre",
+      "backup_sha256": "d33fa6fc75bbfcfe3014e2a8f37b44e0e0e1cf9e2689b66c6d71f70ea3d0466f",
+      "pre_edit_backup_verified": true
+    },
+    {
+      "path": "data/registry_sync.py",
+      "sha256_after": "213ad82a3cdacc53b9a7433957dfb55d9ddefd2f01d83728f3d5c79e6f12010a",
+      "backup_path": "D:\\NourAI\\.backup\\phase10-final-closure\\registry_sync.py.pre-security",
+      "backup_sha256": "51b37ce58f9e981ad4328af4a3cd8b1624d82b83f55c342011c09f7eb638e2bc",
+      "pre_edit_backup_verified": true
+    },
+    {
+      "path": "tests/test_phase10_1_quality_readiness_registry.py",
+      "sha256_after": "f2d4c86c08bb15337df83166847cab077a2a1e512734a661f892421476980e83",
+      "backup_path": "D:\\NourAI\\.backup\\phase10-final-closure\\test_phase10_1_quality_readiness_registry.py.pre-security",
+      "backup_sha256": "ddd95fcdb5fac7f0b91264f65021e406168aaad57f13ca8ebade3ce24af5a582",
+      "pre_edit_backup_verified": true
+    },
+    {
+      "path": "data/download_manager.py",
+      "sha256_after": "bd5d3bddfe628c387740f795dec81d9d62547470f79ec55ab5dc2e30d036ef31",
+      "backup_path": "D:\\NourAI\\.backup\\phase10-final-closure\\download_manager.py.pre-security",
+      "backup_sha256": "55fccf82a0a1f4dd60a59ea3f16fdbd14eb0abb6dc0640758707d66e2d157681",
+      "pre_edit_backup_verified": true
+    },
+    {
+      "path": "tests/test_phase8_acquisition.py",
+      "sha256_after": "042c44752d92f304799aa7377819c9476d31260389dd619b013227915e8fb582",
+      "backup_path": "D:\\NourAI\\.backup\\phase10-final-closure\\test_phase8_acquisition.py.pre-security",
+      "backup_sha256": "fc2a927473dd7adb6401a7d7fbf44435ea464d5f578d5518bb0b0c9c523c3659",
+      "pre_edit_backup_verified": true
+    }
+  ],
+  "files": [
+    {
+      "path": "D:\\NourAI\\data\\raw\\external\\tatoeba_cc0.tar.bz2",
+      "size_bytes": 7963537,
+      "sha256": "7e4251d06edd949db9e47cc360b472873da6c054af5dc4b9d2c9e06d024cd710",
+      "role": "core_input_or_backup"
+    },
+    {
+      "path": "D:\\NourAI\\data\\processed\\phase8\\imported\\tatoeba_cc0_multilingual_v4.jsonl",
+      "size_bytes": 52065889,
+      "sha256": "00f752ca1b78d27fc717a8664bb2c7ebd0f001b2ace11685e1d36456ebb1841a",
+      "role": "core_input_or_backup"
+    },
+    {
+      "path": "D:\\NourAI\\data\\processed\\phase8\\imported\\tatoeba_cc0_multilingual_v4.jsonl.import.json",
+      "size_bytes": 1296,
+      "sha256": "4ced47d574ecbbd044871cd96e3917e2c8bf16868d3b7ea8f9d68d04b79761cc",
+      "role": "core_input_or_backup"
+    },
+    {
+      "path": "D:\\NourAI\\data\\processed\\phase8\\normalized\\tatoeba_cc0_multilingual_v4.normalized.cleaned.jsonl",
+      "size_bytes": 81303011,
+      "sha256": "66fb4f80b7788ff1c236a96038edf4d649981169369f97f7aa4a21c6bbdb36d3",
+      "role": "core_input_or_backup"
+    },
+    {
+      "path": "D:\\NourAI\\data\\processed\\phase8\\splits_v2\\train.jsonl",
+      "size_bytes": 10344574,
+      "sha256": "70e9ac640f7316e995fc38eabb0a06bbd0e2ca122922e4634dd52e3f825bc5f1",
+      "role": "core_input_or_backup"
+    },
+    {
+      "path": "D:\\NourAI\\data\\processed\\phase8\\splits_v2\\validation.jsonl",
+      "size_bytes": 569969,
+      "sha256": "2da06977e1a373a950a15d38807dcab973a088daf44d86e271ddc60257c06c7a",
+      "role": "core_input_or_backup"
+    },
+    {
+      "path": "D:\\NourAI\\data\\processed\\phase8\\splits_v2\\test.jsonl",
+      "size_bytes": 572150,
+      "sha256": "1a706f1280f0bc9873e09c6c81cb4e244ae7f9e589453d7e6ac272d79c2b893b",
+      "role": "core_input_or_backup"
+    },
+    {
+      "path": "D:\\NourAI\\data\\processed\\phase8\\deduplicated\\splits\\train.jsonl",
+      "size_bytes": 11397598,
+      "sha256": "b1f11849397c39f6ca78371bd07ac6dd92cf108ea745f5f47c2f8c6c88d1e24a",
+      "role": "core_input_or_backup"
+    },
+    {
+      "path": "D:\\NourAI\\data\\processed\\phase8\\deduplicated\\splits\\validation.jsonl",
+      "size_bytes": 628496,
+      "sha256": "ed41727c44ac148e8c2916852d2f82fa36be3b7f4a3b85f305fb3d1acbce7d96",
+      "role": "core_input_or_backup"
+    },
+    {
+      "path": "D:\\NourAI\\data\\processed\\phase8\\deduplicated\\splits\\test.jsonl",
+      "size_bytes": 630635,
+      "sha256": "b83a834cdbf9082375d5750f642275752a99bc7d13f7df579173362acca4ec1d",
+      "role": "core_input_or_backup"
+    },
+    {
+      "path": "D:\\NourAI\\data\\metadata\\corpus.sqlite3",
+      "size_bytes": 66916352,
+      "sha256": "afeca442ce63c3ef7ecf09050e779110a80270cd2affe42ff49cde7526ecb0d7",
+      "role": "core_input_or_backup"
+    },
+    {
+      "path": "D:\\NourAI\\.backup\\phase10-execution\\corpus.sqlite3",
+      "size_bytes": 66916352,
+      "sha256": "a39210c85a6fdf205a37c8ed8782dbfedda6305b807ed68f2bb71dfdae12930e",
+      "role": "core_input_or_backup"
+    },
+    {
+      "path": "D:\\NourAI\\configs\\default.json",
+      "size_bytes": 957,
+      "sha256": "6211f19a549e5d41334a8d817c9668818eac1e583dd5bc30319855da10ca4dfe",
+      "role": "core_input_or_backup"
+    },
+    {
+      "path": "D:\\NourAI\\configs\\phase8_corpus.json",
+      "size_bytes": 1756,
+      "sha256": "efd51aeef2c208e6912a51432c976c2c8ce382e4bd18b681d9e54884927b861f",
+      "role": "core_input_or_backup"
+    },
+    {
+      "path": "D:\\NourAI\\configs\\phase9_corpus.json",
+      "size_bytes": 467,
+      "sha256": "1d9f551553c603888945c3d87325dabb5fcb88a12730a364cc13a06638c994c7",
+      "role": "core_input_or_backup"
+    },
+    {
+      "path": "D:\\NourAI\\configs\\phase10_readiness.json",
+      "size_bytes": 950,
+      "sha256": "f04e91c604e71598a7fc10d79165ad73287df2ee1c69f6d2c79d0fdf390c6ac1",
+      "role": "core_input_or_backup"
+    },
+    {
+      "path": "D:\\NourAI\\configs\\dataset_sources.json",
+      "size_bytes": 15724,
+      "sha256": "946df537880bb711f784a38a26a34cf15fb18699593a160df8cadea0f7b01185",
+      "role": "core_input_or_backup"
+    },
+    {
+      "path": "D:\\NourAI\\tokenizer\\byte_tokenizer.py",
+      "size_bytes": 1331,
+      "sha256": "63f3865bac308a81b18c48c96a6458cd72a31d8e88ca463a842a4f3681d1f6f7",
+      "role": "core_input_or_backup"
+    },
+    {
+      "path": "D:\\NourAI\\model\\transformer.py",
+      "size_bytes": 7263,
+      "sha256": "55ed2b0aebb67017e7d163fa6fb7c37c6fe58fd190870536ccc50c72fd97a0ed",
+      "role": "core_input_or_backup"
+    },
+    {
+      "path": "D:\\NourAI\\data\\storage_manager.py",
+      "size_bytes": 9203,
+      "sha256": "a4469aacc7c1e0af49395491cafee18b27ce97285d2806edeafc2b53f0a7e1d3",
+      "role": "modified_source_or_pre_edit_backup"
+    },
+    {
+      "path": "D:\\NourAI\\.backup\\phase10-final-closure\\storage_manager.py.pre",
+      "size_bytes": 9124,
+      "sha256": "f50d8d19026983cee64871e46a8ca2a4f9836c14c6be755aa5d1778131b19aef",
+      "role": "modified_source_or_pre_edit_backup"
+    },
+    {
+      "path": "D:\\NourAI\\tests\\test_phase8_storage.py",
+      "size_bytes": 2610,
+      "sha256": "58559cb0fdd11d69e1352626cb43de9a684f0a5f05e5c06f4b9d9f595105f08e",
+      "role": "modified_source_or_pre_edit_backup"
+    },
+    {
+      "path": "D:\\NourAI\\.backup\\phase10-final-closure\\test_phase8_storage.py.pre",
+      "size_bytes": 1693,
+      "sha256": "d33fa6fc75bbfcfe3014e2a8f37b44e0e0e1cf9e2689b66c6d71f70ea3d0466f",
+      "role": "modified_source_or_pre_edit_backup"
+    },
+    {
+      "path": "D:\\NourAI\\data\\registry_sync.py",
+      "size_bytes": 6349,
+      "sha256": "213ad82a3cdacc53b9a7433957dfb55d9ddefd2f01d83728f3d5c79e6f12010a",
+      "role": "modified_source_or_pre_edit_backup"
+    },
+    {
+      "path": "D:\\NourAI\\.backup\\phase10-final-closure\\registry_sync.py.pre-security",
+      "size_bytes": 5921,
+      "sha256": "51b37ce58f9e981ad4328af4a3cd8b1624d82b83f55c342011c09f7eb638e2bc",
+      "role": "modified_source_or_pre_edit_backup"
+    },
+    {
+      "path": "D:\\NourAI\\tests\\test_phase10_1_quality_readiness_registry.py",
+      "size_bytes": 2930,
+      "sha256": "f2d4c86c08bb15337df83166847cab077a2a1e512734a661f892421476980e83",
+      "role": "modified_source_or_pre_edit_backup"
+    },
+    {
+      "path": "D:\\NourAI\\.backup\\phase10-final-closure\\test_phase10_1_quality_readiness_registry.py.pre-security",
+      "size_bytes": 2448,
+      "sha256": "ddd95fcdb5fac7f0b91264f65021e406168aaad57f13ca8ebade3ce24af5a582",
+      "role": "modified_source_or_pre_edit_backup"
+    },
+    {
+      "path": "D:\\NourAI\\data\\download_manager.py",
+      "size_bytes": 2148,
+      "sha256": "bd5d3bddfe628c387740f795dec81d9d62547470f79ec55ab5dc2e30d036ef31",
+      "role": "modified_source_or_pre_edit_backup"
+    },
+    {
+      "path": "D:\\NourAI\\.backup\\phase10-final-closure\\download_manager.py.pre-security",
+      "size_bytes": 1590,
+      "sha256": "55fccf82a0a1f4dd60a59ea3f16fdbd14eb0abb6dc0640758707d66e2d157681",
+      "role": "modified_source_or_pre_edit_backup"
+    },
+    {
+      "path": "D:\\NourAI\\tests\\test_phase8_acquisition.py",
+      "size_bytes": 2240,
+      "sha256": "042c44752d92f304799aa7377819c9476d31260389dd619b013227915e8fb582",
+      "role": "modified_source_or_pre_edit_backup"
+    },
+    {
+      "path": "D:\\NourAI\\.backup\\phase10-final-closure\\test_phase8_acquisition.py.pre-security",
+      "size_bytes": 1613,
+      "sha256": "fc2a927473dd7adb6401a7d7fbf44435ea464d5f578d5518bb0b0c9c523c3659",
+      "role": "modified_source_or_pre_edit_backup"
+    },
+    {
+      "path": "D:\\NourAI\\reports\\phase10\\final_closure_v2\\_changed_paths_for_manifest.json",
+      "size_bytes": 2222,
+      "sha256": "326cab94f15b2fcc0ea8e773c12eff02e57eca4e49394fe78c269545365d9376",
+      "role": "closure_evidence_or_derived_copy"
+    },
+    {
+      "path": "D:\\NourAI\\reports\\phase10\\final_closure_v2\\blockers_final.json",
+      "size_bytes": 2468,
+      "sha256": "4ea5b3da79b8e39ac06dd0d0714cb45ba806a4bdf6ae9f0fc9e3e66a506f173d",
+      "role": "closure_evidence_or_derived_copy"
+    },
+    {
+      "path": "D:\\NourAI\\reports\\phase10\\final_closure_v2\\dataset_dataloader_final.json",
+      "size_bytes": 5285,
+      "sha256": "e759a2dafddccb55d00f4a61c3d89c3667ff3e9981dadf18ec383ed3ad266663",
+      "role": "closure_evidence_or_derived_copy"
+    },
+    {
+      "path": "D:\\NourAI\\reports\\phase10\\final_closure_v2\\document_leakage_final.json",
+      "size_bytes": 652,
+      "sha256": "71654b388abee49d7d3222994a8aaa9ce348d2289e10ab204da35eced8d0c168",
+      "role": "closure_evidence_or_derived_copy"
+    },
+    {
+      "path": "D:\\NourAI\\reports\\phase10\\final_closure_v2\\FINAL_REPORT.md",
+      "size_bytes": 5996,
+      "sha256": "b8d1d22cb15b010da654ca35cf60fb00c4f13732d035bb974d94e9a5cee1f370",
+      "role": "closure_evidence_or_derived_copy"
+    },
+    {
+      "path": "D:\\NourAI\\reports\\phase10\\final_closure_v2\\generate_closure_reports.py",
+      "size_bytes": 28270,
+      "sha256": "eecc4fed66284174790b9507f55f5e0cec72a602dcbe8c6cfd0c1b497ee1ee83",
+      "role": "closure_evidence_or_derived_copy"
+    },
+    {
+      "path": "D:\\NourAI\\reports\\phase10\\final_closure_v2\\language_readiness_final.json",
+      "size_bytes": 16338,
+      "sha256": "aac11e43b1eba31dd969bb47c860a162f2ab2a38a6ee78fed2d4119d5ab4303e",
+      "role": "closure_evidence_or_derived_copy"
+    },
+    {
+      "path": "D:\\NourAI\\reports\\phase10\\final_closure_v2\\language_readiness_final.md",
+      "size_bytes": 1268,
+      "sha256": "f796505322da61331c395ab9b72a37339fde6017ed1d930d17de844d6a655fe2",
+      "role": "closure_evidence_or_derived_copy"
+    },
+    {
+      "path": "D:\\NourAI\\reports\\phase10\\final_closure_v2\\legal_review_final.json",
+      "size_bytes": 23354,
+      "sha256": "b8afc842a1a510b258dbfaf2e955c342ef908fb0c3c37967d2977b30bd07fff5",
+      "role": "closure_evidence_or_derived_copy"
+    },
+    {
+      "path": "D:\\NourAI\\reports\\phase10\\final_closure_v2\\legal_review_final.md",
+      "size_bytes": 20555,
+      "sha256": "3b1508793fed44191d9554c301b04ffc06ffac141814080f5b22b40d562f50f3",
+      "role": "closure_evidence_or_derived_copy"
+    },
+    {
+      "path": "D:\\NourAI\\reports\\phase10\\final_closure_v2\\near_duplicate_audit.json",
+      "size_bytes": 50063,
+      "sha256": "1009fca5bb5bebecf4c85129573b37580b284960af751c0db810f7eab31c1b36",
+      "role": "closure_evidence_or_derived_copy"
+    },
+    {
+      "path": "D:\\NourAI\\reports\\phase10\\final_closure_v2\\near_duplicate_audit.md",
+      "size_bytes": 4155,
+      "sha256": "867dd59a13529ae3218b66fef64db4c5939b70fb7eb42fd34d12cc5330fe69f9",
+      "role": "closure_evidence_or_derived_copy"
+    },
+    {
+      "path": "D:\\NourAI\\reports\\phase10\\final_closure_v2\\performance_audit_runner.py",
+      "size_bytes": 11766,
+      "sha256": "f30dc0e5831f7c82d2aa0931db1d01f8eb0894a0104d9f67f1eff40c45ca4d95",
+      "role": "closure_evidence_or_derived_copy"
+    },
+    {
+      "path": "D:\\NourAI\\reports\\phase10\\final_closure_v2\\performance_final.json",
+      "size_bytes": 7690,
+      "sha256": "ba27006ce1d4539c13af586667f48db8c535eac1833309f3cc5abe81319538bf",
+      "role": "closure_evidence_or_derived_copy"
+    },
+    {
+      "path": "D:\\NourAI\\reports\\phase10\\final_closure_v2\\performance_final.md",
+      "size_bytes": 1360,
+      "sha256": "65dde6c3c28ed0552cf2c48afc405cd3f197c860ea039a0f53ca2fc8dd3b0d26",
+      "role": "closure_evidence_or_derived_copy"
+    },
+    {
+      "path": "D:\\NourAI\\reports\\phase10\\final_closure_v2\\phase10_closure.json",
+      "size_bytes": 1474,
+      "sha256": "ef6dbde34763349bdc6bf9b9aa3bcb37f5c8ecc76451f2d3fc7df92db9c5e594",
+      "role": "closure_evidence_or_derived_copy"
+    },
+    {
+      "path": "D:\\NourAI\\reports\\phase10\\final_closure_v2\\provenance_final.json",
+      "size_bytes": 7430,
+      "sha256": "62dd77b7caa1fa52ee1e1118e8df6154b6c57720a75f7cf3ad9e1aa11d9676f7",
+      "role": "closure_evidence_or_derived_copy"
+    },
+    {
+      "path": "D:\\NourAI\\reports\\phase10\\final_closure_v2\\provenance_final.md",
+      "size_bytes": 406,
+      "sha256": "f911fdb415b2e73888e06bd23d37a160c776abe2d2d1280d6ef26ec05af10fce",
+      "role": "closure_evidence_or_derived_copy"
+    },
+    {
+      "path": "D:\\NourAI\\reports\\phase10\\final_closure_v2\\security_final.json",
+      "size_bytes": 3890,
+      "sha256": "5f5c43fef6d113e10dd7b53c8a8355bbd1348cd661c7e834ae96d04adf2cb2b2",
+      "role": "closure_evidence_or_derived_copy"
+    },
+    {
+      "path": "D:\\NourAI\\reports\\phase10\\final_closure_v2\\security_final.md",
+      "size_bytes": 965,
+      "sha256": "8fde432a486882f60801ff9b290f93ed8caaaea1f08804ba579cf715bcfbf179",
+      "role": "closure_evidence_or_derived_copy"
+    },
+    {
+      "path": "D:\\NourAI\\reports\\phase10\\final_closure_v2\\split_integrity_final.json",
+      "size_bytes": 1405,
+      "sha256": "3859f037a1c6eb623db05b900267220c6e6095ba1414f6f4439a384352978b21",
+      "role": "closure_evidence_or_derived_copy"
+    },
+    {
+      "path": "D:\\NourAI\\reports\\phase10\\final_closure_v2\\splits_v2_verified\\manifest.json",
+      "size_bytes": 2171,
+      "sha256": "48b488679f7524a7dba5076a74b134ca88aa3d5b6cf0edc1cd91413362412a8b",
+      "role": "closure_evidence_or_derived_copy"
+    },
+    {
+      "path": "D:\\NourAI\\reports\\phase10\\final_closure_v2\\splits_v2_verified\\test.jsonl",
+      "size_bytes": 1434348,
+      "sha256": "47e201802702ead1832140229bf8b0e457a7f964bb7153e3ec32a990b04cf010",
+      "role": "closure_evidence_or_derived_copy"
+    },
+    {
+      "path": "D:\\NourAI\\reports\\phase10\\final_closure_v2\\splits_v2_verified\\train.jsonl",
+      "size_bytes": 25865478,
+      "sha256": "1f952c50ccc5479abf755c728ed00930d87981598099bf7b7cb93033dcd6f25d",
+      "role": "closure_evidence_or_derived_copy"
+    },
+    {
+      "path": "D:\\NourAI\\reports\\phase10\\final_closure_v2\\splits_v2_verified\\validation.jsonl",
+      "size_bytes": 1432731,
+      "sha256": "5b204306931f86703ab4bd021be03d69373227eb48cf72f93fea0b662584a6eb",
+      "role": "closure_evidence_or_derived_copy"
+    },
+    {
+      "path": "D:\\NourAI\\reports\\phase10\\final_closure_v2\\tests_final.json",
+      "size_bytes": 1122,
+      "sha256": "8949ea29067734d91e932d333d9853db91c092959686a3fe0d7bc57bb5210a87",
+      "role": "closure_evidence_or_derived_copy"
+    }
+  ]
+}

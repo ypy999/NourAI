@@ -1,0 +1,4 @@
+{
+  "status": "NOT_CHECKABLE",
+  "reason": "No verified document_id in source split JSONL or relational mapping establishing one per split row."
+}

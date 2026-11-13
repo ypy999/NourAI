@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "validator": "existing corpus.validation.validate_splits",
+  "result": {
+    "valid": true,
+    "errors": [],
+    "split_counts": {
+      "train": 50378,
+      "validation": 10795,
+      "test": 10795
+    },
+    "duplicate_leakage": 0,
+    "duplicates_within_splits": 0,
+    "document_group_leakage": 0
+  },
+  "elapsed_seconds": 210.06,
+  "files": {
+    "train": "D:\\NourAI\\data\\processed\\phase10_2\\splits_v1\\train.jsonl",
+    "validation": "D:\\NourAI\\data\\processed\\phase10_2\\splits_v1\\validation.jsonl",
+    "test": "D:\\NourAI\\data\\processed\\phase10_2\\splits_v1\\test.jsonl"
+  }
+}

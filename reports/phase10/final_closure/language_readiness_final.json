@@ -1,0 +1,11 @@
+{
+  "arabic": "NOT_READY",
+  "english": "UNKNOWN",
+  "french": "UNKNOWN",
+  "overall": "NOT_READY",
+  "reasons": {
+    "arabic": "2 records; no independent validation/test coverage",
+    "english": "counts exist, but legal/provenance/quality gates not all independently validated",
+    "french": "counts exist, but legal/provenance/quality gates not all independently validated"
+  }
+}

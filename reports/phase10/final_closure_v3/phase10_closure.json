@@ -1,0 +1,23 @@
+{
+  "status": "PHASE_10_PARTIALLY_COMPLETE",
+  "created_at_local": "2026-11-13T08:15:55+01:00",
+  "infrastructure_substatus": "SQLITE_PROVENANCE_MIGRATED_AND_VERIFIED",
+  "language_statuses": {
+    "arabic": "NOT_READY",
+    "english": "NOT_READY",
+    "french": "NOT_READY"
+  },
+  "gates": {
+    "sqlite_migration": "PASS; 55,716 mapped; backup and rollback verified",
+    "document_leakage": "NOT_CHECKABLE; formal policy written",
+    "near_duplicate_review": "PENDING_HUMAN_DECISIONS_FOR_15_ROWS",
+    "legal_review": "12 reviewed; 1 verified used source; 11 remain restricted/unverified",
+    "non_training_tests": "156 passed, 0 failed, 0 skipped",
+    "language_readiness": "NOT_READY for all three"
+  },
+  "phase11_allowed": false,
+  "training_started": false,
+  "cuda_used": false,
+  "new_corpus_imported": 0,
+  "non_training_tests": "159 passed, 0 failed, 0 skipped"
+}

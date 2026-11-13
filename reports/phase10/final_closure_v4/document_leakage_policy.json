@@ -1,0 +1,31 @@
+{
+  "status": "NOT_CHECKABLE",
+  "created_at_local": "2026-11-13T08:12:58+01:00",
+  "archive": "data/raw/external/tatoeba_cc0.tar.bz2",
+  "archive_members": [
+    {
+      "name": "sentences_CC0.csv",
+      "bytes": 41865860
+    }
+  ],
+  "source_fields": [
+    "sentence_id",
+    "language",
+    "text",
+    "created_at"
+  ],
+  "original_sentence_id_available": true,
+  "translation_group_or_document_id_in_current_archive": false,
+  "translation_links_export_present": false,
+  "leakage_policy": {
+    "checked": "source_record_id, exact text, normalized text; near-duplicate candidate review",
+    "document_level": "NOT_CHECKABLE",
+    "interpretation": "No claim of document-level independence; sentence IDs identify individual sentences only."
+  },
+  "future_acceptance_gate": {
+    "document_id_or_group_id_required_when_source_has_document_or_translation_group_structure": true,
+    "must_be_authentic_and_source_supplied": true,
+    "missing_value_action": "BLOCKED or UNKNOWN; do not synthesize",
+    "sentence_level_exception": "May be assessed only under explicit sentence-level policy and must remain NOT_CHECKABLE at document level."
+  }
+}

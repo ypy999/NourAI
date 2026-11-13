@@ -1,0 +1,88 @@
+{
+  "generated_at": "2026-11-13T00:45:55.485426+01:00",
+  "splits": {
+    "train": {
+      "path": "D:\\NourAI\\data\\processed\\phase8\\deduplicated\\splits\\train.jsonl",
+      "records": 50144,
+      "empty": 0,
+      "invalid_utf8_or_json_or_schema": 0,
+      "sha256": "b1f11849397c39f6ca78371bd07ac6dd92cf108ea745f5f47c2f8c6c88d1e24a",
+      "languages": {
+        "UNKNOWN": 50144
+      },
+      "mean_chars": 76.65940092533504,
+      "median_chars": 51.0,
+      "min_chars": 3,
+      "max_chars": 1415,
+      "provenance_field_coverage_counts": {
+        "source_id": 0,
+        "source_record_id": 0,
+        "document_id": 0,
+        "license_id": 0,
+        "raw_sha256": 0,
+        "dataset_version": 0
+      },
+      "duplicate_ids": 0,
+      "exact_duplicates_within": 0,
+      "normalized_duplicates_within": 0
+    },
+    "validation": {
+      "path": "D:\\NourAI\\data\\processed\\phase8\\deduplicated\\splits\\validation.jsonl",
+      "records": 2787,
+      "empty": 0,
+      "invalid_utf8_or_json_or_schema": 0,
+      "sha256": "ed41727c44ac148e8c2916852d2f82fa36be3b7f4a3b85f305fb3d1acbce7d96",
+      "languages": {
+        "UNKNOWN": 2787
+      },
+      "mean_chars": 74.87477574452816,
+      "median_chars": 49,
+      "min_chars": 5,
+      "max_chars": 814,
+      "provenance_field_coverage_counts": {
+        "source_id": 0,
+        "source_record_id": 0,
+        "document_id": 0,
+        "license_id": 0,
+        "raw_sha256": 0,
+        "dataset_version": 0
+      },
+      "duplicate_ids": 0,
+      "exact_duplicates_within": 0,
+      "normalized_duplicates_within": 0
+    },
+    "test": {
+      "path": "D:\\NourAI\\data\\processed\\phase8\\deduplicated\\splits\\test.jsonl",
+      "records": 2785,
+      "empty": 0,
+      "invalid_utf8_or_json_or_schema": 0,
+      "sha256": "b83a834cdbf9082375d5750f642275752a99bc7d13f7df579173362acca4ec1d",
+      "languages": {
+        "UNKNOWN": 2785
+      },
+      "mean_chars": 75.76876122082585,
+      "median_chars": 52,
+      "min_chars": 4,
+      "max_chars": 772,
+      "provenance_field_coverage_counts": {
+        "source_id": 0,
+        "source_record_id": 0,
+        "document_id": 0,
+        "license_id": 0,
+        "raw_sha256": 0,
+        "dataset_version": 0
+      },
+      "duplicate_ids": 0,
+      "exact_duplicates_within": 0,
+      "normalized_duplicates_within": 0
+    }
+  },
+  "exact_leakage": {
+    "train|validation": 0,
+    "train|test": 0,
+    "validation|test": 0
+  },
+  "document_leakage": "NOT_CHECKABLE: no document_id in split records",
+  "source_record_leakage": "NOT_CHECKABLE: no source_record_id in split records",
+  "splits_v2": "NOT_CREATED: cannot reliably carry source/document identity into legacy text-only split records without verified key mapping"
+}

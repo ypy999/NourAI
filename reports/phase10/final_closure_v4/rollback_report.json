@@ -1,0 +1,27 @@
+{
+  "created_at": "2026-11-13T08:33:54.266060+01:00",
+  "sqlite_backup": {
+    "path": "D:\\NourAI\\.backup\\phase10-final-closure-v3\\corpus_before_original_update.sqlite3",
+    "sha256": "a39210c85a6fdf205a37c8ed8782dbfedda6305b807ed68f2bb71dfdae12930e"
+  },
+  "sqlite_rollback_test": "PASS on separate test copy; integrity/FK checked",
+  "review_split_backup_dir": "D:\\NourAI\\reports\\phase10\\final_closure_v3\\reviewed_splits\\backups\\20261113T082446",
+  "review_split_restore_hashes": {
+    "train": {
+      "backup_sha256": "1f952c50ccc5479abf755c728ed00930d87981598099bf7b7cb93033dcd6f25d",
+      "restored_sha256": "1f952c50ccc5479abf755c728ed00930d87981598099bf7b7cb93033dcd6f25d",
+      "matches": true
+    },
+    "validation": {
+      "backup_sha256": "5b204306931f86703ab4bd021be03d69373227eb48cf72f93fea0b662584a6eb",
+      "restored_sha256": "5b204306931f86703ab4bd021be03d69373227eb48cf72f93fea0b662584a6eb",
+      "matches": true
+    },
+    "test": {
+      "backup_sha256": "47e201802702ead1832140229bf8b0e457a7f964bb7153e3ec32a990b04cf010",
+      "restored_sha256": "47e201802702ead1832140229bf8b0e457a7f964bb7153e3ec32a990b04cf010",
+      "matches": true
+    }
+  },
+  "application_scope": "derived split copy only; original Phase 8 splits and SQLite unchanged"
+}

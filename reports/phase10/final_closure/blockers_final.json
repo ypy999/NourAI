@@ -1,0 +1,12 @@
+{
+  "phase10": "PARTIALLY_COMPLETE",
+  "blockers": [
+    "unique provenance mapping from splits to original IDs is unavailable",
+    "document leakage not checkable",
+    "full-corpus near-duplicate scan not run",
+    "fresh legal review of registry candidates incomplete",
+    "full performance/security audits incomplete",
+    "training tests excluded by prohibition"
+  ],
+  "phase11": "NOT_PERMITTED"
+}

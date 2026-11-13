@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "dataset_name": "Tatoeba sentences CC0 — NourAI Phase 8",
+  "dataset_version": "official sentences_CC0 export; upstream date is recorded in archive/source listing",
+  "source": {
+    "source_id": "tatoeba_cc0",
+    "url": "https://downloads.tatoeba.org/exports/sentences_CC0.tar.bz2",
+    "sha256": "7e4251d06edd949db9e47cc360b472873da6c054af5dc4b9d2c9e06d024cd710",
+    "version": "official sentences_CC0 export; upstream date is recorded in archive/source listing"
+  },
+  "license": {
+    "license_id": "CC0-1.0",
+    "state": "VERIFIED",
+    "evidence_url": "https://tatoeba.org/en/downloads",
+    "legal_code_url": "https://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  "collection_date": null,
+  "language_distribution": {
+    "source_language_codes": {
+      "eng": 41515,
+      "fra": 14202,
+      "ara": 2
+    },
+    "confidence": "source-provided, not independently verified",
+    "heuristic_script_counts": {
+      "english": 33141,
+      "unclassified": 8790,
+      "french": 13014,
+      "mixed": 772,
+      "arabic": 2
+    }
+  },
+  "record_count": 55716,
+  "character_count": 4263825,
+  "token_count": 4361342,
+  "file_size_bytes": 93959740,
+  "files": [
+    "D:\\NourAI\\data\\processed\\phase8\\normalized\\tatoeba_cc0_multilingual_v4.normalized.cleaned.jsonl",
+    "D:\\NourAI\\data\\processed\\phase8\\deduplicated\\splits\\train.jsonl",
+    "D:\\NourAI\\data\\processed\\phase8\\deduplicated\\splits\\validation.jsonl",
+    "D:\\NourAI\\data\\processed\\phase8\\deduplicated\\splits\\test.jsonl"
+  ],
+  "cleaning_configuration": {
+    "remove_control_chars": true,
+    "collapse_whitespace": true,
+    "preserve_paragraphs": false,
+    "normalization_form": "NFC"
+  },
+  "deduplication_results": {
+    "records_before": 55719,
+    "normalized_duplicates_removed": 3,
+    "unique_records_after": 55716,
+    "cross_split_leakage": 0
+  },
+  "quality_statistics": {
+    "record_count_scored": 55719,
+    "record_count_total": 55719,
+    "characters": 4263825,
+    "byte_tokenizer_ids_including_eos": 4361342,
+    "language_counts_heuristic": {
+      "english": 33141,
+      "unclassified": 8790,
+      "french": 13014,
+      "mixed": 772,
+      "arabic": 2
+    },
+    "source_language_metadata_counts": {
+      "eng": 41515,
+      "fra": 14202,
+      "ara": 2
+    },
+    "language_confidence_mean_by_language": {
+      "English": 0.99,
+      "French": 0.99,
+      "Arabic": 0.99
+    },
+    "language_classification_methods": {
+      "source_language_metadata": 55719
+    },
+    "mean_record_score": 99.9989,
+    "language_balance_score": 54.182,
+    "overall_quality_score": 95.4172,
+    "scores_below_50": 0,
+    "score_formula": "record = 0.15 UTF-8 + 0.15 completeness + 0.20 uniqueness + 0.15 length + 0.20 Unicode integrity + 0.15 formatting; dataset = 0.90 mean record + 0.10 normalized target-language balance",
+    "score_interpretation": "format/integrity heuristic only; not semantic, factual, educational quality or language understanding"
+  },
+  "tokenizer_statistics": {
+    "tokens": 4361342,
+    "tokenizer_version": "byte-tokenizer-utf8-v1",
+    "meaning": "UTF-8 byte IDs plus EOS; not word count"
+  },
+  "split_statistics": {
+    "train": 50144,
+    "validation": 2787,
+    "test": 2785
+  },
+  "split_ratios": {
+    "train": 0.9,
+    "validation": 0.05,
+    "test": 0.05
+  },
+  "random_seed": 1337,
+  "tokenizer_version": "byte-tokenizer-utf8-v1",
+  "processing_status": "conditionally_ready_for_review",
+  "warnings": [
+    "Only 2 Arabic records; no Arabic validation or test coverage.",
+    "Sentence-level subset is not representative evidence for pretraining quality."
+  ],
+  "errors": [],
+  "training_eligible": false,
+  "training_blockers": [
+    "Arabic validation/test coverage is empty (only 2 Arabic records).",
+    "This sentence-level subset is not a representative pretraining corpus.",
+    "No model training or language-capability evaluation was performed."
+  ],
+  "corpus_readiness_status": "CONDITIONALLY_READY",
+  "license_verification_method": "Official Tatoeba CC0-specific export listing and official CC0 legal code; local archive SHA-256 recorded; not individualized legal advice."
+}

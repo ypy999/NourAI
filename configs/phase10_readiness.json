@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "target_languages": ["arabic", "english", "french"],
+  "statistical_sampling": {
+    "confidence_level": 0.95,
+    "maximum_margin_of_error": 0.05,
+    "sampling_unit": "records",
+    "finite_population_correction": true,
+    "assumption": "worst-case proportion p=0.5; independent simple random sample; planning proxy only"
+  },
+  "diversity": {
+    "minimum_unique_sources_per_language": 2,
+    "minimum_verified_domains_per_language": 3
+  },
+  "dataset_size": {
+    "minimum_train_records_per_language": null
+  },
+  "notes": [
+    "Source and domain floors are explicit governance policy settings, not statistical evidence of language capability.",
+    "A null training-record floor means training-size readiness is UNKNOWN until a policy owner sets a justified target.",
+    "Validation and test sample sizes use a configurable proportion-estimation planning proxy; they do not guarantee model-metric precision."
+  ]
+}

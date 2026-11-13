@@ -1,0 +1,13 @@
+{
+  "status": "NOT_CHECKABLE",
+  "document_leakage": "NOT_CHECKABLE: source record schema and split rows have no document_id; Tatoeba unit is sentence-level and no reliable document grouping is provided.",
+  "records_with_verified_source_record_id": 55716,
+  "records_with_document_id": 0,
+  "document_ids_created": false,
+  "test_conclusion": "No document-level leakage claim can be made; document isolation remains unverified.",
+  "created_at_local": "2026-11-13T01:50:51+01:00",
+  "verified_source_records": 55716,
+  "document_ids_available": 0,
+  "reason": "Sentence-level Tatoeba source has no document/group identifiers.",
+  "not_a_pass": true
+}

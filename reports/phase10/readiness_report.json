@@ -1,0 +1,21 @@
+{
+  "generated_at": "2026-11-13T00:45:55.485426+01:00",
+  "readiness": {
+    "arabic": "NOT_READY",
+    "english": "UNKNOWN",
+    "french": "UNKNOWN",
+    "overall": "NOT_READY"
+  },
+  "legal": {
+    "imported_source": "tatoeba_cc0",
+    "status": "VERIFIED per existing source/license registry; no new legal review performed",
+    "new_sources_imported": 0
+  },
+  "blockers": [
+    "Raw archive IDs matched Imported via source_record_id as recorded in raw_reconciliation.json.",
+    "No semantic quality or human language review performed.",
+    "No near-duplicate cross-split calculation was performed.",
+    "Language counts for splits are unavailable because split files contain text only.",
+    "Training tests were excluded because the suite explicitly performs synthetic training."
+  ]
+}

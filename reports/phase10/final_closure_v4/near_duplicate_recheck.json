@@ -1,0 +1,343 @@
+{
+  "created_at": "2026-11-13T08:36:12.561018+01:00",
+  "records_scanned": 55704,
+  "detector_statistics": {
+    "records_indexed": 55704,
+    "probable_pairs": 35,
+    "similarity_metric": "Jaccard over normalized Unicode word trigrams",
+    "similarity_threshold": 0.85,
+    "candidate_limit": 200,
+    "records_deleted_or_excluded": 0,
+    "limitations": [
+      "LSH may miss similar pairs.",
+      "Surface similarity is not semantic equivalence.",
+      "All flagged pairs are retained for review."
+    ]
+  },
+  "total_candidates": 35,
+  "cross_split_candidates": 0,
+  "within_split_candidates": 35,
+  "within_split_distribution": {
+    "train_train": 35
+  },
+  "cross_split_pairs": [],
+  "within_split_pairs": [
+    {
+      "record_id_a": "10078340",
+      "record_id_b": "9926509",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "C'est la foire d'empoigne.",
+      "text_b": "C'est la foire d'empoigne !",
+      "similarity": 1.0
+    },
+    {
+      "record_id_a": "10078342",
+      "record_id_b": "9926508",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "It's the rat race.",
+      "text_b": "It's the rat race!",
+      "similarity": 1.0
+    },
+    {
+      "record_id_a": "10099608",
+      "record_id_b": "10903591",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "The American Society of Plastic Surgeons (ASPS) survey says there were more than 3,200 \"transfeminine\" and \"transmasculine\" surgeries in 2016.",
+      "text_b": "The American Society of Plastic Surgeons (ASPS) survey says there were more than 3,200 “transfeminine” and “transmasculine” surgeries in 2016.",
+      "similarity": 1.0
+    },
+    {
+      "record_id_a": "10109293",
+      "record_id_b": "12222438",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "Don't make me come down there!",
+      "text_b": "Don't make me come down there.",
+      "similarity": 1.0
+    },
+    {
+      "record_id_a": "10110672",
+      "record_id_b": "12080122",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "I'm surrounded by cats!",
+      "text_b": "I'm surrounded by cats.",
+      "similarity": 1.0
+    },
+    {
+      "record_id_a": "11185240",
+      "record_id_b": "11185241",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "We can't afford to live in Boston anymore.",
+      "text_b": "We can't afford to live in Boston.",
+      "similarity": 0.8571428571428571
+    },
+    {
+      "record_id_a": "11262920",
+      "record_id_b": "11262935",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "That's something Tom never told me about.",
+      "text_b": "That's something Tom never told me about you.",
+      "similarity": 0.8571428571428571
+    },
+    {
+      "record_id_a": "11502923",
+      "record_id_b": "9937339",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "Suppliez-moi pour que je mange !",
+      "text_b": "Suppliez-moi pour que je mange.",
+      "similarity": 1.0
+    },
+    {
+      "record_id_a": "11565143",
+      "record_id_b": "11967889",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "Cookie, I don't think we're in Boston anymore.",
+      "text_b": "I don't think we're in Boston anymore.",
+      "similarity": 0.875
+    },
+    {
+      "record_id_a": "11595274",
+      "record_id_b": "11595275",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "I don't know what to do with those.",
+      "text_b": "I don't know what to do with those leftovers.",
+      "similarity": 0.875
+    },
+    {
+      "record_id_a": "11876665",
+      "record_id_b": "12213454",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "What even are cats?!",
+      "text_b": "What even are cats?",
+      "similarity": 1.0
+    },
+    {
+      "record_id_a": "11911775",
+      "record_id_b": "12486780",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "Belay that order.",
+      "text_b": "Belay that order!",
+      "similarity": 1.0
+    },
+    {
+      "record_id_a": "11911776",
+      "record_id_b": "12486787",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "Belay that.",
+      "text_b": "Belay that!",
+      "similarity": 1.0
+    },
+    {
+      "record_id_a": "11989914",
+      "record_id_b": "7125361",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "Si haut que l'on soit assis, on n'est jamais que sur son derrière !",
+      "text_b": "Si haut que l'on soit assis, on n'est jamais que sur son derrière.",
+      "similarity": 1.0
+    },
+    {
+      "record_id_a": "12029157",
+      "record_id_b": "12029158",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "I think we should give this one a try.",
+      "text_b": "I think we should give this one a try, too.",
+      "similarity": 0.875
+    },
+    {
+      "record_id_a": "12343209",
+      "record_id_b": "12343216",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "Hello? Hello? Hi, I'm not here right now, but if you leave me a message after the tone, I'll get back to you as soon as possible. Thanks.",
+      "text_b": "I'm not here right now, but if you leave me a message after the tone, I'll get back to you as soon as possible. Thanks.",
+      "similarity": 0.8928571428571429
+    },
+    {
+      "record_id_a": "12700048",
+      "record_id_b": "12700265",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "L'ineffable parfum des glycines embaumait le jardin.",
+      "text_b": "L'ineffable parfum des glycines embaumait le jardin suranné.",
+      "similarity": 0.8571428571428571
+    },
+    {
+      "record_id_a": "12735943",
+      "record_id_b": "12736498",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "L'intelligence émotionnelle situationnelle adapte nos réponses au contexte.",
+      "text_b": "L'intelligence émotionnelle situationnelle adapte nos réponses au contexte spécifique.",
+      "similarity": 0.875
+    },
+    {
+      "record_id_a": "12736461",
+      "record_id_b": "12736501",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "La pleine conscience relationnelle enrichit la qualité de nos interactions.",
+      "text_b": "La pleine conscience relationnelle enrichit la qualité de nos interactions sociales.",
+      "similarity": 0.8888888888888888
+    },
+    {
+      "record_id_a": "12736927",
+      "record_id_b": "12736960",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "La prétérition feint de ne pas parler d'un sujet qu'on aborde.",
+      "text_b": "La prétérition feint de ne pas parler d'un sujet qu'on aborde pourtant.",
+      "similarity": 0.9166666666666666
+    },
+    {
+      "record_id_a": "12741196",
+      "record_id_b": "12741337",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "On pourrait organiser une soirée pour échanger des idées sur la gestion de l’endométriose.",
+      "text_b": "On pourrait organiser une soirée pour échanger des idées sur la gestion de l’anxiété.",
+      "similarity": 0.8571428571428571
+    },
+    {
+      "record_id_a": "12749356",
+      "record_id_b": "12749432",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "L'effet de génération par production améliore-t-il la mémorisation ?",
+      "text_b": "L'effet de génération par production améliore-t-il la mémorisation active ?",
+      "similarity": 0.9
+    },
+    {
+      "record_id_a": "12749567",
+      "record_id_b": "12749656",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "L'amitié sincère est une source de joie.",
+      "text_b": "L'amitié sincère est une source de joie quotidienne.",
+      "similarity": 0.8571428571428571
+    },
+    {
+      "record_id_a": "12750038",
+      "record_id_b": "12750106",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "Le respect des autres commence par le respect de soi.",
+      "text_b": "Le respect des autres commence par le respect de soi-même.",
+      "similarity": 0.8888888888888888
+    },
+    {
+      "record_id_a": "12768710",
+      "record_id_b": "12770803",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "We stand firm in the face of adversity, unwavering.",
+      "text_b": "We stand firm in the face of adversity.",
+      "similarity": 0.8571428571428571
+    },
+    {
+      "record_id_a": "12768893",
+      "record_id_b": "12768983",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "The river flows, unhurried.",
+      "text_b": "The river flows unhurried.",
+      "similarity": 1.0
+    },
+    {
+      "record_id_a": "7062166",
+      "record_id_b": "7072548",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "La pie niche haut, l'oie niche bas.",
+      "text_b": "La pie niche haut. L'oie niche bas.",
+      "similarity": 1.0
+    },
+    {
+      "record_id_a": "8238849",
+      "record_id_b": "8238858",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "J'allais me faire plus grand quand j'ai été devancé par mon petit-fils.",
+      "text_b": "J'allais me faire plus grand quand j'ai été devancé par mon petit-fils. .",
+      "similarity": 1.0
+    },
+    {
+      "record_id_a": "8508047",
+      "record_id_b": "9509070",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "\"I'm hungry.\" \"Hi Hungry; I'm Dad!\"",
+      "text_b": "\"I'm hungry.\" \"Hi, Hungry! I'm Dad!\"",
+      "similarity": 1.0
+    },
+    {
+      "record_id_a": "8734084",
+      "record_id_b": "8734100",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "Communism will prevail.",
+      "text_b": "Communism will prevail!",
+      "similarity": 1.0
+    },
+    {
+      "record_id_a": "8734085",
+      "record_id_b": "8734098",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "Communism will win.",
+      "text_b": "Communism will win!",
+      "similarity": 1.0
+    },
+    {
+      "record_id_a": "8769885",
+      "record_id_b": "8770046",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "Fuck both of you.",
+      "text_b": "Fuck both of you!",
+      "similarity": 1.0
+    },
+    {
+      "record_id_a": "9764386",
+      "record_id_b": "9764387",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "It's such a long flight.",
+      "text_b": "It's such a long flight!",
+      "similarity": 1.0
+    },
+    {
+      "record_id_a": "9801141",
+      "record_id_b": "9841929",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "My arm is sore!",
+      "text_b": "My arm is sore.",
+      "similarity": 1.0
+    },
+    {
+      "record_id_a": "9816339",
+      "record_id_b": "9816340",
+      "split_a": "train",
+      "split_b": "train",
+      "text_a": "I must've lost the key on the way there.",
+      "text_b": "I must've lost the key on the way.",
+      "similarity": 0.875
+    }
+  ],
+  "elapsed_seconds": 55.9,
+  "interpretation": "All 35 are within Training; zero cross-split candidates. They were retained. LSH may miss candidates and similarity is not semantic proof."
+}

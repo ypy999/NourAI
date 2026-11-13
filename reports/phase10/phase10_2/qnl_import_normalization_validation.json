@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "records": 2894,
+  "unique_source_record_ids": 2894,
+  "unique_document_ids": 2894,
+  "changed_text_records": 2894,
+  "raw_hash_or_copy_failures": 0,
+  "normalized_hash_failures": 0,
+  "provenance_pair_or_duplicate_id_failures": 0,
+  "normalized_characters": 2129189583,
+  "maximum_record_characters": 6812851,
+  "imported_file": {
+    "path": "D:\\NourAI\\data\\processed\\phase10_2\\qnl_arabic_ocr_v2\\imported.jsonl",
+    "bytes": 7472040013,
+    "sha256": "a389db195541f6fc106a7d767e055fb95ddda1d206ee9620cbf4c28df8b585dc"
+  },
+  "normalized_file": {
+    "path": "D:\\NourAI\\data\\processed\\phase10_2\\qnl_arabic_ocr_v2\\normalized.jsonl",
+    "bytes": 3675305500,
+    "sha256": "eea41bb41bdf58b56addc10bf6a359f0884720ebf727001a437b3f3b996f17c4"
+  },
+  "elapsed_seconds": 254.26
+}

@@ -1,0 +1,29 @@
+{
+  "status": "SOURCE_RECORD_PROVENANCE_VERIFIED; EXACT_AND_NORMALIZED_LEAKAGE_ZERO; NEAR_DUPLICATE_REVIEW_OPEN",
+  "split_counts": {
+    "train": 50144,
+    "validation": 2787,
+    "test": 2785
+  },
+  "source_record_id_leakage": 0,
+  "source_ids_verified_from_explicit_source_path_and_line": 55716,
+  "split_text_matches_normalized_by_source_record_id": 55716,
+  "exact_cross_split_leakage": 0,
+  "normalized_cross_split_leakage": 0,
+  "exact_within_split_duplicates": 0,
+  "normalized_within_split_duplicates": 0,
+  "near_duplicate_candidate_pairs_across_splits": 12,
+  "near_duplicate_review_status": "PENDING; candidates are not confirmed leakage until reviewed",
+  "method": "source_record_id assigned only by direct lookup using each existing split row source path + 1-based line_number into the referenced v3 import; checked against normalized v4 JSONL by the actual source_record_id.",
+  "original_phase8_files_modified": false,
+  "document_id_available": false,
+  "created_at_local": "2026-11-13T01:50:51+01:00",
+  "legacy_sqlite_split_ids_trusted": false,
+  "legacy_sqlite_split_fallback_rows": 55716,
+  "document_leakage": "NOT_CHECKABLE",
+  "cross_split_lsh_candidates": 12,
+  "near_duplicate_human_review": "PENDING",
+  "mapping_manifest": "D:\\NourAI\\reports\\phase10\\final_closure_v2\\splits_v2_verified\\manifest.json",
+  "phase8_originals_modified": false,
+  "sqlite_modified": false
+}

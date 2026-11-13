@@ -1,0 +1,11 @@
+{
+  "imported_source": {
+    "source_id": "tatoeba_cc0",
+    "state": "VERIFIED_IN_EXISTING_REGISTRY",
+    "license_id": "CC0-1.0",
+    "scope": "existing explicitly CC0 archive only",
+    "fresh_official_review": "NOT_PERFORMED"
+  },
+  "candidate_sources": "UNVERIFIED/PENDING_REVIEW; no source imported",
+  "legal_advice": "not provided"
+}

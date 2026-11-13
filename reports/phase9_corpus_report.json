@@ -1,0 +1,1174 @@
+{
+  "generated_at": "2026-11-12T15:23:59.581866+00:00",
+  "source_corpus": "D:\\NourAI\\data\\processed\\phase8\\imported\\tatoeba_cc0_multilingual_v4.jsonl",
+  "records": 55719,
+  "languages": {
+    "english": {
+      "records": 41515,
+      "tokens_including_eos": 3373668,
+      "utf8_bytes": 3332153,
+      "characters": 3325053,
+      "quality_distribution": {},
+      "empty_records": 0,
+      "arabic_diagnostics": {},
+      "mean_characters": 80.0928098277731,
+      "unique_sources": 1,
+      "unique_heuristic_domains": 12,
+      "domain_counts": {
+        "Other": 33671,
+        "Conversations": 1202,
+        "General Knowledge": 2920,
+        "Education": 769,
+        "Mathematics": 283,
+        "Geography": 1052,
+        "History": 683,
+        "Technology": 385,
+        "News": 904,
+        "Literature": 480,
+        "Science": 388,
+        "Programming": 191
+      },
+      "heuristic_domains": [
+        "Conversations",
+        "Education",
+        "General Knowledge",
+        "Geography",
+        "History",
+        "Literature",
+        "Mathematics",
+        "News",
+        "Other",
+        "Programming",
+        "Science",
+        "Technology"
+      ],
+      "mean_quality_score": 100.0
+    },
+    "french": {
+      "records": 14202,
+      "tokens_including_eos": 987575,
+      "utf8_bytes": 973373,
+      "characters": 938716,
+      "quality_distribution": {},
+      "empty_records": 0,
+      "arabic_diagnostics": {},
+      "mean_characters": 66.09745106323054,
+      "unique_sources": 1,
+      "unique_heuristic_domains": 12,
+      "domain_counts": {
+        "Other": 11893,
+        "Conversations": 652,
+        "Geography": 171,
+        "General Knowledge": 534,
+        "Science": 198,
+        "Education": 156,
+        "Mathematics": 70,
+        "History": 215,
+        "Literature": 279,
+        "News": 120,
+        "Technology": 163,
+        "Programming": 44
+      },
+      "heuristic_domains": [
+        "Conversations",
+        "Education",
+        "General Knowledge",
+        "Geography",
+        "History",
+        "Literature",
+        "Mathematics",
+        "News",
+        "Other",
+        "Programming",
+        "Science",
+        "Technology"
+      ],
+      "mean_quality_score": 100.0
+    },
+    "arabic": {
+      "records": 2,
+      "tokens_including_eos": 99,
+      "utf8_bytes": 97,
+      "characters": 56,
+      "quality_distribution": {},
+      "empty_records": 0,
+      "arabic_diagnostics": {
+        "characters": 56,
+        "utf8_bytes": 97,
+        "arabic_letter_count": 41,
+        "latin_letter_count": 0,
+        "is_mixed_script": 0,
+        "combining_mark_count": 0,
+        "arabic_diacritic_count": 0,
+        "tatweel_count": 0,
+        "punctuation_count": 2,
+        "arabic_punctuation_count": 0,
+        "replacement_character_count": 0,
+        "would_change_under_nfc": 0,
+        "raw_text_modified": 0
+      },
+      "mean_characters": 28.0,
+      "unique_sources": 1,
+      "unique_heuristic_domains": 2,
+      "domain_counts": {
+        "Conversations": 1,
+        "Other": 1
+      },
+      "heuristic_domains": [
+        "Conversations",
+        "Other"
+      ],
+      "mean_quality_score": 100.0
+    }
+  },
+  "text_language_classification": {
+    "arabic": {
+      "records": 2,
+      "fraction": 3.589439867908613e-05
+    },
+    "english": {
+      "records": 33141,
+      "fraction": 0.5947881333117967
+    },
+    "french": {
+      "records": 13014,
+      "fraction": 0.23356485220481343
+    },
+    "mixed": {
+      "records": 772,
+      "fraction": 0.013855237890127246
+    },
+    "unclassified": {
+      "records": 8790,
+      "fraction": 0.15775588219458353
+    }
+  },
+  "splits": {
+    "arabic": {
+      "train_records": 2,
+      "train_tokens": 99,
+      "train_bytes": 97
+    },
+    "english": {
+      "train_records": 29826,
+      "train_tokens": 2775160,
+      "train_bytes": 2745334,
+      "validation_records": 1657,
+      "validation_tokens": 150702,
+      "validation_bytes": 149045,
+      "test_records": 1657,
+      "test_tokens": 150887,
+      "test_bytes": 149230
+    },
+    "french": {
+      "train_records": 11712,
+      "train_tokens": 826578,
+      "train_bytes": 814866,
+      "validation_records": 651,
+      "validation_tokens": 44989,
+      "validation_bytes": 44338,
+      "test_records": 651,
+      "test_tokens": 46946,
+      "test_bytes": 46295
+    },
+    "mixed": {
+      "train_records": 695,
+      "train_tokens": 62494,
+      "train_bytes": 61799,
+      "validation_records": 39,
+      "validation_tokens": 3224,
+      "validation_bytes": 3185,
+      "test_records": 38,
+      "test_tokens": 3375,
+      "test_bytes": 3337
+    },
+    "unclassified": {
+      "train_records": 7909,
+      "train_tokens": 267357,
+      "train_bytes": 259448,
+      "validation_records": 440,
+      "validation_tokens": 14571,
+      "validation_bytes": 14131,
+      "test_records": 439,
+      "test_tokens": 14701,
+      "test_bytes": 14262
+    }
+  },
+  "split_hash_leakage": 0,
+  "split_validation": {
+    "valid": true,
+    "errors": [],
+    "split_counts": {
+      "train": 50144,
+      "validation": 2787,
+      "test": 2785
+    },
+    "duplicate_leakage": 0,
+    "duplicates_within_splits": 0
+  },
+  "duplicate_counts_import_metadata": {
+    "exact": 0,
+    "normalized": 0
+  },
+  "balance": {
+    "records": 55719,
+    "tokens_including_eos": 4361342,
+    "utf8_bytes": 4305623,
+    "parse_or_metric_errors": 0,
+    "languages": {
+      "arabic": {
+        "records": 2,
+        "tokens_including_eos": 99,
+        "utf8_bytes": 97,
+        "characters": 56,
+        "mean_characters": 28.0,
+        "mean_quality_score": 100.0,
+        "quality_distribution": {
+          "90-100": 2
+        },
+        "unique_domains": 2,
+        "domain_counts": {
+          "Conversations": 1,
+          "Other": 1
+        },
+        "verified_domain_count": 0,
+        "unique_sources": 1,
+        "sources": [
+          "tatoeba_cc0"
+        ],
+        "exact_duplicates": 0,
+        "normalized_duplicates": 0,
+        "empty_records": 0,
+        "record_share": 3.589439867908613e-05,
+        "token_share": 2.2699435173852453e-05,
+        "byte_share": 2.2528679357203358e-05,
+        "domain_coverage": 0.16666666666666666,
+        "source_coverage": 1.0,
+        "quality_factor": 1.0
+      },
+      "english": {
+        "records": 33141,
+        "tokens_including_eos": 3076879,
+        "utf8_bytes": 3043738,
+        "characters": 3036940,
+        "mean_characters": 91.63694517365197,
+        "mean_quality_score": 100.0,
+        "quality_distribution": {
+          "90-100": 33141
+        },
+        "unique_domains": 12,
+        "domain_counts": {
+          "Other": 26119,
+          "Conversations": 1040,
+          "General Knowledge": 2467,
+          "Education": 707,
+          "Mathematics": 275,
+          "Geography": 1031,
+          "Technology": 366,
+          "News": 860,
+          "Literature": 445,
+          "Science": 372,
+          "Programming": 189,
+          "History": 656
+        },
+        "verified_domain_count": 0,
+        "unique_sources": 1,
+        "sources": [
+          "tatoeba_cc0"
+        ],
+        "exact_duplicates": 0,
+        "normalized_duplicates": 0,
+        "empty_records": 0,
+        "record_share": 0.5947881333117967,
+        "token_share": 0.7054890444271511,
+        "byte_share": 0.7069216231890252,
+        "domain_coverage": 1.0,
+        "source_coverage": 1.0,
+        "quality_factor": 1.0
+      },
+      "french": {
+        "records": 13014,
+        "tokens_including_eos": 918573,
+        "utf8_bytes": 905559,
+        "characters": 873076,
+        "mean_characters": 67.0874442907638,
+        "mean_quality_score": 100.0,
+        "quality_distribution": {
+          "90-100": 13014
+        },
+        "unique_domains": 12,
+        "domain_counts": {
+          "Other": 10905,
+          "Conversations": 536,
+          "Geography": 146,
+          "General Knowledge": 502,
+          "Science": 192,
+          "Mathematics": 69,
+          "History": 200,
+          "Literature": 263,
+          "Education": 145,
+          "Technology": 161,
+          "Programming": 42,
+          "News": 113
+        },
+        "verified_domain_count": 0,
+        "unique_sources": 1,
+        "sources": [
+          "tatoeba_cc0"
+        ],
+        "exact_duplicates": 0,
+        "normalized_duplicates": 0,
+        "empty_records": 0,
+        "record_share": 0.23356485220481343,
+        "token_share": 0.21061705319142593,
+        "byte_share": 0.21032008608278058,
+        "domain_coverage": 1.0,
+        "source_coverage": 1.0,
+        "quality_factor": 1.0
+      },
+      "mixed": {
+        "records": 772,
+        "tokens_including_eos": 69113,
+        "utf8_bytes": 68341,
+        "characters": 66335,
+        "mean_characters": 85.9261658031088,
+        "mean_quality_score": 100.0,
+        "quality_distribution": {
+          "90-100": 772
+        },
+        "unique_domains": 12,
+        "domain_counts": {
+          "Other": 585,
+          "Conversations": 89,
+          "Geography": 26,
+          "Education": 12,
+          "News": 11,
+          "General Knowledge": 33,
+          "History": 20,
+          "Literature": 20,
+          "Science": 10,
+          "Technology": 3,
+          "Mathematics": 2,
+          "Programming": 2
+        },
+        "verified_domain_count": 0,
+        "unique_sources": 1,
+        "sources": [
+          "tatoeba_cc0"
+        ],
+        "exact_duplicates": 0,
+        "normalized_duplicates": 0,
+        "empty_records": 0,
+        "record_share": 0.013855237890127246,
+        "token_share": 0.015846727910812774,
+        "byte_share": 0.0158724997520684,
+        "domain_coverage": 1.0,
+        "source_coverage": 1.0,
+        "quality_factor": 1.0
+      },
+      "unknown": {
+        "records": 8790,
+        "tokens_including_eos": 296678,
+        "utf8_bytes": 287888,
+        "characters": 287418,
+        "mean_characters": 32.69829351535836,
+        "mean_quality_score": 100.0,
+        "quality_distribution": {
+          "90-100": 8790
+        },
+        "unique_domains": 12,
+        "domain_counts": {
+          "Other": 7955,
+          "History": 22,
+          "Programming": 2,
+          "General Knowledge": 452,
+          "News": 40,
+          "Education": 61,
+          "Conversations": 189,
+          "Science": 12,
+          "Geography": 20,
+          "Technology": 18,
+          "Literature": 31,
+          "Mathematics": 7
+        },
+        "verified_domain_count": 0,
+        "unique_sources": 1,
+        "sources": [
+          "tatoeba_cc0"
+        ],
+        "exact_duplicates": 0,
+        "normalized_duplicates": 0,
+        "empty_records": 0,
+        "record_share": 0.15775588219458353,
+        "token_share": 0.06802447503543634,
+        "byte_share": 0.06686326229676867,
+        "domain_coverage": 1.0,
+        "source_coverage": 1.0,
+        "quality_factor": 1.0
+      }
+    },
+    "target_ratios": {
+      "arabic": 0.35,
+      "english": 0.27,
+      "french": 0.27,
+      "mixed": 0.06,
+      "unknown": 0.05
+    },
+    "effective_support_shares": {
+      "arabic": 0.11111766991532641,
+      "english": 0.3237851035343438,
+      "french": 0.21451121076817625,
+      "mixed": 0.16529842606809653,
+      "unknown": 0.18528758971405698
+    },
+    "sampling_weights": {
+      "arabic": 3.76016,
+      "english": 0.99547,
+      "french": 1.502572,
+      "mixed": 0.433315,
+      "unknown": 0.32214
+    },
+    "sampling_weight_formula": "composite support = 0.20*record share + 0.25*ByteTokenizer-token share + 0.15*UTF-8 byte share + 0.15*relative domain coverage + 0.15*relative source coverage + 0.10*(mean Quality Score/100); weight = configured target ratio / normalized composite support; normalized to mean record weight 1 and clipped to configured bounds",
+    "sampling_weight_bounds": {
+      "minimum": 0.1,
+      "maximum": 10.0
+    },
+    "total_exact_duplicates": 0,
+    "total_normalized_duplicates": 0,
+    "duplicate_fraction": 0.0,
+    "empty_records": 0,
+    "records_modified_or_deleted": 0,
+    "note": "Weights are recommendations only; source records remain unchanged and an empty language group cannot be sampled."
+  },
+  "readiness": {
+    "created_at": "2026-11-12T15:23:59.581826+00:00",
+    "status": "NOT_READY",
+    "legal_readiness": {
+      "status": "READY",
+      "blockers": [],
+      "used_source_count": 1
+    },
+    "technical_readiness": {
+      "status": "READY",
+      "blockers": [],
+      "split_validation": {
+        "valid": true,
+        "errors": [],
+        "split_counts": {
+          "train": 50144,
+          "validation": 2787,
+          "test": 2785
+        },
+        "duplicate_leakage": 0,
+        "duplicates_within_splits": 0
+      }
+    },
+    "linguistic_readiness": {
+      "status": "NOT_READY",
+      "languages": {
+        "arabic": {
+          "corpus_records": 2,
+          "corpus_tokens": 99,
+          "validation_records": 0,
+          "validation_tokens": 0,
+          "test_records": 0,
+          "test_tokens": 0,
+          "independent_evaluation_present": false,
+          "meets_configured_evaluation_floor": false
+        },
+        "english": {
+          "corpus_records": 33141,
+          "corpus_tokens": 3076879,
+          "validation_records": 1657,
+          "validation_tokens": 150702,
+          "test_records": 1657,
+          "test_tokens": 150887,
+          "independent_evaluation_present": true,
+          "meets_configured_evaluation_floor": true
+        },
+        "french": {
+          "corpus_records": 13014,
+          "corpus_tokens": 918573,
+          "validation_records": 651,
+          "validation_tokens": 44989,
+          "test_records": 651,
+          "test_tokens": 46946,
+          "independent_evaluation_present": true,
+          "meets_configured_evaluation_floor": true
+        }
+      },
+      "configured_minimum_eval_records_per_split": 100,
+      "configured_minimum_eval_tokens_per_split": 10000,
+      "blockers": [
+        "arabic is absent from the corpus or an independent validation/test split"
+      ]
+    },
+    "diversity_readiness": {
+      "status": "NOT_READY",
+      "minimum_sources_per_language": 2,
+      "minimum_source_verified_domains_per_language": 3,
+      "blockers": [
+        "arabic has 1 source(s); configured minimum is 2",
+        "arabic has 0 source-verified domain(s); configured minimum is 3",
+        "english has 1 source(s); configured minimum is 2",
+        "english has 0 source-verified domain(s); configured minimum is 3",
+        "french has 1 source(s); configured minimum is 2",
+        "french has 0 source-verified domain(s); configured minimum is 3"
+      ]
+    },
+    "training_readiness": {
+      "status": "NOT_READY",
+      "training_started": false,
+      "blockers": [
+        "training is explicitly out of scope for Phase 9",
+        "one or more legal, technical, language-evaluation, or diversity gates are not ready"
+      ]
+    },
+    "all_blockers": [
+      "arabic is absent from the corpus or an independent validation/test split",
+      "arabic has 1 source(s); configured minimum is 2",
+      "arabic has 0 source-verified domain(s); configured minimum is 3",
+      "english has 1 source(s); configured minimum is 2",
+      "english has 0 source-verified domain(s); configured minimum is 3",
+      "french has 1 source(s); configured minimum is 2",
+      "french has 0 source-verified domain(s); configured minimum is 3",
+      "training is explicitly out of scope for Phase 9",
+      "one or more legal, technical, language-evaluation, or diversity gates are not ready"
+    ],
+    "size_alone_used_as_readiness_gate": false,
+    "note": "Evaluation floors are configurable operational guardrails, not claims of statistically sufficient model evaluation. Domain heuristics and source metadata are not independent semantic verification."
+  },
+  "source_count": 1,
+  "sources": [
+    {
+      "source_id": "tatoeba_cc0",
+      "name": "Tatoeba sentences CC0 export",
+      "url": "https://downloads.tatoeba.org/exports/sentences_CC0.tar.bz2",
+      "format": "tatoeba_cc0_tsv_bz2",
+      "license_id": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "source_license_url": "https://tatoeba.org/en/downloads",
+      "status": "VERIFIED",
+      "approved_for_ingestion": true,
+      "languages": [
+        "ara",
+        "eng",
+        "fra",
+        "multilingual"
+      ],
+      "approximate_size_bytes": 7963537,
+      "content_type": "sentence-level TSV in tar.bz2",
+      "release_version": "official sentences_CC0 export; upstream date is recorded in archive/source listing",
+      "license_version": "CC0-1.0",
+      "commercial_use": "permitted by CC0 terms",
+      "attribution_required": false,
+      "sharealike_required": false,
+      "derivatives": "permitted by CC0 terms",
+      "geographic_restrictions": null,
+      "temporal_restrictions": null,
+      "checked_at": "2026-11-11",
+      "verification_method": "official Tatoeba CC0-specific export page and official CC0 legal code; checksum and archive layout verified locally",
+      "legal_review_note": "Source/label verification, not individualized legal advice or independent counsel opinion.",
+      "allowed_use": "corpus ingestion for the explicitly CC0 export only",
+      "notes": "Do not substitute the general sentences export; it includes CC BY content."
+    }
+  ],
+  "training_started": false,
+  "new_corpus_imported": false,
+  "limitations": [
+    "Tatoeba corpus has no domain metadata; domain labels are heuristic.",
+    "Language counts rely on source language codes and are not independently verified.",
+    "This diagnostic does not demonstrate linguistic competence."
+  ],
+  "analysis_performance": {
+    "elapsed_seconds": 47.614165000006324,
+    "process_memory_before_bytes": {
+      "working_set_bytes": 21053440,
+      "peak_working_set_bytes": 21057536
+    },
+    "process_memory_after_bytes": {
+      "working_set_bytes": 22814720,
+      "peak_working_set_bytes": 25382912
+    },
+    "throughput_records_per_second": 1170.214906158664,
+    "hardware": "CPU; process working-set measurements via Windows API when available"
+  },
+  "scaling_benchmark": {
+    "generated_at": "2026-11-12T15:19:15Z",
+    "hardware": "CPU only; current host; no CUDA calls",
+    "measurement_scope": "synthetic generation excluded; analysis includes tokenizer/language/domain/quality passes; splitting includes SQLite deduplication and output writing",
+    "memory_metric": "Windows process working set/peak working set; None if unavailable",
+    "results": [
+      {
+        "records": 1000,
+        "dataset_kind": "synthetic_benchmark_only",
+        "analysis_seconds": 0.27351460000500083,
+        "analysis_records_per_second": 3656.111958856004,
+        "tokens_including_eos": 62895,
+        "analysis_tokens_per_second": 229951.16165224838,
+        "split_and_deduplicate_seconds": 0.15203090000431985,
+        "split_records_per_second": 6577.610209316565,
+        "deduplicated_records": 1000,
+        "duplicate_records_removed": 0,
+        "split_counts": {
+          "train": 900,
+          "validation": 51,
+          "test": 49
+        },
+        "output_bytes": 132788,
+        "process_memory_before_bytes": {
+          "working_set_bytes": 23474176,
+          "peak_working_set_bytes": 25542656
+        },
+        "process_memory_after_analysis_bytes": {
+          "working_set_bytes": 23474176,
+          "peak_working_set_bytes": 25542656
+        },
+        "split_leakage_by_construction": "split_records globally deduplicates before assignment; synthetic output not treated as corpus"
+      },
+      {
+        "records": 10000,
+        "dataset_kind": "synthetic_benchmark_only",
+        "analysis_seconds": 2.746315100011998,
+        "analysis_records_per_second": 3641.2427692497167,
+        "tokens_including_eos": 638895,
+        "analysis_tokens_per_second": 232637.17990597978,
+        "split_and_deduplicate_seconds": 1.471127600001637,
+        "split_records_per_second": 6797.506891984674,
+        "deduplicated_records": 10000,
+        "duplicate_records_removed": 0,
+        "split_counts": {
+          "train": 9000,
+          "validation": 501,
+          "test": 499
+        },
+        "output_bytes": 1347789,
+        "process_memory_before_bytes": {
+          "working_set_bytes": 23961600,
+          "peak_working_set_bytes": 25542656
+        },
+        "process_memory_after_analysis_bytes": {
+          "working_set_bytes": 23977984,
+          "peak_working_set_bytes": 25542656
+        },
+        "split_leakage_by_construction": "split_records globally deduplicates before assignment; synthetic output not treated as corpus"
+      },
+      {
+        "records": 100000,
+        "dataset_kind": "synthetic_benchmark_only",
+        "analysis_seconds": 29.80374620000657,
+        "analysis_records_per_second": 3355.2829006434754,
+        "tokens_including_eos": 6488895,
+        "analysis_tokens_per_second": 217720.78437570942,
+        "split_and_deduplicate_seconds": 28.56898260000162,
+        "split_records_per_second": 3500.2996571531507,
+        "deduplicated_records": 100000,
+        "duplicate_records_removed": 0,
+        "split_counts": {
+          "train": 90000,
+          "validation": 5001,
+          "test": 4999
+        },
+        "output_bytes": 13677790,
+        "process_memory_before_bytes": {
+          "working_set_bytes": 24178688,
+          "peak_working_set_bytes": 29257728
+        },
+        "process_memory_after_analysis_bytes": {
+          "working_set_bytes": 24162304,
+          "peak_working_set_bytes": 29257728
+        },
+        "split_leakage_by_construction": "split_records globally deduplicates before assignment; synthetic output not treated as corpus"
+      }
+    ],
+    "one_million_run": "not run; default safe scale ceiling is 100,000; no one-million result is claimed"
+  },
+  "source_candidates": [
+    {
+      "source_id": "tatoeba_general",
+      "name": "Tatoeba general sentences export",
+      "url": "https://downloads.tatoeba.org/exports/sentences.tar.bz2",
+      "format": "tsv_bz2",
+      "license_id": "CC-BY-2.0-FR",
+      "license_url": "https://creativecommons.org/licenses/by/2.0/fr/",
+      "source_license_url": "https://tatoeba.org/en/terms_of_use",
+      "status": "NEEDS_REVIEW",
+      "approved_for_ingestion": false,
+      "languages": [
+        "multilingual"
+      ],
+      "approximate_size_bytes": null,
+      "content_type": "sentence-level TSV",
+      "release_version": null,
+      "license_version": "CC-BY-2.0-FR",
+      "commercial_use": "requires review of applicable terms",
+      "attribution_required": true,
+      "sharealike_required": false,
+      "derivatives": "requires review of applicable terms",
+      "geographic_restrictions": null,
+      "temporal_restrictions": null,
+      "checked_at": "2026-11-11",
+      "verification_method": "official source terms page reviewed; no ingestion performed",
+      "legal_review_note": "Attribution and corpus use require review.",
+      "allowed_use": null,
+      "notes": "Attribution obligations must be evaluated before corpus use.",
+      "download_url": null
+    },
+    {
+      "source_id": "wikimedia",
+      "name": "Wikimedia Wikipedia dumps",
+      "url": "https://dumps.wikimedia.org/",
+      "format": "xml_bz2",
+      "license_id": "CC-BY-SA-4.0/GFDL (project and revision dependent)",
+      "license_url": "https://foundation.wikimedia.org/wiki/Policy:Terms_of_Use",
+      "source_license_url": "https://meta.wikimedia.org/wiki/Terms_of_Use",
+      "status": "NEEDS_REVIEW",
+      "approved_for_ingestion": false,
+      "languages": [
+        "multilingual"
+      ],
+      "approximate_size_bytes": null,
+      "content_type": "encyclopedic XML dump",
+      "release_version": "rolling latest; project dump date must be pinned before use",
+      "license_version": "project/revision dependent",
+      "commercial_use": "subject to project terms and license obligations",
+      "attribution_required": true,
+      "sharealike_required": true,
+      "derivatives": "share-alike obligations may apply",
+      "geographic_restrictions": null,
+      "temporal_restrictions": null,
+      "checked_at": "2026-11-11",
+      "verification_method": "official Wikimedia terms reviewed; per-revision validation not completed",
+      "legal_review_note": "Needs project/revision-level license and attribution review.",
+      "allowed_use": null,
+      "notes": "Attribution/share-alike and per-project/revision conditions require review.",
+      "download_url": null
+    },
+    {
+      "source_id": "oscar",
+      "name": "OSCAR Common Crawl derived corpora",
+      "url": "https://huggingface.co/datasets/oscar",
+      "format": "parquet_or_jsonl",
+      "license_id": "Underlying page licenses vary / are not established by packaging license",
+      "license_url": null,
+      "source_license_url": "https://huggingface.co/datasets/oscar",
+      "status": "UNKNOWN_LICENSE",
+      "approved_for_ingestion": false,
+      "languages": [
+        "multilingual"
+      ],
+      "approximate_size_bytes": null,
+      "content_type": "web crawl text corpus",
+      "release_version": "dataset card version must be pinned before use",
+      "license_version": "underlying source rights vary or unknown",
+      "commercial_use": "unknown",
+      "attribution_required": "unknown",
+      "sharealike_required": "unknown",
+      "derivatives": "unknown",
+      "geographic_restrictions": "unknown",
+      "temporal_restrictions": "unknown",
+      "checked_at": "2026-11-11",
+      "verification_method": "dataset card reviewed; underlying page-level rights not established",
+      "legal_review_note": "Do not ingest automatically.",
+      "allowed_use": null,
+      "notes": "Dataset packaging terms do not establish rights for each underlying web page.",
+      "download_url": null
+    },
+    {
+      "source_id": "common_voice_ar_27",
+      "name": "Mozilla Common Voice 27 Arabic validated sentences",
+      "url": "https://mozilladatacollective.com/datasets/cmu5wom3z00ceo107guxtg4xa",
+      "format": "candidate; not ingested",
+      "license_id": "CC0-1.0",
+      "license_url": "https://mozilladatacollective.com/datasets/cmu5wom3z00ceo107guxtg4xa",
+      "source_license_url": "https://mozilladatacollective.com/datasets/cmu5wom3z00ceo107guxtg4xa",
+      "status": "VERIFIED",
+      "approved_for_ingestion": false,
+      "languages": [
+        "ara"
+      ],
+      "approximate_size_bytes": 3543348019,
+      "content_type": "candidate multilingual text dataset",
+      "release_version": "reviewed 2026-11-12",
+      "license_version": "CC0-1.0",
+      "commercial_use": "not approved pending source-specific review",
+      "attribution_required": false,
+      "sharealike_required": false,
+      "derivatives": "not approved",
+      "checked_at": "2026-11-12",
+      "verification_method": "official source page reviewed",
+      "legal_review_note": "CC0 identified; Common Voice platform terms prohibit mirroring/rehosting and speaker identification; ingestion not approved pending use/retention review. Only validated sentences; gated MDC access; ASR text not general-domain.",
+      "allowed_use": "Not approved for ingestion",
+      "notes": "Candidate only; no data downloaded or imported.",
+      "download_url": null
+    },
+    {
+      "source_id": "common_voice_en_au_24",
+      "name": "Common Voice v24 English Australia subset",
+      "url": "https://mozilladatacollective.com/datasets/cmko7havo02f5nw07rbwwhowe",
+      "format": "candidate; not ingested",
+      "license_id": "CC0-1.0",
+      "license_url": "https://mozilladatacollective.com/datasets/cmko7havo02f5nw07rbwwhowe",
+      "source_license_url": "https://mozilladatacollective.com/datasets/cmko7havo02f5nw07rbwwhowe",
+      "status": "VERIFIED",
+      "approved_for_ingestion": false,
+      "languages": [
+        "eng"
+      ],
+      "approximate_size_bytes": 2061584302,
+      "content_type": "candidate multilingual text dataset",
+      "release_version": "reviewed 2026-11-12",
+      "license_version": "CC0-1.0",
+      "commercial_use": "not approved pending source-specific review",
+      "attribution_required": false,
+      "sharealike_required": false,
+      "derivatives": "not approved",
+      "checked_at": "2026-11-12",
+      "verification_method": "official source page reviewed",
+      "legal_review_note": "Gated MDC; elicited ASR speech, not general-domain text. Platform terms restrict redistribution/speaker identification.",
+      "allowed_use": "Not approved for ingestion",
+      "notes": "Candidate only; no data downloaded or imported.",
+      "download_url": null
+    },
+    {
+      "source_id": "common_voice_fr_26",
+      "name": "Common Voice v26 French of France",
+      "url": "https://mozilladatacollective.com/datasets/cmrumhinj0001md07y3huuhs5",
+      "format": "candidate; not ingested",
+      "license_id": "CC0-1.0",
+      "license_url": "https://mozilladatacollective.com/datasets/cmrumhinj0001md07y3huuhs5",
+      "source_license_url": "https://mozilladatacollective.com/datasets/cmrumhinj0001md07y3huuhs5",
+      "status": "VERIFIED",
+      "approved_for_ingestion": false,
+      "languages": [
+        "fra"
+      ],
+      "approximate_size_bytes": 174731960,
+      "content_type": "candidate multilingual text dataset",
+      "release_version": "reviewed 2026-11-12",
+      "license_version": "CC0-1.0",
+      "commercial_use": "not approved pending source-specific review",
+      "attribution_required": false,
+      "sharealike_required": false,
+      "derivatives": "not approved",
+      "checked_at": "2026-11-12",
+      "verification_method": "official source page reviewed",
+      "legal_review_note": "Gated MDC; small ASR subset, not general-domain text. Platform terms restrict redistribution/speaker identification.",
+      "allowed_use": "Not approved for ingestion",
+      "notes": "Candidate only; no data downloaded or imported.",
+      "download_url": null
+    },
+    {
+      "source_id": "madar_parallel",
+      "name": "MADAR Parallel Corpus",
+      "url": "https://camel.abudhabi.nyu.edu/madar-parallel-corpus/",
+      "format": "candidate; not ingested",
+      "license_id": "RESEARCH_INTERNAL_USE_ONLY",
+      "license_url": "https://camel.abudhabi.nyu.edu/madar-parallel-corpus/",
+      "source_license_url": "https://camel.abudhabi.nyu.edu/madar-parallel-corpus/",
+      "status": "NEEDS_REVIEW",
+      "approved_for_ingestion": false,
+      "languages": [
+        "ara"
+      ],
+      "approximate_size_bytes": null,
+      "content_type": "candidate multilingual text dataset",
+      "release_version": "reviewed 2026-11-12",
+      "license_version": "RESEARCH_INTERNAL_USE_ONLY",
+      "commercial_use": "not approved pending source-specific review",
+      "attribution_required": false,
+      "sharealike_required": false,
+      "derivatives": "not approved",
+      "checked_at": "2026-11-12",
+      "verification_method": "official source page reviewed",
+      "legal_review_note": "Official terms restrict use to internal research/evaluation and prohibit redistribution/modification; excluded from training ingestion.",
+      "allowed_use": "Not approved for ingestion",
+      "notes": "Candidate only; no data downloaded or imported.",
+      "download_url": null
+    },
+    {
+      "source_id": "culturax",
+      "name": "CulturaX web corpus",
+      "url": "https://huggingface.co/datasets/uonlp/CulturaX",
+      "format": "candidate; not ingested",
+      "license_id": "UNKNOWN_LICENSE",
+      "license_url": "https://huggingface.co/datasets/uonlp/CulturaX",
+      "source_license_url": "https://huggingface.co/datasets/uonlp/CulturaX",
+      "status": "UNKNOWN_LICENSE",
+      "approved_for_ingestion": false,
+      "languages": [
+        "ara",
+        "eng",
+        "fra"
+      ],
+      "approximate_size_bytes": null,
+      "content_type": "candidate multilingual text dataset",
+      "release_version": "reviewed 2026-11-12",
+      "license_version": "UNKNOWN_LICENSE",
+      "commercial_use": "not approved pending source-specific review",
+      "attribution_required": false,
+      "sharealike_required": false,
+      "derivatives": "not approved",
+      "checked_at": "2026-11-12",
+      "verification_method": "official source page reviewed",
+      "legal_review_note": "Packaging does not resolve source-page rights; privacy/sensitive data risk flagged; excluded.",
+      "allowed_use": "Not approved for ingestion",
+      "notes": "Candidate only; no data downloaded or imported.",
+      "download_url": null
+    },
+    {
+      "source_id": "oscar_moscar",
+      "name": "OSCAR / mOSCAR web corpus",
+      "url": "https://oscar-project.github.io/documentation/versions/mOSCAR/",
+      "format": "candidate; not ingested",
+      "license_id": "UNKNOWN_LICENSE",
+      "license_url": "https://oscar-project.github.io/documentation/versions/mOSCAR/",
+      "source_license_url": "https://oscar-project.github.io/documentation/versions/mOSCAR/",
+      "status": "UNKNOWN_LICENSE",
+      "approved_for_ingestion": false,
+      "languages": [
+        "ara",
+        "eng",
+        "fra"
+      ],
+      "approximate_size_bytes": null,
+      "content_type": "candidate multilingual text dataset",
+      "release_version": "reviewed 2026-11-12",
+      "license_version": "UNKNOWN_LICENSE",
+      "commercial_use": "not approved pending source-specific review",
+      "attribution_required": false,
+      "sharealike_required": false,
+      "derivatives": "not approved",
+      "checked_at": "2026-11-12",
+      "verification_method": "official source page reviewed",
+      "legal_review_note": "Packaging license is not treated as granting rights to underlying pages; excluded pending source-level review.",
+      "allowed_use": "Not approved for ingestion",
+      "notes": "Candidate only; no data downloaded or imported.",
+      "download_url": null
+    },
+    {
+      "source_id": "mot_voa",
+      "name": "MOT multilingual VOA news corpus",
+      "url": "https://github.com/bltlab/mot",
+      "format": "candidate; not ingested",
+      "license_id": "CC-BY-4.0",
+      "license_url": "https://github.com/bltlab/mot",
+      "source_license_url": "https://github.com/bltlab/mot",
+      "status": "NEEDS_REVIEW",
+      "approved_for_ingestion": false,
+      "languages": [
+        "eng",
+        "fra"
+      ],
+      "approximate_size_bytes": 6012954214,
+      "content_type": "candidate multilingual text dataset",
+      "release_version": "reviewed 2026-11-12",
+      "license_version": "CC-BY-4.0",
+      "commercial_use": "not approved pending source-specific review",
+      "attribution_required": true,
+      "sharealike_required": false,
+      "derivatives": "not approved",
+      "checked_at": "2026-11-12",
+      "verification_method": "official source page reviewed",
+      "legal_review_note": "English/French candidate only; no Arabic. Requires attribution and artifact/source terms review; not downloaded.",
+      "allowed_use": "Not approved for ingestion",
+      "notes": "Candidate only; no data downloaded or imported.",
+      "download_url": null
+    },
+    {
+      "source_id": "hplt_v1_2",
+      "name": "HPLT v1.2 multilingual web corpus",
+      "url": "https://hplt-project.org/datasets/v1.2",
+      "download_url": null,
+      "format": "large web-crawled multilingual corpus",
+      "license_id": "UNKNOWN_LICENSE",
+      "license_url": "https://hplt-project.org/datasets/v1.2",
+      "source_license_url": "https://hplt-project.org/datasets/v1.2",
+      "status": "UNKNOWN_LICENSE",
+      "approved_for_ingestion": false,
+      "languages": [
+        "ara",
+        "eng",
+        "fra"
+      ],
+      "approximate_size_bytes": 174000000000,
+      "content_type": "web text; cleaned/deduplicated and raw variants",
+      "release_version": "HPLT v1.2",
+      "license_version": "CC0 packaging; underlying source-page rights unresolved",
+      "commercial_use": "unknown pending source-level rights review",
+      "attribution_required": null,
+      "sharealike_required": null,
+      "derivatives": "unknown for underlying contents",
+      "geographic_restrictions": null,
+      "temporal_restrictions": null,
+      "checked_at": "2026-11-12",
+      "verification_method": "official HPLT dataset page reviewed",
+      "legal_review_note": "CC0 applies to packaging/artifacts as described; source-page text rights are not resolved. Arabic raw corpus is approximately 174 GB and is not suitable for current local storage. Excluded.",
+      "allowed_use": "None until source-level rights review",
+      "notes": "No archive downloaded. HPLT v1.2 Arabic cleaned/deduplicated variants are far beyond current storage budget."
+    }
+  ],
+  "phase8_reference": {
+    "quality": {
+      "record_count_scored": 55719,
+      "record_count_total": 55719,
+      "characters": 4263825,
+      "byte_tokenizer_ids_including_eos": 4361342,
+      "language_counts_heuristic": {
+        "english": 33141,
+        "unclassified": 8790,
+        "french": 13014,
+        "mixed": 772,
+        "arabic": 2
+      },
+      "source_language_metadata_counts": {
+        "eng": 41515,
+        "fra": 14202,
+        "ara": 2
+      },
+      "language_confidence_mean_by_language": {
+        "English": 0.99,
+        "French": 0.99,
+        "Arabic": 0.99
+      },
+      "language_classification_methods": {
+        "source_language_metadata": 55719
+      },
+      "mean_record_score": 99.9989,
+      "language_balance_score": 54.182,
+      "overall_quality_score": 95.4172,
+      "scores_below_50": 0,
+      "score_formula": "record = 0.15 UTF-8 + 0.15 completeness + 0.20 uniqueness + 0.15 length + 0.20 Unicode integrity + 0.15 formatting; dataset = 0.90 mean record + 0.10 normalized target-language balance",
+      "score_interpretation": "format/integrity heuristic only; not semantic, factual, educational quality or language understanding"
+    },
+    "deduplication": {
+      "records": 55719,
+      "normalized_duplicates": 3,
+      "valid_before_dedup": false,
+      "resolved_by_deduplication": true,
+      "unknown_source_records": 0,
+      "unknown_license_records": 0,
+      "suspicious_records": 0
+    },
+    "deduplicated_splits": {
+      "valid": true,
+      "errors": [],
+      "split_counts": {
+        "train": 50144,
+        "validation": 2787,
+        "test": 2785
+      },
+      "duplicate_leakage": 0,
+      "duplicates_within_splits": 0,
+      "normalized_duplicates_removed_before_split": 3,
+      "split_ratios": {
+        "train": 0.9,
+        "validation": 0.05,
+        "test": 0.05
+      },
+      "random_seed": 1337,
+      "processing_seconds": 25.9765702
+    },
+    "dashboard": {
+      "records": 55719,
+      "deduplicated_unique_records": 55716,
+      "normalized_duplicates_removed": 3,
+      "rejected_records": 0,
+      "source_language_metadata_counts": {
+        "eng": 41515,
+        "fra": 14202,
+        "ara": 2
+      },
+      "characters": 4263825,
+      "mean_integrity_score": 99.9989,
+      "source_ids": [
+        "tatoeba_cc0"
+      ],
+      "license_ids": [
+        "CC0-1.0"
+      ]
+    }
+  },
+  "text_language_classification_phase8": {
+    "english": 33141,
+    "unclassified": 8790,
+    "french": 13014,
+    "mixed": 772,
+    "arabic": 2
+  },
+  "normalized_duplicates_removed_before_split": 3,
+  "exact_duplicates_before_split": 0,
+  "duplicate_fraction_before_split": 5.384159801862919e-05,
+  "measured_language_gaps": {
+    "arabic": {
+      "observed_records": 2,
+      "minimum_per_independent_split": 100,
+      "note": "Actual split-level counts and tokens are listed in language readiness."
+    },
+    "english": {
+      "observed_records": 41515,
+      "minimum_per_independent_split": 100,
+      "note": "Actual split-level counts and tokens are listed in language readiness."
+    },
+    "french": {
+      "observed_records": 14202,
+      "minimum_per_independent_split": 100,
+      "note": "Actual split-level counts and tokens are listed in language readiness."
+    }
+  },
+  "execution_summary": {
+    "implementation_status": "PARTIAL_TOOLING_COMPLETE_CORPUS_EXPANSION_BLOCKED",
+    "phase9_corpus_readiness": "NOT_READY",
+    "full_phase9_goal_complete": false,
+    "reason": "No new eligible corpus was acquired or imported; existing Tatoeba corpus does not meet Arabic evaluation or source/domain diversity requirements.",
+    "tests": {
+      "baseline_previous_phases": {
+        "passed": 149,
+        "failed": 0,
+        "skipped": 0
+      },
+      "final_full_suite": {
+        "passed": 161,
+        "failed": 0,
+        "skipped": 0
+      },
+      "phase9_added_tests": 12,
+      "command": ".venv\\Scripts\\python.exe -m pytest -q -p no:cacheprovider"
+    },
+    "new_files": [
+      "data/domain_analysis.py",
+      "data/language_balancing.py",
+      "data/phase9_readiness.py",
+      "data/phase9_pipeline.py",
+      "data/phase9_benchmark.py",
+      "configs/phase9_corpus.json",
+      "tests/test_phase9.py",
+      "tests/test_phase9_domains.py",
+      "tests/test_phase9_balancing.py",
+      "tests/test_phase9_readiness.py",
+      "reports/phase9_corpus_report.json",
+      "reports/phase9_corpus_report.md",
+      "reports/phase9_gap_analysis.json",
+      "reports/phase9_gap_analysis.md",
+      "reports/phase9_language_balance.json",
+      "reports/phase9_domain_distribution.json",
+      "reports/phase9_benchmark.json",
+      "reports/phase9_corpus_dashboard.html",
+      "PHASE_9_MULTILINGUAL_CORPUS_REPORT.md"
+    ],
+    "modified_files": [
+      "configs/dataset_sources.json"
+    ],
+    "backups_created": [
+      ".backup/phase9-before-execution/configs/dataset_sources.json",
+      ".backup/phase9-before-execution/data/metadata/corpus.sqlite3"
+    ],
+    "raw_data_modified": false,
+    "phase8_source_data_modified": false,
+    "sqlite_metadata_database_modified": false,
+    "training_started": false,
+    "cuda_used": false,
+    "candidate_sources_downloaded_or_ingested": 0,
+    "source_catalog_candidate_count": 11
+  }
+}

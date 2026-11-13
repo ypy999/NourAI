@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "created_at_local": "2026-11-13T01:50:51+01:00",
+  "environment": {
+    "python": "3.15.2 (tags/v3.15.2:5e58eaa, Oct 25 2026, 17:27:03) [MSC v.1951 64 bit (AMD64)]",
+    "executable": "D:\\NourAI\\.venv\\Scripts\\python.exe",
+    "torch": "2.15.0+cpu",
+    "device": "CPU",
+    "cuda_used": false
+  },
+  "command": ".venv\\Scripts\\python.exe -m pytest -p no:cacheprovider --basetemp=D:\\NourAI\\reports\\phase10\\pytest-temp\\phase10-closure-final-v2 -q --ignore=tests/test_training.py",
+  "full_non_training": {
+    "passed": 156,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 11.54
+  },
+  "focused_final": {
+    "files": [
+      "test_phase8_acquisition.py",
+      "test_phase10_1_quality_readiness_registry.py",
+      "test_phase8_storage.py",
+      "test_phase8_corpus.py"
+    ],
+    "passed": 33,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 0.94
+  },
+  "excluded": {
+    "file": "tests/test_training.py",
+    "collected": 21,
+    "executed": false,
+    "reason": "Contains Trainer.fit() and weight-update tests; excluded per no-training rule."
+  },
+  "failures_suppressed": false
+}

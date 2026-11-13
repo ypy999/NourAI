@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "target_language_ratios": {"arabic": 0.35, "english": 0.27, "french": 0.27, "mixed": 0.06, "unknown": 0.05},
+  "minimum_evaluation_records_per_split": 100,
+  "minimum_evaluation_tokens_per_split": 10000,
+  "minimum_sources_per_language": 2,
+  "minimum_source_verified_domains_per_language": 3,
+  "training_allowed_in_phase9": false,
+  "approved_source_ids": ["tatoeba_cc0"],
+  "candidate_source_ingestion_requires_manual_approval": true
+}

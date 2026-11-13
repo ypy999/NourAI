@@ -1,0 +1,20 @@
+{
+  "split_records": {
+    "train": 50144,
+    "validation": 2787,
+    "test": 2785
+  },
+  "exact_leakage": {
+    "train_validation": 0,
+    "train_test": 0,
+    "validation_test": 0
+  },
+  "normalized_leakage": {
+    "train_validation": 0,
+    "train_test": 0,
+    "validation_test": 0
+  },
+  "source_record_leakage": "NOT_CHECKABLE from split files",
+  "document_leakage": "NOT_CHECKABLE: no verified document IDs",
+  "splits_v2": "NOT_CREATED: no trustworthy one-to-one source linkage"
+}

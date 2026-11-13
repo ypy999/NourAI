@@ -1,0 +1,62 @@
+{
+  "status": "MIGRATED_AND_VERIFIED",
+  "mapped_rows": 55716,
+  "table_counts_before": {
+    "license_current": 4,
+    "license_history": 4,
+    "sources": 1,
+    "datasets": 2,
+    "files": 6,
+    "records": 111435,
+    "operations": 3
+  },
+  "integrity_check": [
+    [
+      "ok"
+    ]
+  ],
+  "foreign_key_violations": [],
+  "content_hashes_unchanged": true,
+  "generated_split_ids_remaining": 0,
+  "candidate": "D:\\NourAI\\reports\\phase10\\final_closure_v3\\migration_candidate.sqlite3",
+  "candidate_sha256": "bf5dc2d45ecb3470fb7f983bd45ebb37f78dd8e34329c1d7ad969f409e7b96af",
+  "original_backup": "D:\\NourAI\\.backup\\phase10-final-closure-v3\\corpus_before_original_update.sqlite3",
+  "original_backup_sha256": "a39210c85a6fdf205a37c8ed8782dbfedda6305b807ed68f2bb71dfdae12930e",
+  "rollback_test": "PASS",
+  "rollback_test_sha256": "5e6a0ca738045ba74bb2e0e71a16a98ff49980a712d3cf53f7d6dd05f48b53f3",
+  "migration_map": "D:\\NourAI\\reports\\phase10\\final_closure_v3\\migration_map.jsonl",
+  "migration_map_sha256": "ad47c170f2b21616cbacb82b2576b46e197eba2c8d07bda814de371b896c6ffd",
+  "original_db_sha256_after": "5928d43e5095f3ec51ca3b0b125b7b841aa19f8149d7fe050d0ebdbcad76014c",
+  "created_at_local": "2026-11-13T08:12:58+01:00",
+  "dry_run_mapped": 55716,
+  "dry_run_unproven": 0,
+  "dry_run_content_hash_mismatches": 0,
+  "all_source_refs_verified": true,
+  "original_update_performed_after_candidate_checks": true,
+  "rollback_script": "D:\\NourAI\\reports\\phase10\\final_closure_v3\\rollback_sqlite_migration.py",
+  "rollback_script_test": "PASS on rollback_script_test.sqlite3; integrity and FK checks passed",
+  "legacy_unverified_rows": 0,
+  "post_review_read_only_check": {
+    "integrity_check": [
+      [
+        "ok"
+      ]
+    ],
+    "foreign_key_violations": 0,
+    "verified_provenance_rows": 55716,
+    "sqlite_split_counts": [
+      [
+        "test",
+        2785
+      ],
+      [
+        "train",
+        50144
+      ],
+      [
+        "validation",
+        2787
+      ]
+    ]
+  }
+}

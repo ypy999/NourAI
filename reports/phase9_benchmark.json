@@ -1,0 +1,90 @@
+{
+  "generated_at": "2026-11-12T15:19:15Z",
+  "hardware": "CPU only; current host; no CUDA calls",
+  "measurement_scope": "synthetic generation excluded; analysis includes tokenizer/language/domain/quality passes; splitting includes SQLite deduplication and output writing",
+  "memory_metric": "Windows process working set/peak working set; None if unavailable",
+  "results": [
+    {
+      "records": 1000,
+      "dataset_kind": "synthetic_benchmark_only",
+      "analysis_seconds": 0.27351460000500083,
+      "analysis_records_per_second": 3656.111958856004,
+      "tokens_including_eos": 62895,
+      "analysis_tokens_per_second": 229951.16165224838,
+      "split_and_deduplicate_seconds": 0.15203090000431985,
+      "split_records_per_second": 6577.610209316565,
+      "deduplicated_records": 1000,
+      "duplicate_records_removed": 0,
+      "split_counts": {
+        "train": 900,
+        "validation": 51,
+        "test": 49
+      },
+      "output_bytes": 132788,
+      "process_memory_before_bytes": {
+        "working_set_bytes": 23474176,
+        "peak_working_set_bytes": 25542656
+      },
+      "process_memory_after_analysis_bytes": {
+        "working_set_bytes": 23474176,
+        "peak_working_set_bytes": 25542656
+      },
+      "split_leakage_by_construction": "split_records globally deduplicates before assignment; synthetic output not treated as corpus"
+    },
+    {
+      "records": 10000,
+      "dataset_kind": "synthetic_benchmark_only",
+      "analysis_seconds": 2.746315100011998,
+      "analysis_records_per_second": 3641.2427692497167,
+      "tokens_including_eos": 638895,
+      "analysis_tokens_per_second": 232637.17990597978,
+      "split_and_deduplicate_seconds": 1.471127600001637,
+      "split_records_per_second": 6797.506891984674,
+      "deduplicated_records": 10000,
+      "duplicate_records_removed": 0,
+      "split_counts": {
+        "train": 9000,
+        "validation": 501,
+        "test": 499
+      },
+      "output_bytes": 1347789,
+      "process_memory_before_bytes": {
+        "working_set_bytes": 23961600,
+        "peak_working_set_bytes": 25542656
+      },
+      "process_memory_after_analysis_bytes": {
+        "working_set_bytes": 23977984,
+        "peak_working_set_bytes": 25542656
+      },
+      "split_leakage_by_construction": "split_records globally deduplicates before assignment; synthetic output not treated as corpus"
+    },
+    {
+      "records": 100000,
+      "dataset_kind": "synthetic_benchmark_only",
+      "analysis_seconds": 29.80374620000657,
+      "analysis_records_per_second": 3355.2829006434754,
+      "tokens_including_eos": 6488895,
+      "analysis_tokens_per_second": 217720.78437570942,
+      "split_and_deduplicate_seconds": 28.56898260000162,
+      "split_records_per_second": 3500.2996571531507,
+      "deduplicated_records": 100000,
+      "duplicate_records_removed": 0,
+      "split_counts": {
+        "train": 90000,
+        "validation": 5001,
+        "test": 4999
+      },
+      "output_bytes": 13677790,
+      "process_memory_before_bytes": {
+        "working_set_bytes": 24178688,
+        "peak_working_set_bytes": 29257728
+      },
+      "process_memory_after_analysis_bytes": {
+        "working_set_bytes": 24162304,
+        "peak_working_set_bytes": 29257728
+      },
+      "split_leakage_by_construction": "split_records globally deduplicates before assignment; synthetic output not treated as corpus"
+    }
+  ],
+  "one_million_run": "not run; default safe scale ceiling is 100,000; no one-million result is claimed"
+}

@@ -1,0 +1,106 @@
+{
+  "status": "PASS",
+  "created_at_utc": "2026-11-13T09:18:56.091087+00:00",
+  "source_files": [
+    "D:\\NourAI\\data\\processed\\phase8\\normalized\\tatoeba_cc0_multilingual_v4.normalized.cleaned.jsonl",
+    "D:\\NourAI\\data\\processed\\phase10_2\\qnl_arabic_ocr_v2\\normalized.jsonl",
+    "D:\\NourAI\\data\\processed\\phase10_2\\wto_en_fr_chunk00_stratified_sample\\normalized.jsonl"
+  ],
+  "input_counts_by_language": {
+    "english": 51335,
+    "french": 24022,
+    "arabic": 2896
+  },
+  "input_counts_by_source": {
+    "tatoeba_cc0": 55719,
+    "qnl_arabic_ocr_v2": 2894,
+    "wto_public_corpus_en_fr": 19640
+  },
+  "requested_ratios": {
+    "train": 0.7,
+    "validation": 0.15,
+    "test": 0.15
+  },
+  "seed": 10202,
+  "grouping_field": "document_id (QNL QNL RECORD #(ITEM); WTO official IdxID; Tatoeba source record used as individual group when document_id absent)",
+  "split_stats": {
+    "input_records": 78253,
+    "empty_records": 0,
+    "duplicate_records": 6285,
+    "exact_duplicate_records": 6248,
+    "normalized_duplicate_records": 37,
+    "unique_records": 71968,
+    "split_counts": {
+      "train": 50378,
+      "validation": 10795,
+      "test": 10795
+    },
+    "language_counts": {
+      "validation": {
+        "arabic": 434,
+        "english": 7948,
+        "french": 2413
+      },
+      "test": {
+        "arabic": 434,
+        "english": 8179,
+        "french": 2182
+      },
+      "train": {
+        "arabic": 2028,
+        "english": 33245,
+        "french": 15105
+      }
+    },
+    "requested_ratios": {
+      "train": 0.7,
+      "validation": 0.15,
+      "test": 0.15
+    },
+    "actual_ratios": {
+      "train": 0.7000055580257892,
+      "validation": 0.14999722098710538,
+      "test": 0.14999722098710538
+    },
+    "seed": 10202,
+    "warnings": [],
+    "processing_seconds": 690.9364736000134,
+    "source_import_stats": {},
+    "source_estimate": {},
+    "group_count": 58681,
+    "records_without_document_id": 55716,
+    "group_split_counts": {
+      "train": {
+        "train": 0,
+        "validation": 0,
+        "test": 0,
+        "english": 25784,
+        "french": 9918,
+        "arabic": 2027
+      },
+      "validation": {
+        "train": 0,
+        "validation": 0,
+        "test": 0,
+        "english": 7661,
+        "french": 2142,
+        "arabic": 433
+      },
+      "test": {
+        "train": 0,
+        "validation": 0,
+        "test": 0,
+        "english": 8132,
+        "french": 2142,
+        "arabic": 433
+      }
+    },
+    "grouping_policy": "document_id when present; otherwise each stable record is its own group"
+  },
+  "output_paths": {
+    "train": "D:\\NourAI\\data\\processed\\phase10_2\\splits_v1\\train.jsonl",
+    "validation": "D:\\NourAI\\data\\processed\\phase10_2\\splits_v1\\validation.jsonl",
+    "test": "D:\\NourAI\\data\\processed\\phase10_2\\splits_v1\\test.jsonl"
+  },
+  "elapsed_seconds": 691.09
+}

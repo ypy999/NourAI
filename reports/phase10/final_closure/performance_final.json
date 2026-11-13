@@ -1,0 +1,9 @@
+{
+  "scope": "small CPU smoke only",
+  "dataset_load_seconds": 0.0228656,
+  "batch_size": 2,
+  "sequence_length": 16,
+  "memory_usage": "NOT_MEASURED",
+  "throughput": "NOT_MEASURED",
+  "full corpus benchmark": "NOT_RUN"
+}

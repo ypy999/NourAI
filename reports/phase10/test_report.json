@@ -1,0 +1,11 @@
+{
+  "generated_at": "2026-11-13T00:45:55.485426+01:00",
+  "tests": {
+    "command": ".venv/Scripts/python.exe -m pytest -q -p no:cacheprovider --basetemp reports/phase10/pytest-temp --ignore=tests/test_training.py",
+    "passed": 153,
+    "failed": 0,
+    "skipped": 0,
+    "duration_seconds": 13.31,
+    "excluded": "tests/test_training.py to honor no-training restriction"
+  }
+}

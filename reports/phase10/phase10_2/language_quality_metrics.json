@@ -1,0 +1,289 @@
+{
+  "status": "PASS",
+  "created_at_utc": "2026-11-13T09:27:35.305936+00:00",
+  "tokenizer": "ByteTokenizer",
+  "token_count_definition": "UTF-8 byte IDs plus one EOS token; no BOS included",
+  "total_records": 71968,
+  "unique_sources": [
+    "qnl_arabic_ocr_v2",
+    "tatoeba_cc0",
+    "wto_public_corpus_en_fr"
+  ],
+  "splits": {
+    "train": {
+      "path": "D:\\NourAI\\data\\processed\\phase10_2\\splits_v1\\train.jsonl",
+      "records": 50378,
+      "counts_by_language": {
+        "arabic": 2028,
+        "english": 33245,
+        "french": 15105
+      },
+      "bytes": 2601775915,
+      "sha256": "0e7e4af291dc50635faaaa38cf6e2c2cd745a50ed75bc3bbbfa146b33878fbd9"
+    },
+    "validation": {
+      "path": "D:\\NourAI\\data\\processed\\phase10_2\\splits_v1\\validation.jsonl",
+      "records": 10795,
+      "counts_by_language": {
+        "arabic": 434,
+        "english": 7948,
+        "french": 2413
+      },
+      "bytes": 578494178,
+      "sha256": "70ed663acb6fffe276c4ea6a6bcd8fe7f27c15f3458bf64df67f8c10ce0541d1"
+    },
+    "test": {
+      "path": "D:\\NourAI\\data\\processed\\phase10_2\\splits_v1\\test.jsonl",
+      "records": 10795,
+      "counts_by_language": {
+        "arabic": 434,
+        "english": 8179,
+        "french": 2182
+      },
+      "bytes": 590542788,
+      "sha256": "d6d397ea8f881cfdef7f73946803f8adfe9040f9266eb66e31a449baac737cee"
+    }
+  },
+  "languages": {
+    "arabic": {
+      "records": 2896,
+      "tokens_including_eos": 3636884243,
+      "utf8_bytes": 3636881347,
+      "characters": 2129189639,
+      "quality_buckets": {
+        "90-100": 2896
+      },
+      "source_counts": {
+        "qnl_arabic_ocr_v2": 2894,
+        "tatoeba_cc0": 2
+      },
+      "domain_counts": {},
+      "licenses": {
+        "PUBLIC_DOMAIN_TEXTS; CC0-1.0_METADATA": 2894,
+        "CC0-1.0": 2
+      },
+      "splits": {
+        "train": 2028,
+        "validation": 434,
+        "test": 434
+      },
+      "missing_provenance": {},
+      "replacement_char_records": 0,
+      "bad_unicode_records": 0,
+      "formatting_error_records": 0,
+      "empty_records": 0,
+      "sources_without_docs": 2,
+      "length_summary_characters": {
+        "min": 24,
+        "median": 526508.5,
+        "mean": 735217.416781768,
+        "max": 6812851,
+        "buckets_0_99_100_499_500_1999_2000plus": {
+          "2000+": 2894,
+          "0-99": 2
+        }
+      },
+      "mean_quality_score": 100.0,
+      "unique_source_count": 2,
+      "unique_domain_count": 0,
+      "unique_document_count": 2894,
+      "byte_tokens_plus_eos": 3636884243
+    },
+    "english": {
+      "records": 49372,
+      "tokens_including_eos": 4352303,
+      "utf8_bytes": 4302931,
+      "characters": 4295144,
+      "quality_buckets": {
+        "90-100": 49372
+      },
+      "source_counts": {
+        "tatoeba_cc0": 41512,
+        "wto_public_corpus_en_fr": 7860
+      },
+      "domain_counts": {
+        "TF": 40,
+        "AG": 1188,
+        "SPS": 265,
+        "MIN": 44,
+        "UNKNOWN": 1938,
+        "DS": 423,
+        "TBT": 396,
+        "TPR": 2961,
+        "SCM": 178,
+        "OFFICE": 69,
+        "BFA": 322,
+        "ADP": 36
+      },
+      "licenses": {
+        "CC0-1.0": 41512,
+        "WTO_PUBLIC_CORPUS_TERMS": 7860
+      },
+      "splits": {
+        "train": 33245,
+        "validation": 7948,
+        "test": 8179
+      },
+      "missing_provenance": {},
+      "replacement_char_records": 0,
+      "bad_unicode_records": 0,
+      "formatting_error_records": 0,
+      "empty_records": 0,
+      "sources_without_docs": 41512,
+      "length_summary_characters": {
+        "min": 1,
+        "median": 51.0,
+        "mean": 86.99554403305517,
+        "max": 4180,
+        "buckets_0_99_100_499_500_1999_2000plus": {
+          "0-99": 34376,
+          "100-499": 14804,
+          "500-1999": 189,
+          "2000+": 3
+        }
+      },
+      "mean_quality_score": 100.0,
+      "unique_source_count": 2,
+      "unique_domain_count": 12,
+      "unique_document_count": 71,
+      "byte_tokens_plus_eos": 4352303
+    },
+    "french": {
+      "records": 19700,
+      "tokens_including_eos": 1895663,
+      "utf8_bytes": 1875963,
+      "characters": 1815330,
+      "quality_buckets": {
+        "90-100": 19700
+      },
+      "source_counts": {
+        "tatoeba_cc0": 14202,
+        "wto_public_corpus_en_fr": 5498
+      },
+      "domain_counts": {
+        "TBT": 329,
+        "UNKNOWN": 1753,
+        "OFFICE": 67,
+        "SPS": 224,
+        "TF": 36,
+        "DS": 391,
+        "TPR": 1015,
+        "AG": 1146,
+        "BFA": 302,
+        "ADP": 32,
+        "SCM": 165,
+        "MIN": 38
+      },
+      "licenses": {
+        "CC0-1.0": 14202,
+        "WTO_PUBLIC_CORPUS_TERMS": 5498
+      },
+      "splits": {
+        "train": 15105,
+        "validation": 2413,
+        "test": 2182
+      },
+      "missing_provenance": {},
+      "replacement_char_records": 0,
+      "bad_unicode_records": 0,
+      "formatting_error_records": 0,
+      "empty_records": 0,
+      "sources_without_docs": 14202,
+      "length_summary_characters": {
+        "min": 4,
+        "median": 72.0,
+        "mean": 92.148730964467,
+        "max": 1739,
+        "buckets_0_99_100_499_500_1999_2000plus": {
+          "0-99": 14805,
+          "100-499": 4786,
+          "500-1999": 109
+        }
+      },
+      "mean_quality_score": 100.0,
+      "unique_source_count": 2,
+      "unique_domain_count": 12,
+      "unique_document_count": 70,
+      "byte_tokens_plus_eos": 1895663
+    }
+  },
+  "quality_formula": {
+    "weights": {
+      "utf8_encoding": 0.15,
+      "completeness": 0.15,
+      "uniqueness": 0.2,
+      "length": 0.15,
+      "unicode_integrity": 0.2,
+      "formatting": 0.15
+    },
+    "formula": "score = sum(component_percent * weight), as data.quality.score_record; uniqueness=100 for deduplicated splits; length bounds min_chars=1, max_chars=None",
+    "validated_against_existing_scorer_sample": [
+      {
+        "language": "arabic",
+        "characters": 764208,
+        "matches_existing_score_record": true
+      },
+      {
+        "language": "arabic",
+        "characters": 835323,
+        "matches_existing_score_record": true
+      },
+      {
+        "language": "arabic",
+        "characters": 2325900,
+        "matches_existing_score_record": true
+      },
+      {
+        "language": "arabic",
+        "characters": 838896,
+        "matches_existing_score_record": true
+      },
+      {
+        "language": "english",
+        "characters": 20,
+        "matches_existing_score_record": true
+      },
+      {
+        "language": "english",
+        "characters": 154,
+        "matches_existing_score_record": true
+      },
+      {
+        "language": "english",
+        "characters": 36,
+        "matches_existing_score_record": true
+      },
+      {
+        "language": "english",
+        "characters": 130,
+        "matches_existing_score_record": true
+      },
+      {
+        "language": "french",
+        "characters": 72,
+        "matches_existing_score_record": true
+      },
+      {
+        "language": "french",
+        "characters": 58,
+        "matches_existing_score_record": true
+      },
+      {
+        "language": "french",
+        "characters": 26,
+        "matches_existing_score_record": true
+      },
+      {
+        "language": "french",
+        "characters": 49,
+        "matches_existing_score_record": true
+      }
+    ]
+  },
+  "limitations": [
+    "Quality score is a deterministic text-integrity heuristic, not semantic quality or language understanding.",
+    "QNL source metadata has no verified subject-domain taxonomy; no domain inferred for QNL.",
+    "Tatoeba export does not provide document IDs; source sentence IDs were used only for record provenance, not document grouping."
+  ],
+  "elapsed_seconds": 105.67
+}

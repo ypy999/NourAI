@@ -1,0 +1,97 @@
+{
+  "created_at": "2026-11-13T08:33:54.266060+01:00",
+  "reviewed_split_counts": {
+    "train": 50144,
+    "validation": 2782,
+    "test": 2778
+  },
+  "removed_eval_rows": 12,
+  "removed_ids_by_split": {
+    "train": [],
+    "validation": [
+      "10516920",
+      "11267026",
+      "12749455",
+      "8053062",
+      "8719724"
+    ],
+    "test": [
+      "11502922",
+      "12026764",
+      "12704941",
+      "12749423",
+      "8308080",
+      "8511637",
+      "9182687"
+    ]
+  },
+  "exact_normalized_source_leakage": [
+    {
+      "splits": [
+        "train",
+        "validation"
+      ],
+      "source_record_id_intersection": 0,
+      "exact_text_intersection": 0,
+      "normalized_text_intersection": 0,
+      "document_id_check": "NOT_CHECKABLE"
+    },
+    {
+      "splits": [
+        "train",
+        "test"
+      ],
+      "source_record_id_intersection": 0,
+      "exact_text_intersection": 0,
+      "normalized_text_intersection": 0,
+      "document_id_check": "NOT_CHECKABLE"
+    },
+    {
+      "splits": [
+        "validation",
+        "test"
+      ],
+      "source_record_id_intersection": 0,
+      "exact_text_intersection": 0,
+      "normalized_text_intersection": 0,
+      "document_id_check": "NOT_CHECKABLE"
+    }
+  ],
+  "near_duplicate_recheck": {
+    "records_scanned": 55704,
+    "candidate_pairs_total": 35,
+    "cross_split_candidates": 0,
+    "within_split_train_candidates": 35,
+    "status": "PASS_FOR_CROSS_SPLIT_LEAKAGE; Train-Train candidates retained and documented",
+    "threshold": 0.85,
+    "metric": "Jaccard over normalized Unicode word trigrams",
+    "limitations": [
+      "LSH may miss similar pairs.",
+      "Surface similarity is not semantic equivalence.",
+      "All flagged pairs are retained for review."
+    ]
+  },
+  "document_leakage": "NOT_CHECKABLE",
+  "sqlite_integrity_check": [
+    [
+      "ok"
+    ]
+  ],
+  "sqlite_foreign_key_check": [],
+  "verified_provenance_rows": 55716,
+  "sqlite_split_counts": [
+    [
+      "test",
+      2785
+    ],
+    [
+      "train",
+      50144
+    ],
+    [
+      "validation",
+      2787
+    ]
+  ],
+  "phase8_originals_modified": false
+}

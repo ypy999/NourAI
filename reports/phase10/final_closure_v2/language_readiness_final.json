@@ -1,0 +1,511 @@
+{
+  "status": "MEASURED_LANGUAGE_READINESS_NOT_READY",
+  "created_at_local": "2026-11-13T01:18:37+0100",
+  "corpus": {
+    "path": "D:\\NourAI\\data\\processed\\phase8\\imported\\tatoeba_cc0_multilingual_v4.jsonl",
+    "records_examined": 55719,
+    "invalid_records": 0,
+    "unique_source_record_ids": 55719,
+    "languages": {
+      "arabic": {
+        "records": 2,
+        "unique_source_record_ids": 2,
+        "source_id_duplicates": 0,
+        "exact_duplicate_records": 0,
+        "normalized_duplicate_groups_in_source": 0,
+        "mean_characters": 28.0,
+        "min_characters": 24,
+        "max_characters": 32,
+        "mean_byte_tokens": 48.5,
+        "min_byte_tokens": 44,
+        "max_byte_tokens": 53,
+        "utf8_bytes": 97,
+        "source_count": 1,
+        "verified_domain_count": 0,
+        "domain_metadata_available": false,
+        "quality_indicators": {
+          "records": 2,
+          "empty": 0,
+          "invalid_unicode": 0,
+          "unexpected_control_characters": 0,
+          "unexpected_control_records": 0,
+          "mojibake_indicators": 0,
+          "detected_arabic": 2,
+          "heuristic_match": 2,
+          "heuristic_mismatch": 0,
+          "possible_incomplete_text": 0,
+          "very_short_fragment_candidates": 0,
+          "boilerplate_matches": 0
+        },
+        "split_counts": {
+          "train": 2,
+          "validation": 0,
+          "test": 0
+        },
+        "split_mapped_records": 2
+      },
+      "english": {
+        "records": 41515,
+        "unique_source_record_ids": 41515,
+        "source_id_duplicates": 0,
+        "exact_duplicate_records": 0,
+        "normalized_duplicate_groups_in_source": 3,
+        "mean_characters": 80.0928098277731,
+        "min_characters": 3,
+        "max_characters": 1415,
+        "mean_byte_tokens": 80.2638323497531,
+        "min_byte_tokens": 3,
+        "max_byte_tokens": 1418,
+        "utf8_bytes": 3332153,
+        "source_count": 1,
+        "verified_domain_count": 0,
+        "domain_metadata_available": false,
+        "quality_indicators": {
+          "records": 41515,
+          "empty": 0,
+          "invalid_unicode": 0,
+          "unexpected_control_characters": 0,
+          "unexpected_control_records": 0,
+          "mojibake_indicators": 0,
+          "detected_english": 33035,
+          "heuristic_match": 33035,
+          "heuristic_mismatch": 8480,
+          "possible_incomplete_text": 248,
+          "very_short_fragment_candidates": 230,
+          "boilerplate_matches": 3,
+          "detected_unclassified": 8392,
+          "detected_mixed": 81,
+          "detected_french": 7
+        },
+        "split_counts": {
+          "train": 37380,
+          "validation": 2070,
+          "test": 2062
+        },
+        "split_mapped_records": 41512
+      },
+      "french": {
+        "records": 14202,
+        "unique_source_record_ids": 14202,
+        "source_id_duplicates": 0,
+        "exact_duplicate_records": 0,
+        "normalized_duplicate_groups_in_source": 0,
+        "mean_characters": 66.09745106323054,
+        "min_characters": 8,
+        "max_characters": 988,
+        "mean_byte_tokens": 68.53774116321645,
+        "min_byte_tokens": 8,
+        "max_byte_tokens": 1021,
+        "utf8_bytes": 973373,
+        "source_count": 1,
+        "verified_domain_count": 0,
+        "domain_metadata_available": false,
+        "quality_indicators": {
+          "records": 14202,
+          "empty": 0,
+          "invalid_unicode": 0,
+          "unexpected_control_characters": 0,
+          "unexpected_control_records": 0,
+          "mojibake_indicators": 0,
+          "detected_french": 13007,
+          "heuristic_match": 13007,
+          "heuristic_mismatch": 1195,
+          "possible_incomplete_text": 58,
+          "very_short_fragment_candidates": 46,
+          "boilerplate_matches": 0,
+          "detected_mixed": 691,
+          "detected_unclassified": 398,
+          "detected_english": 106
+        },
+        "split_counts": {
+          "train": 12762,
+          "validation": 717,
+          "test": 723
+        },
+        "split_mapped_records": 14202
+      }
+    },
+    "source_language_counts": {
+      "ara": 2,
+      "eng": 41515,
+      "fra": 14202
+    },
+    "split_language_counts": {
+      "arabic": {
+        "train": {
+          "records": 2
+        },
+        "validation": {
+          "records": 0
+        },
+        "test": {
+          "records": 0
+        }
+      },
+      "english": {
+        "train": {
+          "records": 37380
+        },
+        "validation": {
+          "records": 2070
+        },
+        "test": {
+          "records": 2062
+        }
+      },
+      "french": {
+        "train": {
+          "records": 12762
+        },
+        "validation": {
+          "records": 717
+        },
+        "test": {
+          "records": 723
+        }
+      }
+    },
+    "exact_duplicate_records_in_splits": 0,
+    "normalized_duplicate_records_in_splits": 0,
+    "near_duplicate_candidates_cross_splits": 12,
+    "content_quality_summary": {
+      "arabic": {
+        "records_checked": 2,
+        "empty_records": 0,
+        "invalid_unicode_records": 0,
+        "corrupted_records": 0,
+        "unexpected_control_character_records": 0,
+        "unexpected_control_character_count": 0,
+        "mojibake_indicators": 0,
+        "heuristic_language_match_rate": 1.0,
+        "heuristic_mismatch_records": 0,
+        "incomplete_text_signal_records": 0,
+        "very_short_fragment_candidates": 0,
+        "boilerplate_matches": 0,
+        "semantic_factual_quality": "NOT_EVALUATED"
+      },
+      "english": {
+        "records_checked": 41515,
+        "empty_records": 0,
+        "invalid_unicode_records": 0,
+        "corrupted_records": 0,
+        "unexpected_control_character_records": 0,
+        "unexpected_control_character_count": 0,
+        "mojibake_indicators": 0,
+        "heuristic_language_match_rate": 0.7957364807900759,
+        "heuristic_mismatch_records": 8480,
+        "incomplete_text_signal_records": 248,
+        "very_short_fragment_candidates": 230,
+        "boilerplate_matches": 3,
+        "semantic_factual_quality": "NOT_EVALUATED"
+      },
+      "french": {
+        "records_checked": 14202,
+        "empty_records": 0,
+        "invalid_unicode_records": 0,
+        "corrupted_records": 0,
+        "unexpected_control_character_records": 0,
+        "unexpected_control_character_count": 0,
+        "mojibake_indicators": 0,
+        "heuristic_language_match_rate": 0.9158569215603436,
+        "heuristic_mismatch_records": 1195,
+        "incomplete_text_signal_records": 58,
+        "very_short_fragment_candidates": 46,
+        "boilerplate_matches": 0,
+        "semantic_factual_quality": "NOT_EVALUATED"
+      }
+    },
+    "tokenizer_full_corpus_round_trip_failures": 0,
+    "tokenizer_invalid_ids": 0
+  },
+  "readiness_policy_result": {
+    "schema_version": 1,
+    "created_at": "2026-11-13T00:18:37.376911+00:00",
+    "policy": {
+      "schema_version": 1,
+      "target_languages": [
+        "arabic",
+        "english",
+        "french"
+      ],
+      "statistical_sampling": {
+        "confidence_level": 0.95,
+        "maximum_margin_of_error": 0.05,
+        "sampling_unit": "records",
+        "finite_population_correction": true,
+        "assumption": "worst-case proportion p=0.5; independent simple random sample; planning proxy only"
+      },
+      "diversity": {
+        "minimum_unique_sources_per_language": 2,
+        "minimum_verified_domains_per_language": 3
+      },
+      "dataset_size": {
+        "minimum_train_records_per_language": null
+      },
+      "notes": [
+        "Source and domain floors are explicit governance policy settings, not statistical evidence of language capability.",
+        "A null training-record floor means training-size readiness is UNKNOWN until a policy owner sets a justified target.",
+        "Validation and test sample sizes use a configurable proportion-estimation planning proxy; they do not guarantee model-metric precision."
+      ]
+    },
+    "languages": {
+      "arabic": {
+        "status": "NOT_READY",
+        "checks": {
+          "language_coverage": {
+            "status": "READY",
+            "details": {
+              "records": 2
+            },
+            "blockers": []
+          },
+          "validation_reliability": {
+            "status": "NOT_READY",
+            "details": {
+              "records": 0,
+              "required_records": 2,
+              "confidence_level": 0.95,
+              "maximum_margin_of_error": 0.05,
+              "planning_assumption": "worst-case proportion p=0.5; simple random sampling"
+            },
+            "blockers": [
+              "validation/test records are below the planned sample size of 2"
+            ]
+          },
+          "test_reliability": {
+            "status": "NOT_READY",
+            "details": {
+              "records": 0,
+              "required_records": 2,
+              "confidence_level": 0.95,
+              "maximum_margin_of_error": 0.05,
+              "planning_assumption": "worst-case proportion p=0.5; simple random sampling"
+            },
+            "blockers": [
+              "validation/test records are below the planned sample size of 2"
+            ]
+          },
+          "source_diversity": {
+            "status": "NOT_READY",
+            "details": {
+              "unique_sources": 1,
+              "required": 2
+            },
+            "blockers": [
+              "requires 2 unique sources"
+            ]
+          },
+          "domain_coverage": {
+            "status": "NOT_READY",
+            "details": {
+              "verified_domains": 0,
+              "required": 3
+            },
+            "blockers": [
+              "requires 3 verified domains"
+            ]
+          },
+          "dataset_size": {
+            "status": "UNKNOWN",
+            "details": {
+              "train_records": 2,
+              "configured_minimum": null
+            },
+            "blockers": [
+              "a justified training-size policy or train count is missing"
+            ]
+          }
+        }
+      },
+      "english": {
+        "status": "NOT_READY",
+        "checks": {
+          "language_coverage": {
+            "status": "READY",
+            "details": {
+              "records": 41515
+            },
+            "blockers": []
+          },
+          "validation_reliability": {
+            "status": "READY",
+            "details": {
+              "records": 2070,
+              "required_records": 381,
+              "confidence_level": 0.95,
+              "maximum_margin_of_error": 0.05,
+              "planning_assumption": "worst-case proportion p=0.5; simple random sampling"
+            },
+            "blockers": []
+          },
+          "test_reliability": {
+            "status": "READY",
+            "details": {
+              "records": 2062,
+              "required_records": 381,
+              "confidence_level": 0.95,
+              "maximum_margin_of_error": 0.05,
+              "planning_assumption": "worst-case proportion p=0.5; simple random sampling"
+            },
+            "blockers": []
+          },
+          "source_diversity": {
+            "status": "NOT_READY",
+            "details": {
+              "unique_sources": 1,
+              "required": 2
+            },
+            "blockers": [
+              "requires 2 unique sources"
+            ]
+          },
+          "domain_coverage": {
+            "status": "NOT_READY",
+            "details": {
+              "verified_domains": 0,
+              "required": 3
+            },
+            "blockers": [
+              "requires 3 verified domains"
+            ]
+          },
+          "dataset_size": {
+            "status": "UNKNOWN",
+            "details": {
+              "train_records": 37380,
+              "configured_minimum": null
+            },
+            "blockers": [
+              "a justified training-size policy or train count is missing"
+            ]
+          }
+        }
+      },
+      "french": {
+        "status": "NOT_READY",
+        "checks": {
+          "language_coverage": {
+            "status": "READY",
+            "details": {
+              "records": 14202
+            },
+            "blockers": []
+          },
+          "validation_reliability": {
+            "status": "READY",
+            "details": {
+              "records": 717,
+              "required_records": 375,
+              "confidence_level": 0.95,
+              "maximum_margin_of_error": 0.05,
+              "planning_assumption": "worst-case proportion p=0.5; simple random sampling"
+            },
+            "blockers": []
+          },
+          "test_reliability": {
+            "status": "READY",
+            "details": {
+              "records": 723,
+              "required_records": 375,
+              "confidence_level": 0.95,
+              "maximum_margin_of_error": 0.05,
+              "planning_assumption": "worst-case proportion p=0.5; simple random sampling"
+            },
+            "blockers": []
+          },
+          "source_diversity": {
+            "status": "NOT_READY",
+            "details": {
+              "unique_sources": 1,
+              "required": 2
+            },
+            "blockers": [
+              "requires 2 unique sources"
+            ]
+          },
+          "domain_coverage": {
+            "status": "NOT_READY",
+            "details": {
+              "verified_domains": 0,
+              "required": 3
+            },
+            "blockers": [
+              "requires 3 verified domains"
+            ]
+          },
+          "dataset_size": {
+            "status": "UNKNOWN",
+            "details": {
+              "train_records": 12762,
+              "configured_minimum": null
+            },
+            "blockers": [
+              "a justified training-size policy or train count is missing"
+            ]
+          }
+        }
+      }
+    },
+    "checks": {
+      "legal_readiness": {
+        "status": "READY",
+        "details": {
+          "source_count": 1
+        },
+        "blockers": []
+      },
+      "document_leakage": {
+        "status": "UNKNOWN",
+        "details": {
+          "leaked_groups": null
+        },
+        "blockers": [
+          "document leakage metric missing"
+        ]
+      },
+      "duplicate_leakage": {
+        "status": "READY",
+        "details": {
+          "cross_split_duplicates": 0,
+          "within_split_duplicates": 0
+        },
+        "blockers": []
+      },
+      "data_quality": {
+        "status": "READY",
+        "details": {
+          "records_checked": 55719,
+          "empty_records": 0,
+          "invalid_unicode_records": 0,
+          "corrupted_records": 0
+        },
+        "blockers": []
+      },
+      "tokenizer_compatibility": {
+        "status": "READY",
+        "details": {
+          "compatible": true,
+          "tokenizer": "ByteTokenizer",
+          "vocab_size": 260,
+          "roundtrip_failures": 0,
+          "invalid_token_ids": 0,
+          "full_imported_corpus_checked": true
+        },
+        "blockers": []
+      }
+    },
+    "training_started": false,
+    "overall_status": "NOT_READY",
+    "language_statuses": {
+      "arabic": "NOT_READY",
+      "english": "NOT_READY",
+      "french": "NOT_READY"
+    },
+    "assumptions_and_limits": [
+      "Sample-size planning assumes independent simple random samples and a worst-case proportion; it is not a guarantee of validation/test model-metric precision.",
+      "Heuristic domains, language labels, and surface quality checks are not semantic or factual verification.",
+      "Missing evidence remains UNKNOWN and can never be counted as READY."
+    ]
+  },
+  "claim_limit": "Language ID and content quality diagnostics are project heuristics. They do not establish human fluency, semantic understanding, factual correctness, or readiness to train."
+}

@@ -1,0 +1,121 @@
+{
+  "status": "PASS",
+  "created_at_utc": "2026-11-13T09:05:47.428897+00:00",
+  "source_id": "wto_public_corpus_en_fr",
+  "archive_path": "D:\\NourAI\\data\\raw\\external\\phase10_2\\wto_en_fr_corpus_2019_EN-FR.zip",
+  "archive_bytes": 1501806179,
+  "archive_sha256": "09f958e84a626cc294eaa0c3b87b2daa7abf1f786fc91d2978756264750545f5",
+  "selected_member": "Eng-Fra_UTF8/Eng-Fra-UTF8-00.txt",
+  "member_uncompressed_bytes": 257068075,
+  "member_crc32": "96b9d2c4",
+  "sampling_policy": "within each official IdxDomain, deterministically select max(3 documents, 2% of available document IDs), capped by domain count, ranked by SHA-256 of fixed seed + domain + official IdxID; import all paired non-empty segments from selected documents",
+  "selected_documents": 124,
+  "domain_document_sampling": {
+    "ADP": {
+      "available_documents": 192,
+      "selected_documents": 4
+    },
+    "AG": {
+      "available_documents": 247,
+      "selected_documents": 5
+    },
+    "UNKNOWN": {
+      "available_documents": 1447,
+      "selected_documents": 29
+    },
+    "SCM": {
+      "available_documents": 223,
+      "selected_documents": 5
+    },
+    "SG": {
+      "available_documents": 122,
+      "selected_documents": 3
+    },
+    "SPS": {
+      "available_documents": 900,
+      "selected_documents": 18
+    },
+    "TBT": {
+      "available_documents": 1345,
+      "selected_documents": 27
+    },
+    "ACC": {
+      "available_documents": 219,
+      "selected_documents": 5
+    },
+    "OFFICE": {
+      "available_documents": 39,
+      "selected_documents": 3
+    },
+    "BFA": {
+      "available_documents": 62,
+      "selected_documents": 3
+    },
+    "DS": {
+      "available_documents": 308,
+      "selected_documents": 7
+    },
+    "RL": {
+      "available_documents": 18,
+      "selected_documents": 3
+    },
+    "AFT": {
+      "available_documents": 2,
+      "selected_documents": 2
+    },
+    "MIN": {
+      "available_documents": 156,
+      "selected_documents": 4
+    },
+    "TF": {
+      "available_documents": 5,
+      "selected_documents": 3
+    },
+    "TPR": {
+      "available_documents": 138,
+      "selected_documents": 3
+    }
+  },
+  "records_in_first_pass": 895126,
+  "valid_records_in_first_pass": 895126,
+  "parse_errors_continuation_reconstruction": 0,
+  "unpaired_rows_skipped": 159317,
+  "aligned_pairs_imported": 9820,
+  "record_counts": {
+    "english": 9820,
+    "french": 9820
+  },
+  "duplicate_source_ids": 0,
+  "unique_documents_selected": 124,
+  "document_domain_pair_counts": {
+    "UNKNOWN": 2554,
+    "DS": 481,
+    "SPS": 574,
+    "TBT": 762,
+    "AG": 1250,
+    "TPR": 3362,
+    "SCM": 241,
+    "MIN": 54,
+    "ADP": 44,
+    "OFFICE": 71,
+    "BFA": 371,
+    "TF": 56
+  },
+  "normalization_changed_records": 6195,
+  "empty_after_normalization": 0,
+  "maximum_segment_characters": 4180,
+  "imported_file": {
+    "path": "D:\\NourAI\\data\\processed\\phase10_2\\wto_en_fr_chunk00_stratified_sample\\imported.jsonl",
+    "bytes": 36433794,
+    "sha256": "074bf48939087bb51aa8c1881138c030d4b7ea0c09025b10c341d18dc2945576"
+  },
+  "normalized_file": {
+    "path": "D:\\NourAI\\data\\processed\\phase10_2\\wto_en_fr_chunk00_stratified_sample\\normalized.jsonl",
+    "bytes": 38486165,
+    "sha256": "d1f5edb140a31388dc16c1aefcc97c75f039fa3871d254e9645a48350cf6b7f9"
+  },
+  "full_streaming_passes_to_eof": 2,
+  "elapsed_seconds_total": 20.27,
+  "elapsed_seconds_export_pass": 14.63,
+  "crc_validated": "ZipExtFile reached EOF in both complete passes"
+}

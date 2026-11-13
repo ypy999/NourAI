@@ -1,0 +1,44 @@
+[
+  {
+    "path": "data/storage_manager.py",
+    "sha256_after": "a4469aacc7c1e0af49395491cafee18b27ce97285d2806edeafc2b53f0a7e1d3",
+    "backup_path": "D:\\NourAI\\.backup\\phase10-final-closure\\storage_manager.py.pre",
+    "backup_sha256": "f50d8d19026983cee64871e46a8ca2a4f9836c14c6be755aa5d1778131b19aef",
+    "pre_edit_backup_verified": true
+  },
+  {
+    "path": "tests/test_phase8_storage.py",
+    "sha256_after": "58559cb0fdd11d69e1352626cb43de9a684f0a5f05e5c06f4b9d9f595105f08e",
+    "backup_path": "D:\\NourAI\\.backup\\phase10-final-closure\\test_phase8_storage.py.pre",
+    "backup_sha256": "d33fa6fc75bbfcfe3014e2a8f37b44e0e0e1cf9e2689b66c6d71f70ea3d0466f",
+    "pre_edit_backup_verified": true
+  },
+  {
+    "path": "data/registry_sync.py",
+    "sha256_after": "213ad82a3cdacc53b9a7433957dfb55d9ddefd2f01d83728f3d5c79e6f12010a",
+    "backup_path": "D:\\NourAI\\.backup\\phase10-final-closure\\registry_sync.py.pre-security",
+    "backup_sha256": "51b37ce58f9e981ad4328af4a3cd8b1624d82b83f55c342011c09f7eb638e2bc",
+    "pre_edit_backup_verified": true
+  },
+  {
+    "path": "tests/test_phase10_1_quality_readiness_registry.py",
+    "sha256_after": "f2d4c86c08bb15337df83166847cab077a2a1e512734a661f892421476980e83",
+    "backup_path": "D:\\NourAI\\.backup\\phase10-final-closure\\test_phase10_1_quality_readiness_registry.py.pre-security",
+    "backup_sha256": "ddd95fcdb5fac7f0b91264f65021e406168aaad57f13ca8ebade3ce24af5a582",
+    "pre_edit_backup_verified": true
+  },
+  {
+    "path": "data/download_manager.py",
+    "sha256_after": "bd5d3bddfe628c387740f795dec81d9d62547470f79ec55ab5dc2e30d036ef31",
+    "backup_path": "D:\\NourAI\\.backup\\phase10-final-closure\\download_manager.py.pre-security",
+    "backup_sha256": "55fccf82a0a1f4dd60a59ea3f16fdbd14eb0abb6dc0640758707d66e2d157681",
+    "pre_edit_backup_verified": true
+  },
+  {
+    "path": "tests/test_phase8_acquisition.py",
+    "sha256_after": "042c44752d92f304799aa7377819c9476d31260389dd619b013227915e8fb582",
+    "backup_path": "D:\\NourAI\\.backup\\phase10-final-closure\\test_phase8_acquisition.py.pre-security",
+    "backup_sha256": "fc2a927473dd7adb6401a7d7fbf44435ea464d5f578d5518bb0b0c9c523c3659",
+    "pre_edit_backup_verified": true
+  }
+]

@@ -1,0 +1,32 @@
+{
+  "created_at": "2026-11-13T08:33:54.266060+01:00",
+  "modified_files": [
+    {
+      "path": "D:\\NourAI\\data\\metadata\\corpus.sqlite3",
+      "reason": "verified provenance migration",
+      "backup": "D:\\NourAI\\.backup\\phase10-final-closure-v3\\corpus_before_original_update.sqlite3",
+      "backup_sha256": "a39210c85a6fdf205a37c8ed8782dbfedda6305b807ed68f2bb71dfdae12930e"
+    },
+    {
+      "path": "D:\\NourAI\\reports\\phase10\\final_closure_v3\\review_pairs.csv",
+      "reason": "recorded 15 decisions",
+      "backup": "D:\\NourAI\\.backup\\phase10-final-closure-v4\\pre-review-decisions\\review_pairs.csv",
+      "backup_sha256": "25e82accbc86adaf57c2922b41bf6ddf80fbd61d2f589cc9afec7f2234b58b0d"
+    },
+    {
+      "path": "D:\\NourAI\\reports\\phase10\\final_closure_v3\\apply_review_decisions.py",
+      "reason": "corrected write-result reporting",
+      "backup": "D:\\NourAI\\.backup\\phase10-final-closure-v4\\pre-fix\\apply_review_decisions.py",
+      "backup_sha256": "5b0accf69cc516834561d933afba4a6bd5192de98e5f4d3f436cf836bfbd8b17"
+    },
+    {
+      "path": "D:\\NourAI\\tests\\test_phase10_closure_v3.py",
+      "reason": "updated regression for resolved decisions",
+      "backup": "D:\\NourAI\\.backup\\phase10-final-closure-v4\\pre-fix\\test_phase10_closure_v3.py",
+      "backup_sha256": "058767ac6a00248b8ca102fe829bb9e4cc7bb33db3412b18a584d0854fcd9a05"
+    }
+  ],
+  "phase8_originals_modified": false,
+  "new_corpus_imported": 0,
+  "training_or_cuda_changes": false
+}

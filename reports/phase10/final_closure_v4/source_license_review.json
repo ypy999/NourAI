@@ -1,0 +1,401 @@
+{
+  "status": "REVIEWED; UNAPPROVED SOURCES REMAIN BLOCKED",
+  "created_at_local": "2026-11-13T08:12:58+01:00",
+  "source_count": 12,
+  "classification_counts": {
+    "VERIFIED": 1,
+    "RESTRICTED": 7,
+    "UNVERIFIED": 4,
+    "REJECTED": 0
+  },
+  "new_imports": 0,
+  "sources": [
+    {
+      "source_id": "tatoeba_cc0",
+      "assessment": "VERIFIED",
+      "publisher": "Tatoeba Association",
+      "source_url": "https://downloads.tatoeba.org/exports/sentences_CC0.tar.bz2",
+      "official_evidence_urls": [
+        "https://tatoeba.org/en/downloads",
+        "https://creativecommons.org/publicdomain/zero/1.0/legalcode.en"
+      ],
+      "actual_license": "CC0-1.0, limited to sentences in the dedicated sentences_CC0 export",
+      "access": "Public weekly export; distinct from general sentences export.",
+      "research_internal": "Permitted for the dedicated CC0 records.",
+      "local_training": "Permitted under CC0 for the dedicated export.",
+      "commercial_use": "Permitted under CC0 for the dedicated export.",
+      "redistribution": "Permitted under CC0 for the dedicated export.",
+      "modification": "Permitted under CC0.",
+      "attribution": "Not required by CC0; preserving source provenance remains recommended.",
+      "geography": "No geographic restriction stated by CC0; applicable law remains relevant.",
+      "privacy": "Sentence-level corpus; source terms do not establish that every text is free of privacy concerns.",
+      "approval": "Existing registry says approved; this is the only imported source.",
+      "scope_limit": "Verified only for the exact CC0 export; do not substitute Tatoeba general export.",
+      "registry_state": "VERIFIED",
+      "registry_approved_for_ingestion": true,
+      "reviewed_at": "2026-11-13",
+      "unresolved_items": [
+        "No independent legal counsel opinion."
+      ],
+      "final_classification": "VERIFIED",
+      "current_project_approval": true
+    },
+    {
+      "source_id": "tatoeba_general",
+      "assessment": "RESTRICTED",
+      "publisher": "Tatoeba Association",
+      "source_url": "https://downloads.tatoeba.org/exports/sentences.tar.bz2",
+      "official_evidence_urls": [
+        "https://tatoeba.org/en/downloads",
+        "https://tatoeba.org/en/terms_of_use",
+        "https://creativecommons.org/licenses/by/2.0/fr/legalcode.fr"
+      ],
+      "actual_license": "Tatoeba states general files are CC BY 2.0 FR; some sentences are separately CC0.",
+      "access": "Public download.",
+      "research_internal": "Reuse can be allowed subject to applicable per-record license and attribution terms; no corpus approved.",
+      "local_training": "Potentially possible subject to license scope, attribution obligations, and local law; not approved here.",
+      "commercial_use": "CC BY permits commercial use when license terms are met; per-record scope must be respected.",
+      "redistribution": "Requires attribution and intact notices; license and record scope must be preserved.",
+      "modification": "Permitted subject to attribution and license terms.",
+      "attribution": "Required for CC BY records; maintain author/title/URI and modification notices where applicable.",
+      "geography": "French association terms refer to French, residence, and other applicable laws.",
+      "privacy": "Not individually reviewed.",
+      "approval": "Not approved for ingestion.",
+      "scope_limit": "Do not apply the general export license to the dedicated CC0 export or vice versa.",
+      "registry_state": "NEEDS_REVIEW",
+      "registry_approved_for_ingestion": false,
+      "reviewed_at": "2026-11-13",
+      "unresolved_items": [
+        "No independent legal counsel opinion.",
+        "No individual record-level license audit unless specified."
+      ],
+      "final_classification": "RESTRICTED",
+      "current_project_approval": false
+    },
+    {
+      "source_id": "wikimedia",
+      "assessment": "RESTRICTED",
+      "publisher": "Wikimedia Foundation and individual project contributors",
+      "source_url": "https://dumps.wikimedia.org/",
+      "official_evidence_urls": [
+        "https://foundation.wikimedia.org/wiki/Policy:Terms_of_Use",
+        "https://meta.wikimedia.org/wiki/How_to_use_or_reuse_our_content"
+      ],
+      "actual_license": "Typically CC BY-SA 4.0 and GFDL for contributor text, with project/revision and third-party exceptions.",
+      "access": "Public dumps; pin a project and dump date.",
+      "research_internal": "Possible only after per-revision license/exception filtering and compliance review.",
+      "local_training": "Not approved until revision-level scope and obligations are implemented.",
+      "commercial_use": "Licenses generally permit with compliance, attribution, and share-alike; individual exceptions remain.",
+      "redistribution": "Attribution and share-alike/GFDL terms can apply; exclude fair-use/third-party material.",
+      "modification": "Permitted under compatible license terms where source content allows.",
+      "attribution": "Required; source page authorship/links and modifications must be attributed.",
+      "geography": "Applicable laws vary; not individually reviewed.",
+      "privacy": "Contributor and third-party content may include personal data; no project-specific review performed.",
+      "approval": "Not approved for ingestion.",
+      "scope_limit": "Repository-wide terms do not establish the license for every page or revision.",
+      "registry_state": "NEEDS_REVIEW",
+      "registry_approved_for_ingestion": false,
+      "reviewed_at": "2026-11-13",
+      "unresolved_items": [
+        "No independent legal counsel opinion.",
+        "No individual record-level license audit unless specified."
+      ],
+      "final_classification": "RESTRICTED",
+      "current_project_approval": false
+    },
+    {
+      "source_id": "oscar",
+      "assessment": "UNVERIFIED",
+      "publisher": "OSCAR / Inria ALMAnaCH; underlying content originates in Common Crawl",
+      "source_url": "https://huggingface.co/datasets/oscar-corpus/oscar",
+      "official_evidence_urls": [
+        "https://huggingface.co/datasets/oscar-corpus/oscar",
+        "https://commoncrawl.org/terms-of-use"
+      ],
+      "actual_license": "Official OSCAR card says CC0 applies only to metadata and annotations; crawled text is third-party content.",
+      "access": "Gated access; official card states access is suspended pending clarification.",
+      "research_internal": "Not established for this project; comply with local TDM/research exceptions and underlying terms.",
+      "local_training": "Not approved; underlying rights are unresolved and Common Crawl terms include AI/ML training-related indemnity language.",
+      "commercial_use": "Unknown for crawled contents.",
+      "redistribution": "Not established; content-owner terms may separately apply.",
+      "modification": "Not established for underlying texts.",
+      "attribution": "Depends on each underlying source; not resolved by packaging.",
+      "geography": "Local law materially affects permissible TDM/research use.",
+      "privacy": "Official terms warn crawled content may contain personal/sensitive material; privacy risks require review.",
+      "approval": "Not approved for ingestion.",
+      "scope_limit": "Do not treat dataset-card/package CC0 as a license for the crawled text.",
+      "registry_state": "UNKNOWN_LICENSE",
+      "registry_approved_for_ingestion": false,
+      "reviewed_at": "2026-11-13",
+      "unresolved_items": [
+        "No independent legal counsel opinion.",
+        "No individual record-level license audit unless specified."
+      ],
+      "final_classification": "UNVERIFIED",
+      "current_project_approval": false
+    },
+    {
+      "source_id": "common_voice_ar_27",
+      "assessment": "RESTRICTED",
+      "publisher": "Mozilla Common Voice; distributed through Mozilla Data Collective",
+      "source_url": "https://mozilladatacollective.com/datasets/cmu5wom3z00ceo107guxtg4xa",
+      "official_evidence_urls": [
+        "https://mozilladatacollective.com/datasets/cmu5wom3z00ceo107guxtg4xa",
+        "https://mozilladatacollective.com/terms/consumers",
+        "https://community.mozilladatacollective.com/faq-why-cant-i-re-host-or-share-common-voice-datasets-that-i-download-from-mdc/"
+      ],
+      "actual_license": "Dataset page identifies CC0-1.0 and separately forbids speaker identification and dataset re-hosting/re-sharing.",
+      "access": "MDC account/platform terms apply; dataset is an ASR audio/transcript release.",
+      "research_internal": "ASR/local research use is the stated purpose, subject to account terms and no speaker identification.",
+      "local_training": "Local ASR training is within stated use; general LLM text pretraining is not established by this dataset-specific purpose.",
+      "commercial_use": "CC0 is listed, but platform agreement and usage restrictions must also be followed; not cleared for this project.",
+      "redistribution": "Re-hosting/re-sharing prohibited by the dataset page/platform FAQ.",
+      "modification": "CC0 applies to covered dataset content, subject to platform/dataset restrictions.",
+      "attribution": "CC0 does not require attribution; provenance recommended.",
+      "geography": "No dataset-specific geographic license limit found; platform terms and local law apply.",
+      "privacy": "No speaker re-identification; speaker metadata and recordings require careful handling.",
+      "approval": "Registry says not approved; no data downloaded or ingested.",
+      "scope_limit": "The dataset is speech/ASR data with text transcripts, not a vetted general-domain text corpus.",
+      "registry_state": "VERIFIED",
+      "registry_approved_for_ingestion": false,
+      "reviewed_at": "2026-11-13",
+      "unresolved_items": [
+        "No independent legal counsel opinion.",
+        "No individual record-level license audit unless specified."
+      ],
+      "final_classification": "RESTRICTED",
+      "current_project_approval": false
+    },
+    {
+      "source_id": "common_voice_en_au_24",
+      "assessment": "RESTRICTED",
+      "publisher": "Mozilla Common Voice; Mozilla Data Collective dataset curator",
+      "source_url": "https://mozilladatacollective.com/datasets/cmko7havo02f5nw07rbwwhowe",
+      "official_evidence_urls": [
+        "https://mozilladatacollective.com/datasets/cmko7havo02f5nw07rbwwhowe",
+        "https://mozilladatacollective.com/terms/consumers",
+        "https://community.mozilladatacollective.com/faq-why-cant-i-re-host-or-share-common-voice-datasets-that-i-download-from-mdc/"
+      ],
+      "actual_license": "Dataset page identifies CC0-1.0; dataset page forbids speaker identification and re-hosting/re-sharing.",
+      "access": "MDC account/platform terms apply; CSV and MP3 subset.",
+      "research_internal": "ASR/local research use; page says designed for ASR acoustic prediction on Australian English.",
+      "local_training": "Local ASR use is stated; general text-only LLM pretraining is not established.",
+      "commercial_use": "CC0 listed; platform terms and access conditions still apply, so no project approval.",
+      "redistribution": "Re-hosting/re-sharing prohibited by the dataset page/platform FAQ.",
+      "modification": "CC0 for covered contents, subject to platform restrictions.",
+      "attribution": "CC0 does not require attribution; provenance recommended.",
+      "geography": "No dataset-specific geographic limit found; platform terms and law apply.",
+      "privacy": "No speaker identification; metadata includes self-described accent and may include other speaker metadata.",
+      "approval": "Registry says not approved; no data downloaded or ingested.",
+      "scope_limit": "An ASR speech subset (en-AU) and not broad-domain English text.",
+      "registry_state": "VERIFIED",
+      "registry_approved_for_ingestion": false,
+      "reviewed_at": "2026-11-13",
+      "unresolved_items": [
+        "No independent legal counsel opinion.",
+        "No individual record-level license audit unless specified."
+      ],
+      "final_classification": "RESTRICTED",
+      "current_project_approval": false
+    },
+    {
+      "source_id": "common_voice_fr_26",
+      "assessment": "RESTRICTED",
+      "publisher": "Mozilla Common Voice; Mozilla Data Collective curator",
+      "source_url": "https://mozilladatacollective.com/datasets/cmrumhinj0001md07y3huuhs5",
+      "official_evidence_urls": [
+        "https://mozilladatacollective.com/datasets/cmrumhinj0001md07y3huuhs5",
+        "https://mozilladatacollective.com/terms/consumers",
+        "https://community.mozilladatacollective.com/faq-why-cant-i-re-host-or-share-common-voice-datasets-that-i-download-from-mdc/"
+      ],
+      "actual_license": "Dataset page identifies CC0-1.0 and prohibits speaker identification; MDC Common Voice FAQ says datasets may not be re-hosted/shared.",
+      "access": "MDC account/platform terms apply; MP3 and TSV.",
+      "research_internal": "Speech technology/linguistics research stated; use subject to platform terms.",
+      "local_training": "Local speech technology training intended; general LLM text pretraining not established.",
+      "commercial_use": "CC0 listed, subject to platform agreement and restriction review; not approved.",
+      "redistribution": "Re-hosting/re-sharing prohibited by the platform FAQ.",
+      "modification": "CC0 for covered content subject to restrictions.",
+      "attribution": "CC0 does not require attribution; provenance recommended.",
+      "geography": "No dataset-specific geographic limit found; platform terms and law apply.",
+      "privacy": "No speaker identification.",
+      "approval": "Registry says not approved; no data downloaded or ingested.",
+      "scope_limit": "Validated France-accent ASR corpus, not general-domain text.",
+      "registry_state": "VERIFIED",
+      "registry_approved_for_ingestion": false,
+      "reviewed_at": "2026-11-13",
+      "unresolved_items": [
+        "No independent legal counsel opinion.",
+        "No individual record-level license audit unless specified."
+      ],
+      "final_classification": "RESTRICTED",
+      "current_project_approval": false
+    },
+    {
+      "source_id": "madar_parallel",
+      "assessment": "RESTRICTED",
+      "publisher": "CMU / NYU Abu Dhabi MADAR project",
+      "source_url": "https://camel.abudhabi.nyu.edu/madar-parallel-corpus/",
+      "official_evidence_urls": [
+        "https://camel.abudhabi.nyu.edu/madar-parallel-corpus/"
+      ],
+      "actual_license": "Official grant is internal research/evaluation only; no sublicense or further distribution and no modification; commercial rights require separate agreement.",
+      "access": "Download is conditioned on accepting the license; English and French versions require U-Star Consortium contact.",
+      "research_internal": "Permitted only for internal research and evaluation as stated.",
+      "local_training": "Not established; no modification right is granted; obtain written permission before using for model training.",
+      "commercial_use": "Not permitted under the displayed grant; separate commercial license is offered.",
+      "redistribution": "Not permitted under the displayed grant.",
+      "modification": "Not permitted under the displayed grant.",
+      "attribution": "Citation is requested by project page; license notice must be retained in internal copies.",
+      "geography": "No explicit geographic restriction stated.",
+      "privacy": "No privacy statement assessed in the displayed license.",
+      "approval": "Not approved for ingestion.",
+      "scope_limit": "The displayed permission is narrow; treat as internal-only and do not redistribute/modify.",
+      "registry_state": "NEEDS_REVIEW",
+      "registry_approved_for_ingestion": false,
+      "reviewed_at": "2026-11-13",
+      "unresolved_items": [
+        "No independent legal counsel opinion.",
+        "No individual record-level license audit unless specified."
+      ],
+      "final_classification": "RESTRICTED",
+      "current_project_approval": false
+    },
+    {
+      "source_id": "culturax",
+      "assessment": "UNVERIFIED",
+      "publisher": "CulturaX dataset authors / UONLP project; content derives from mC4 and OSCAR",
+      "source_url": "https://huggingface.co/datasets/uonlp/CulturaX",
+      "official_evidence_urls": [
+        "https://huggingface.co/datasets/uonlp/CulturaX",
+        "https://commoncrawl.org/terms-of-use"
+      ],
+      "actual_license": "Dataset card says terms strictly follow mC4 and OSCAR; no standalone license grants rights to all underlying web content.",
+      "access": "Hugging Face access may require authentication.",
+      "research_internal": "Not established without underlying source and local-law review.",
+      "local_training": "Not approved; underlying crawl-page rights remain unresolved and Common Crawl terms expressly address AI/ML use.",
+      "commercial_use": "Unknown for underlying webpage content.",
+      "redistribution": "Not established for underlying content.",
+      "modification": "Not established for underlying content.",
+      "attribution": "Source-specific, not resolved by CulturaX packaging.",
+      "geography": "Underlying rights and text/data-mining law vary by location.",
+      "privacy": "Official card warns personal/sensitive information may remain.",
+      "approval": "Not approved for ingestion.",
+      "scope_limit": "Packaging/public availability is not evidence of content-level permissions.",
+      "registry_state": "UNKNOWN_LICENSE",
+      "registry_approved_for_ingestion": false,
+      "reviewed_at": "2026-11-13",
+      "unresolved_items": [
+        "No independent legal counsel opinion.",
+        "No individual record-level license audit unless specified."
+      ],
+      "final_classification": "UNVERIFIED",
+      "current_project_approval": false
+    },
+    {
+      "source_id": "oscar_moscar",
+      "assessment": "UNVERIFIED",
+      "publisher": "Inria OSCAR project; underlying text from web pages and Common Crawl",
+      "source_url": "https://oscar-project.github.io/documentation/versions/mOSCAR/",
+      "official_evidence_urls": [
+        "https://oscar-project.github.io/documentation/versions/mOSCAR/",
+        "https://commoncrawl.org/terms-of-use"
+      ],
+      "actual_license": "mOSCAR page licenses actual packaging under CC BY 4.0 and states the project does not own extracted text.",
+      "access": "Access via Hugging Face dataset repository.",
+      "research_internal": "Not established for underlying text absent page-level rights review.",
+      "local_training": "Not approved; CC BY applies to packaging only; source-page rights unresolved.",
+      "commercial_use": "Unknown for underlying text; packaging license alone is insufficient.",
+      "redistribution": "Packaging may be redistributed with CC BY attribution; underlying text requires source-level rights.",
+      "modification": "Packaging may be modified subject to CC BY; underlying text depends on original source.",
+      "attribution": "CC BY attribution applies to packaging; content may have separate conditions.",
+      "geography": "Underlying source rights vary.",
+      "privacy": "Web documents/URLs can reveal personal or sensitive content; no per-record screening performed.",
+      "approval": "Not approved for ingestion.",
+      "scope_limit": "Do not equate package CC BY with a license for each extracted text.",
+      "registry_state": "UNKNOWN_LICENSE",
+      "registry_approved_for_ingestion": false,
+      "reviewed_at": "2026-11-13",
+      "unresolved_items": [
+        "No independent legal counsel opinion.",
+        "No individual record-level license audit unless specified."
+      ],
+      "final_classification": "UNVERIFIED",
+      "current_project_approval": false
+    },
+    {
+      "source_id": "mot_voa",
+      "assessment": "RESTRICTED",
+      "publisher": "Brandeis University Broadening Linguistic Technologies Lab; source material collected from Voice of America",
+      "source_url": "https://github.com/bltlab/mot",
+      "official_evidence_urls": [
+        "https://github.com/bltlab/mot"
+      ],
+      "actual_license": "MOT repository states the collection is CC BY 4.0 and source material is public domain.",
+      "access": "Public GitHub releases; pin the exact release/site files before use.",
+      "research_internal": "Permitted subject to CC BY attribution and exact release validation.",
+      "local_training": "Potentially permitted with attribution; no project approval until a specific release and file provenance are reviewed.",
+      "commercial_use": "CC BY 4.0 allows commercial reuse with conditions; confirm each collected artifact is in-scope.",
+      "redistribution": "Allowed under CC BY attribution and notice obligations, subject to source material scope.",
+      "modification": "Allowed under CC BY with indication of changes and attribution.",
+      "attribution": "Required; cite MOT and authors and preserve license/changes notice.",
+      "geography": "No specific geographic restriction stated by repository.",
+      "privacy": "Review individual VOA source files and any embedded metadata before use.",
+      "approval": "Not approved for ingestion; no files downloaded.",
+      "scope_limit": "License summary verified from project repository, but no release artifact or item-level contents were audited.",
+      "registry_state": "NEEDS_REVIEW",
+      "registry_approved_for_ingestion": false,
+      "reviewed_at": "2026-11-13",
+      "unresolved_items": [
+        "No independent legal counsel opinion.",
+        "No individual record-level license audit unless specified."
+      ],
+      "final_classification": "RESTRICTED",
+      "current_project_approval": false
+    },
+    {
+      "source_id": "hplt_v1_2",
+      "assessment": "UNVERIFIED",
+      "publisher": "HPLT consortium; source collections include Common Crawl and Internet Archive",
+      "source_url": "https://hplt-project.org/datasets/v1.2",
+      "official_evidence_urls": [
+        "https://hplt-project.org/datasets/v1.2",
+        "https://commoncrawl.org/terms-of-use"
+      ],
+      "actual_license": "Official HPLT terms say package is CC0, but HPLT does not own the extracted text; user is responsible for applicable legal framework. v1.2 is marked deprecated.",
+      "access": "Public shards; v1.2 deprecated. Current Arabic raw variant is listed at about 174 GB.",
+      "research_internal": "Not established for underlying texts absent source-level rights review.",
+      "local_training": "Not approved; package CC0 does not resolve underlying source rights.",
+      "commercial_use": "Unknown for underlying texts.",
+      "redistribution": "Package license does not resolve redistribution rights for source texts.",
+      "modification": "Package may be CC0, but underlying text rights unresolved.",
+      "attribution": "Depends on underlying sources; HPLT asks for research citation.",
+      "geography": "Applicable text/data mining and privacy laws vary; page explicitly assigns compliance responsibility to user.",
+      "privacy": "Privacy/anonymization and takedown risks require source-level review.",
+      "approval": "Not approved; no files downloaded.",
+      "scope_limit": "Deprecated release, no source-page rights evidence, and local disk/storage constraints.",
+      "registry_state": "UNKNOWN_LICENSE",
+      "registry_approved_for_ingestion": false,
+      "reviewed_at": "2026-11-13",
+      "unresolved_items": [
+        "No independent legal counsel opinion.",
+        "No individual record-level license audit unless specified."
+      ],
+      "final_classification": "UNVERIFIED",
+      "current_project_approval": false
+    }
+  ],
+  "current_official_pages_rechecked": [
+    "https://tatoeba.org/en/downloads",
+    "https://foundation.wikimedia.org/wiki/Policy:Terms_of_Use",
+    "https://huggingface.co/datasets/oscar-corpus/oscar",
+    "https://mozilladatacollective.com/datasets/cmu5wom3z00ceo107guxtg4xa",
+    "https://mozilladatacollective.com/terms/consumers",
+    "https://commoncrawl.org/terms-of-use"
+  ],
+  "arabic_priority": [
+    "common_voice_ar_27 is CC0-listed and Arabic, but it is a speech/ASR dataset and prohibits re-hosting/re-sharing; not a direct text corpus source.",
+    "Tatoeba CC0 is the only currently used source and contributes only two Arabic sentences.",
+    "No Arabic candidate is approved for ingestion by this closure."
+  ],
+  "legal_limit": "Engineering evidence review, not legal advice. Packaging license does not establish rights to underlying crawled text."
+}

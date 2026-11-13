@@ -1,0 +1,66 @@
+{
+  "status": "REVIEW_APPLIED_AND_SPLITS_VERIFIED",
+  "counts": {
+    "train": 50144,
+    "validation": 2782,
+    "test": 2778
+  },
+  "removed_evaluation_records": 12,
+  "removed_ids": [
+    "10516920",
+    "11267026",
+    "11502922",
+    "12026764",
+    "12704941",
+    "12749423",
+    "12749455",
+    "8053062",
+    "8308080",
+    "8511637",
+    "8719724",
+    "9182687"
+  ],
+  "cross_split_leakage": [
+    {
+      "pair": "train-validation",
+      "source_record_id_intersection": 0,
+      "exact_text_intersection": 0,
+      "normalized_text_intersection": 0
+    },
+    {
+      "pair": "train-test",
+      "source_record_id_intersection": 0,
+      "exact_text_intersection": 0,
+      "normalized_text_intersection": 0
+    },
+    {
+      "pair": "validation-test",
+      "source_record_id_intersection": 0,
+      "exact_text_intersection": 0,
+      "normalized_text_intersection": 0
+    }
+  ],
+  "document_leakage": "NOT_CHECKABLE",
+  "sqlite_integrity_check": [
+    [
+      "ok"
+    ]
+  ],
+  "sqlite_foreign_key_check": [],
+  "sqlite_split_counts": [
+    [
+      "test",
+      2785
+    ],
+    [
+      "train",
+      50144
+    ],
+    [
+      "validation",
+      2787
+    ]
+  ],
+  "original_splits_modified": false,
+  "phase8_originals_modified": false
+}

@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "report_type": "phase9_final_validated_corpus_snapshot",
+  "created_at": "2026-11-12",
+  "evidence": {
+    "corpus_metrics_source": "reports/phase9_corpus_report.json",
+    "database_validation_source": "local Windows Python 3.15.2, sqlite3 URI mode=ro; SQLite 3.53.4",
+    "database_integrity_check": "ok",
+    "database_foreign_key_check": [],
+    "tests": {"passed": 174, "failed": 0, "skipped": 0, "run_date": "prior validation run; not rerun for this report"}
+  },
+  "corpus": {
+    "imported_records_before_deduplication": 55719,
+    "normalized_duplicates_removed": 3,
+    "unique_records_after_deduplication": 55716,
+    "languages": {"arabic": 2, "english": 41515, "french": 14202},
+    "source_distribution": {"tatoeba_cc0": 55719},
+    "splits": {"train": 50144, "validation": 2787, "test": 2785},
+    "duplicate_leakage": 0,
+    "readiness": "NOT_READY"
+  },
+  "database": {
+    "tables_including_sqlite_sequence": 8,
+    "table_counts": {"sources": 1, "datasets": 2, "files": 6, "records": 111435, "operations": 3, "license_current": 4, "license_history": 4},
+    "record_language_metadata_counts": {"Arabic": 4, "English": 74655, "French": 27216, "Unknown": 9560},
+    "record_source_counts": {"tatoeba_cc0": 111435},
+    "split_counts_including_import_records": {"unassigned_import_records": 55719, "train": 50144, "validation": 2787, "test": 2785},
+    "license_states": {"VERIFIED": 1, "NEEDS_REVIEW": 2, "UNKNOWN_LICENSE": 1},
+    "records_missing_source_record_id": 0,
+    "records_missing_raw_sha256": 0,
+    "orphan_records": 0,
+    "integrity_check": "ok",
+    "foreign_key_violations": []
+  },
+  "limitations": [
+    "Database language counts include imported and split metadata records and are not corpus-level language totals.",
+    "The database schema does not store document_id or ingestion timestamps per record, so those fields cannot be independently validated from SQLite.",
+    "Existing reports provide three normalized duplicates removed and zero split leakage; this report did not rescan all raw text for duplicates.",
+    "No new corpus was imported and no training or CUDA was used."
+  ]
+}

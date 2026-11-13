@@ -1,0 +1,21 @@
+{
+  "created_at": "2026-11-13T08:33:54.266060+01:00",
+  "non_training_suite": {
+    "command": ".venv\\Scripts\\python.exe -m pytest -q tests --ignore=tests/test_training.py --basetemp=reports/phase10/final_closure_v3/pytest-final-run",
+    "passed": 159,
+    "failed": 0,
+    "skipped": 0,
+    "duration_seconds": 20.42,
+    "status": "PASS",
+    "warning": "One cache warning; tests passed."
+  },
+  "training_tests": {
+    "collect_only": true,
+    "collected": 21,
+    "executed": false
+  },
+  "default_temp_attempt": "failed at setup due access denied to pytest-of-info; project-local basetemp rerun passed",
+  "training_started": false,
+  "cuda_used": false,
+  "weights_updated": false
+}

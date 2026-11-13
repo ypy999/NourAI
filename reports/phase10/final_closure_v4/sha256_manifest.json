@@ -1,0 +1,214 @@
+{
+  "algorithm": "SHA-256",
+  "created_at": "2026-11-13T08:36:12.561018+01:00",
+  "self_hash_excluded": true,
+  "phase8_baseline_checks": [
+    {
+      "path": "data/raw/external/tatoeba_cc0.tar.bz2",
+      "baseline_sha256": "7e4251d06edd949db9e47cc360b472873da6c054af5dc4b9d2c9e06d024cd710",
+      "current_sha256": "7e4251d06edd949db9e47cc360b472873da6c054af5dc4b9d2c9e06d024cd710",
+      "matches": true
+    },
+    {
+      "path": "data/processed/phase8/imported/tatoeba_cc0_multilingual_v4.jsonl",
+      "baseline_sha256": "00f752ca1b78d27fc717a8664bb2c7ebd0f001b2ace11685e1d36456ebb1841a",
+      "current_sha256": "00f752ca1b78d27fc717a8664bb2c7ebd0f001b2ace11685e1d36456ebb1841a",
+      "matches": true
+    },
+    {
+      "path": "data/processed/phase8/imported/tatoeba_cc0_multilingual_v4.jsonl.import.json",
+      "baseline_sha256": "4ced47d574ecbbd044871cd96e3917e2c8bf16868d3b7ea8f9d68d04b79761cc",
+      "current_sha256": "4ced47d574ecbbd044871cd96e3917e2c8bf16868d3b7ea8f9d68d04b79761cc",
+      "matches": true
+    },
+    {
+      "path": "data/processed/phase8/normalized/tatoeba_cc0_multilingual_v4.normalized.cleaned.jsonl",
+      "baseline_sha256": "66fb4f80b7788ff1c236a96038edf4d649981169369f97f7aa4a21c6bbdb36d3",
+      "current_sha256": "66fb4f80b7788ff1c236a96038edf4d649981169369f97f7aa4a21c6bbdb36d3",
+      "matches": true
+    },
+    {
+      "path": "data/processed/phase8/deduplicated/splits/train.jsonl",
+      "baseline_sha256": "b1f11849397c39f6ca78371bd07ac6dd92cf108ea745f5f47c2f8c6c88d1e24a",
+      "current_sha256": "b1f11849397c39f6ca78371bd07ac6dd92cf108ea745f5f47c2f8c6c88d1e24a",
+      "matches": true
+    },
+    {
+      "path": "data/processed/phase8/deduplicated/splits/validation.jsonl",
+      "baseline_sha256": "ed41727c44ac148e8c2916852d2f82fa36be3b7f4a3b85f305fb3d1acbce7d96",
+      "current_sha256": "ed41727c44ac148e8c2916852d2f82fa36be3b7f4a3b85f305fb3d1acbce7d96",
+      "matches": true
+    },
+    {
+      "path": "data/processed/phase8/deduplicated/splits/test.jsonl",
+      "baseline_sha256": "b83a834cdbf9082375d5750f642275752a99bc7d13f7df579173362acca4ec1d",
+      "current_sha256": "b83a834cdbf9082375d5750f642275752a99bc7d13f7df579173362acca4ec1d",
+      "matches": true
+    },
+    {
+      "path": "configs/phase8_corpus.json",
+      "baseline_sha256": "efd51aeef2c208e6912a51432c976c2c8ce382e4bd18b681d9e54884927b861f",
+      "current_sha256": "efd51aeef2c208e6912a51432c976c2c8ce382e4bd18b681d9e54884927b861f",
+      "matches": true
+    },
+    {
+      "path": "configs/phase9_corpus.json",
+      "baseline_sha256": "1d9f551553c603888945c3d87325dabb5fcb88a12730a364cc13a06638c994c7",
+      "current_sha256": "1d9f551553c603888945c3d87325dabb5fcb88a12730a364cc13a06638c994c7",
+      "matches": true
+    },
+    {
+      "path": "configs/dataset_sources.json",
+      "baseline_sha256": "946df537880bb711f784a38a26a34cf15fb18699593a160df8cadea0f7b01185",
+      "current_sha256": "946df537880bb711f784a38a26a34cf15fb18699593a160df8cadea0f7b01185",
+      "matches": true
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "reports\\phase10\\final_closure_v4\\additional_near_duplicate_candidates.csv",
+      "size": 7590,
+      "sha256": "7785329ce09334ad9df5d318d4821fe76fc43317554984624d4b5ef02737ad3a"
+    },
+    {
+      "path": "reports\\phase10\\final_closure_v4\\apply_review_decisions.py",
+      "size": 4123,
+      "sha256": "e35e5f70ae8646858c84fa604ec44de7f79d177f176fb3358f7d1f21c60fb20c"
+    },
+    {
+      "path": "reports\\phase10\\final_closure_v4\\document_leakage_policy.json",
+      "size": 1183,
+      "sha256": "afbd34e8e48aa9302cefd837e81946ca21c0c09ed289e74f5468f08d8699a318"
+    },
+    {
+      "path": "reports\\phase10\\final_closure_v4\\document_leakage_policy.md",
+      "size": 861,
+      "sha256": "1dda946f82a49e5bafc0fa9da42ec471f5e0556f2ab7ecab58837a600816bc47"
+    },
+    {
+      "path": "reports\\phase10\\final_closure_v4\\FINAL_REPORT.md",
+      "size": 2189,
+      "sha256": "dd7e9ad3d45aade2a8a50a077d0432e3ed5c085ca3baac57d85446c575e53385"
+    },
+    {
+      "path": "reports\\phase10\\final_closure_v4\\human_review_report.md",
+      "size": 3844,
+      "sha256": "433e053fa1b4c8ad4799ae1d134e37df383b8a04a61a6a2871c0eae700947d4e"
+    },
+    {
+      "path": "reports\\phase10\\final_closure_v4\\leakage_report.json",
+      "size": 2219,
+      "sha256": "8811c9c8585102cf1d5de226b526ce26894b43995f83cd5c2603aaefcdd88be0"
+    },
+    {
+      "path": "reports\\phase10\\final_closure_v4\\migration_map.jsonl",
+      "size": 23443472,
+      "sha256": "ad47c170f2b21616cbacb82b2576b46e197eba2c8d07bda814de371b896c6ffd"
+    },
+    {
+      "path": "reports\\phase10\\final_closure_v4\\migration_report.json",
+      "size": 2077,
+      "sha256": "dfd57f75d1f6cb280af65a6f0038d39467022843ba555eaf360b2656da34b629"
+    },
+    {
+      "path": "reports\\phase10\\final_closure_v4\\modified_files_and_backups.json",
+      "size": 1539,
+      "sha256": "06b40758c0663b7a8e81c284a5a07ed4af22c9a5b0fc385d35497580bcebf415"
+    },
+    {
+      "path": "reports\\phase10\\final_closure_v4\\near_duplicate_recheck.json",
+      "size": 11502,
+      "sha256": "d1b56c2e237abc7d88196e2befbec04ff67b17f521382356468f07297618c824"
+    },
+    {
+      "path": "reports\\phase10\\final_closure_v4\\phase10_closure.json",
+      "size": 1405,
+      "sha256": "e6d295b964aa73fc5a54b3767210390bc35767f5408b77d7f8b7d8a73666e16f"
+    },
+    {
+      "path": "reports\\phase10\\final_closure_v4\\restore_test\\test.jsonl",
+      "size": 1434348,
+      "sha256": "47e201802702ead1832140229bf8b0e457a7f964bb7153e3ec32a990b04cf010"
+    },
+    {
+      "path": "reports\\phase10\\final_closure_v4\\restore_test\\train.jsonl",
+      "size": 25865478,
+      "sha256": "1f952c50ccc5479abf755c728ed00930d87981598099bf7b7cb93033dcd6f25d"
+    },
+    {
+      "path": "reports\\phase10\\final_closure_v4\\restore_test\\validation.jsonl",
+      "size": 1432731,
+      "sha256": "5b204306931f86703ab4bd021be03d69373227eb48cf72f93fea0b662584a6eb"
+    },
+    {
+      "path": "reports\\phase10\\final_closure_v4\\review_pairs.csv",
+      "size": 5024,
+      "sha256": "9404f3fb275d4e567951e90359e563c6c80f05de051a65fb7e5a920fbdf652da"
+    },
+    {
+      "path": "reports\\phase10\\final_closure_v4\\reviewed_splits\\backups\\20261113T082446\\test.jsonl",
+      "size": 1434348,
+      "sha256": "47e201802702ead1832140229bf8b0e457a7f964bb7153e3ec32a990b04cf010"
+    },
+    {
+      "path": "reports\\phase10\\final_closure_v4\\reviewed_splits\\backups\\20261113T082446\\train.jsonl",
+      "size": 25865478,
+      "sha256": "1f952c50ccc5479abf755c728ed00930d87981598099bf7b7cb93033dcd6f25d"
+    },
+    {
+      "path": "reports\\phase10\\final_closure_v4\\reviewed_splits\\backups\\20261113T082446\\validation.jsonl",
+      "size": 1432731,
+      "sha256": "5b204306931f86703ab4bd021be03d69373227eb48cf72f93fea0b662584a6eb"
+    },
+    {
+      "path": "reports\\phase10\\final_closure_v4\\reviewed_splits\\review_audit.json",
+      "size": 11861,
+      "sha256": "941334297527622b93cb4fcee34c72edee61b720b2798d3aced46b141f042015"
+    },
+    {
+      "path": "reports\\phase10\\final_closure_v4\\reviewed_splits\\test.jsonl",
+      "size": 1430866,
+      "sha256": "55367b7ac33223d92788544e2c6b6c1314e1341f51e6f1271f4ae9e6d303e62d"
+    },
+    {
+      "path": "reports\\phase10\\final_closure_v4\\reviewed_splits\\train.jsonl",
+      "size": 25865478,
+      "sha256": "1f952c50ccc5479abf755c728ed00930d87981598099bf7b7cb93033dcd6f25d"
+    },
+    {
+      "path": "reports\\phase10\\final_closure_v4\\reviewed_splits\\validation.jsonl",
+      "size": 1430266,
+      "sha256": "f408a340fbfcf7819cd73bda7895b48492d60510b4bf4f6158703f218f7683da"
+    },
+    {
+      "path": "reports\\phase10\\final_closure_v4\\rollback_report.json",
+      "size": 1312,
+      "sha256": "1e3cc60b0cb1dc706ac943814d099799a1eb35e95f1667378b2fd8c2ad208541"
+    },
+    {
+      "path": "reports\\phase10\\final_closure_v4\\rollback_sqlite_migration.py",
+      "size": 1886,
+      "sha256": "fb8bad3f0e974af658315622c89b2a121679846cfb1dee95acdc1cab8171941e"
+    },
+    {
+      "path": "reports\\phase10\\final_closure_v4\\similarity_report.json",
+      "size": 779,
+      "sha256": "e8622681f20da5bdda38ce0e57914f26abb6c8af45e54152a701bbb89fee163a"
+    },
+    {
+      "path": "reports\\phase10\\final_closure_v4\\source_license_review.json",
+      "size": 25028,
+      "sha256": "e4a5ed1587ee299fcd20dc92b7cfb8ce277566b15dcba2f3da3d1d4fc3a59d2c"
+    },
+    {
+      "path": "reports\\phase10\\final_closure_v4\\source_license_review.md",
+      "size": 522,
+      "sha256": "885a74f7e92808d0aaf8b2f7d003e3e943cdaa6fe76271068a137634d0eacf38"
+    },
+    {
+      "path": "reports\\phase10\\final_closure_v4\\test_report.json",
+      "size": 714,
+      "sha256": "ea311343fdf0e59378e4d2872ff6600add598019ebfd04a776b926c8747e23c6"
+    }
+  ]
+}

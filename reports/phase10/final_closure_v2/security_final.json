@@ -1,0 +1,94 @@
+{
+  "status": "STATIC_AUDIT_COMPLETED_WITH_PATH_BOUNDARY_FIXES; RESIDUAL_LOW_RISKS_DOCUMENTED",
+  "created_at_local": "2026-11-13T01:50:51+01:00",
+  "scope": "Static source/config/test review plus project tests; no external penetration testing, training, CUDA, or download.",
+  "secret_scan": {
+    "files_scanned": 103,
+    "high_confidence_matches": 0,
+    "credential_filename_candidates": 0,
+    "redacted_matches": [],
+    "credential_paths": [],
+    "limits": "Pattern scan; raw corpus, binary files and .venv excluded."
+  },
+  "controls": [
+    "Archive absolute and parent traversal rejected; archives stream without extraction.",
+    "Input line, JSON, archive member and expanded size limits present.",
+    "StorageManager and CorpusMetadataStore confine resolved paths.",
+    "Invalid JSON/UTF-8/corrupt archive cases covered in tests.",
+    "Original SQLite opened via mode=ro; no write/checkpoint/migration.",
+    "Approved-source gate, explicit DownloadManager request, byte cap and provenance checksum present; no network download made.",
+    "Current PyTorch checkpoint load uses weights_only=True."
+  ],
+  "findings": [
+    {
+      "id": "SEC-01",
+      "severity": "MEDIUM",
+      "status": "FIXED_AND_TESTED",
+      "description": "RegistrySync previously accepted external DB/registry paths.",
+      "files": [
+        "data/registry_sync.py",
+        "tests/test_phase10_1_quality_readiness_registry.py"
+      ],
+      "fix": "Reject resolved paths outside project root.",
+      "verification": "Regression and full suite pass."
+    },
+    {
+      "id": "SEC-02",
+      "severity": "MEDIUM",
+      "status": "FIXED_AND_TESTED",
+      "description": "DownloadManager custom config could direct DB/raw output outside root.",
+      "files": [
+        "data/download_manager.py",
+        "tests/test_phase8_acquisition.py"
+      ],
+      "fix": "Resolve and confine both paths to root.",
+      "verification": "Parent traversal and absolute external path regressions pass."
+    },
+    {
+      "id": "DATA-01",
+      "severity": "HIGH_DATA_INTEGRITY",
+      "status": "FIXED_FOR_FUTURE_WRITES; LEGACY_DB_UNCHANGED",
+      "description": "Missing source_record_id was replaced by import/split line labels.",
+      "files": [
+        "data/storage_manager.py",
+        "tests/test_phase8_storage.py"
+      ],
+      "fix": "Missing ID remains NULL; line number stays metadata.",
+      "verification": "Regression/full suite pass; 55,716 old split fallback values remain unmigrated."
+    },
+    {
+      "id": "SEC-03",
+      "severity": "LOW_CONDITIONAL",
+      "status": "OPEN_DOCUMENTED",
+      "description": "Transformer checkpoint reader falls back to unrestricted torch.load only if PyTorch lacks weights_only.",
+      "runtime": "Current PyTorch 2.15.0+cpu takes safe weights_only path.",
+      "recommendation": "Load trusted checkpoints only; consider removing old-version fallback when compatible."
+    },
+    {
+      "id": "SEC-04",
+      "severity": "LOW",
+      "status": "OPEN_DOCUMENTED",
+      "description": "Low-level download_resumable accepts caller-selected destination; high-level DownloadManager is root-confined."
+    },
+    {
+      "id": "SEC-05",
+      "severity": "LOW_OPERATIONAL",
+      "status": "OPEN_DOCUMENTED",
+      "description": "TokenSequenceDataset uses OS TemporaryDirectory for token cache.",
+      "evidence": "Six pre-existing nourai-token-cache directories dated Nov 10/12; none created or modified Nov 13.",
+      "recommendation": "Add scratch-root configuration if policy requires all temporary files inside project."
+    }
+  ],
+  "writes": {
+    "report_and_test_temp_root": "D:\\NourAI\\reports\\phase10",
+    "network_downloads": 0,
+    "new_persistent_os_temp_caches": 0,
+    "original_sqlite_write_calls": 0
+  },
+  "final_tests": {
+    "passed": 156,
+    "failed": 0,
+    "skipped": 0,
+    "training_tests_excluded": 21
+  }
+}

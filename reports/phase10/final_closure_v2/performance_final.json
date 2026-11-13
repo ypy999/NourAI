@@ -1,0 +1,203 @@
+{
+  "created_at_local": "2026-11-13T01:22:30.453283+01:00",
+  "environment": {
+    "python": "3.15.2 (tags/v3.15.2:5e58eaa, Oct 25 2026, 17:27:03) [MSC v.1951 64 bit (AMD64)]",
+    "executable": "D:\\NourAI\\.venv\\Scripts\\python.exe",
+    "os": "Windows-10-10.0.19045-SP0",
+    "processor": "Intel64 Family 6 Model 142 Stepping 12, GenuineIntel",
+    "logical_cpus": 4,
+    "torch": "2.15.0+cpu",
+    "torch_device": "cpu",
+    "cuda_used": false,
+    "torch_cpu_threads": 2,
+    "memory_before": {
+      "available": true,
+      "ram_total_bytes": 8475860992,
+      "ram_available_bytes": 4193746944,
+      "ram_used_percent": 50,
+      "process_working_set_bytes": 215150592,
+      "process_peak_working_set_bytes": 215154688,
+      "process_pagefile_bytes": 297848832
+    },
+    "memory_after": {
+      "available": true,
+      "ram_total_bytes": 8475860992,
+      "ram_available_bytes": 4187123712,
+      "ram_used_percent": 50,
+      "process_working_set_bytes": 222920704,
+      "process_peak_working_set_bytes": 222945280,
+      "process_pagefile_bytes": 303263744
+    }
+  },
+  "tokenizer": {
+    "name": "ByteTokenizer",
+    "vocab_size": 260,
+    "corpus_path": "D:\\NourAI\\data\\processed\\phase8\\imported\\tatoeba_cc0_multilingual_v4.jsonl",
+    "corpus_records": 55719,
+    "characters": 4263825,
+    "tokens": 4305623,
+    "elapsed_seconds": 1.3550372000026982,
+    "records_per_second": 41119.90430955626,
+    "tokens_per_second": 3177494.3152788915,
+    "invalid_rows": 0,
+    "invalid_token_ids": 0,
+    "roundtrip_failures": 0,
+    "length_benchmarks": [
+      {
+        "characters_per_text": 32,
+        "repeats": 125000,
+        "tokens": 5375000,
+        "elapsed_seconds": 0.09339350000664126,
+        "tokens_per_second": 57552185.105149515
+      },
+      {
+        "characters_per_text": 256,
+        "repeats": 15625,
+        "tokens": 5328125,
+        "elapsed_seconds": 0.09757210001407657,
+        "tokens_per_second": 54607054.672711976
+      },
+      {
+        "characters_per_text": 2048,
+        "repeats": 1953,
+        "tokens": 5335596,
+        "elapsed_seconds": 0.03822590000345372,
+        "tokens_per_second": 139580650.8026738
+      },
+      {
+        "characters_per_text": 16384,
+        "repeats": 244,
+        "tokens": 5330668,
+        "elapsed_seconds": 0.03566789999604225,
+        "tokens_per_second": 149452813.3305156
+      }
+    ],
+    "measurement_note": "Length benchmark uses deterministic multilingual synthetic strings; corpus throughput uses all actual imported records."
+  },
+  "dataset": {
+    "path": "D:\\NourAI\\reports\\phase10\\final_closure_v2\\splits_v2_verified",
+    "splits": {
+      "train": {
+        "records_in_jsonl": 50144,
+        "dataset_sequences": 30716,
+        "token_count": 3931688,
+        "initialization_seconds": 16.33190900000045,
+        "tokenization_tokens_per_second": 240736.5850495427
+      },
+      "validation": {
+        "records_in_jsonl": 2787,
+        "dataset_sequences": 1667,
+        "token_count": 213486,
+        "initialization_seconds": 1.0986718000058318,
+        "tokenization_tokens_per_second": 194312.8056976313
+      },
+      "test": {
+        "records_in_jsonl": 2785,
+        "dataset_sequences": 1686,
+        "token_count": 215909,
+        "initialization_seconds": 1.1362066000001505,
+        "tokenization_tokens_per_second": 190026.18009785493
+      }
+    },
+    "note": "Each full JSONL split was read and byte-tokenized by the existing TokenSequenceDataset; no training was run."
+  },
+  "dataloader": {
+    "configured_batch_size": 8,
+    "workers": {
+      "full_corpus_worker_count": 0,
+      "alternate_worker_test": {
+        "num_workers": 1,
+        "status": "PASS",
+        "batches": 64,
+        "input_tokens": 65536,
+        "elapsed_seconds": 2.3872778000077233,
+        "tokens_per_second": 27452.188429762125,
+        "mean_batch_seconds": 0.037145387499094795,
+        "median_batch_seconds": 0.0016078499975265004,
+        "p95_batch_seconds": 0.0016985999973258004,
+        "first_batch_sha256": "57f86da7e95904c53be32e62641032891ad2a1ace8a0205aeb5d777d1ba63e80",
+        "shapes_valid": true,
+        "dtypes_valid": true,
+        "next_token_shift_valid": true
+      }
+    },
+    "full_pass_configured_batch_size": {
+      "train": {
+        "batches": 3840,
+        "input_tokens": 3931648,
+        "elapsed_seconds": 3.746693299995968,
+        "tokens_per_second": 1049364.7825415095,
+        "mean_batch_seconds": 0.0009695443750009266,
+        "median_batch_seconds": 0.0009778500025277026,
+        "p95_batch_seconds": 0.0009934999980032444,
+        "first_batch_sha256": "57f86da7e95904c53be32e62641032891ad2a1ace8a0205aeb5d777d1ba63e80",
+        "shapes_valid": true,
+        "dtypes_valid": true,
+        "next_token_shift_valid": true
+      },
+      "validation": {
+        "batches": 209,
+        "input_tokens": 213376,
+        "elapsed_seconds": 0.20474660000763834,
+        "tokens_per_second": 1042146.7315796196,
+        "mean_batch_seconds": 0.0009722784694209561,
+        "median_batch_seconds": 0.000982900004601106,
+        "p95_batch_seconds": 0.0009992999985115603,
+        "first_batch_sha256": "26dc695542927998c1d194cc3e72eeb8c1de034e138de7960844b549dddae9ec",
+        "shapes_valid": true,
+        "dtypes_valid": true,
+        "next_token_shift_valid": true
+      },
+      "test": {
+        "batches": 211,
+        "input_tokens": 215808,
+        "elapsed_seconds": 0.20004180000978522,
+        "tokens_per_second": 1078814.5277109263,
+        "mean_batch_seconds": 0.0009411132700109007,
+        "median_batch_seconds": 0.0009485000045970082,
+        "p95_batch_seconds": 0.0009580000041751191,
+        "first_batch_sha256": "e00b5be8967463d6187d81d454898f0ddb8fe61711d7daed651329c3e0dd42ac",
+        "shapes_valid": true,
+        "dtypes_valid": true,
+        "next_token_shift_valid": true
+      }
+    },
+    "alternate_batch_size_sampled": {
+      "1": {
+        "batches": 128,
+        "input_tokens": 16384,
+        "elapsed_seconds": 0.02446820000477601,
+        "tokens_per_second": 669603.8121644406,
+        "mean_batch_seconds": 0.0001844031248765532,
+        "median_batch_seconds": 0.00018309999722987413,
+        "p95_batch_seconds": 0.0001883999939309433,
+        "first_batch_sha256": "fbe37ec07d9264f0b20b66d1077bca1eeee2afb0bb3d6c5d361f0e6c31b31076",
+        "shapes_valid": true,
+        "dtypes_valid": true,
+        "next_token_shift_valid": true
+      },
+      "16": {
+        "batches": 128,
+        "input_tokens": 262144,
+        "elapsed_seconds": 0.23352470000099856,
+        "tokens_per_second": 1122553.6313669563,
+        "mean_batch_seconds": 0.001816614062931876,
+        "median_batch_seconds": 0.0018145499998354353,
+        "p95_batch_seconds": 0.001829200002248399,
+        "first_batch_sha256": "ad61cccc11e6dd51408a8d80303f5aefc4d3131b17d6db1f39a91ff8a50068ee",
+        "shapes_valid": true,
+        "dtypes_valid": true,
+        "next_token_shift_valid": true
+      }
+    },
+    "determinism": {
+      "seed": 1337,
+      "first_batch_hash_run1": "56fd1cd81c34d025e5497789bb2a764651cf97ee9776b5eabf5e08a6c7bcd08e",
+      "first_batch_hash_run2": "56fd1cd81c34d025e5497789bb2a764651cf97ee9776b5eabf5e08a6c7bcd08e",
+      "repeatable": true
+    },
+    "note": "Configured batch size processed every sequence in each split; batch sizes 1/16 and worker=1 measurements use at most 128/64 batches."
+  },
+  "total_elapsed_seconds": 27.607694899998023,
+  "training_started": false
+}

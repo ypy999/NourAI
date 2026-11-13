@@ -1,0 +1,230 @@
+{
+  "records": 55719,
+  "tokens_including_eos": 4361342,
+  "utf8_bytes": 4305623,
+  "parse_or_metric_errors": 0,
+  "languages": {
+    "arabic": {
+      "records": 2,
+      "tokens_including_eos": 99,
+      "utf8_bytes": 97,
+      "characters": 56,
+      "mean_characters": 28.0,
+      "mean_quality_score": 100.0,
+      "quality_distribution": {
+        "90-100": 2
+      },
+      "unique_domains": 2,
+      "domain_counts": {
+        "Conversations": 1,
+        "Other": 1
+      },
+      "verified_domain_count": 0,
+      "unique_sources": 1,
+      "sources": [
+        "tatoeba_cc0"
+      ],
+      "exact_duplicates": 0,
+      "normalized_duplicates": 0,
+      "empty_records": 0,
+      "record_share": 3.589439867908613e-05,
+      "token_share": 2.2699435173852453e-05,
+      "byte_share": 2.2528679357203358e-05,
+      "domain_coverage": 0.16666666666666666,
+      "source_coverage": 1.0,
+      "quality_factor": 1.0
+    },
+    "english": {
+      "records": 33141,
+      "tokens_including_eos": 3076879,
+      "utf8_bytes": 3043738,
+      "characters": 3036940,
+      "mean_characters": 91.63694517365197,
+      "mean_quality_score": 100.0,
+      "quality_distribution": {
+        "90-100": 33141
+      },
+      "unique_domains": 12,
+      "domain_counts": {
+        "Other": 26119,
+        "Conversations": 1040,
+        "General Knowledge": 2467,
+        "Education": 707,
+        "Mathematics": 275,
+        "Geography": 1031,
+        "Technology": 366,
+        "News": 860,
+        "Literature": 445,
+        "Science": 372,
+        "Programming": 189,
+        "History": 656
+      },
+      "verified_domain_count": 0,
+      "unique_sources": 1,
+      "sources": [
+        "tatoeba_cc0"
+      ],
+      "exact_duplicates": 0,
+      "normalized_duplicates": 0,
+      "empty_records": 0,
+      "record_share": 0.5947881333117967,
+      "token_share": 0.7054890444271511,
+      "byte_share": 0.7069216231890252,
+      "domain_coverage": 1.0,
+      "source_coverage": 1.0,
+      "quality_factor": 1.0
+    },
+    "french": {
+      "records": 13014,
+      "tokens_including_eos": 918573,
+      "utf8_bytes": 905559,
+      "characters": 873076,
+      "mean_characters": 67.0874442907638,
+      "mean_quality_score": 100.0,
+      "quality_distribution": {
+        "90-100": 13014
+      },
+      "unique_domains": 12,
+      "domain_counts": {
+        "Other": 10905,
+        "Conversations": 536,
+        "Geography": 146,
+        "General Knowledge": 502,
+        "Science": 192,
+        "Mathematics": 69,
+        "History": 200,
+        "Literature": 263,
+        "Education": 145,
+        "Technology": 161,
+        "Programming": 42,
+        "News": 113
+      },
+      "verified_domain_count": 0,
+      "unique_sources": 1,
+      "sources": [
+        "tatoeba_cc0"
+      ],
+      "exact_duplicates": 0,
+      "normalized_duplicates": 0,
+      "empty_records": 0,
+      "record_share": 0.23356485220481343,
+      "token_share": 0.21061705319142593,
+      "byte_share": 0.21032008608278058,
+      "domain_coverage": 1.0,
+      "source_coverage": 1.0,
+      "quality_factor": 1.0
+    },
+    "mixed": {
+      "records": 772,
+      "tokens_including_eos": 69113,
+      "utf8_bytes": 68341,
+      "characters": 66335,
+      "mean_characters": 85.9261658031088,
+      "mean_quality_score": 100.0,
+      "quality_distribution": {
+        "90-100": 772
+      },
+      "unique_domains": 12,
+      "domain_counts": {
+        "Other": 585,
+        "Conversations": 89,
+        "Geography": 26,
+        "Education": 12,
+        "News": 11,
+        "General Knowledge": 33,
+        "History": 20,
+        "Literature": 20,
+        "Science": 10,
+        "Technology": 3,
+        "Mathematics": 2,
+        "Programming": 2
+      },
+      "verified_domain_count": 0,
+      "unique_sources": 1,
+      "sources": [
+        "tatoeba_cc0"
+      ],
+      "exact_duplicates": 0,
+      "normalized_duplicates": 0,
+      "empty_records": 0,
+      "record_share": 0.013855237890127246,
+      "token_share": 0.015846727910812774,
+      "byte_share": 0.0158724997520684,
+      "domain_coverage": 1.0,
+      "source_coverage": 1.0,
+      "quality_factor": 1.0
+    },
+    "unknown": {
+      "records": 8790,
+      "tokens_including_eos": 296678,
+      "utf8_bytes": 287888,
+      "characters": 287418,
+      "mean_characters": 32.69829351535836,
+      "mean_quality_score": 100.0,
+      "quality_distribution": {
+        "90-100": 8790
+      },
+      "unique_domains": 12,
+      "domain_counts": {
+        "Other": 7955,
+        "History": 22,
+        "Programming": 2,
+        "General Knowledge": 452,
+        "News": 40,
+        "Education": 61,
+        "Conversations": 189,
+        "Science": 12,
+        "Geography": 20,
+        "Technology": 18,
+        "Literature": 31,
+        "Mathematics": 7
+      },
+      "verified_domain_count": 0,
+      "unique_sources": 1,
+      "sources": [
+        "tatoeba_cc0"
+      ],
+      "exact_duplicates": 0,
+      "normalized_duplicates": 0,
+      "empty_records": 0,
+      "record_share": 0.15775588219458353,
+      "token_share": 0.06802447503543634,
+      "byte_share": 0.06686326229676867,
+      "domain_coverage": 1.0,
+      "source_coverage": 1.0,
+      "quality_factor": 1.0
+    }
+  },
+  "target_ratios": {
+    "arabic": 0.35,
+    "english": 0.27,
+    "french": 0.27,
+    "mixed": 0.06,
+    "unknown": 0.05
+  },
+  "effective_support_shares": {
+    "arabic": 0.11111766991532641,
+    "english": 0.3237851035343438,
+    "french": 0.21451121076817625,
+    "mixed": 0.16529842606809653,
+    "unknown": 0.18528758971405698
+  },
+  "sampling_weights": {
+    "arabic": 3.76016,
+    "english": 0.99547,
+    "french": 1.502572,
+    "mixed": 0.433315,
+    "unknown": 0.32214
+  },
+  "sampling_weight_formula": "composite support = 0.20*record share + 0.25*ByteTokenizer-token share + 0.15*UTF-8 byte share + 0.15*relative domain coverage + 0.15*relative source coverage + 0.10*(mean Quality Score/100); weight = configured target ratio / normalized composite support; normalized to mean record weight 1 and clipped to configured bounds",
+  "sampling_weight_bounds": {
+    "minimum": 0.1,
+    "maximum": 10.0
+  },
+  "total_exact_duplicates": 0,
+  "total_normalized_duplicates": 0,
+  "duplicate_fraction": 0.0,
+  "empty_records": 0,
+  "records_modified_or_deleted": 0,
+  "note": "Weights are recommendations only; source records remain unchanged and an empty language group cannot be sampled."
+}

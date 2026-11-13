@@ -1,0 +1,5 @@
+{
+  "status": "NOT_RUN_ON_FULL_CORPUS",
+  "reason": "No complete corpus-wide candidate scan was run; no candidates are claimed.",
+  "deletion_performed": false
+}

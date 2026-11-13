@@ -1,0 +1,44 @@
+{
+  "status": "PHASE_10_INFRASTRUCTURE_COMPLETE",
+  "created_at": "2026-11-13T08:36:12.561018+01:00",
+  "infrastructure_substatus": "PASS; SQLite provenance, delegated pair review, integrity and regression verified",
+  "language_statuses": {
+    "arabic": "NOT_READY",
+    "english": "NOT_READY",
+    "french": "NOT_READY"
+  },
+  "gates": {
+    "sqlite_provenance": "PASS: 55,716 verified mappings; backup and rollback verified",
+    "delegated_similarity_review": "PASS: 15/15 decisions; 12 removed from derived eval copies; 3 kept",
+    "source_id_exact_normalized_leakage": "PASS: zero intersections",
+    "near_duplicate_leakage": "PASS across splits: 0 candidates; 35 additional pairs are Train-Train and retained",
+    "document_leakage": "NOT_CHECKABLE; policy documented",
+    "source_licenses": "reviewed; 11 remain RESTRICTED/UNVERIFIED; no import",
+    "non_training_tests": "159 passed, 0 failed, 0 skipped",
+    "training_tests": "21 collected only"
+  },
+  "phase11_allowed": false,
+  "training_started": false,
+  "cuda_used": false,
+  "new_corpus_imported": 0,
+  "phase8_originals_modified": false,
+  "derived_split_counts": {
+    "train": 50144,
+    "validation": 2782,
+    "test": 2778
+  },
+  "sqlite_split_counts": [
+    [
+      "test",
+      2785
+    ],
+    [
+      "train",
+      50144
+    ],
+    [
+      "validation",
+      2787
+    ]
+  ]
+}

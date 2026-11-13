@@ -1,0 +1,1 @@
+{"overall_status":"NOT_READY","language_statuses":{"arabic":"NOT_READY","english":"UNKNOWN","french":"UNKNOWN"},"training_started":false,"reason":"Arabic has only 2 records and no validation/test coverage; source and domain diversity policy is unmet."}

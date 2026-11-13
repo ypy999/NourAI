@@ -1,0 +1,36 @@
+{
+  "status": "PHASE_10_PARTIALLY_COMPLETE",
+  "created_at_local": "2026-11-13T01:50:51+01:00",
+  "decision": "Do not approve Phase 10 complete; do not proceed to Phase 11.",
+  "completed": [
+    "Explicit split provenance verified in a new copy; Phase 8 originals preserved.",
+    "Exact and normalized leakage checks passed.",
+    "Full-corpus near-duplicate candidate scan run.",
+    "All 12 source-registry entries re-reviewed against official pages.",
+    "CPU performance and Dataset/DataLoader integration measured.",
+    "Security path escapes fixed and tested.",
+    "Final non-training suite passed."
+  ],
+  "gates": {
+    "split_provenance": "VERIFIED_IN_DERIVED_COPY; legacy SQLite IDs untrusted",
+    "document_leakage": "NOT_CHECKABLE",
+    "near_duplicate": "SCAN_COMPLETE; 12 CROSS-SPLIT CANDIDATES PENDING HUMAN REVIEW",
+    "legal": "USED TATOEBA_CC0 VERIFIED; OTHER SOURCES NOT APPROVED",
+    "performance": "CPU_MEASURED",
+    "security": "AUDITED; LOW RESIDUAL RISKS DOCUMENTED",
+    "dataset_dataloader": "PASS_WITH_FIXED_WINDOW_LIMITS",
+    "non_training_tests": "156_PASS_0_FAIL_0_SKIP",
+    "languages": {
+      "arabic": "NOT_READY",
+      "english": "NOT_READY",
+      "french": "NOT_READY"
+    }
+  },
+  "reports_directory": "D:\\NourAI\\reports\\phase10\\final_closure_v2",
+  "phase11_allowed": false,
+  "training_started": false,
+  "cuda_used": false,
+  "new_data_imported": 0,
+  "sqlite_modified": false,
+  "phase8_originals_modified": false
+}

@@ -1,0 +1,69 @@
+{
+  "status": "BLOCKERS_REMAIN",
+  "created_at_local": "2026-11-13T01:50:51+01:00",
+  "phase10_status": "PHASE_10_PARTIALLY_COMPLETE",
+  "blockers": [
+    {
+      "id": "B1",
+      "severity": "CRITICAL_DATA_INTEGRITY",
+      "status": "OPEN",
+      "description": "55,716 legacy SQLite split source_record_id values are generated line labels such as train:1.",
+      "required": "Separately approved backup/migration or corrected DB copy; reconcile only from explicit source references."
+    },
+    {
+      "id": "B2",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "description": "Document leakage NOT_CHECKABLE: no genuine document/group IDs.",
+      "required": "Obtain authentic IDs or formally assess sentence-level split policy; never claim this check passed."
+    },
+    {
+      "id": "B3",
+      "severity": "HIGH",
+      "status": "OPEN_REVIEW",
+      "description": "12 cross-split near-duplicate LSH candidates await human decisions; scan is not exhaustive all-pairs.",
+      "required": "Review candidates and record decisions; never auto-delete."
+    },
+    {
+      "id": "B4",
+      "severity": "HIGH_READINESS",
+      "status": "OPEN",
+      "description": "Arabic/English/French are NOT_READY; Arabic lacks validation/test; English/French lack source/domain diversity under policy.",
+      "required": "Legally cleared traceable sources and independent splits after authorization."
+    },
+    {
+      "id": "B5",
+      "severity": "MEDIUM_PROVENANCE",
+      "status": "OPEN",
+      "description": "Explicit pipeline_version and document IDs absent; normalization version only partial.",
+      "required": "Add prospectively; do not infer historical values."
+    }
+  ],
+  "completed": {
+    "raw_import": "55,719 matched by ID per prior report, not repeated",
+    "split_mapping": "55,716 via explicit source path+line",
+    "source_id_leakage": 0,
+    "exact_leakage": 0,
+    "normalized_leakage": 0,
+    "sqlite_integrity": [
+      "ok"
+    ],
+    "fk_violations": 0,
+    "near_duplicates_examined": 55719,
+    "legal_sources_reviewed": 12,
+    "tests": "156 pass / 0 fail / 0 skip",
+    "security": "Path-boundary fixes tested"
+  },
+  "language_statuses": {
+    "arabic": "NOT_READY",
+    "english": "NOT_READY",
+    "french": "NOT_READY"
+  },
+  "not_claimed": [
+    "language understanding",
+    "absence of document leakage",
+    "near-duplicate clearance",
+    "approval of restricted/unverified sources",
+    "training readiness"
+  ]
+}

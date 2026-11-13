@@ -1,0 +1,155 @@
+{
+  "status": "INTEGRATION_PASSED_WITH_FIXED_WINDOW_LIMITATIONS_DOCUMENTED",
+  "created_at_local": "2026-11-13T01:50:51+01:00",
+  "input": {
+    "directory": "D:\\NourAI\\reports\\phase10\\final_closure_v2\\splits_v2_verified",
+    "read_only": true,
+    "records": {
+      "train": 50144,
+      "validation": 2787,
+      "test": 2785
+    }
+  },
+  "dataset": {
+    "class": "datasets.dataset.TokenSequenceDataset",
+    "tokenizer": "ByteTokenizer",
+    "vocab_size": 260,
+    "sequence_length": 128,
+    "tokens_including_eos": {
+      "train": 3931688,
+      "validation": 213486,
+      "test": 215909
+    },
+    "examples": {
+      "train": 30716,
+      "validation": 1667,
+      "test": 1686
+    },
+    "dtype": "torch.int64",
+    "shape": "sequence [L], batch [B,L]",
+    "next_token_shift_valid": true,
+    "padding": "none; fixed windows",
+    "attention_mask": "not returned; Transformer applies causal mask",
+    "tail": "partial final context window omitted",
+    "record_boundary": "EOS appended per record; windows traverse concatenated stream"
+  },
+  "tokenizer": {
+    "records": 55719,
+    "roundtrip_failures": 0,
+    "invalid_rows": 0,
+    "invalid_ids": 0,
+    "languages": [
+      "Arabic",
+      "English",
+      "French",
+      "mixed Unicode test fixtures"
+    ]
+  },
+  "dataloader": {
+    "batch_size": 8,
+    "workers": {
+      "full_corpus_worker_count": 0,
+      "alternate_worker_test": {
+        "num_workers": 1,
+        "status": "PASS",
+        "batches": 64,
+        "input_tokens": 65536,
+        "elapsed_seconds": 2.3872778000077233,
+        "tokens_per_second": 27452.188429762125,
+        "mean_batch_seconds": 0.037145387499094795,
+        "median_batch_seconds": 0.0016078499975265004,
+        "p95_batch_seconds": 0.0016985999973258004,
+        "first_batch_sha256": "57f86da7e95904c53be32e62641032891ad2a1ace8a0205aeb5d777d1ba63e80",
+        "shapes_valid": true,
+        "dtypes_valid": true,
+        "next_token_shift_valid": true
+      }
+    },
+    "full_pass": {
+      "train": {
+        "batches": 3840,
+        "input_tokens": 3931648,
+        "elapsed_seconds": 3.746693299995968,
+        "tokens_per_second": 1049364.7825415095,
+        "mean_batch_seconds": 0.0009695443750009266,
+        "median_batch_seconds": 0.0009778500025277026,
+        "p95_batch_seconds": 0.0009934999980032444,
+        "first_batch_sha256": "57f86da7e95904c53be32e62641032891ad2a1ace8a0205aeb5d777d1ba63e80",
+        "shapes_valid": true,
+        "dtypes_valid": true,
+        "next_token_shift_valid": true
+      },
+      "validation": {
+        "batches": 209,
+        "input_tokens": 213376,
+        "elapsed_seconds": 0.20474660000763834,
+        "tokens_per_second": 1042146.7315796196,
+        "mean_batch_seconds": 0.0009722784694209561,
+        "median_batch_seconds": 0.000982900004601106,
+        "p95_batch_seconds": 0.0009992999985115603,
+        "first_batch_sha256": "26dc695542927998c1d194cc3e72eeb8c1de034e138de7960844b549dddae9ec",
+        "shapes_valid": true,
+        "dtypes_valid": true,
+        "next_token_shift_valid": true
+      },
+      "test": {
+        "batches": 211,
+        "input_tokens": 215808,
+        "elapsed_seconds": 0.20004180000978522,
+        "tokens_per_second": 1078814.5277109263,
+        "mean_batch_seconds": 0.0009411132700109007,
+        "median_batch_seconds": 0.0009485000045970082,
+        "p95_batch_seconds": 0.0009580000041751191,
+        "first_batch_sha256": "e00b5be8967463d6187d81d454898f0ddb8fe61711d7daed651329c3e0dd42ac",
+        "shapes_valid": true,
+        "dtypes_valid": true,
+        "next_token_shift_valid": true
+      }
+    },
+    "alternate_batch_samples": {
+      "1": {
+        "batches": 128,
+        "input_tokens": 16384,
+        "elapsed_seconds": 0.02446820000477601,
+        "tokens_per_second": 669603.8121644406,
+        "mean_batch_seconds": 0.0001844031248765532,
+        "median_batch_seconds": 0.00018309999722987413,
+        "p95_batch_seconds": 0.0001883999939309433,
+        "first_batch_sha256": "fbe37ec07d9264f0b20b66d1077bca1eeee2afb0bb3d6c5d361f0e6c31b31076",
+        "shapes_valid": true,
+        "dtypes_valid": true,
+        "next_token_shift_valid": true
+      },
+      "16": {
+        "batches": 128,
+        "input_tokens": 262144,
+        "elapsed_seconds": 0.23352470000099856,
+        "tokens_per_second": 1122553.6313669563,
+        "mean_batch_seconds": 0.001816614062931876,
+        "median_batch_seconds": 0.0018145499998354353,
+        "p95_batch_seconds": 0.001829200002248399,
+        "first_batch_sha256": "ad61cccc11e6dd51408a8d80303f5aefc4d3131b17d6db1f39a91ff8a50068ee",
+        "shapes_valid": true,
+        "dtypes_valid": true,
+        "next_token_shift_valid": true
+      }
+    },
+    "seeded_repeatability": true
+  },
+  "memory": {
+    "process_before": 215150592,
+    "process_peak_after": 222945280,
+    "ram_total": 8475860992,
+    "ram_available_after": 4187123712
+  },
+  "tests": {
+    "focused": "33 passed / 0 failed / 0 skipped",
+    "full": "156 passed / 0 failed / 0 skipped",
+    "cuda_used": false
+  },
+  "limitations": [
+    "Input correctness is not learning quality/training speed.",
+    "No document grouping/mask available without authentic document IDs.",
+    "Variable-length padding not used by fixed-window API."
+  ]
+}

@@ -1,0 +1,169 @@
+"""CPU-first training loop with validation, accumulation and resumable checkpoints."""
+import math
+import random
+import time
+
+import torch
+
+from .checkpoint_manager import CheckpointManager
+from .early_stopping import EarlyStopping
+from .logger import JsonlLogger
+from .metrics import LossAccumulator, memory_usage_mb
+from .optimizer import create_optimizer
+from .scheduler import create_scheduler
+from .validator import validate
+
+
+class Trainer:
+    def __init__(self, model, config, train_loader, validation_loader,
+                 checkpoint_manager=None, logger=None):
+        if config.device != "cpu":
+            raise RuntimeError("this training run is configured for CPU only; CUDA was not initialized")
+        if config.precision != "fp32":
+            raise ValueError("mixed precision is not enabled for CPU training; select precision='fp32'")
+        if len(train_loader) == 0 or len(validation_loader) == 0:
+            raise ValueError("training and validation loaders must both contain batches")
+        self.model = model.to("cpu")
+        self.config = config
+        self.train_loader, self.validation_loader = train_loader, validation_loader
+        self.optimizer = create_optimizer(model, config)
+        steps_per_epoch = math.ceil(len(train_loader) / config.gradient_accumulation_steps)
+        total_steps = config.max_training_steps or steps_per_epoch * config.epochs
+        self.scheduler = create_scheduler(self.optimizer, config.scheduler_type, total_steps, config.warmup_steps)
+        self.checkpoints = checkpoint_manager or CheckpointManager("checkpoints/phase5", keep=config.checkpoint_keep)
+        self.logger = logger or JsonlLogger("reports/training.jsonl")
+        self.early_stopping = EarlyStopping(config.early_stopping_patience, config.early_stopping_min_delta, config.early_stopping)
+        self.epoch = 0
+        self.batch_in_epoch = 0
+        self.global_step = 0
+        self.best_validation_loss = None
+        self.history = []
+        self._resumed = False
+        self._stop_requested = False
+
+    def request_stop(self):
+        """Request a graceful stop at the next optimizer boundary."""
+        self._stop_requested = True
+
+    def resume(self, path=None):
+        payload = self.checkpoints.load(path, model=self.model, optimizer=self.optimizer,
+                                        scheduler=self.scheduler, config=self.config, restore_rng=True)
+        self.epoch = int(payload.get("trainer_state", {}).get("epoch", payload["epoch"] + 1))
+        self.batch_in_epoch = int(payload.get("trainer_state", {}).get("batch_in_epoch", 0))
+        self.global_step = int(payload["global_step"])
+        self.best_validation_loss = payload.get("best_validation_loss")
+        self._resumed = True
+        if payload.get("early_stopping_state"):
+            self.early_stopping.load_state_dict(payload["early_stopping_state"])
+        return payload
+
+    def _save(self, epoch, next_batch, best=False):
+        args = dict(model=self.model, optimizer=self.optimizer, scheduler=self.scheduler,
+                    epoch=epoch, global_step=self.global_step, config=self.config,
+                    best_validation_loss=self.best_validation_loss,
+                    trainer_state={"epoch": epoch, "batch_in_epoch": next_batch},
+                    early_stopping_state=self.early_stopping.state_dict())
+        return self.checkpoints.save_best(**args) if best else self.checkpoints.save(**args)
+
+    def fit(self, resume=False):
+        if resume:
+            self.resume()
+        if not self._resumed:
+            random.seed(self.config.random_seed)
+            torch.manual_seed(self.config.random_seed)
+        reports = []
+        stop = False
+        self.optimizer.zero_grad(set_to_none=True)
+        for epoch in range(self.epoch, self.config.epochs):
+            self.epoch = epoch
+            epoch_started = time.perf_counter()
+            generator = getattr(self.train_loader, "generator", None)
+            if generator is not None:
+                generator.manual_seed(self.config.random_seed + epoch)
+            self.model.train()
+            training = LossAccumulator()
+            started = time.perf_counter()
+            tokens_since_log = 0
+            start_batch = self.batch_in_epoch if epoch == self.epoch else 0
+            # The stored cursor is consumed only for the epoch being resumed.
+            if epoch != self.epoch:
+                start_batch = 0
+            validated_at_step = -1
+            next_batch = start_batch
+            for batch_index, (input_ids, target_ids) in enumerate(self.train_loader):
+                if batch_index < start_batch:
+                    continue
+                input_ids, target_ids = input_ids.to("cpu"), target_ids.to("cpu")
+                group_start = batch_index - batch_index % self.config.gradient_accumulation_steps
+                group_size = min(self.config.gradient_accumulation_steps, len(self.train_loader) - group_start)
+                _, loss = self.model(input_ids, target_ids)
+                if loss is None or not torch.isfinite(loss):
+                    raise FloatingPointError(f"non-finite training loss at epoch {epoch}, batch {batch_index}")
+                token_count = target_ids.numel()
+                training.update(loss.item(), token_count)
+                tokens_since_log += token_count
+                (loss / group_size).backward()
+                last_batch = batch_index + 1 == len(self.train_loader)
+                optimizer_boundary = (batch_index + 1) % self.config.gradient_accumulation_steps == 0 or last_batch
+                if not optimizer_boundary:
+                    continue
+                grad_norm = torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.config.gradient_clip_norm, error_if_nonfinite=True)
+                if not torch.isfinite(grad_norm):
+                    raise FloatingPointError("non-finite gradient norm")
+                self.optimizer.step()
+                self.scheduler.step()
+                self.optimizer.zero_grad(set_to_none=True)
+                self.global_step += 1
+                elapsed = max(time.perf_counter() - started, 1e-9)
+                self.logger.log({"event": "train_step", "epoch": epoch, "step": self.global_step,
+                                 "training_loss": training.average_loss,
+                                 "learning_rate": self.optimizer.param_groups[0]["lr"],
+                                 "step_time_seconds": elapsed,
+                                 "tokens_per_second": tokens_since_log / elapsed,
+                                 "memory_mb": memory_usage_mb(), "gradient_norm": float(grad_norm)})
+                tokens_since_log = 0
+                started = time.perf_counter()
+                next_batch = batch_index + 1
+                if self.global_step % self.config.validation_interval == 0:
+                    val = validate(self.model, self.validation_loader, "cpu")
+                    record = {"epoch": epoch, "step": self.global_step, **val}
+                    reports.append(record); self.history.append(record)
+                    improved, should_stop = self.early_stopping.update(val["validation_loss"])
+                    if improved:
+                        self.best_validation_loss = val["validation_loss"]
+                        self._save(epoch, next_batch, best=True)
+                    self.logger.log({"event": "validation", **record, "best": improved,
+                                     "memory_mb": memory_usage_mb()})
+                    validated_at_step = self.global_step
+                    if should_stop:
+                        stop = True
+                if self.global_step % self.config.checkpoint_interval == 0:
+                    self._save(epoch, next_batch)
+                if self._stop_requested:
+                    self._save(epoch, next_batch)
+                    stop = True
+                if stop or (self.config.max_training_steps and self.global_step >= self.config.max_training_steps):
+                    break
+            epoch_complete = next_batch >= len(self.train_loader)
+            self.batch_in_epoch = 0 if epoch_complete else next_batch
+            self.epoch = epoch + 1 if epoch_complete else epoch
+            if validated_at_step != self.global_step and self.global_step:
+                val = validate(self.model, self.validation_loader, "cpu")
+                record = {"epoch": epoch, "step": self.global_step, **val}
+                reports.append(record); self.history.append(record)
+                improved, should_stop = self.early_stopping.update(val["validation_loss"])
+                if improved:
+                    self.best_validation_loss = val["validation_loss"]
+                    self._save(self.epoch, self.batch_in_epoch, best=True)
+                self.logger.log({"event": "validation", **record, "best": improved,
+                                 "memory_mb": memory_usage_mb()})
+                stop = stop or should_stop
+            self._save(self.epoch, self.batch_in_epoch)
+            self.logger.log({"event": "epoch_end", "epoch": epoch,
+                             "training_loss": training.average_loss,
+                             "validation_loss": reports[-1]["validation_loss"] if reports else None,
+                             "global_step": self.global_step,
+                             "epoch_time_seconds": time.perf_counter() - epoch_started})
+            if stop or (self.config.max_training_steps and self.global_step >= self.config.max_training_steps):
+                break
+        return reports

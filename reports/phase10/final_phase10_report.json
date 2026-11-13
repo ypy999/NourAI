@@ -1,0 +1,190 @@
+{
+  "generated_at": "2026-11-13T00:45:55.485426+01:00",
+  "environment": {
+    "python": "3.15.2 (tags/v3.15.2:5e58eaa, Oct 25 2026, 17:27:03) [MSC v.1951 64 bit (AMD64)]",
+    "os": "Windows-10-10.0.19045-SP0",
+    "sqlite": "3.53.4"
+  },
+  "corpus_files": {
+    "imported": {
+      "path": "D:\\NourAI\\data\\processed\\phase8\\imported\\tatoeba_cc0_multilingual_v4.jsonl",
+      "records": 55719,
+      "empty": 0,
+      "invalid_utf8_or_json_or_schema": 0,
+      "sha256": "00f752ca1b78d27fc717a8664bb2c7ebd0f001b2ace11685e1d36456ebb1841a",
+      "languages": {
+        "eng": 41515,
+        "fra": 14202,
+        "ara": 2
+      },
+      "mean_chars": 76.5237172239272,
+      "median_chars": 51,
+      "min_chars": 3,
+      "max_chars": 1415,
+      "provenance_field_coverage_counts": {
+        "source_id": 55719,
+        "source_record_id": 55719,
+        "document_id": 0,
+        "license_id": 55719,
+        "raw_sha256": 0,
+        "dataset_version": 55719
+      },
+      "duplicate_ids": 0,
+      "exact_duplicates_within": 0,
+      "normalized_duplicates_within": 0
+    },
+    "normalized": {
+      "path": "D:\\NourAI\\data\\processed\\phase8\\normalized\\tatoeba_cc0_multilingual_v4.normalized.cleaned.jsonl",
+      "records": 55719,
+      "empty": 0,
+      "invalid_utf8_or_json_or_schema": 0,
+      "sha256": "66fb4f80b7788ff1c236a96038edf4d649981169369f97f7aa4a21c6bbdb36d3",
+      "languages": {
+        "eng": 41515,
+        "fra": 14202,
+        "ara": 2
+      },
+      "mean_chars": 76.5234839103358,
+      "median_chars": 51,
+      "min_chars": 3,
+      "max_chars": 1415,
+      "provenance_field_coverage_counts": {
+        "source_id": 55719,
+        "source_record_id": 55719,
+        "document_id": 0,
+        "license_id": 55719,
+        "raw_sha256": 0,
+        "dataset_version": 55719
+      },
+      "duplicate_ids": 0,
+      "exact_duplicates_within": 0,
+      "normalized_duplicates_within": 0
+    },
+    "train": {
+      "path": "D:\\NourAI\\data\\processed\\phase8\\deduplicated\\splits\\train.jsonl",
+      "records": 50144,
+      "empty": 0,
+      "invalid_utf8_or_json_or_schema": 0,
+      "sha256": "b1f11849397c39f6ca78371bd07ac6dd92cf108ea745f5f47c2f8c6c88d1e24a",
+      "languages": {
+        "UNKNOWN": 50144
+      },
+      "mean_chars": 76.65940092533504,
+      "median_chars": 51.0,
+      "min_chars": 3,
+      "max_chars": 1415,
+      "provenance_field_coverage_counts": {
+        "source_id": 0,
+        "source_record_id": 0,
+        "document_id": 0,
+        "license_id": 0,
+        "raw_sha256": 0,
+        "dataset_version": 0
+      },
+      "duplicate_ids": 0,
+      "exact_duplicates_within": 0,
+      "normalized_duplicates_within": 0
+    },
+    "validation": {
+      "path": "D:\\NourAI\\data\\processed\\phase8\\deduplicated\\splits\\validation.jsonl",
+      "records": 2787,
+      "empty": 0,
+      "invalid_utf8_or_json_or_schema": 0,
+      "sha256": "ed41727c44ac148e8c2916852d2f82fa36be3b7f4a3b85f305fb3d1acbce7d96",
+      "languages": {
+        "UNKNOWN": 2787
+      },
+      "mean_chars": 74.87477574452816,
+      "median_chars": 49,
+      "min_chars": 5,
+      "max_chars": 814,
+      "provenance_field_coverage_counts": {
+        "source_id": 0,
+        "source_record_id": 0,
+        "document_id": 0,
+        "license_id": 0,
+        "raw_sha256": 0,
+        "dataset_version": 0
+      },
+      "duplicate_ids": 0,
+      "exact_duplicates_within": 0,
+      "normalized_duplicates_within": 0
+    },
+    "test": {
+      "path": "D:\\NourAI\\data\\processed\\phase8\\deduplicated\\splits\\test.jsonl",
+      "records": 2785,
+      "empty": 0,
+      "invalid_utf8_or_json_or_schema": 0,
+      "sha256": "b83a834cdbf9082375d5750f642275752a99bc7d13f7df579173362acca4ec1d",
+      "languages": {
+        "UNKNOWN": 2785
+      },
+      "mean_chars": 75.76876122082585,
+      "median_chars": 52,
+      "min_chars": 4,
+      "max_chars": 772,
+      "provenance_field_coverage_counts": {
+        "source_id": 0,
+        "source_record_id": 0,
+        "document_id": 0,
+        "license_id": 0,
+        "raw_sha256": 0,
+        "dataset_version": 0
+      },
+      "duplicate_ids": 0,
+      "exact_duplicates_within": 0,
+      "normalized_duplicates_within": 0
+    }
+  },
+  "cross_split_exact_leakage": {
+    "train|validation": 0,
+    "train|test": 0,
+    "validation|test": 0
+  },
+  "cross_split_document_leakage": "NOT_CHECKABLE: no document_id in split records",
+  "cross_split_source_record_leakage": "NOT_CHECKABLE: no source_record_id in split records",
+  "sqlite": {
+    "integrity_check": [
+      [
+        "ok"
+      ]
+    ],
+    "foreign_key_check": [],
+    "table_counts": {
+      "datasets": 2,
+      "files": 6,
+      "license_current": 4,
+      "license_history": 4,
+      "operations": 3,
+      "records": 111435,
+      "sources": 1
+    }
+  },
+  "readiness": {
+    "arabic": "NOT_READY",
+    "english": "UNKNOWN",
+    "french": "UNKNOWN",
+    "overall": "NOT_READY"
+  },
+  "legal": {
+    "imported_source": "tatoeba_cc0",
+    "status": "VERIFIED per existing source/license registry; no new legal review performed",
+    "new_sources_imported": 0
+  },
+  "splits_v2": "NOT_CREATED: cannot reliably carry source/document identity into legacy text-only split records without verified key mapping",
+  "tests": {
+    "command": ".venv/Scripts/python.exe -m pytest -q -p no:cacheprovider --basetemp reports/phase10/pytest-temp --ignore=tests/test_training.py",
+    "passed": 153,
+    "failed": 0,
+    "skipped": 0,
+    "duration_seconds": 13.31,
+    "excluded": "tests/test_training.py to honor no-training restriction"
+  },
+  "limitations": [
+    "Raw archive IDs matched Imported via source_record_id as recorded in raw_reconciliation.json.",
+    "No semantic quality or human language review performed.",
+    "No near-duplicate cross-split calculation was performed.",
+    "Language counts for splits are unavailable because split files contain text only.",
+    "Training tests were excluded because the suite explicitly performs synthetic training."
+  ]
+}

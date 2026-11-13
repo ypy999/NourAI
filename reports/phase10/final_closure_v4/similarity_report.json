@@ -1,0 +1,22 @@
+{
+  "created_at": "2026-11-13T08:36:12.561018+01:00",
+  "delegated_pairs_reviewed": 15,
+  "decisions_recorded": 15,
+  "cross_split_pairs_decided": 12,
+  "unmapped_normalized_pairs_kept": 3,
+  "removed_from_derived_validation_test": 12,
+  "post_review_detector": {
+    "records_scanned": 55704,
+    "total_candidates": 35,
+    "cross_split_candidates": 0,
+    "within_train_candidates": 35,
+    "within_train_disposition": "retained; within-split quality observations outside delegated cases",
+    "threshold": 0.85,
+    "metric": "Jaccard over normalized Unicode word trigrams",
+    "limitations": [
+      "LSH may miss similar pairs.",
+      "Surface similarity is not semantic equivalence.",
+      "All flagged pairs are retained for review."
+    ]
+  }
+}

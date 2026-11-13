@@ -1,0 +1,18 @@
+{
+  "status": "ABORTED_NOT_PUBLISHED",
+  "reason": "CSV quote parsing split unescaped text continuation lines into spurious records; raw member reinspection identified physical-line continuation records. No imported/normalized output was published.",
+  "records_observed_before_abort": 9855,
+  "invalid_row_count_reported_by_csv_parser": 209718,
+  "partial_files": [
+    {
+      "sha256": "82eb550bab1833a3689c528613e952dbad268a113732cb5dc28cd1d79b514443",
+      "name": "imported.jsonl.partial",
+      "bytes": 36565730
+    },
+    {
+      "sha256": "d29ecaec3ffc2ca96be4cc3feb55e2eee4249b04baf50b5249d7dd7a8aa98c07",
+      "name": "normalized.jsonl.partial",
+      "bytes": 38624384
+    }
+  ]
+}

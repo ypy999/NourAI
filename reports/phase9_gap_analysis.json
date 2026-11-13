@@ -1,0 +1,41 @@
+{
+  "status": "NOT_READY",
+  "blockers": [
+    "arabic is absent from the corpus or an independent validation/test split",
+    "arabic has 1 source(s); configured minimum is 2",
+    "arabic has 0 source-verified domain(s); configured minimum is 3",
+    "english has 1 source(s); configured minimum is 2",
+    "english has 0 source-verified domain(s); configured minimum is 3",
+    "french has 1 source(s); configured minimum is 2",
+    "french has 0 source-verified domain(s); configured minimum is 3",
+    "training is explicitly out of scope for Phase 9",
+    "one or more legal, technical, language-evaluation, or diversity gates are not ready"
+  ],
+  "language_records": {
+    "english": 41515,
+    "french": 14202,
+    "arabic": 2
+  },
+  "measured_language_gaps": {
+    "arabic": {
+      "observed_records": 2,
+      "minimum_per_independent_split": 100,
+      "note": "Actual split-level counts and tokens are listed in language readiness."
+    },
+    "english": {
+      "observed_records": 41515,
+      "minimum_per_independent_split": 100,
+      "note": "Actual split-level counts and tokens are listed in language readiness."
+    },
+    "french": {
+      "observed_records": 14202,
+      "minimum_per_independent_split": 100,
+      "note": "Actual split-level counts and tokens are listed in language readiness."
+    }
+  },
+  "acquisition_needed": [
+    "Arabic: obtain an authorized Common Voice Arabic 27 archive and ingest only validated sentence rows after terms review.",
+    "English/French: obtain independent licensed general-text sources; identified Common Voice speech subsets are not sufficient for general-domain LLM data."
+  ],
+  "no_data_acquired": true
+}

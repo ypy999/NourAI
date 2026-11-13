@@ -1,0 +1,34 @@
+{
+  "english": {
+    "Other": 33671,
+    "Conversations": 1202,
+    "General Knowledge": 2920,
+    "Education": 769,
+    "Mathematics": 283,
+    "Geography": 1052,
+    "History": 683,
+    "Technology": 385,
+    "News": 904,
+    "Literature": 480,
+    "Science": 388,
+    "Programming": 191
+  },
+  "french": {
+    "Other": 11893,
+    "Conversations": 652,
+    "Geography": 171,
+    "General Knowledge": 534,
+    "Science": 198,
+    "Education": 156,
+    "Mathematics": 70,
+    "History": 215,
+    "Literature": 279,
+    "News": 120,
+    "Technology": 163,
+    "Programming": 44
+  },
+  "arabic": {
+    "Conversations": 1,
+    "Other": 1
+  }
+}

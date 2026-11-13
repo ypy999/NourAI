@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "dataset_name": "Tatoeba sentences CC0 export",
+  "dataset_version": "official sentences_CC0 export; upstream date is recorded in archive/source listing",
+  "source": {
+    "source_id": "tatoeba_cc0",
+    "url": "https://downloads.tatoeba.org/exports/sentences_CC0.tar.bz2",
+    "sha256": "7e4251d06edd949db9e47cc360b472873da6c054af5dc4b9d2c9e06d024cd710"
+  },
+  "license": {
+    "license_id": "CC0-1.0",
+    "state": "VERIFIED",
+    "evidence_url": "https://tatoeba.org/en/downloads"
+  },
+  "collection_date": null,
+  "language_distribution": {
+    "source_language_codes": {
+      "eng": 41515,
+      "fra": 14202,
+      "ara": 2
+    },
+    "confidence": "source-provided, not independently verified"
+  },
+  "record_count": 55716,
+  "character_count": 0,
+  "token_count": 0,
+  "file_size_bytes": 12656729,
+  "files": [
+    "D:\\NourAI\\data\\processed\\phase8\\deduplicated\\splits\\train.jsonl",
+    "D:\\NourAI\\data\\processed\\phase8\\deduplicated\\splits\\validation.jsonl",
+    "D:\\NourAI\\data\\processed\\phase8\\deduplicated\\splits\\test.jsonl"
+  ],
+  "cleaning_configuration": {
+    "vocab_size": 260,
+    "context_length": 128,
+    "d_model": 128,
+    "n_heads": 4,
+    "n_layers": 4,
+    "dropout": 0.1,
+    "batch_size": 8,
+    "learning_rate": 0.0003,
+    "device": "cpu",
+    "validation_fraction": 0.1,
+    "random_seed": 1337,
+    "max_document_chars": 2000000,
+    "io_batch_lines": 512,
+    "cleaning_unicode_normalization": "NFC",
+    "cleaning_remove_control_chars": true,
+    "cleaning_collapse_whitespace": true,
+    "cleaning_preserve_paragraphs": false,
+    "cleaning_min_chars": 1,
+    "cleaning_reject_short": false,
+    "epochs": 3,
+    "weight_decay": 0.01,
+    "adam_betas": [
+      0.9,
+      0.999
+    ],
+    "adam_epsilon": 1e-08,
+    "warmup_steps": 0,
+    "gradient_accumulation_steps": 1,
+    "gradient_clip_norm": 1.0,
+    "scheduler_type": "cosine",
+    "precision": "fp32",
+    "validation_interval": 100,
+    "checkpoint_interval": 100,
+    "early_stopping": false,
+    "early_stopping_patience": 3,
+    "early_stopping_min_delta": 0.0,
+    "max_training_steps": 0,
+    "checkpoint_keep": 3
+  },
+  "deduplication_results": null,
+  "quality_statistics": null,
+  "tokenizer_statistics": null,
+  "split_statistics": {
+    "train": 50144,
+    "validation": 2787,
+    "test": 2785
+  },
+  "split_ratios": {
+    "train": 0.9,
+    "validation": 0.05,
+    "test": 0.05
+  },
+  "random_seed": 1337,
+  "tokenizer_version": "byte-tokenizer-utf8-v1",
+  "processing_status": "conditionally_ready_for_review",
+  "warnings": [
+    "arabic: 2 unique record(s); requested split(s) validation, test are empty in this stratum"
+  ],
+  "errors": [],
+  "training_eligible": false,
+  "training_blockers": [
+    "Arabic validation/test coverage is empty (only 2 Arabic source records).",
+    "The corpus is a sentence subset, not a representative pretraining corpus."
+  ],
+  "corpus_readiness_status": "CONDITIONALLY_READY",
+  "source_retrieved_at": "2026-11-11T19:44:51.886312+00:00",
+  "license_verification_method": "official Tatoeba CC0-specific export page and official CC0 legal code; checksum and archive layout verified locally"
+}
