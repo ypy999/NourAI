@@ -449,9 +449,12 @@ class NourAIBackend:
         db_path: str | Path | None = None,
         use_capabilities: bool = False,
     ):
+        repo_root = Path(__file__).resolve().parents[1]
         default_ckpt = Path("checkpoints/v1_2/nourai_v1_2_model.pt")
         if not default_ckpt.is_file():
-            default_ckpt = Path("checkpoints/phase16/phase16_sft_aligned_model.pt")
+            default_ckpt = repo_root / "checkpoints" / "v1_2" / "nourai_v1_2_model.pt"
+        if not default_ckpt.is_file():
+            default_ckpt = repo_root / "checkpoints" / "phase16" / "phase16_sft_aligned_model.pt"
         self.engine = engine or InferenceEngine.from_checkpoint(default_ckpt)
         self.capabilities = NourAICapabilityEngine(model=self.engine.model, tokenizer=self.engine.tokenizer)
         self.use_capabilities = bool(use_capabilities)

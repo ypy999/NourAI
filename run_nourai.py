@@ -2,8 +2,16 @@
 from __future__ import annotations
 
 import argparse
+import os
+from pathlib import Path
+import sys
 import time
 import webbrowser
+
+ROOT = Path(__file__).resolve().parent
+os.chdir(ROOT)
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from api.backend import NourAIBackend
 from deployment.production import ProductionDatabase, SystemMonitor, start_live_http_server

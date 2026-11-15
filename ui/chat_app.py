@@ -10,7 +10,10 @@ from api.backend import NourAIBackend
 
 
 def load_ui_html(path: str | Path = "ui/index.html") -> str:
-    return Path(path).read_text(encoding="utf-8")
+    p = Path(path)
+    if not p.is_file():
+        p = Path(__file__).resolve().parents[1] / path
+    return p.read_text(encoding="utf-8")
 
 
 def run_phase19_ui_audit(
