@@ -477,7 +477,18 @@ class NourAIBackend:
 
     def _authenticate(self, headers: dict[str, str]) -> dict[str, Any] | None:
         auth_header = headers.get("Authorization") or headers.get("authorization")
-        return self.auth.verify_token(auth_header)
+        if auth_header:
+            verified = self.auth.verify_token(auth_header)
+            if verified:
+                return verified
+        cookie_header = headers.get("Cookie") or headers.get("cookie") or ""
+        for part in cookie_header.split(";"):
+            kv = part.strip().split("=", 1)
+            if len(kv) == 2 and kv[0].strip() == "nourai_token":
+                verified = self.auth.verify_token(kv[1].strip())
+                if verified:
+                    return verified
+        return None
 
     def handle_request(
         self,
@@ -537,6 +548,7 @@ class NourAIBackend:
             if not user:
                 return 401, sec_headers, {"error": "invalid username or password"}
             token = self.auth.issue_token(user)
+            sec_headers["Set-Cookie"] = f"nourai_token={token}; Path=/; SameSite=Lax; Max-Age=604800"
             return 200, sec_headers, {"access_token": token, "token_type": "Bearer", "user": user}
 
         if method == "POST" and route == "/api/v1/auth/guest":
@@ -548,6 +560,7 @@ class NourAIBackend:
             guest_pwd = f"GuestPass#{secrets.token_hex(6)}"
             user = self.users.register_user(guest_uname, guest_pwd, role="user")
             token = self.auth.issue_token(user)
+            sec_headers["Set-Cookie"] = f"nourai_token={token}; Path=/; SameSite=Lax; Max-Age=604800"
             return 200, sec_headers, {"access_token": token, "token_type": "Bearer", "user": user}
 
         # Protected routes require Bearer authentication
