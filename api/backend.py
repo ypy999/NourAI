@@ -520,6 +520,20 @@ class NourAIBackend:
         if method == "GET" and route == "/" and ui_html_provider is not None:
             return 200, {**sec_headers, "Content-Type": "text/html; charset=utf-8"}, ui_html_provider()
 
+        if method == "GET" and route == "/googleba5e2e501ed82fe6.html":
+            return (
+                200,
+                {**sec_headers, "Content-Type": "text/html; charset=utf-8"},
+                "google-site-verification: googleba5e2e501ed82fe6.html",
+            )
+
+        if method == "GET" and route == "/robots.txt":
+            return (
+                200,
+                {**sec_headers, "Content-Type": "text/plain; charset=utf-8"},
+                "User-agent: *\nAllow: /\n",
+            )
+
         if method == "GET" and route == "/manifest.json":
             return 200, sec_headers, {
                 "name": "NourAI",
