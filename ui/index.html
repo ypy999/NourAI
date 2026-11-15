@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#212121" />
   <title>NourAI</title>
   <style>
     :root {
@@ -530,8 +532,8 @@
     <!-- Minimal Input Bar -->
     <footer class="chat-input-bar">
       <div class="composer-pill">
-        <input type="file" id="doc-upload-input" accept=".txt,.md,.json,.csv,.py,.js,.html,.log" style="display:none;" onchange="handleFileUpload(this)" />
-        <button class="icon-btn" onclick="document.getElementById('doc-upload-input').click()" title="إرفاق ملف">📎</button>
+        <input type="file" id="doc-upload-input" accept=".txt,.md,.json,.csv,.py,.js,.html,.log,.docx,.pdf" style="display:none;" onchange="handleFileUpload(this)" />
+        <button class="icon-btn" onclick="document.getElementById('doc-upload-input').click()" title="إرفاق ملف (TXT, DOCX, PDF)">📎</button>
         <textarea
           id="prompt-input"
           dir="auto"
@@ -771,20 +773,43 @@
       }
     }
 
+    function getPinnedSet() {
+      const raw = getCookie("nourai_pinned_sessions");
+      return new Set(raw ? raw.split(",").filter(Boolean) : []);
+    }
+
+    function togglePinSession(sessionId) {
+      const pinned = getPinnedSet();
+      if (pinned.has(sessionId)) pinned.delete(sessionId);
+      else pinned.add(sessionId);
+      setCookie("nourai_pinned_sessions", Array.from(pinned).join(","), 180);
+      renderSessionList();
+    }
+
     function renderSessionList() {
       const list = document.getElementById("session-history-list");
       list.innerHTML = "";
-      for (const s of sessions) {
+      const pinned = getPinnedSet();
+      const sorted = [...sessions].sort((a, b) => (pinned.has(b.session_id) ? 1 : 0) - (pinned.has(a.session_id) ? 1 : 0));
+      for (const s of sorted) {
+        const isPinned = pinned.has(s.session_id);
         const li = document.createElement("li");
         li.className = "session-item" + (s.session_id === activeSessionId ? " active" : "");
 
         const titleSpan = document.createElement("span");
         titleSpan.className = "session-title";
-        titleSpan.textContent = s.title || s.session_id;
+        titleSpan.textContent = (isPinned ? "📌 " : "") + (s.title || s.session_id);
         titleSpan.onclick = () => selectSession(s.session_id);
 
         const actions = document.createElement("div");
         actions.className = "session-actions";
+
+        const pinBtn = document.createElement("button");
+        pinBtn.className = "icon-btn";
+        pinBtn.style.fontSize = "0.72rem";
+        pinBtn.textContent = "📌";
+        pinBtn.title = "تثبيت";
+        pinBtn.onclick = (e) => { e.stopPropagation(); togglePinSession(s.session_id); };
 
         const renameBtn = document.createElement("button");
         renameBtn.className = "icon-btn";
@@ -798,6 +823,7 @@
         delBtn.textContent = "✕";
         delBtn.onclick = (e) => { e.stopPropagation(); deleteSession(s.session_id); };
 
+        actions.appendChild(pinBtn);
         actions.appendChild(renameBtn);
         actions.appendChild(delBtn);
         li.appendChild(titleSpan);
@@ -896,7 +922,48 @@
       return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
 
+    function renderQuizBlock(jsonStr) {
+      try {
+        const q = JSON.parse(jsonStr);
+        const qId = "quiz-" + Math.floor(Math.random() * 100000);
+        const optsHtml = (q.options || []).map((opt, idx) => {
+          const isCorrect = idx === q.correct ? "1" : "0";
+          const expEnc = encodeURIComponent(q.explanation || "");
+          return `<button class="chip" style="display:block;width:100%;text-align:start;margin-top:0.4rem;border-radius:0.5rem;" onclick="checkQuizAnswer(this, ${isCorrect}, '${qId}', decodeURIComponent('${expEnc}'))">${escapeHtml(opt)}</button>`;
+        }).join("");
+        return `<div style="background:var(--bg-sidebar);border:1px solid var(--border);border-radius:0.75rem;padding:0.9rem;margin:0.5rem 0;"><strong>${escapeHtml(q.question || "")}</strong><div style="margin-top:0.4rem;">${optsHtml}</div><div id="${qId}" style="margin-top:0.55rem;font-size:0.84rem;display:none;"></div></div>`;
+      } catch (e) {
+        return escapeHtml(jsonStr);
+      }
+    }
+
+    function checkQuizAnswer(btnEl, isCorrect, feedbackId, explanation) {
+      const fb = document.getElementById(feedbackId);
+      if (!fb) return;
+      fb.style.display = "block";
+      if (isCorrect) {
+        btnEl.style.borderColor = "#22c55e";
+        btnEl.style.background = "#143321";
+        fb.style.color = "#86efac";
+        fb.textContent = "✅ " + explanation;
+      } else {
+        btnEl.style.borderColor = "#ef4444";
+        btnEl.style.background = "#3b1c1c";
+        fb.style.color = "#fca5a5";
+        fb.textContent = "❌ إجابة غير صحيحة، حاول اختيار خيار آخر.";
+      }
+    }
+
     function formatInlineMarkdown(text) {
+      if (text.includes("[QUIZ_JSON]") && text.includes("[/QUIZ_JSON]")) {
+        const parts = text.split(/\[QUIZ_JSON\]([\s\S]*?)\[\/QUIZ_JSON\]/g);
+        let out = "";
+        for (let i = 0; i < parts.length; i++) {
+          if (i % 2 === 0) out += formatInlineMarkdown(parts[i]);
+          else out += renderQuizBlock(parts[i]);
+        }
+        return out;
+      }
       let s = escapeHtml(text);
       s = s.replace(/!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)/g, '<img src="$2" alt="$1" class="generated-img" loading="lazy" />');
       s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" style="color:#93c5fd;text-decoration:underline;">$1</a>');
@@ -925,7 +992,8 @@
           const previewBtn = isPreviewable
             ? `<button class="icon-btn" style="font-size:0.75rem;" onclick="openLiveCanvas(decodeURIComponent('${encodedCode}'))">▶️ معاينة</button>`
             : (isPython ? `<button class="icon-btn" style="font-size:0.75rem;" onclick="runPythonCode(decodeURIComponent('${encodedCode}'), '${outId}')">▶️ تشغيل</button>` : "");
-          html += `<pre><div class="code-header"><span>${escapeHtml(lang)}</span><div>${previewBtn}<button class="icon-btn" style="font-size:0.75rem;" onclick="copyAnswer(decodeURIComponent('${encodedCode}'), this)">نسخ</button></div></div><code>${escapeHtml(code)}</code><div id="${outId}" style="display:none;padding:0.5rem 0.8rem;border-top:1px solid var(--border);background:#0d0d0d;color:#86efac;font-family:monospace;font-size:0.8rem;white-space:pre-wrap;"></div></pre>`;
+          const inlineSvg = lang === "svg" && code.trim().startsWith("<svg") ? `<div style="margin:0.5rem 0;">${code}</div>` : "";
+          html += `${inlineSvg}<pre><div class="code-header"><span>${escapeHtml(lang)}</span><div>${previewBtn}<button class="icon-btn" style="font-size:0.75rem;" onclick="copyAnswer(decodeURIComponent('${encodedCode}'), this)">نسخ</button></div></div><code>${escapeHtml(code)}</code><div id="${outId}" style="display:none;padding:0.5rem 0.8rem;border-top:1px solid var(--border);background:#0d0d0d;color:#86efac;font-family:monospace;font-size:0.8rem;white-space:pre-wrap;"></div></pre>`;
         }
       }
       targetEl.innerHTML = html;
@@ -1112,14 +1180,27 @@
       const token = await ensureAuthenticated();
       if (!token) return;
       try {
-        const content = await file.text();
+        const lowerName = file.name.toLowerCase();
+        let payloadBody = { filename: file.name };
+        if (lowerName.endsWith(".docx") || lowerName.endsWith(".pdf")) {
+          const buf = await file.arrayBuffer();
+          const bytes = new Uint8Array(buf);
+          let binary = "";
+          for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
+          payloadBody.content_base64 = btoa(binary);
+        } else {
+          payloadBody.content = await file.text();
+        }
         const res = await fetch("/api/v1/documents", {
           method: "POST",
           headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
-          body: JSON.stringify({ filename: file.name, content: content })
+          body: JSON.stringify(payloadBody)
         });
         if (res.ok) {
           document.getElementById("prompt-input").value = `لخص ما ورد في الملف المرفق (${file.name})`;
+        } else {
+          const err = await res.json();
+          showError(err.error || "فشل قراءة الملف");
         }
       } catch (err) {
         showError(err.message);

@@ -1,14 +1,57 @@
 """Long-Term User Memory (ChatGPT-style Memory Updated) & Zero-Bloat Local Document RAG (SQLite) for NourAI."""
 from __future__ import annotations
 
+import base64
 from contextlib import closing
 import hashlib
+import io
 import re
 import sqlite3
 import threading
 import time
 from pathlib import Path
 from typing import Any
+import xml.etree.ElementTree as ET
+import zipfile
+import zlib
+
+
+def extract_text_from_binary_upload(filename: str, raw_bytes: bytes) -> str:
+    """Extract plain text from .docx, .pdf, or UTF-8 text files using only Python's standard library ($0, 0 extra packages)."""
+    ext = Path(filename or "").suffix.lower()
+    if ext == ".docx":
+        try:
+            with zipfile.ZipFile(io.BytesIO(raw_bytes)) as zf:
+                xml_bytes = zf.read("word/document.xml")
+            root = ET.fromstring(xml_bytes)
+            texts = [el.text for el in root.iter() if el.tag.endswith("}t") and el.text]
+            return " ".join(texts).strip()
+        except Exception as exc:
+            raise ValueError(f"failed to parse .docx file: {exc}") from exc
+
+    if ext == ".pdf":
+        extracted_parts: list[str] = []
+        # Decompress any FlateDecode streams and extract parenthesized text strings
+        for m in re.finditer(rb"stream[\r\n]+([\s\S]*?)[\r\n]+endstream", raw_bytes):
+            stream_data = m.group(1)
+            for candidate in (stream_data,):
+                try:
+                    decomp = zlib.decompress(candidate)
+                except Exception:
+                    decomp = candidate
+                for txt_m in re.finditer(rb"\(([^()\\]{2,250})\)", decomp):
+                    piece = txt_m.group(1).decode("utf-8", errors="ignore").strip()
+                    if piece and any(c.isalnum() for c in piece):
+                        extracted_parts.append(piece)
+        if not extracted_parts:
+            for txt_m in re.finditer(rb"\(([^()\\]{3,250})\)", raw_bytes):
+                piece = txt_m.group(1).decode("utf-8", errors="ignore").strip()
+                if piece and any(c.isalnum() for c in piece):
+                    extracted_parts.append(piece)
+        result = " ".join(extracted_parts).strip()
+        return result or raw_bytes.decode("utf-8", errors="ignore").strip()
+
+    return raw_bytes.decode("utf-8", errors="replace").strip()
 
 
 MEMORY_PATTERNS_AR = [

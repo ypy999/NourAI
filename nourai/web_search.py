@@ -1,6 +1,7 @@
 """Zero-cost, zero-bloat Live Web Search & Universal Q&A Engine for NourAI (Wikipedia + Google News RSS + DuckDuckGo + Free LLM Synthesis)."""
 from __future__ import annotations
 
+from datetime import datetime, timedelta, timezone
 import html
 import json
 import os
@@ -400,6 +401,192 @@ def _maybe_proofread_and_rewrite(prompt: str, lang_code: str) -> str | None:
     return f"✍️ **Proofreading & Professional Rewrite:**\n\n- **Corrected Text:** \"{fixed[0].upper() + fixed[1:] if fixed else fixed}\""
 
 
+def _expand_slash_command(prompt: str) -> str:
+    """Feature 10: Expand quick slash commands (/صورة, /لخص, /صحح, /مخطط, /اختبرني, /كود, /حول)."""
+    txt = (prompt or "").strip()
+    if not txt.startswith("/"):
+        return txt
+    slash_map = [
+        (r"^/(?:صورة|صوره|ارسم|image|draw)\s+(.+)$", r"ارسم صورة \1"),
+        (r"^/(?:لخص|تلخيص|summarize|summary)\s+(.+)$", r"لخص النص: \1"),
+        (r"^/(?:صحح|تدقيق|proofread|fix)\s+(.+)$", r"صحح هذا النص: \1"),
+        (r"^/(?:مخطط|خريطة|diagram|flowchart)\s*(.*)$", r"ارسم مخطط \1"),
+        (r"^/(?:اختبرني|اختبار|quiz)\s*(.*)$", r"اختبرني في \1"),
+        (r"^/(?:كود|برمجة|code)\s+(.+)$", r"اكتب دالة بايثون \1"),
+        (r"^/(?:ترجم|translate)\s+(.+)$", r"ترجم إلى الإنجليزية: \1"),
+    ]
+    for pat, repl in slash_map:
+        m = re.match(pat, txt, flags=re.IGNORECASE | re.DOTALL)
+        if m:
+            return re.sub(pat, repl, txt, flags=re.IGNORECASE | re.DOTALL).strip()
+    return txt[1:].strip()
+
+
+def _maybe_generate_svg_diagram(prompt: str, lang_code: str) -> str | None:
+    """Feature 7: Generate an SVG Flowchart / Mindmap diagram when requested ($0, 0 extra packages)."""
+    lower = (prompt or "").lower()
+    if not any(
+        k in lower
+        for k in ("ارسم مخطط", "مخطط انسيابي", "خريطة ذهنية", "خريطه ذهنيه", "flowchart", "mindmap", "svg diagram", "schéma")
+    ):
+        return None
+
+    topic = re.sub(
+        r"^(?:ارسم مخططاً?|مخطط انسيابي|خريطة ذهنية|flowchart|diagram|schéma)\s*(?:لـ|عن|حول|for|of|de)?\s*",
+        "",
+        prompt.strip(),
+        flags=re.IGNORECASE,
+    ).strip() or "مراحل العمل والذكاء الاصطناعي"
+
+    svg_code = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 220" width="100%" height="220" style="background:#141414;border-radius:12px;font-family:Segoe UI,Tahoma,sans-serif;">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+  <text x="360" y="34" fill="#f8fafc" font-size="16" font-weight="bold" text-anchor="middle">📊 {html.escape(topic[:45])}</text>
+  <rect x="30" y="75" width="135" height="64" rx="10" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+  <text x="97" y="112" fill="#e2e8f0" font-size="13" text-anchor="middle">1. المدخلات والبيانات</text>
+  <line x1="165" y1="107" x2="205" y2="107" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="210" y="75" width="135" height="64" rx="10" fill="#1e293b" stroke="#6366f1" stroke-width="1.5"/>
+  <text x="277" y="112" fill="#e2e8f0" font-size="13" text-anchor="middle">2. التحليل والمعالجة</text>
+  <line x1="345" y1="107" x2="385" y2="107" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="390" y="75" width="135" height="64" rx="10" fill="#1e293b" stroke="#06b6d4" stroke-width="1.5"/>
+  <text x="457" y="112" fill="#e2e8f0" font-size="13" text-anchor="middle">3. الاستنتاج الذكي</text>
+  <line x1="525" y1="107" x2="555" y2="107" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="560" y="75" width="130" height="64" rx="10" fill="#1e293b" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="625" y="112" fill="#86efac" font-size="13" text-anchor="middle">4. النتيجة النهائية ✓</text>
+</svg>"""
+    return f"📊 **المخطط التوضيحي لـ «{topic}»** (اضغط **▶️ معاينة** لعرضه بالحجم الكامل):\n\n```svg\n{svg_code}\n```"
+
+
+def _maybe_generate_interactive_quiz(prompt: str, lang_code: str) -> str | None:
+    """Feature 9: Generate an interactive clickable Quiz card when user says 'اختبرني' / 'quiz me'."""
+    lower = (prompt or "").lower()
+    if not any(k in lower for k in ("اختبرني", "اعطني اختبار", "سؤال اختياري", "quiz me", "test my knowledge", "quizz")):
+        return None
+
+    if "انجليزي" in lower or "إنجليزي" in lower or "english" in lower:
+        quiz_payload = {
+            "question": "اختر الترجمة الصحيحة لكلمة «الذكاء الاصطناعي» باللغة الإنجليزية:",
+            "options": ["Artificial Intelligence", "Natural Science", "Computer Network", "Digital Storage"],
+            "correct": 0,
+            "explanation": "أحسنت! Artificial Intelligence (AI) تعني الذكاء الاصطناعي.",
+        }
+    elif "فرنس" in lower or "french" in lower or "français" in lower:
+        quiz_payload = {
+            "question": "ما معنى جملة «Bonjour, comment allez-vous ?» باللغة العربية؟",
+            "options": ["مرحباً، كيف حالك؟", "شكراً جزيلاً لك", "أين تقع المحطة؟", "إلى اللقاء غداً"],
+            "correct": 0,
+            "explanation": "إجابة صحيحة! Bonjour, comment allez-vous ? تعني مرحباً، كيف حالك؟",
+        }
+    else:
+        quiz_payload = {
+            "question": "في لغة بايثون (Python)، ما هي الكلمة المفتاحية المستخدمة لتعريف دالة جديدة؟",
+            "options": ["def", "function", "func", "lambda_def"],
+            "correct": 0,
+            "explanation": "ممتاز! الكلمة المفتاحية `def` تُستخدم لتعريف الدوال في بايثون.",
+        }
+
+    return f"🎯 **اختبار تفاعلي سريع (اضغط على الإجابة الصحيحة):**\n\n[QUIZ_JSON]{json.dumps(quiz_payload, ensure_ascii=False)}[/QUIZ_JSON]"
+
+
+def _maybe_convert_units_currency_time(prompt: str, lang_code: str) -> str | None:
+    """Feature 11: World Clock, Currency Converter, and Unit Converter ($0)."""
+    text = (prompt or "").strip()
+    lower = text.lower()
+
+    # A. World Clock ("كم الساعة الآن...")
+    if any(k in lower for k in ("كم الساعة", "كم الساعه", "الوقت الان", "الوقت الآن", "what time is it", "quelle heure")):
+        utc_now = datetime.now(timezone.utc)
+        cities = [
+            ("الدوحة / الرياض / مكة", 3),
+            ("دبي / أبوظبي", 4),
+            ("القاهرة", 2),
+            ("الجزائر / تونس / الرباط", 1),
+            ("باريس / برلين", 1),
+            ("لندن (GMT)", 0),
+            ("نيويورك", -5),
+            ("طوكيو", 9),
+        ]
+        lines = ["🕒 **التوقيت العالمي الحالي الآن:**\n"]
+        for name, offset in cities:
+            t_str = (utc_now + timedelta(hours=offset)).strftime("%H:%M:%S")
+            lines.append(f"- **{name}:** `{t_str}` (UTC{offset:+d})")
+        return "\n".join(lines)
+
+    # B. Currency Converter ("100 دولار الى ريال" / "500 ريال بالدولار")
+    curr_aliases = {
+        "دولار": "USD", "usd": "USD", "$": "USD",
+        "يورو": "EUR", "eur": "EUR", "€": "EUR",
+        "ريال قطري": "QAR", "قطري": "QAR", "qar": "QAR",
+        "ريال سعودي": "SAR", "سعودي": "SAR", "ريال": "SAR", "sar": "SAR",
+        "درهم": "AED", "aed": "AED",
+        "جنيه": "EGP", "egp": "EGP",
+        "دينار كويتي": "KWD", "kwd": "KWD",
+        "استرليني": "GBP", "gbp": "GBP",
+    }
+    if any(k in lower for k in ("دولار", "يورو", "ريال", "درهم", "جنيه", "عملة", "سعر صرف", "usd", "eur", "sar", "qar")):
+        num_m = re.search(r"(\d+(?:\.\d+)?)", lower)
+        if num_m and any(w in lower for w in ("كم", "حول", "يساوي", "بال", "إلى", "الى", "to", "in", "en")):
+            amount = float(num_m.group(1))
+            rates_per_usd = {
+                "USD": 1.0,
+                "EUR": 0.92,
+                "QAR": 3.64,
+                "SAR": 3.75,
+                "AED": 3.6725,
+                "EGP": 49.2,
+                "KWD": 0.307,
+                "GBP": 0.79,
+            }
+            # Try live open exchange rate API ($0, no key)
+            try:
+                req = Request("https://open.er-api.com/v6/latest/USD", headers={"User-Agent": USER_AGENT})
+                with urlopen(req, timeout=3.0) as resp:
+                    live_data = json.loads(resp.read().decode("utf-8", errors="replace"))
+                    if "rates" in live_data:
+                        for k in list(rates_per_usd.keys()):
+                            if k in live_data["rates"]:
+                                rates_per_usd[k] = float(live_data["rates"][k])
+            except Exception:
+                pass
+
+            src_curr = "USD"
+            for alias, code in sorted(curr_aliases.items(), key=lambda x: -len(x[0])):
+                pos = lower.find(alias)
+                if pos != -1 and pos < len(lower) // 2 + 5:
+                    src_curr = code
+                    break
+            in_usd = amount / rates_per_usd[src_curr]
+            lines = [f"💱 **تحويل العملات لمبلغ `{amount:g} {src_curr}`:**\n"]
+            for code in ("USD", "SAR", "QAR", "AED", "EUR", "EGP", "KWD", "GBP"):
+                if code != src_curr:
+                    val = in_usd * rates_per_usd[code]
+                    lines.append(f"- **{code}:** `{val:,.2f}`")
+            return "\n".join(lines)
+
+    # C. Unit Converter ("100 ميل الى كم" / "50 كيلو الى باوند")
+    unit_m = re.search(r"(\d+(?:\.\d+)?)\s*(ميل|كم|كيلومتر|كيلوجرام|كجم|باوند|قدم|متر|mile|miles|km|kg|lb|lbs|ft|m)\b", lower)
+    if unit_m and any(w in lower for w in ("حول", "كم يساوي", "إلى", "الى", "to ", "in ")):
+        val = float(unit_m.group(1))
+        u = unit_m.group(2)
+        if u in ("ميل", "mile", "miles"):
+            return f"📏 **تحويل الوحدات:** `{val:g}` ميل = **`{val * 1.60934:,.2f}` كيلومتر (km)**."
+        if u in ("كم", "كيلومتر", "km"):
+            return f"📏 **تحويل الوحدات:** `{val:g}` كيلومتر = **`{val / 1.60934:,.2f}` ميل (miles)**."
+        if u in ("كيلوجرام", "كجم", "kg"):
+            return f"⚖️ **تحويل الوزن:** `{val:g}` كجم = **`{val * 2.20462:,.2f}` باوند (lbs)**."
+        if u in ("باوند", "lb", "lbs"):
+            return f"⚖️ **تحويل الوزن:** `{val:g}` باوند = **`{val / 2.20462:,.2f}` كيلوجرام (kg)**."
+        if u in ("قدم", "ft"):
+            return f"📏 **تحويل الطول:** `{val:g}` قدم = **`{val * 0.3048:,.2f}` متر (m)**."
+        if u in ("متر", "m"):
+            return f"📏 **تحويل الطول:** `{val:g}` متر = **`{val / 0.3048:,.2f}` قدم (ft)**."
+
+    return None
+
+
 def _maybe_generate_html_artifact(prompt: str, lang_code: str) -> str | None:
     """Generate a complete runnable HTML/CSS/JS artifact when the user requests a web widget, calculator, or page."""
     lower = (prompt or "").lower()
@@ -565,6 +752,7 @@ class NourAIWebAndSmartEngine:
         rag_chunks: list[dict[str, Any]] | None = None,
         persona: str = "general",
     ) -> dict[str, Any]:
+        prompt = _expand_slash_command(prompt)
         detected = detect_text_language(prompt)
         lang_code = "ar" if detected == "arabic" else ("fr" if detected == "french" else "en")
         if language:
@@ -618,6 +806,39 @@ class NourAIWebAndSmartEngine:
                 "language": lang_code,
                 "task": "proofreading_and_rewrite",
                 "response_source": "smart_proofreader",
+                "citations": [],
+            }
+
+        # 1c2. Check for SVG Diagram / Flowchart (Feature 7)
+        svg_reply = _maybe_generate_svg_diagram(prompt, lang_code)
+        if svg_reply:
+            return {
+                "reply": svg_reply,
+                "language": lang_code,
+                "task": "svg_diagram",
+                "response_source": "diagram_engine",
+                "citations": [],
+            }
+
+        # 1c3. Check for Interactive Quiz Card (Feature 9)
+        quiz_reply = _maybe_generate_interactive_quiz(prompt, lang_code)
+        if quiz_reply:
+            return {
+                "reply": quiz_reply,
+                "language": lang_code,
+                "task": "interactive_quiz",
+                "response_source": "quiz_engine",
+                "citations": [],
+            }
+
+        # 1c4. Check for Currency, Unit, or World Clock conversion (Feature 11)
+        conv_unit_reply = _maybe_convert_units_currency_time(prompt, lang_code)
+        if conv_unit_reply:
+            return {
+                "reply": conv_unit_reply,
+                "language": lang_code,
+                "task": "unit_currency_time_converter",
+                "response_source": "live_converter",
                 "citations": [],
             }
 

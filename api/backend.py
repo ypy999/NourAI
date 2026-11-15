@@ -23,6 +23,7 @@ from nourai.memory_and_rag import (
     LocalDocumentRAGStore,
     LongTermMemoryStore,
     extract_memories_from_message,
+    extract_text_from_binary_upload,
 )
 from nourai.web_search import NourAIWebAndSmartEngine
 
@@ -519,6 +520,24 @@ class NourAIBackend:
         if method == "GET" and route == "/" and ui_html_provider is not None:
             return 200, {**sec_headers, "Content-Type": "text/html; charset=utf-8"}, ui_html_provider()
 
+        if method == "GET" and route == "/manifest.json":
+            return 200, sec_headers, {
+                "name": "NourAI",
+                "short_name": "NourAI",
+                "start_url": "/",
+                "display": "standalone",
+                "background_color": "#212121",
+                "theme_color": "#212121",
+                "description": "NourAI — Local-first Multilingual AI Assistant",
+                "icons": [
+                    {
+                        "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Crect width='128' height='128' rx='28' fill='%23171717'/%3E%3Ctext x='64' y='84' font-size='68' text-anchor='middle' fill='%23ffffff'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E",
+                        "sizes": "192x192",
+                        "type": "image/svg+xml",
+                    }
+                ],
+            }
+
         if method == "GET" and route == "/api/v1/health":
             return 200, sec_headers, {
                 "status": "ok",
@@ -604,10 +623,16 @@ class NourAIBackend:
                 return 200, sec_headers, {"documents": self.rag.list_documents(claims["sub"])}
             if method == "POST":
                 try:
+                    fname = str(body.get("filename", "document.txt"))
+                    raw_content = str(body.get("content", ""))
+                    b64_content = str(body.get("content_base64", "")).strip()
+                    if b64_content and not raw_content:
+                        raw_bytes = base64.b64decode(b64_content)
+                        raw_content = extract_text_from_binary_upload(fname, raw_bytes)
                     doc_meta = self.rag.ingest_document(
                         claims["sub"],
-                        str(body.get("filename", "document.txt")),
-                        str(body.get("content", "")),
+                        fname,
+                        raw_content,
                     )
                     return 201, sec_headers, {"document": doc_meta}
                 except ValueError as exc:
