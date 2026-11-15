@@ -9,15 +9,15 @@
   ],
   "model_checkpoint": {
     "path": "checkpoints\\v1_2\\nourai_v1_2_model.pt",
-    "sha256": "6228c42a78a26625c50c5bc2a66fddd6c3f4d43e6ab1a34daf83fc1df0a95409",
-    "size_bytes": 3391299
+    "sha256": "695da3c353ad606a3f941279505039862c7e1dac3c63ea263ee085271dea6e87",
+    "size_bytes": 19512395
   },
   "artifacts": {
     "aligned_model_checkpoint": {
       "path": "checkpoints\\v1_2\\nourai_v1_2_model.pt",
-      "sha256": "6228c42a78a26625c50c5bc2a66fddd6c3f4d43e6ab1a34daf83fc1df0a95409",
-      "size_bytes": 3391299
+      "sha256": "695da3c353ad606a3f941279505039862c7e1dac3c63ea263ee085271dea6e87",
+      "size_bytes": 19512395
     }
   },
-  "checkpoint_sha256": "6228c42a78a26625c50c5bc2a66fddd6c3f4d43e6ab1a34daf83fc1df0a95409"
+  "checkpoint_sha256": "695da3c353ad606a3f941279505039862c7e1dac3c63ea263ee085271dea6e87"
 }

@@ -691,21 +691,15 @@ class NourAIBackend:
             all_user_memories = [m["fact"] for m in self.memories.list_memories(claims["sub"])]
             matched_rag_chunks = self.rag.search_chunks(claims["sub"], message, top_k=3)
 
-            updated_sess = self.sessions.get_session(str(session_id), user_id=claims["sub"])
-            history_turns = updated_sess["messages"][-4:] if updated_sess else []
-            prompt_parts = []
-            for turn in history_turns:
-                tag = "<|user|>" if turn["role"] == "user" else "<|assistant|>"
-                prompt_parts.append(f"{tag}\n{turn['content']}")
-            prompt_parts.append("<|assistant|>\n")
-            formatted_prompt = "\n".join(prompt_parts)
+            formatted_prompt = f"<|user|>\n{message}\n<|assistant|>\n"
 
             gen_cfg = GenerationConfig(
-                max_new_tokens=min(int(body.get("max_new_tokens", 128)), 256),
-                strategy=str(body.get("strategy", "top_p")),
-                temperature=float(body.get("temperature", 0.8)),
+                max_new_tokens=min(int(body.get("max_new_tokens", 160)), 256),
+                strategy=str(body.get("strategy", "greedy")),
+                temperature=float(body.get("temperature", 0.7)),
                 top_k=int(body.get("top_k", 16)),
                 top_p=float(body.get("top_p", 0.90)),
+                repetition_penalty=float(body.get("repetition_penalty", 1.0)),
                 stop_sequences=("<|user|>", "<|endoftext|>"),
             ).validate()
 

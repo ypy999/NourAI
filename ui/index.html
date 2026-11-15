@@ -710,8 +710,8 @@
         <label for="engine-mode-select" style="font-size:0.78rem;color:var(--text-muted);">المحرك:</label>
         <select id="engine-mode-select" class="model-pill-select" onchange="updateModeBadge()">
           <option value="web_ai">🌐 بحث قوقل والويب الحي + الذكاء الشامل (Live Web & AI — مجاني)</option>
+          <option value="neural">🧠 الشبكة العصبية المدرَّبة على GPU (Trained Neural 4.87M)</option>
           <option value="fallback">✦ المساعد المحلي السريع (Offline Smart Assistant)</option>
-          <option value="neural">🧠 الشبكة العصبية الخام (Raw Neural 843K)</option>
         </select>
 
         <label for="language-selector" id="ui-lang-label" style="font-size:0.78rem;color:var(--text-muted);">اللغة:</label>
@@ -813,9 +813,9 @@
     <div class="control-group">
       <label for="strategy-select">استراتيجية التوليد (Sampling Strategy)</label>
       <select id="strategy-select">
+        <option value="greedy">Greedy (Deterministic — موصى به للشبكة العصبية)</option>
         <option value="top_p">Top-P (Nucleus)</option>
         <option value="top_k">Top-K</option>
-        <option value="greedy">Greedy (Deterministic)</option>
         <option value="temperature">Temperature</option>
       </select>
     </div>
@@ -837,7 +837,7 @@
 
     <div class="control-group">
       <label for="max-tokens-input">أقصى عدد للرموز (Max New Tokens)</label>
-      <input type="number" id="max-tokens-input" value="40" min="4" max="64" step="4" />
+      <input type="number" id="max-tokens-input" value="160" min="4" max="256" step="8" />
     </div>
 
     <div class="control-group">
