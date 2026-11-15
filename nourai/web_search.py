@@ -282,6 +282,124 @@ def _answer_conversational_or_identity(prompt: str, lang_code: str, newly_saved_
     return None
 
 
+def _maybe_generate_ai_image(prompt: str, lang_code: str) -> str | None:
+    """Feature 1: Generate a high-res AI image URL ($0, no API key) when user asks to draw/create an image."""
+    text = (prompt or "").strip()
+    lower = text.lower()
+    img_patterns = [
+        r"^(?:ارسم|إرسم|صمم صورة|اصنع صورة|ولد صورة|تخيل صورة|ارسم لي صورة|ارسم لي)\s+(.+)$",
+        r"^(?:draw|generate an image of|create an image of|create a picture of|imagine)\s+(.+)$",
+        r"^(?:dessine|génère une image de|crée une image de)\s+(.+)$",
+    ]
+    subj = None
+    for pat in img_patterns:
+        m = re.match(pat, text, flags=re.IGNORECASE)
+        if m:
+            subj = m.group(1).strip()
+            break
+    if not subj and any(
+        k in lower
+        for k in ("ارسم صورة", "ولد صورة", "اصنع صورة", "generate image", "draw a picture", "générer une image")
+    ):
+        subj = text
+    if not subj:
+        return None
+
+    seed = sum(ord(c) for c in subj) % 10000
+    img_url = f"https://image.pollinations.ai/prompt/{quote_plus(subj)}?width=768&height=512&nologo=true&seed={seed}"
+    if lang_code == "ar":
+        return f"🎨 **تم توليد الصورة بالذكاء الاصطناعي لـ «{subj}»:**\n\n![{subj}]({img_url})\n\n[📥 فتح أو تنزيل الصورة بالحجم الكامل]({img_url})"
+    if lang_code == "fr":
+        return f"🎨 **Image générée par IA pour « {subj} » :**\n\n![{subj}]({img_url})\n\n[📥 Ouvrir / Télécharger l'image]({img_url})"
+    return f"🎨 **AI Generated Image for '{subj}':**\n\n![{subj}]({img_url})\n\n[📥 Open / Download Full Image]({img_url})"
+
+
+def _maybe_read_and_summarize_url(prompt: str, lang_code: str) -> str | None:
+    """Feature 2: Fetch and summarize any http:// or https:// webpage URL pasted in the chat ($0)."""
+    url_match = re.search(r"(https?://[^\s<>\"']+)", prompt or "")
+    if not url_match:
+        return None
+    target_url = url_match.group(1).rstrip(".,;)")
+    try:
+        req = Request(target_url, headers={"User-Agent": USER_AGENT})
+        with urlopen(req, timeout=5.5) as resp:
+            raw_html = resp.read().decode("utf-8", errors="replace")
+        title_m = re.search(r"<title[^>]*>([\s\S]*?)</title>", raw_html, flags=re.IGNORECASE)
+        page_title = _strip_html(title_m.group(1)) if title_m else target_url
+        cleaned = re.sub(r"<(script|style|noscript|svg|header|footer|nav)[^>]*>[\s\S]*?</\1>", " ", raw_html, flags=re.IGNORECASE)
+        paragraphs = [
+            _strip_html(p)
+            for p in re.findall(r"<p[^>]*>([\s\S]*?)</p>", cleaned, flags=re.IGNORECASE)
+        ]
+        meaningful = [p for p in paragraphs if len(p) >= 45][:5]
+        if not meaningful:
+            body_txt = _strip_html(cleaned)
+            meaningful = [body_txt[:600]] if body_txt else ["لم يتم العثور على نص مقروء كافٍ داخل الصفحة."]
+
+        bullets = "\n".join(f"- {p[:280]}" for p in meaningful[:4])
+        if lang_code == "ar":
+            return f"🔗 **ملخص محتوى الرابط:** [{page_title}]({target_url})\n\n**أبرز النقاط المستخلصة من الصفحة:**\n{bullets}"
+        if lang_code == "fr":
+            return f"🔗 **Résumé de la page :** [{page_title}]({target_url})\n\n**Points clés extraits :**\n{bullets}"
+        return f"🔗 **Webpage Summary:** [{page_title}]({target_url})\n\n**Key Extracted Points:**\n{bullets}"
+    except Exception as exc:
+        if lang_code == "ar":
+            return f"⚠️ تعذّر الوصول المباشر إلى الرابط ({target_url}): `{exc}`"
+        return f"⚠️ Could not fetch URL ({target_url}): `{exc}`"
+
+
+def _maybe_proofread_and_rewrite(prompt: str, lang_code: str) -> str | None:
+    """Feature 4: Smart Proofreader & Professional Rewriter for Arabic, English, and French."""
+    text = (prompt or "").strip()
+    patterns = [
+        r"^(?:صحح|دقق|دقق لغويا|صحح هذا النص|أعد صياغة|اعد صياغة|حسّن صياغة)\s*[:：-]?\s*(.+)$",
+        r"^(?:proofread|correct this|rewrite professionally|improve this text)\s*[:：-]?\s*(.+)$",
+        r"^(?:corrige|corrigez|reformule|reformulez)\s*[:：-]?\s*(.+)$",
+    ]
+    target = None
+    for pat in patterns:
+        m = re.match(pat, text, flags=re.IGNORECASE | re.DOTALL)
+        if m:
+            target = m.group(1).strip()
+            break
+    if not target:
+        return None
+
+    # Common Arabic typo & grammar fixes
+    fixed = target
+    ar_fixes = {
+        "مادا": "ماذا",
+        "هاذا": "هذا",
+        "هاذه": "هذه",
+        "لاكن": "لكن",
+        "ذالك": "ذلك",
+        "انشاء الله": "إن شاء الله",
+        "ان شاء الله": "إن شاء الله",
+        "مساءالخير": "مساء الخير",
+        "صباحالخير": "صباح الخير",
+        "شكراً جزيلا": "شكراً جزيلاً",
+        "شكرا جزيلا": "شكراً جزيلاً",
+        "انت ": "أنت ",
+        "انا ": "أنا ",
+        "الى ": "إلى ",
+    }
+    for wrong, right in ar_fixes.items():
+        fixed = fixed.replace(wrong, right)
+    fixed = re.sub(r"\s+", " ", fixed).strip()
+    if fixed and fixed[-1] not in ".!؟?":
+        fixed += "."
+
+    if lang_code == "ar":
+        return (
+            f"✍️ **التدقيق اللغوي وإعادة الصياغة الاحترافية:**\n\n"
+            f"- **النص بعد التصحيح الإملائي والنحوي:**\n  «{fixed}»\n\n"
+            f"- **الصياغة الرسمية المقترحة:**\n  «نودّ إفادتكم بأنّ: {fixed}»"
+        )
+    if lang_code == "fr":
+        return f"✍️ **Correction et reformulation professionnelle :**\n\n- **Texte corrigé :** « {fixed[0].upper() + fixed[1:] if fixed else fixed} »"
+    return f"✍️ **Proofreading & Professional Rewrite:**\n\n- **Corrected Text:** \"{fixed[0].upper() + fixed[1:] if fixed else fixed}\""
+
+
 def _maybe_generate_html_artifact(prompt: str, lang_code: str) -> str | None:
     """Generate a complete runnable HTML/CSS/JS artifact when the user requests a web widget, calculator, or page."""
     lower = (prompt or "").lower()
@@ -445,6 +563,7 @@ class NourAIWebAndSmartEngine:
         gemini_api_key: str | None = None,
         user_memories: list[str] | None = None,
         rag_chunks: list[dict[str, Any]] | None = None,
+        persona: str = "general",
     ) -> dict[str, Any]:
         detected = detect_text_language(prompt)
         lang_code = "ar" if detected == "arabic" else ("fr" if detected == "french" else "en")
@@ -469,7 +588,40 @@ class NourAIWebAndSmartEngine:
                 "citations": [],
             }
 
-        # 1b. Check if user is asking for an interactive HTML/JS Preview Artifact (Canvas)
+        # 1a. Check if user is asking for Free AI Image Generation (Feature 1)
+        img_reply = _maybe_generate_ai_image(prompt, lang_code)
+        if img_reply:
+            return {
+                "reply": img_reply,
+                "language": lang_code,
+                "task": "ai_image_generation",
+                "response_source": "ai_image_generator",
+                "citations": [],
+            }
+
+        # 1b. Check if user pasted a webpage URL to read & summarize (Feature 2)
+        url_reply = _maybe_read_and_summarize_url(prompt, lang_code)
+        if url_reply:
+            return {
+                "reply": url_reply,
+                "language": lang_code,
+                "task": "webpage_url_summary",
+                "response_source": "url_reader",
+                "citations": [],
+            }
+
+        # 1c. Check if user asked for Proofreading / Professional Rewriting (Feature 4)
+        proof_reply = _maybe_proofread_and_rewrite(prompt, lang_code)
+        if proof_reply:
+            return {
+                "reply": proof_reply,
+                "language": lang_code,
+                "task": "proofreading_and_rewrite",
+                "response_source": "smart_proofreader",
+                "citations": [],
+            }
+
+        # 1d. Check if user is asking for an interactive HTML/JS Preview Artifact (Canvas)
         html_artifact = _maybe_generate_html_artifact(prompt, lang_code)
         if html_artifact:
             return {

@@ -450,6 +450,27 @@
         z-index: 90;
       }
     }
+
+    .generated-img {
+      max-width: 100%;
+      width: 480px;
+      border-radius: 0.75rem;
+      border: 1px solid var(--border);
+      margin: 0.6rem 0;
+      display: block;
+    }
+
+    @media print {
+      aside.sidebar, header.chat-header, footer.chat-input-bar, aside.settings-panel, #cookie-banner, #welcome-hero, .bubble-actions {
+        display: none !important;
+      }
+      body, main.chat-area, #chat-messages {
+        background: #ffffff !important;
+        color: #000000 !important;
+        height: auto !important;
+        overflow: visible !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -532,6 +553,15 @@
       <button class="icon-btn" onclick="toggleSettings()">✕</button>
     </div>
     <div class="control-group">
+      <label for="persona-select">الشخصية / الدور (Persona)</label>
+      <select id="persona-select" onchange="setCookie('nourai_persona', this.value, 90)">
+        <option value="general">مساعد عام (افتراضي)</option>
+        <option value="coder">مبرمج ومهندس برمجيات</option>
+        <option value="teacher">معلم لغات وشرح مبسط</option>
+        <option value="writer">مدقق لغوي وكاتب أكاديمي</option>
+      </select>
+    </div>
+    <div class="control-group">
       <label for="strategy-select">استراتيجية التوليد</label>
       <select id="strategy-select">
         <option value="greedy">Greedy</option>
@@ -565,6 +595,7 @@
       <div id="memories-list" style="font-size:0.75rem;color:var(--text-main);">—</div>
       <div id="rag-docs-list" style="font-size:0.75rem;color:var(--text-main);"></div>
     </div>
+    <button class="new-chat-btn" onclick="window.print()" style="justify-content:center;margin-top:0.25rem;">📄 حفظ المحادثة PDF</button>
   </aside>
 
   <!-- Live HTML Preview Modal -->
@@ -865,29 +896,66 @@
       return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
 
+    function formatInlineMarkdown(text) {
+      let s = escapeHtml(text);
+      s = s.replace(/!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)/g, '<img src="$2" alt="$1" class="generated-img" loading="lazy" />');
+      s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" style="color:#93c5fd;text-decoration:underline;">$1</a>');
+      s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+      return s.replace(/\n/g, "<br/>");
+    }
+
     function renderFormattedContent(targetEl, rawText) {
       targetEl.dataset.raw = rawText;
       if (!rawText.includes("```")) {
-        targetEl.innerHTML = escapeHtml(rawText).replace(/\n/g, "<br/>");
+        targetEl.innerHTML = formatInlineMarkdown(rawText);
         return;
       }
       const parts = rawText.split(/```(\w*)\n?([\s\S]*?)```/g);
       let html = "";
       for (let i = 0; i < parts.length; i += 3) {
         const normalText = parts[i] || "";
-        html += escapeHtml(normalText).replace(/\n/g, "<br/>");
+        html += formatInlineMarkdown(normalText);
         if (i + 2 < parts.length) {
           const lang = (parts[i + 1] || "code").toLowerCase();
           const code = parts[i + 2] || "";
           const encodedCode = encodeURIComponent(code);
+          const outId = "py-out-" + i + "-" + Math.floor(Math.random() * 100000);
           const isPreviewable = lang === "html" || lang === "svg" || code.includes("<html") || code.includes("<style");
+          const isPython = lang === "python" || lang === "py" || code.includes("def ") || code.includes("print(");
           const previewBtn = isPreviewable
             ? `<button class="icon-btn" style="font-size:0.75rem;" onclick="openLiveCanvas(decodeURIComponent('${encodedCode}'))">▶️ معاينة</button>`
-            : "";
-          html += `<pre><div class="code-header"><span>${escapeHtml(lang)}</span><div>${previewBtn}<button class="icon-btn" style="font-size:0.75rem;" onclick="copyAnswer(decodeURIComponent('${encodedCode}'), this)">نسخ</button></div></div><code>${escapeHtml(code)}</code></pre>`;
+            : (isPython ? `<button class="icon-btn" style="font-size:0.75rem;" onclick="runPythonCode(decodeURIComponent('${encodedCode}'), '${outId}')">▶️ تشغيل</button>` : "");
+          html += `<pre><div class="code-header"><span>${escapeHtml(lang)}</span><div>${previewBtn}<button class="icon-btn" style="font-size:0.75rem;" onclick="copyAnswer(decodeURIComponent('${encodedCode}'), this)">نسخ</button></div></div><code>${escapeHtml(code)}</code><div id="${outId}" style="display:none;padding:0.5rem 0.8rem;border-top:1px solid var(--border);background:#0d0d0d;color:#86efac;font-family:monospace;font-size:0.8rem;white-space:pre-wrap;"></div></pre>`;
         }
       }
       targetEl.innerHTML = html;
+    }
+
+    async function runPythonCode(codeStr, outputId) {
+      const outEl = document.getElementById(outputId);
+      if (!outEl) return;
+      outEl.style.display = "block";
+      outEl.textContent = "جاري التشغيل...";
+      const token = await ensureAuthenticated();
+      if (!token) return;
+      try {
+        const res = await fetch("/api/v1/code/run", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+          body: JSON.stringify({ code: codeStr })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          outEl.style.color = "#fca5a5";
+          outEl.textContent = data.error || "خطأ في التشغيل";
+        } else {
+          outEl.style.color = data.exit_code === 0 ? "#86efac" : "#fca5a5";
+          outEl.textContent = (data.stdout || data.stderr || "(تم التنفيذ بنجاح بدون مخرجات نصية)").trim();
+        }
+      } catch (err) {
+        outEl.style.color = "#fca5a5";
+        outEl.textContent = err.message;
+      }
     }
 
     async function sendStreamingMessage() {
@@ -928,6 +996,7 @@
             enable_web_search: enableWebSearch,
             use_fallback_assistant: useFallback,
             gemini_api_key: geminiKey,
+            persona: document.getElementById("persona-select").value,
             strategy: document.getElementById("strategy-select").value,
             temperature: parseFloat(document.getElementById("temperature-input").value),
             top_k: parseInt(document.getElementById("top-k-input").value, 10),
@@ -1074,6 +1143,10 @@
       const savedKey = getCookie("nourai_gemini_key");
       if (savedKey) {
         document.getElementById("gemini-key-input").value = savedKey;
+      }
+      const savedPersona = getCookie("nourai_persona");
+      if (savedPersona) {
+        document.getElementById("persona-select").value = savedPersona;
       }
       await refreshSessionList();
       const savedSess = getCookie("nourai_active_session");

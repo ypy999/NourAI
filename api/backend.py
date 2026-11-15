@@ -10,6 +10,8 @@ import os
 from pathlib import Path
 import secrets
 import sqlite3
+import subprocess
+import sys
 import threading
 import time
 from typing import Any
@@ -618,6 +620,28 @@ class NourAIBackend:
                 return 404, sec_headers, {"error": "document not found"}
             return 200, sec_headers, {"status": "deleted", "doc_id": doc_id}
 
+        if method == "POST" and route == "/api/v1/code/run":
+            code_str = str(body.get("code", "")).strip()
+            if not code_str:
+                return 400, sec_headers, {"error": "code cannot be empty"}
+            forbidden = ("import subprocess", "import shutil", "import socket", "os.system", "os.remove", "os.unlink", "rmdir", "open(")
+            if any(f in code_str for f in forbidden):
+                return 400, sec_headers, {"error": "code contains restricted system/file operations"}
+            try:
+                proc = subprocess.run(
+                    [sys.executable, "-I", "-c", code_str],
+                    capture_output=True,
+                    text=True,
+                    timeout=4.0,
+                )
+                return 200, sec_headers, {
+                    "stdout": proc.stdout[:4000],
+                    "stderr": proc.stderr[:2000],
+                    "exit_code": proc.returncode,
+                }
+            except subprocess.TimeoutExpired:
+                return 408, sec_headers, {"error": "code execution timed out (4s limit)"}
+
         if method == "POST" and route == "/api/v1/sessions":
             sess = self.sessions.create_session(
                 claims["sub"],
@@ -730,6 +754,7 @@ class NourAIBackend:
                     gemini_api_key=str(body.get("gemini_api_key", "")).strip() or None,
                     user_memories=all_user_memories,
                     rag_chunks=matched_rag_chunks,
+                    persona=str(body.get("persona", "general")),
                 )
                 web_elapsed_ms = round((time.perf_counter() - t_web0) * 1000.0, 3)
                 reply_text = web_out["reply"]
