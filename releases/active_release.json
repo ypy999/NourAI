@@ -1,8 +1,8 @@
 {
   "active_version": "v1.2.0",
   "checkpoint_path": "checkpoints\\v1_2\\nourai_v1_2_model.pt",
-  "checkpoint_sha256": "3474a8f8d118984cf99d9887f5c171d2b3fd597ed659005ba19eb523a9f9f01a",
+  "checkpoint_sha256": "6228c42a78a26625c50c5bc2a66fddd6c3f4d43e6ab1a34daf83fc1df0a95409",
   "verified_parameters": 843008,
   "smoke_tokens_generated": 6,
-  "switched_at_utc": "2026-11-14T01:04:19Z"
+  "switched_at_utc": "2026-11-15T21:41:49Z"
 }

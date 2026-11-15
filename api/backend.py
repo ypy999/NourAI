@@ -17,6 +17,7 @@ from urllib.parse import urlparse
 
 from inference.engine import GenerationConfig, InferenceEngine, StreamChunk
 from nourai.capabilities import NourAICapabilityEngine
+from nourai.web_search import NourAIWebAndSmartEngine
 
 
 class UserManager:
@@ -457,6 +458,7 @@ class NourAIBackend:
             default_ckpt = repo_root / "checkpoints" / "phase16" / "phase16_sft_aligned_model.pt"
         self.engine = engine or InferenceEngine.from_checkpoint(default_ckpt)
         self.capabilities = NourAICapabilityEngine(model=self.engine.model, tokenizer=self.engine.tokenizer)
+        self.web_engine = NourAIWebAndSmartEngine(self.capabilities)
         self.use_capabilities = bool(use_capabilities)
         self.db_path = Path(db_path) if db_path else None
         self.users = UserManager(db_path=self.db_path)
@@ -659,7 +661,56 @@ class NourAIBackend:
             ).validate()
 
             self.engine.reset_stop()
+            enable_web_search = bool(body.get("enable_web_search", False))
             use_fallback = bool(body.get("use_fallback_assistant", self.use_capabilities))
+
+            if enable_web_search:
+                t_web0 = time.perf_counter()
+                web_out = self.web_engine.answer_with_web(
+                    message,
+                    language=language,
+                    history=prior_messages,
+                    enable_web_search=True,
+                    gemini_api_key=str(body.get("gemini_api_key", "")).strip() or None,
+                )
+                web_elapsed_ms = round((time.perf_counter() - t_web0) * 1000.0, 3)
+                reply_text = web_out["reply"]
+                self.sessions.append_turn(str(session_id), "assistant", reply_text, language=language)
+                if route == "/api/v1/chat/stream":
+                    words = reply_text.split(" ")
+                    chunks = [
+                        StreamChunk(
+                            token_id=-1,
+                            text_delta=w if idx_w == len(words) - 1 else (w + " "),
+                            step_index=idx_w + 1,
+                            is_final=(idx_w == len(words) - 1),
+                            finish_reason="web_complete" if idx_w == len(words) - 1 else None,
+                        ).to_dict()
+                        for idx_w, w in enumerate(words)
+                    ]
+                    return 200, sec_headers, {
+                        "session_id": session_id,
+                        "language": language,
+                        "response_source": web_out["response_source"],
+                        "citations": web_out.get("citations", []),
+                        "stream_chunks": chunks,
+                        "reply": reply_text,
+                    }
+                return 200, sec_headers, {
+                    "session_id": session_id,
+                    "language": language,
+                    "response_source": web_out["response_source"],
+                    "citations": web_out.get("citations", []),
+                    "reply": reply_text,
+                    "task": web_out["task"],
+                    "metrics": {
+                        "generated_tokens": 0,
+                        "ttft_ms": 0.0,
+                        "elapsed_ms": web_elapsed_ms,
+                        "tokens_per_second": 0.0,
+                        "mode": web_out["response_source"],
+                    },
+                }
 
             if use_fallback:
                 t_rule0 = time.perf_counter()

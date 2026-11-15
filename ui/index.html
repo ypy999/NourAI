@@ -709,8 +709,9 @@
       <div class="header-right">
         <label for="engine-mode-select" style="font-size:0.78rem;color:var(--text-muted);">المحرك:</label>
         <select id="engine-mode-select" class="model-pill-select" onchange="updateModeBadge()">
-          <option value="fallback">✦ NourAI Smart Assistant (موصى به للمحادثة والمهام)</option>
-          <option value="neural">🧠 NourAI Raw Neural 843K (توليد الشبكة العصبية الخام)</option>
+          <option value="web_ai">🌐 بحث قوقل والويب الحي + الذكاء الشامل (Live Web & AI — مجاني)</option>
+          <option value="fallback">✦ المساعد المحلي السريع (Offline Smart Assistant)</option>
+          <option value="neural">🧠 الشبكة العصبية الخام (Raw Neural 843K)</option>
         </select>
 
         <label for="language-selector" id="ui-lang-label" style="font-size:0.78rem;color:var(--text-muted);">اللغة:</label>
@@ -825,6 +826,11 @@
       <input type="number" id="max-tokens-input" value="40" min="4" max="64" step="4" />
     </div>
 
+    <div class="control-group">
+      <label for="gemini-key-input">مفتاح Gemini API المجاني (اختياري)</label>
+      <input type="password" id="gemini-key-input" placeholder="AIzaSy... (اختياري)" />
+    </div>
+
     <div class="telemetry-box" id="telemetry-box">
       <strong style="color:var(--text-main);">معلومات النظام والنموذج</strong>
       <div id="telemetry-params">المعاملات: 843,008 (Pre-LN GPT)</div>
@@ -931,8 +937,10 @@
     function updateModeBadge() {
       const mode = document.getElementById("engine-mode-select").value;
       const cap = document.getElementById("active-mode-caption");
-      if (mode === "fallback") {
-        cap.textContent = "الوضع النشط: ✦ المساعد الذكي الشامل (Smart Assistant — QA, Code, Math, Translation)";
+      if (mode === "web_ai") {
+        cap.textContent = "الوضع النشط: 🌐 بحث قوقل وويكيبيديا الحي + الذكاء الشامل (يجيب على أي سؤال مجاناً)";
+      } else if (mode === "fallback") {
+        cap.textContent = "الوضع النشط: ✦ المساعد المحلي السريع بدون إنترنت (Offline Smart Assistant)";
       } else {
         cap.textContent = "الوضع النشط: 🧠 التوليد العصبي الخام المباشر (Raw Neural 843K Byte-Transformer)";
       }
@@ -1184,11 +1192,14 @@
       appendMessageBubble("user", text);
       updateHeroVisibility();
 
-      const useFallback = document.getElementById("engine-mode-select").value === "fallback";
+      const selectedMode = document.getElementById("engine-mode-select").value;
+      const enableWebSearch = selectedMode === "web_ai";
+      const useFallback = selectedMode === "fallback" || selectedMode === "web_ai";
+      const geminiKey = (document.getElementById("gemini-key-input").value || "").trim();
       const assistantObj = appendMessageBubble(
         "assistant",
         "",
-        useFallback ? "rule_based_fallback_assistant" : "neural_model"
+        enableWebSearch ? "live_web_ai" : (useFallback ? "rule_based_fallback_assistant" : "neural_model")
       );
 
       const statusEl = document.getElementById("stream-status-indicator");
@@ -1207,7 +1218,9 @@
             session_id: activeSessionId,
             language: currentLanguage,
             message: text,
+            enable_web_search: enableWebSearch,
             use_fallback_assistant: useFallback,
+            gemini_api_key: geminiKey,
             strategy: document.getElementById("strategy-select").value,
             temperature: parseFloat(document.getElementById("temperature-input").value),
             top_k: parseInt(document.getElementById("top-k-input").value, 10),
@@ -1225,10 +1238,13 @@
         }
         activeSessionId = payload.session_id || activeSessionId;
         if (payload.response_source && assistantObj.sourceBadge) {
-          assistantObj.sourceBadge.textContent =
-            payload.response_source === "neural_model"
-              ? "🧠 neural_model (شبكة عصبية)"
-              : "✦ smart_assistant (مساعد ذكي)";
+          if (payload.response_source === "neural_model") {
+            assistantObj.sourceBadge.textContent = "🧠 neural_model (شبكة عصبية)";
+          } else if (payload.response_source.includes("web")) {
+            assistantObj.sourceBadge.textContent = "🌐 " + payload.response_source + " (بحث ويب حي)";
+          } else {
+            assistantObj.sourceBadge.textContent = "✦ " + payload.response_source;
+          }
         }
 
         let fullStreamed = "";

@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: nourai-studio
+    runtime: python
+    plan: free
+    buildCommand: pip install --no-cache-dir -r requirements/base.txt
+    startCommand: python run_nourai.py --no-browser --host 0.0.0.0
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"

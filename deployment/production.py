@@ -236,6 +236,8 @@ def start_live_http_server(
     *,
     enable_tls: bool = False,
     cert_dir: str | Path = "data/production/tls",
+    host: str = "127.0.0.1",
+    port: int = 0,
 ) -> tuple[ThreadingHTTPServer, threading.Thread, str]:
     """Start a live local ThreadingHTTPServer (HTTP or real TLS 1.3 HTTPS) serving UI (/) and REST API (/api/v1/*)."""
     ui_html = load_ui_html()
@@ -286,7 +288,7 @@ def start_live_http_server(
         def do_DELETE(self) -> None:
             self._dispatch("DELETE")
 
-    server = ThreadingHTTPServer(("127.0.0.1", 0), _Handler)
+    server = ThreadingHTTPServer((host, int(port)), _Handler)
     scheme = "http"
     if enable_tls:
         cert_path, key_path = ensure_self_signed_tls_cert(cert_dir)
@@ -296,10 +298,11 @@ def start_live_http_server(
         server.socket = server_ctx.wrap_socket(server.socket, server_side=True)
         scheme = "https"
 
-    port = server.server_address[1]
+    bound_port = server.server_address[1]
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
-    return server, thread, f"{scheme}://127.0.0.1:{port}"
+    display_host = "127.0.0.1" if host == "0.0.0.0" else host
+    return server, thread, f"{scheme}://{display_host}:{bound_port}"
 
 
 def run_phase21_deployment_audit(
