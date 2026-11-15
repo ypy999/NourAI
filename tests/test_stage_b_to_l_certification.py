@@ -161,6 +161,54 @@ def test_stage_h_and_i_api_sqlite_persistence_ui_and_security():
         assert fallback_chat["response_source"] == "rule_based_fallback_assistant"
         assert fallback_chat["metrics"]["generated_tokens"] == 0
 
+        # Verify Long-Term Memory, Document RAG, Live Canvas & Cloud GPU Notebook (Items 2, 3, 4, 5)
+        b_studio = NourAIBackend(engine=b1.engine, db_path=db_file, rate_limit_per_minute=20)
+        _, _, g_st = b_studio.handle_request("POST", "/api/v1/auth/guest")
+        st_headers = {"Authorization": f"Bearer {g_st['access_token']}"}
+
+        # Item 2: Long-Term Memory auto-extraction & persistence
+        _, _, mem_chat = b_studio.handle_request(
+            "POST",
+            "/api/v1/chat",
+            headers=st_headers,
+            body={"language": "arabic", "message": "تذكر أن اسمي طارق وأعمل في هندسة الذكاء الاصطناعي", "enable_web_search": True},
+        )
+        assert len(mem_chat.get("memories_updated", [])) >= 1
+        _, _, mem_list = b_studio.handle_request("GET", "/api/v1/memories", headers=st_headers)
+        assert any("طارق" in m["fact"] for m in mem_list["memories"])
+
+        # Item 3: Local Document Upload & RAG
+        _, _, doc_up = b_studio.handle_request(
+            "POST",
+            "/api/v1/documents",
+            headers=st_headers,
+            body={"filename": "project_secret_spec.txt", "content": "رمز الإطلاق الخاص بمشروع المريخ هو MARS-2029."},
+        )
+        assert doc_up["document"]["chunk_count"] >= 1
+        _, _, rag_ans = b_studio.handle_request(
+            "POST",
+            "/api/v1/chat",
+            headers=st_headers,
+            body={"language": "arabic", "message": "ما هو رمز الإطلاق في الملف المرفق؟", "enable_web_search": True},
+        )
+        assert "MARS-2029" in rag_ans["reply"]
+        assert rag_ans["response_source"] == "local_document_rag"
+
+        # Item 4: Live HTML Code Preview Canvas
+        _, _, canvas_ans = b_studio.handle_request(
+            "POST",
+            "/api/v1/chat",
+            headers=st_headers,
+            body={"language": "arabic", "message": "اصنع لي آلة حاسبة تفاعلية بـ HTML", "enable_web_search": True},
+        )
+        assert "```html" in canvas_ans["reply"]
+        assert canvas_ans["response_source"] == "live_code_canvas"
+        assert "openLiveCanvas(" in html
+
+        # Item 5: Cloud GPU Colab/Kaggle Notebook exists
+        assert Path("notebooks/NourAI_Cloud_GPU_Training_Colab_Kaggle.ipynb").is_file()
+        assert Path("scripts/train_cloud_gpu.py").is_file()
+
     redacted = redact_sensitive_text('{"password": "MySecretPassword123"} Bearer abcdef.12345')
     assert "MySecretPassword123" not in redacted and "abcdef.12345" not in redacted
 

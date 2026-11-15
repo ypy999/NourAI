@@ -760,9 +760,13 @@
           <strong>🏛️ الأسئلة المعرفية (العربية)</strong>
           <span>ما هي عاصمة قطر وما أهميتها؟</span>
         </div>
-        <div class="suggestion-card" onclick="useStarterPrompt('Quelle est la capitale de la France ?')">
-          <strong>🇫🇷 Dialogue Multilingue (Français)</strong>
-          <span>Quelle est la capitale de la France ?</span>
+        <div class="suggestion-card" onclick="useStarterPrompt('اصنع لي آلة حاسبة تفاعلية بـ HTML')">
+          <strong>🎨 معاينة حية للأكواد (Live HTML Canvas)</strong>
+          <span>اصنع لي آلة حاسبة تفاعلية بـ HTML مع زر تشغيل مباشر</span>
+        </div>
+        <div class="suggestion-card" onclick="useStarterPrompt('تذكر أن اسمي محمد وأفضل البرمجة بلغة بايثون')">
+          <strong>🧠 الذاكرة الدائمة (ChatGPT Memory)</strong>
+          <span>تذكر أن اسمي محمد وأفضل البرمجة بلغة بايثون</span>
         </div>
       </div>
     </div>
@@ -773,6 +777,8 @@
     <!-- Bottom Pill Composer -->
     <footer class="chat-input-bar">
       <div class="composer-pill">
+        <input type="file" id="doc-upload-input" accept=".txt,.md,.json,.csv,.py,.js,.html,.log" style="display:none;" onchange="handleFileUpload(this)" />
+        <button class="mini-btn" onclick="document.getElementById('doc-upload-input').click()" id="attach-btn" title="إرفاق ملف للبحث بداخله (Local RAG)">📎 ملف</button>
         <button class="mini-btn" onclick="startVoiceInput()" id="mic-btn" title="إدخال صوتي">🎤</button>
         <textarea
           id="prompt-input"
@@ -831,6 +837,19 @@
       <input type="password" id="gemini-key-input" placeholder="AIzaSy... (اختياري)" />
     </div>
 
+    <div class="telemetry-box" id="memories-box">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <strong style="color:var(--text-main);">🧠 الذاكرة الدائمة (Memory)</strong>
+        <button class="mini-btn" onclick="clearUserMemories()" title="مسح الذاكرة">مسح</button>
+      </div>
+      <div id="memories-list" style="font-size:0.75rem;line-height:1.45;">لا توجد ذكريات محفوظة بعد. قل مثلاً: «تذكر أن اسمي ...»</div>
+    </div>
+
+    <div class="telemetry-box" id="rag-docs-box">
+      <strong style="color:var(--text-main);">📄 ملفاتك المرفقة (Local RAG)</strong>
+      <div id="rag-docs-list" style="font-size:0.75rem;line-height:1.45;">لم يتم إرفاق ملفات بعد (اضغط 📎 ملف بالأسفل).</div>
+    </div>
+
     <div class="telemetry-box" id="telemetry-box">
       <strong style="color:var(--text-main);">معلومات النظام والنموذج</strong>
       <div id="telemetry-params">المعاملات: 843,008 (Pre-LN GPT)</div>
@@ -838,6 +857,17 @@
       <div id="telemetry-langs">اللغات: العربية · EN · FR</div>
     </div>
   </aside>
+
+  <!-- Live HTML/JS Code Preview Modal (Claude Artifacts / ChatGPT Canvas Style) -->
+  <div id="live-canvas-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);z-index:999;justify-content:center;align-items:center;padding:1.5rem;">
+    <div style="background:var(--bg-panel);border:1px solid var(--border);border-radius:1rem;width:min(900px,95vw);height:min(640px,88vh);display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow-lg);">
+      <div style="padding:0.75rem 1.1rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+        <strong>▶️ المعاينة الحية للكود (NourAI Live Code Canvas)</strong>
+        <button class="danger-btn" onclick="closeLiveCanvas()" style="padding:0.3rem 0.75rem;">✕ إغلاق</button>
+      </div>
+      <iframe id="live-canvas-iframe" sandbox="allow-scripts" style="flex:1;width:100%;border:none;background:#ffffff;"></iframe>
+    </div>
+  </div>
 
   <script>
     const I18N = {
@@ -1167,10 +1197,14 @@
         const normalText = parts[i] || "";
         html += escapeHtml(normalText).replace(/\n/g, "<br/>");
         if (i + 2 < parts.length) {
-          const lang = parts[i + 1] || "code";
+          const lang = (parts[i + 1] || "code").toLowerCase();
           const code = parts[i + 2] || "";
           const encodedCode = encodeURIComponent(code);
-          html += `<pre><div class="code-header"><span>${escapeHtml(lang)}</span><button class="mini-btn" onclick="copyAnswer(decodeURIComponent('${encodedCode}'), this)">📋 Copy Code</button></div><code>${escapeHtml(code)}</code></pre>`;
+          const isPreviewable = lang === "html" || lang === "svg" || code.includes("<html") || code.includes("<style") || code.includes("<div");
+          const previewBtn = isPreviewable
+            ? `<button class="mini-btn" style="border-color:var(--accent);color:#a5b4fc;" onclick="openLiveCanvas(decodeURIComponent('${encodedCode}'))">▶️ معاينة حية (Live Preview)</button>`
+            : "";
+          html += `<pre><div class="code-header"><span>${escapeHtml(lang)}</span><div style="display:flex;gap:0.35rem;">${previewBtn}<button class="mini-btn" onclick="copyAnswer(decodeURIComponent('${encodedCode}'), this)">📋 Copy Code</button></div></div><code>${escapeHtml(code)}</code></pre>`;
         }
       }
       targetEl.innerHTML = html;
@@ -1247,6 +1281,10 @@
           }
         }
 
+        if (payload.memories_updated && payload.memories_updated.length > 0 && assistantObj.sourceBadge) {
+          assistantObj.sourceBadge.textContent += " · 🧠 تم تحديث الذاكرة (Memory Updated)";
+        }
+
         let fullStreamed = "";
         if (payload.stream_chunks) {
           for (const chunk of payload.stream_chunks) {
@@ -1259,6 +1297,7 @@
           }
         }
         await refreshSessionList();
+        await refreshMemoriesAndDocs();
       } catch (err) {
         showError(err.message);
       }
@@ -1407,9 +1446,112 @@
       }
     });
 
+    function openLiveCanvas(codeStr) {
+      const modal = document.getElementById("live-canvas-modal");
+      const iframe = document.getElementById("live-canvas-iframe");
+      iframe.srcdoc = codeStr;
+      modal.style.display = "flex";
+    }
+
+    function closeLiveCanvas() {
+      const modal = document.getElementById("live-canvas-modal");
+      const iframe = document.getElementById("live-canvas-iframe");
+      iframe.srcdoc = "";
+      modal.style.display = "none";
+    }
+
+    async function refreshMemoriesAndDocs() {
+      const token = await ensureAuthenticated();
+      if (!token) return;
+      try {
+        const mRes = await fetch("/api/v1/memories", {
+          headers: { "Authorization": "Bearer " + token }
+        });
+        if (mRes.ok) {
+          const mData = await mRes.json();
+          const mems = mData.memories || [];
+          const memEl = document.getElementById("memories-list");
+          if (mems.length === 0) {
+            memEl.textContent = "لا توجد ذكريات محفوظة بعد. قل مثلاً: «تذكر أن اسمي ...»";
+          } else {
+            memEl.innerHTML = mems.map(m => "• " + escapeHtml(m.fact)).join("<br/>");
+          }
+        }
+
+        const dRes = await fetch("/api/v1/documents", {
+          headers: { "Authorization": "Bearer " + token }
+        });
+        if (dRes.ok) {
+          const dData = await dRes.json();
+          const docs = dData.documents || [];
+          const docEl = document.getElementById("rag-docs-list");
+          if (docs.length === 0) {
+            docEl.textContent = "لم يتم إرفاق ملفات بعد (اضغط 📎 ملف بالأسفل).";
+          } else {
+            docEl.innerHTML = docs
+              .map(d => `<div style="display:flex;justify-content:space-between;align-items:center;margin-top:3px;"><span>📄 ${escapeHtml(d.filename)} (${d.chunk_count} فقرات)</span><button class="mini-btn" onclick="deleteUploadedDoc('${d.doc_id}')">✕</button></div>`)
+              .join("");
+          }
+        }
+      } catch (err) {
+        // ignore transient errors
+      }
+    }
+
+    async function clearUserMemories() {
+      const token = await ensureAuthenticated();
+      if (!token) return;
+      await fetch("/api/v1/memories", {
+        method: "DELETE",
+        headers: { "Authorization": "Bearer " + token }
+      });
+      await refreshMemoriesAndDocs();
+    }
+
+    async function handleFileUpload(inputEl) {
+      const file = inputEl.files && inputEl.files[0];
+      if (!file) return;
+      const token = await ensureAuthenticated();
+      if (!token) return;
+      try {
+        const content = await file.text();
+        const res = await fetch("/api/v1/documents", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+          },
+          body: JSON.stringify({ filename: file.name, content: content })
+        });
+        if (!res.ok) {
+          const errData = await res.json();
+          showError(errData.error || "فشل رفع الملف");
+        } else {
+          await refreshMemoriesAndDocs();
+          const promptInput = document.getElementById("prompt-input");
+          promptInput.value = `لخص ما ورد في الملف المرفق (${file.name})`;
+          autoResizeTextarea(promptInput);
+        }
+      } catch (err) {
+        showError(err.message);
+      }
+      inputEl.value = "";
+    }
+
+    async function deleteUploadedDoc(docId) {
+      const token = await ensureAuthenticated();
+      if (!token) return;
+      await fetch("/api/v1/documents/" + docId, {
+        method: "DELETE",
+        headers: { "Authorization": "Bearer " + token }
+      });
+      await refreshMemoriesAndDocs();
+    }
+
     window.addEventListener("DOMContentLoaded", () => {
       checkModelHealth();
       refreshSessionList();
+      refreshMemoriesAndDocs();
       updateHeroVisibility();
       updateModeBadge();
     });

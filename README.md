@@ -1,6 +1,8 @@
 # NourAI `v1.2.0` — Local-First Multilingual Language Model (Arabic · English · French)
 
-NourAI هو مشروع نموذج لغوي محلي متعدد اللغات (**العربية، الإنجليزية، الفرنسية**) مبني بمعمارية **Decoder-only Pre-LN Transformer**، ويعمل محلياً بالكامل (`Local-First`) عبر مكتبة بايثون القياسية (`ThreadingHTTPServer` + `ssl` بدون اعتماد على `FastAPI`/`uvicorn`) مع واجهة برمجية (`REST API`)، وواجهة محادثة متجاوبة (`RTL/LTR Web UI`)، وقاعدة بيانات إنتاجية (`SQLite WAL`)، ودعم التشفير (`TLS 1.3 HTTPS`).
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ypy999/NourAI/blob/main/notebooks/NourAI_Cloud_GPU_Training_Colab_Kaggle.ipynb)
+
+NourAI هو مشروع نموذج لغوي محلي متعدد اللغات (**العربية، الإنجليزية، الفرنسية**) مبني بمعمارية **Decoder-only Pre-LN Transformer**، ويعمل محلياً بالكامل (`Local-First`) عبر مكتبة بايثون القياسية (`ThreadingHTTPServer` + `ssl` بدون اعتماد على `FastAPI`/`uvicorn`) مع واجهة برمجية (`REST API`)، وواجهة محادثة متجاوبة (`RTL/LTR Web UI`)، وبحث ويب حي مجاني (`Wikipedia + Google News RSS + DuckDuckGo`)، وذاكرة دائمة للمستخدم (`Long-Term Memory`)، وتحليل المستندات المرفقة (`Local Document RAG`)، ومعاينة حية للأكواد (`Live HTML/JS Canvas`)، ودعم التشفير (`TLS 1.3 HTTPS`).
 
 ---
 

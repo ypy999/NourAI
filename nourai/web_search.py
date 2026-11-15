@@ -160,6 +160,70 @@ def search_duckduckgo_instant(query: str, max_results: int = 3) -> list[dict[str
     return results[:max_results]
 
 
+def _maybe_generate_html_artifact(prompt: str, lang_code: str) -> str | None:
+    """Generate a complete runnable HTML/CSS/JS artifact when the user requests a web widget, calculator, or page."""
+    lower = (prompt or "").lower()
+    html_triggers = (
+        "html",
+        "آلة حاسبة",
+        "الة حاسبة",
+        "صفحة هبوط",
+        "صفحة ويب",
+        "لوحة تحكم",
+        "calculator",
+        "landing page",
+        "calculatrice",
+    )
+    if not any(t in lower for t in html_triggers):
+        return None
+
+    intro = (
+        "إليك كود تطبيق ويب تفاعلي كامل بـ **HTML/CSS/JS** جاهز للتجربة. اضغط على زر **«▶️ معاينة حية (Live Preview)»** أعلى صندوق الكود لتشغيله مباشرة داخل النافذة:"
+        if lang_code == "ar"
+        else (
+            "Voici une application Web interactive complète en **HTML/CSS/JS**. Cliquez sur **« ▶️ Live Preview »** pour l'exécuter :"
+            if lang_code == "fr"
+            else "Here is a complete interactive **HTML/CSS/JS** web widget. Click **'▶️ Live Preview'** above the code block to run it live:"
+        )
+    )
+    html_code = """<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    body { font-family: system-ui, sans-serif; background: linear-gradient(135deg,#0f172a,#1e1b4b); color: #fff; display: flex; justify-content: center; align-items: center; min-height: 92vh; margin: 0; }
+    .card { background: rgba(255,255,255,0.08); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.18); padding: 22px; border-radius: 18px; width: 310px; box-shadow: 0 20px 40px rgba(0,0,0,0.45); }
+    h3 { margin: 0 0 12px 0; text-align: center; background: linear-gradient(90deg,#60a5fa,#ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    #display { width: 100%; height: 48px; border-radius: 10px; border: none; background: #090d16; color: #38bdf8; font-size: 1.4rem; text-align: left; padding: 0 12px; margin-bottom: 12px; box-sizing: border-box; direction: ltr; }
+    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; direction: ltr; }
+    button { height: 44px; border-radius: 10px; border: none; font-size: 1.05rem; font-weight: bold; cursor: pointer; background: #1e293b; color: #f8fafc; transition: 0.15s; }
+    button:hover { background: #4f46e5; }
+    .eq { background: linear-gradient(135deg,#6366f1,#ec4899); }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h3>✦ حاسبة NourAI الذكية</h3>
+    <input id="display" readonly value="0" />
+    <div class="grid">
+      <button onclick="clr()">C</button><button onclick="ins('(')">(</button><button onclick="ins(')')">)</button><button onclick="ins('/')">÷</button>
+      <button onclick="ins('7')">7</button><button onclick="ins('8')">8</button><button onclick="ins('9')">9</button><button onclick="ins('*')">×</button>
+      <button onclick="ins('4')">4</button><button onclick="ins('5')">5</button><button onclick="ins('6')">6</button><button onclick="ins('-')">−</button>
+      <button onclick="ins('1')">1</button><button onclick="ins('2')">2</button><button onclick="ins('3')">3</button><button onclick="ins('+')">+</button>
+      <button onclick="ins('0')" style="grid-column:span 2">0</button><button onclick="ins('.')">.</button><button class="eq" onclick="calc()">=</button>
+    </div>
+  </div>
+  <script>
+    const d = document.getElementById('display');
+    function ins(v) { d.value = (d.value === '0' ? v : d.value + v); }
+    function clr() { d.value = '0'; }
+    function calc() { try { d.value = String(Function('"use strict";return (' + d.value + ')')()); } catch { d.value = 'Error'; } }
+  </script>
+</body>
+</html>"""
+    return f"{intro}\n\n```html\n{html_code}\n```"
+
+
 def query_free_llm_with_context(
     prompt: str,
     *,
@@ -167,11 +231,18 @@ def query_free_llm_with_context(
     web_results: list[dict[str, str]],
     history: list[dict[str, str]] | None = None,
     api_key: str | None = None,
+    user_memories: list[str] | None = None,
+    rag_chunks: list[dict[str, Any]] | None = None,
 ) -> str | None:
-    """Synthesize a ChatGPT/Gemini-grade answer using optional Gemini API key or free Pollinations AI endpoint."""
+    """Synthesize a ChatGPT/Gemini-grade answer using optional Gemini/Groq API key or free Pollinations AI endpoint."""
     context_lines = []
     for idx, r in enumerate(web_results[:5], 1):
-        context_lines.append(f"[{idx}] {r['source']} - {r['title']}: {r['snippet']} ({r['url']})")
+        context_lines.append(f"[Web {idx}] {r['source']} - {r['title']}: {r['snippet']} ({r['url']})")
+    if rag_chunks:
+        for ch in rag_chunks[:3]:
+            context_lines.append(f"[Document {ch['filename']} #{ch['chunk_index']}]: {ch['content']}")
+    if user_memories:
+        context_lines.append("User Saved Memories: " + " | ".join(user_memories))
     web_context = "\n".join(context_lines) if context_lines else "No external web snippets needed."
 
     sys_instruction = (
@@ -250,6 +321,8 @@ class NourAIWebAndSmartEngine:
         history: list[dict[str, str]] | None = None,
         enable_web_search: bool = True,
         gemini_api_key: str | None = None,
+        user_memories: list[str] | None = None,
+        rag_chunks: list[dict[str, Any]] | None = None,
     ) -> dict[str, Any]:
         detected = detect_text_language(prompt)
         lang_code = "ar" if detected == "arabic" else ("fr" if detected == "french" else "en")
@@ -272,6 +345,57 @@ class NourAIWebAndSmartEngine:
                 "task": "safety_refusal",
                 "response_source": "safety_guard",
                 "citations": [],
+            }
+
+        # 1b. Check if user is asking for an interactive HTML/JS Preview Artifact (Canvas)
+        html_artifact = _maybe_generate_html_artifact(prompt, lang_code)
+        if html_artifact:
+            return {
+                "reply": html_artifact,
+                "language": lang_code,
+                "task": "html_live_artifact",
+                "response_source": "live_code_canvas",
+                "citations": [],
+            }
+
+        # 1c. Check if user is asking about their persistent Long-Term Memories
+        lower_p = prompt.lower()
+        if user_memories and any(
+            k in lower_p
+            for k in ("ما اسمي", "من أنا", "ماذا تعرف عني", "ما في ذاكرتك", "تذكرني", "what is my name", "what do you remember", "comment je m'appelle")
+        ):
+            mem_bullet = "\n".join(f"- 🧠 {m}" for m in user_memories)
+            reply_mem = (
+                f"بناءً على **الذاكرة الدائمة (Long-Term Memory)** المحفوظة لك عبر الجلسات:\n\n{mem_bullet}"
+                if lang_code == "ar"
+                else f"Based on your saved **Long-Term Memory** across sessions:\n\n{mem_bullet}"
+            )
+            return {
+                "reply": reply_mem,
+                "language": lang_code,
+                "task": "long_term_memory_recall",
+                "response_source": "long_term_memory",
+                "citations": [],
+            }
+
+        # 1d. Check if user uploaded documents (Local Document RAG) and is asking about them
+        if rag_chunks and any(
+            k in lower_p
+            for k in ("ملف", "مستند", "وثيقة", "المرفق", "في النص المرفوع", "file", "document", "uploaded", "fichier", "document")
+        ):
+            lines = [
+                "📄 **الإجابة المستخلصة من ملفاتك المرفقة (Local Document RAG):**\n"
+                if lang_code == "ar"
+                else "📄 **Answer extracted from your uploaded documents (Local Document RAG):**\n"
+            ]
+            for ch in rag_chunks[:3]:
+                lines.append(f"- **[ملف: `{ch['filename']}` — فقرة #{ch['chunk_index']}]**:\n  {ch['content']}")
+            return {
+                "reply": "\n\n".join(lines),
+                "language": lang_code,
+                "task": "document_rag",
+                "response_source": "local_document_rag",
+                "citations": [{"source": "Uploaded Document", "title": c["filename"], "snippet": c["content"][:120], "url": ""} for c in rag_chunks[:3]],
             }
 
         # 2. If it's a deterministic local task (math, coding, translation, memory, contradiction), check local capability first
@@ -302,13 +426,15 @@ class NourAIWebAndSmartEngine:
                 seen_titles.add(key)
                 unique_web.append(item)
 
-        # 4. Synthesize natural answer with LLM + Web Context
+        # 4. Synthesize natural answer with LLM + Web Context + Memories + RAG
         synthesized = query_free_llm_with_context(
             prompt,
             lang_code=lang_code,
             web_results=unique_web,
             history=history,
             api_key=gemini_api_key,
+            user_memories=user_memories,
+            rag_chunks=rag_chunks,
         )
 
         if synthesized:

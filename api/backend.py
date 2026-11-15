@@ -17,6 +17,11 @@ from urllib.parse import urlparse
 
 from inference.engine import GenerationConfig, InferenceEngine, StreamChunk
 from nourai.capabilities import NourAICapabilityEngine
+from nourai.memory_and_rag import (
+    LocalDocumentRAGStore,
+    LongTermMemoryStore,
+    extract_memories_from_message,
+)
 from nourai.web_search import NourAIWebAndSmartEngine
 
 
@@ -466,6 +471,8 @@ class NourAIBackend:
         self.auth = AuthManager(secret_key=resolved_secret)
         self.rate_limiter = RateLimiter(max_requests=rate_limit_per_minute, window_seconds=60.0)
         self.sessions = SessionManager(db_path=self.db_path)
+        self.memories = LongTermMemoryStore(db_path=self.db_path)
+        self.rag = LocalDocumentRAGStore(db_path=self.db_path)
         self.openapi = build_openapi_spec()
 
     def _authenticate(self, headers: dict[str, str]) -> dict[str, Any] | None:
@@ -556,12 +563,47 @@ class NourAIBackend:
 
         if method == "DELETE" and route == "/api/v1/users/me":
             deleted_sessions = self.sessions.delete_all_user_sessions(claims["sub"])
+            self.memories.clear_memories(claims["sub"])
             deleted_user = self.users.delete_user(claims["sub"])
             return 200, sec_headers, {
                 "status": "deleted",
                 "user_deleted": deleted_user,
                 "sessions_deleted": deleted_sessions,
             }
+
+        if route == "/api/v1/memories":
+            if method == "GET":
+                return 200, sec_headers, {"memories": self.memories.list_memories(claims["sub"])}
+            if method == "POST":
+                try:
+                    rec = self.memories.add_memory(claims["sub"], str(body.get("fact", "")))
+                    return 201, sec_headers, {"memory": rec}
+                except ValueError as exc:
+                    return 400, sec_headers, {"error": str(exc)}
+            if method == "DELETE":
+                removed = self.memories.clear_memories(claims["sub"])
+                return 200, sec_headers, {"status": "cleared", "removed_count": removed}
+
+        if route == "/api/v1/documents":
+            if method == "GET":
+                return 200, sec_headers, {"documents": self.rag.list_documents(claims["sub"])}
+            if method == "POST":
+                try:
+                    doc_meta = self.rag.ingest_document(
+                        claims["sub"],
+                        str(body.get("filename", "document.txt")),
+                        str(body.get("content", "")),
+                    )
+                    return 201, sec_headers, {"document": doc_meta}
+                except ValueError as exc:
+                    return 400, sec_headers, {"error": str(exc)}
+
+        if route.startswith("/api/v1/documents/") and method == "DELETE":
+            doc_id = route[len("/api/v1/documents/") :].strip("/")
+            ok = self.rag.delete_document(claims["sub"], doc_id)
+            if not ok:
+                return 404, sec_headers, {"error": "document not found"}
+            return 200, sec_headers, {"status": "deleted", "doc_id": doc_id}
 
         if method == "POST" and route == "/api/v1/sessions":
             sess = self.sessions.create_session(
@@ -642,6 +684,13 @@ class NourAIBackend:
             prior_messages = list(sess.get("messages", []))
             self.sessions.append_turn(str(session_id), "user", message, language=language)
 
+            # Extract & persist cross-session long-term memories (ChatGPT Memory Updated style)
+            newly_extracted = extract_memories_from_message(message)
+            for fact in newly_extracted:
+                self.memories.add_memory(claims["sub"], fact)
+            all_user_memories = [m["fact"] for m in self.memories.list_memories(claims["sub"])]
+            matched_rag_chunks = self.rag.search_chunks(claims["sub"], message, top_k=3)
+
             updated_sess = self.sessions.get_session(str(session_id), user_id=claims["sub"])
             history_turns = updated_sess["messages"][-4:] if updated_sess else []
             prompt_parts = []
@@ -672,6 +721,8 @@ class NourAIBackend:
                     history=prior_messages,
                     enable_web_search=True,
                     gemini_api_key=str(body.get("gemini_api_key", "")).strip() or None,
+                    user_memories=all_user_memories,
+                    rag_chunks=matched_rag_chunks,
                 )
                 web_elapsed_ms = round((time.perf_counter() - t_web0) * 1000.0, 3)
                 reply_text = web_out["reply"]
@@ -693,6 +744,8 @@ class NourAIBackend:
                         "language": language,
                         "response_source": web_out["response_source"],
                         "citations": web_out.get("citations", []),
+                        "memories_updated": newly_extracted,
+                        "memory_count": len(all_user_memories),
                         "stream_chunks": chunks,
                         "reply": reply_text,
                     }
@@ -701,6 +754,8 @@ class NourAIBackend:
                     "language": language,
                     "response_source": web_out["response_source"],
                     "citations": web_out.get("citations", []),
+                    "memories_updated": newly_extracted,
+                    "memory_count": len(all_user_memories),
                     "reply": reply_text,
                     "task": web_out["task"],
                     "metrics": {
