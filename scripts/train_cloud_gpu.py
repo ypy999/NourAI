@@ -149,7 +149,7 @@ def main() -> None:
 
     eng = InferenceEngine.from_checkpoint(out_path)
     cfg_gen = GenerationConfig(
-        max_new_tokens=80,
+        max_new_tokens=160,
         strategy="greedy",
         repetition_penalty=1.0,
         stop_sequences=("<|endoftext|>", "<|user|>"),

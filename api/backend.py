@@ -701,7 +701,7 @@ class NourAIBackend:
             formatted_prompt = "\n".join(prompt_parts)
 
             gen_cfg = GenerationConfig(
-                max_new_tokens=min(int(body.get("max_new_tokens", 24)), 64),
+                max_new_tokens=min(int(body.get("max_new_tokens", 128)), 256),
                 strategy=str(body.get("strategy", "top_p")),
                 temperature=float(body.get("temperature", 0.8)),
                 top_k=int(body.get("top_k", 16)),
