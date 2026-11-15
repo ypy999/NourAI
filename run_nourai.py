@@ -113,7 +113,13 @@ def main() -> None:
         return
 
     db = ProductionDatabase()
-    backend = NourAIBackend(db_path=db.db_path, use_capabilities=args.fallback_rules)
+    secret_file = db.db_path.parent / ".jwt_secret"
+    if not secret_file.is_file():
+        import secrets as _sec
+        secret_file.parent.mkdir(parents=True, exist_ok=True)
+        secret_file.write_text(_sec.token_hex(32), encoding="utf-8")
+    persisted_secret = secret_file.read_text(encoding="utf-8").strip()
+    backend = NourAIBackend(db_path=db.db_path, secret_key=persisted_secret, use_capabilities=args.fallback_rules)
     monitor = SystemMonitor(db)
     server, thread, url = start_live_http_server(
         backend,

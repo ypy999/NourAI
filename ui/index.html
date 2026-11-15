@@ -757,7 +757,9 @@
         });
         if (res.status === 401) {
           authToken = null;
+          activeSessionId = null;
           setCookie("nourai_token", "", -1);
+          setCookie("nourai_active_session", "", -1);
           token = await ensureAuthenticated();
           if (!token) return;
           res = await fetch("/api/v1/sessions", {
@@ -767,6 +769,10 @@
         if (!res.ok) return;
         const data = await res.json();
         sessions = data.sessions || [];
+        if (activeSessionId && !sessions.some(s => s.session_id === activeSessionId)) {
+          activeSessionId = null;
+          setCookie("nourai_active_session", "", -1);
+        }
         renderSessionList();
       } catch (err) {
         showError(err.message);
@@ -840,14 +846,19 @@
     async function selectSession(sessionId) {
       const token = await ensureAuthenticated();
       if (!token) return;
-      activeSessionId = sessionId;
-      setCookie("nourai_active_session", sessionId, 7);
-      renderSessionList();
       try {
         const res = await fetch("/api/v1/sessions/" + sessionId, {
           headers: { "Authorization": "Bearer " + token }
         });
-        if (!res.ok) return;
+        if (!res.ok) {
+          activeSessionId = null;
+          setCookie("nourai_active_session", "", -1);
+          renderSessionList();
+          return;
+        }
+        activeSessionId = sessionId;
+        setCookie("nourai_active_session", sessionId, 7);
+        renderSessionList();
         const data = await res.json();
         const container = document.getElementById("chat-messages");
         container.innerHTML = "";
@@ -1051,27 +1062,41 @@
       document.getElementById("stop-btn").style.display = "flex";
 
       try {
-        const response = await fetch("/api/v1/chat/stream", {
+        let reqBody = {
+          session_id: activeSessionId,
+          language: currentLanguage,
+          message: text,
+          enable_web_search: enableWebSearch,
+          use_fallback_assistant: useFallback,
+          gemini_api_key: geminiKey,
+          persona: document.getElementById("persona-select").value,
+          strategy: document.getElementById("strategy-select").value,
+          temperature: parseFloat(document.getElementById("temperature-input").value),
+          top_k: parseInt(document.getElementById("top-k-input").value, 10),
+          top_p: parseFloat(document.getElementById("top-p-input").value),
+          max_new_tokens: parseInt(document.getElementById("max-tokens-input").value, 10)
+        };
+        let response = await fetch("/api/v1/chat/stream", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             "Authorization": "Bearer " + token
           },
-          body: JSON.stringify({
-            session_id: activeSessionId,
-            language: currentLanguage,
-            message: text,
-            enable_web_search: enableWebSearch,
-            use_fallback_assistant: useFallback,
-            gemini_api_key: geminiKey,
-            persona: document.getElementById("persona-select").value,
-            strategy: document.getElementById("strategy-select").value,
-            temperature: parseFloat(document.getElementById("temperature-input").value),
-            top_k: parseInt(document.getElementById("top-k-input").value, 10),
-            top_p: parseFloat(document.getElementById("top-p-input").value),
-            max_new_tokens: parseInt(document.getElementById("max-tokens-input").value, 10)
-          })
+          body: JSON.stringify(reqBody)
         });
+        if (response.status === 404 && activeSessionId) {
+          activeSessionId = null;
+          setCookie("nourai_active_session", "", -1);
+          reqBody.session_id = null;
+          response = await fetch("/api/v1/chat/stream", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + token
+            },
+            body: JSON.stringify(reqBody)
+          });
+        }
         const payload = await response.json();
         if (!response.ok) {
           showError(payload.error || "Request failed");
