@@ -69,9 +69,12 @@ def main() -> None:
             windows.append((chunk[:-1], chunk[1:]))
 
     def encode_sft(prompt_text: str, response_text: str) -> tuple[list[int], list[int]]:
-        p_ids = tokenizer.encode(f"<|user|>\n{prompt_text}\n<|assistant|>\n", add_bos=True, add_eos=False)
-        r_ids = tokenizer.encode(f"{response_text}<|endoftext|>", add_bos=False, add_eos=True)
+        # Match InferenceEngine._prepare_context_ids(prompt) which uses add_bos=False
+        p_ids = tokenizer.encode(f"<|user|>\n{prompt_text}\n<|assistant|>\n", add_bos=False, add_eos=False)
+        r_ids = tokenizer.encode(response_text, add_bos=False, add_eos=True)
         full = (p_ids + r_ids)[: seq_len + 1]
+        if full[-1] != tokenizer.eos_id:
+            full[-1] = tokenizer.eos_id
         x = list(full[:-1])
         y = list(full[1:])
         for i in range(min(max(0, len(p_ids) - 1), len(y))):
@@ -146,12 +149,13 @@ def main() -> None:
 
     eng = InferenceEngine.from_checkpoint(out_path)
     cfg_gen = GenerationConfig(
-        max_new_tokens=64,
+        max_new_tokens=80,
         strategy="greedy",
+        repetition_penalty=1.0,
         stop_sequences=("<|endoftext|>", "<|user|>"),
     )
     print("\n=== Post-Training Neural Generation Verification ===")
-    for q, _ in core_anchors[:5]:
+    for q, _ in core_anchors:
         sample = eng.generate(f"<|user|>\n{q}\n<|assistant|>\n", cfg_gen)
         print(f"Q: {q}\nA: {sample['generated_text']}\n")
 

@@ -68,6 +68,9 @@ def sample_next_token(
     """Select next token ID from 1D vocabulary logits using configured sampling strategy."""
     scaled = logits.detach().clone().to(torch.float32)
 
+    if config.strategy == "greedy":
+        return int(torch.argmax(scaled).item())
+
     if config.repetition_penalty > 1.0 and generated_ids:
         unique_seen = set(generated_ids[-64:])
         for token_id in unique_seen:
@@ -76,9 +79,6 @@ def sample_next_token(
                     scaled[token_id] = scaled[token_id] / float(config.repetition_penalty)
                 else:
                     scaled[token_id] = scaled[token_id] * float(config.repetition_penalty)
-
-    if config.strategy == "greedy":
-        return int(torch.argmax(scaled).item())
 
     scaled = scaled / float(config.temperature)
 
