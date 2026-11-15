@@ -1,0 +1,126 @@
+{
+  "phase": "16",
+  "title": "Model Fine-tuning & Alignment",
+  "timestamp": "2026-11-13T22:02:36Z",
+  "status": "CERTIFIED_FOR_PHASE_17_INFERENCE_ENGINE",
+  "certification_verdict": "CERTIFIED_FOR_PHASE_17_INFERENCE_ENGINE",
+  "all_checks_passed": true,
+  "checklist": {
+    "instruction_data_prepared": true,
+    "instruction_dataset_built": true,
+    "supervised_fine_tuning_completed": true,
+    "instruction_following_improved": true,
+    "response_quality_improved": true,
+    "safety_tested_and_verified": true,
+    "post_finetuning_evaluated": true
+  },
+  "instruction_dataset_summary": {
+    "train": {
+      "path": "data\\processed\\phase16\\splits\\train.jsonl",
+      "total_records": 288,
+      "language_counts": {
+        "arabic": 96,
+        "english": 96,
+        "french": 96
+      },
+      "category_counts": {
+        "qa": 48,
+        "summarization": 48,
+        "translation": 48,
+        "explanation": 48,
+        "safety_refusal": 96
+      },
+      "sha256": "4b65f0850f6cabbc609d17e3b940bba552fa3709a6ddfa0ea91a966bd804f538"
+    },
+    "validation": {
+      "path": "data\\processed\\phase16\\splits\\validation.jsonl",
+      "total_records": 72,
+      "language_counts": {
+        "arabic": 24,
+        "english": 24,
+        "french": 24
+      },
+      "category_counts": {
+        "qa": 12,
+        "summarization": 12,
+        "translation": 12,
+        "explanation": 12,
+        "safety_refusal": 24
+      },
+      "sha256": "2a43e4816371156e634cc734697e78b7230636d735e870b44ad3ed2e8b9dcc40"
+    },
+    "test": {
+      "path": "data\\processed\\phase16\\splits\\test.jsonl",
+      "total_records": 72,
+      "language_counts": {
+        "arabic": 24,
+        "english": 24,
+        "french": 24
+      },
+      "category_counts": {
+        "qa": 12,
+        "summarization": 12,
+        "translation": 12,
+        "explanation": 12,
+        "safety_refusal": 24
+      },
+      "sha256": "64ad88d2cda2612cf326ddf3f3a4cce22c68860a90d435ba85915795fb03b9b5"
+    }
+  },
+  "sft_metrics": {
+    "completed_steps": 32,
+    "elapsed_seconds": 10.805,
+    "before_validation_loss": 3.212654,
+    "after_validation_loss": 2.788235,
+    "validation_loss_reduction": 0.42442,
+    "before_perplexity": 24.8449,
+    "after_perplexity": 16.2523,
+    "aligned_model_checkpoint": "checkpoints\\phase16\\phase16_sft_aligned_model.pt"
+  },
+  "per_language_instruction_nll": {
+    "arabic": {
+      "before_sft_nll": 2.102107,
+      "after_sft_nll": 1.931621,
+      "nll_reduction": 0.170486,
+      "before_sft_perplexity": 8.1834,
+      "after_sft_perplexity": 6.9007
+    },
+    "english": {
+      "before_sft_nll": 2.946766,
+      "after_sft_nll": 2.761051,
+      "nll_reduction": 0.185715,
+      "before_sft_perplexity": 19.0443,
+      "after_sft_perplexity": 15.8165
+    },
+    "french": {
+      "before_sft_nll": 3.288413,
+      "after_sft_nll": 2.950379,
+      "nll_reduction": 0.338034,
+      "before_sft_perplexity": 26.8003,
+      "after_sft_perplexity": 19.1132
+    }
+  },
+  "safety_alignment_evaluation": [
+    {
+      "language": "arabic",
+      "safe_refusal_nll": 1.706761,
+      "unsafe_compliance_nll": 2.894575,
+      "prefers_safe_refusal": true,
+      "safety_margin_nll": 1.187814
+    },
+    {
+      "language": "english",
+      "safe_refusal_nll": 2.929097,
+      "unsafe_compliance_nll": 4.226484,
+      "prefers_safe_refusal": true,
+      "safety_margin_nll": 1.297387
+    },
+    {
+      "language": "french",
+      "safe_refusal_nll": 2.888264,
+      "unsafe_compliance_nll": 4.070695,
+      "prefers_safe_refusal": true,
+      "safety_margin_nll": 1.182431
+    }
+  ]
+}

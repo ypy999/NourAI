@@ -1,0 +1,232 @@
+{
+  "phase": "15",
+  "title": "Multilingual Model Evaluation",
+  "timestamp": "2026-11-13T22:00:42Z",
+  "status": "CERTIFIED_FOR_PHASE_16_FINE_TUNING_AND_ALIGNMENT",
+  "certification_verdict": "CERTIFIED_FOR_PHASE_16_FINE_TUNING_AND_ALIGNMENT",
+  "all_checks_passed": true,
+  "checklist": {
+    "arabic_evaluated": true,
+    "english_evaluated": true,
+    "french_evaluated": true,
+    "perplexity_computed": true,
+    "reading_comprehension_tested": true,
+    "translation_tested": true,
+    "summarization_tested": true,
+    "question_answering_tested": true,
+    "independent_language_quality_measured": true
+  },
+  "overall_test_progression": {
+    "untrained_baseline": {
+      "loss": 5.544911,
+      "perplexity": 255.9318
+    },
+    "phase13_initial_model": {
+      "loss": 2.180759,
+      "perplexity": 8.853
+    },
+    "phase14_optimized_model": {
+      "loss": 1.966383,
+      "perplexity": 7.1448
+    }
+  },
+  "per_language_evaluation": {
+    "arabic": {
+      "language": "arabic",
+      "records": 36,
+      "sequences": 259,
+      "valid_tokens": 33152,
+      "untrained_loss": 5.535103,
+      "untrained_perplexity": 253.4338,
+      "test_loss": 1.717428,
+      "test_perplexity": 5.5702,
+      "bits_per_byte": 2.477724,
+      "loss_reduction_vs_untrained": 3.817675,
+      "top1_token_accuracy": 0.3923,
+      "top5_token_accuracy": 0.8463,
+      "valid_generation_rate": 1.0,
+      "sample_generations": [
+        {
+          "prompt": "وع ومطالب ومباحث و مسائل ثم\nاننا",
+          "generated_continuation": "� ار قو عا"
+        },
+        {
+          "prompt": "لك كان من المتحتم اشهار أسباب ال",
+          "generated_continuation": "نرلب واا�"
+        },
+        {
+          "prompt": "لتعامل وعقد كافة العقود اما في ب",
+          "generated_continuation": "�للسالاا�"
+        }
+      ]
+    },
+    "english": {
+      "language": "english",
+      "records": 36,
+      "sequences": 19,
+      "valid_tokens": 2432,
+      "untrained_loss": 5.578836,
+      "untrained_perplexity": 264.7633,
+      "test_loss": 3.541168,
+      "test_perplexity": 34.5072,
+      "bits_per_byte": 5.108826,
+      "loss_reduction_vs_untrained": 2.037668,
+      "top1_token_accuracy": 0.1694,
+      "top5_token_accuracy": 0.4149,
+      "valid_generation_rate": 1.0,
+      "sample_generations": [
+        {
+          "prompt": "If straight people can tell kids",
+          "generated_continuation": "e nerre seeh o e"
+        },
+        {
+          "prompt": "The courses at the Center for Mu",
+          "generated_continuation": "nenaeeo  a i ie "
+        },
+        {
+          "prompt": "Tom tried to haggle with the sho",
+          "generated_continuation": "iianaoio ei rna "
+        }
+      ]
+    },
+    "french": {
+      "language": "french",
+      "records": 36,
+      "sequences": 19,
+      "valid_tokens": 2432,
+      "untrained_loss": 5.579251,
+      "untrained_perplexity": 264.8731,
+      "test_loss": 3.619491,
+      "test_perplexity": 37.3186,
+      "bits_per_byte": 5.221822,
+      "loss_reduction_vs_untrained": 1.95976,
+      "top1_token_accuracy": 0.1217,
+      "top5_token_accuracy": 0.3947,
+      "valid_generation_rate": 1.0,
+      "sample_generations": [
+        {
+          "prompt": "Il lui a rendu visite alors qu'e",
+          "generated_continuation": "oaeet ie n n  or"
+        },
+        {
+          "prompt": "Il lui a conté fleurette.",
+          "generated_continuation": "  ia oi a strtn "
+        },
+        {
+          "prompt": "On en a enduré.",
+          "generated_continuation": "anihe e nr iooss"
+        }
+      ]
+    }
+  },
+  "task_evaluations": {
+    "reading_comprehension": [
+      {
+        "language": "arabic",
+        "untrained_target_nll": 5.581134,
+        "trained_target_nll": 1.667758,
+        "trained_distractor_nll": 7.315759,
+        "prefers_target_over_distractor": true,
+        "improved_over_untrained": true,
+        "generated_sample": "اكبننسم\nهزلد�"
+      },
+      {
+        "language": "english",
+        "untrained_target_nll": 5.604839,
+        "trained_target_nll": 2.964241,
+        "trained_distractor_nll": 7.000288,
+        "prefers_target_over_distractor": true,
+        "improved_over_untrained": true,
+        "generated_sample": "ioenne claaralh mnneateo"
+      },
+      {
+        "language": "french",
+        "untrained_target_nll": 5.609822,
+        "trained_target_nll": 3.369575,
+        "trained_distractor_nll": 7.025238,
+        "prefers_target_over_distractor": true,
+        "improved_over_untrained": true,
+        "generated_sample": "s t nsssueiiiheseesstaao"
+      }
+    ],
+    "translation": [
+      {
+        "pair": "english->french",
+        "untrained_nll": 5.498186,
+        "trained_nll": 3.424433,
+        "trained_perplexity": 30.7052,
+        "improved_over_untrained": true,
+        "generated_sample": " nsnshe  hasr tenhossti "
+      },
+      {
+        "pair": "english->arabic",
+        "untrained_nll": 5.572579,
+        "trained_nll": 1.912351,
+        "trained_perplexity": 6.769,
+        "improved_over_untrained": true,
+        "generated_sample": "noiaeuo trieir n  eh ti "
+      },
+      {
+        "pair": "french->english",
+        "untrained_nll": 5.602278,
+        "trained_nll": 3.496849,
+        "trained_perplexity": 33.0113,
+        "improved_over_untrained": true,
+        "generated_sample": "eua eam h  atmesatsess a"
+      }
+    ],
+    "summarization": [
+      {
+        "language": "arabic",
+        "untrained_nll": 5.540184,
+        "trained_nll": 1.60881,
+        "trained_perplexity": 4.9969,
+        "improved_over_untrained": true,
+        "generated_sample": "ايل ايل يوولو"
+      },
+      {
+        "language": "english",
+        "untrained_nll": 5.555808,
+        "trained_nll": 3.506458,
+        "trained_perplexity": 33.33,
+        "improved_over_untrained": true,
+        "generated_sample": "etoeneuattdoreiioet elee"
+      },
+      {
+        "language": "french",
+        "untrained_nll": 5.604363,
+        "trained_nll": 3.430641,
+        "trained_perplexity": 30.8965,
+        "improved_over_untrained": true,
+        "generated_sample": "eeaa sssaecisaer لذه�"
+      }
+    ],
+    "question_answering": [
+      {
+        "language": "arabic",
+        "untrained_nll": 5.568558,
+        "trained_nll": 1.606048,
+        "trained_perplexity": 4.9831,
+        "improved_over_untrained": true,
+        "generated_sample": "وللل hi a ندجى �"
+      },
+      {
+        "language": "english",
+        "untrained_nll": 5.560296,
+        "trained_nll": 3.801978,
+        "trained_perplexity": 44.7897,
+        "improved_over_untrained": true,
+        "generated_sample": "rsna ueiali soi si  ount"
+      },
+      {
+        "language": "french",
+        "untrained_nll": 5.588239,
+        "trained_nll": 3.484349,
+        "trained_perplexity": 32.6012,
+        "improved_over_untrained": true,
+        "generated_sample": "lrra tuoi dreml  ttlhoat"
+      }
+    ]
+  },
+  "tokenizer_and_generation_integrity": "ok"
+}

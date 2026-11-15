@@ -1,0 +1,8 @@
+{
+  "dataset": "phase16_sft",
+  "languages": [
+    "ar",
+    "en",
+    "fr"
+  ]
+}

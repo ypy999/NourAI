@@ -1,0 +1,11 @@
+{
+  "version": "1.1.0",
+  "previous_version": "1.0.0",
+  "checkpoint": "checkpoints\\phase24\\phase24_v1_1_continual_model.pt",
+  "checkpoint_sha256": "07a09212fcf46af2ec1b330e726b8015b7814f9e6733296df89d4d3f53272003",
+  "v1_0_validation_loss": 2.518359,
+  "v1_1_validation_loss": 2.435771,
+  "v1_0_perplexity": 12.4082,
+  "v1_1_perplexity": 11.4246,
+  "released_at": "2026-11-13T22:13:23Z"
+}

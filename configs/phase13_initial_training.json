@@ -1,0 +1,51 @@
+{
+  "phase": "13",
+  "title": "Initial Model Training",
+  "source_splits_dir": "data/processed/phase10_3/splits",
+  "working_splits_dir": "data/processed/phase13/splits",
+  "checkpoint_dir": "checkpoints/phase13",
+  "report_dir": "reports/phase13",
+  "prerequisite_reports": {
+    "phase10_12": "reports/phase10/phase10_12_certification_report.json",
+    "phase11": "reports/phase11/phase11_architecture_report.json",
+    "phase12": "reports/phase12/phase12_training_engine_report.json"
+  },
+  "corpus_sampling": {
+    "target_languages": ["arabic", "english", "french"],
+    "train_records_per_language": 180,
+    "validation_records_per_language": 36,
+    "test_records_per_language": 36,
+    "max_excerpt_chars": 512,
+    "max_chunks_per_long_document": 12,
+    "interleave_languages": true,
+    "random_seed": 1337
+  },
+  "training_config": {
+    "vocab_size": 260,
+    "context_length": 128,
+    "d_model": 128,
+    "n_heads": 4,
+    "n_layers": 4,
+    "dropout": 0.05,
+    "batch_size": 8,
+    "gradient_accumulation_steps": 2,
+    "learning_rate": 0.002,
+    "weight_decay": 0.01,
+    "adam_betas": [0.9, 0.999],
+    "adam_epsilon": 1e-8,
+    "gradient_clip_norm": 1.0,
+    "scheduler_type": "linear_warmup_cosine",
+    "warmup_steps": 6,
+    "epochs": 4,
+    "max_training_steps": 40,
+    "validation_interval": 10,
+    "checkpoint_interval": 10,
+    "checkpoint_keep": 3,
+    "early_stopping": true,
+    "early_stopping_patience": 4,
+    "early_stopping_min_delta": 0.001,
+    "device": "cpu",
+    "precision": "fp32",
+    "random_seed": 1337
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "version": "1.0.0",
+  "codename": "NourAI Multilingual Local-First v1.0",
+  "released_at": "2026-11-13T22:12:17Z",
+  "supported_languages": [
+    "arabic",
+    "english",
+    "french"
+  ],
+  "certified_phases": {
+    "phase10_12": "CERTIFIED_FOR_PHASE_11_ARCHITECTURE_AND_INITIAL_TRAINING",
+    "phase11": "CERTIFIED_FOR_PHASE_12_TRAINING_ENGINE",
+    "phase12": "CERTIFIED_FOR_PHASE_13_INITIAL_MODEL_TRAINING",
+    "phase13": "CERTIFIED_FOR_PHASE_14_TRAINING_OPTIMIZATION",
+    "phase14": "CERTIFIED_FOR_PHASE_15_MULTILINGUAL_EVALUATION",
+    "phase15": "CERTIFIED_FOR_PHASE_16_FINE_TUNING_AND_ALIGNMENT",
+    "phase16": "CERTIFIED_FOR_PHASE_17_INFERENCE_ENGINE",
+    "phase17": "CERTIFIED_FOR_PHASE_18_API_AND_BACKEND",
+    "phase18": "CERTIFIED_FOR_PHASE_19_USER_INTERFACE",
+    "phase19": "CERTIFIED_FOR_PHASE_20_SECURITY_AND_PERFORMANCE",
+    "phase20": "CERTIFIED_FOR_PHASE_21_DEPLOYMENT_AND_PRODUCTION",
+    "phase21": "CERTIFIED_FOR_PHASE_22_FINAL_RELEASE"
+  },
+  "artifacts": {
+    "aligned_model_checkpoint": {
+      "path": "checkpoints/phase16/phase16_sft_aligned_model.pt",
+      "sha256": "8118cea64f080842a5ab68114b5833ebddf6b36fc441200c52f53c2a46d1c196",
+      "size_bytes": 3391763
+    },
+    "optimized_model_checkpoint": {
+      "path": "checkpoints/phase14/phase14_optimized_model.pt",
+      "sha256": "7cd636934f2559b3865371a60eda512d7b7b4f7f00ca77aa8fc4dac9cd4e22af",
+      "size_bytes": 3391647
+    },
+    "initial_model_checkpoint": {
+      "path": "checkpoints/phase13/phase13_model.pt",
+      "sha256": "b83003672e6cdc9b22a1afd9eeb72c3dc52f231a550b618d4fed7db35a47185a",
+      "size_bytes": 3391067
+    },
+    "ui_bundle": {
+      "path": "ui/index.html",
+      "sha256": "587476e6d232ac9efcfec134d5302d477c38a7a29de67da99fe4c14fa33cff6a",
+      "size_bytes": 10082
+    },
+    "architecture_doc": {
+      "path": "docs\\ARCHITECTURE.md",
+      "sha256": "94378cff0168fb8ea590d4f2a585e3b9bf16003628b6c98bb9076321c12a4142",
+      "size_bytes": 731
+    },
+    "api_reference_doc": {
+      "path": "docs\\API_REFERENCE.md",
+      "sha256": "37f43e0291746a94088d588c51eadaa4b75b66b7b54dbb8753300fcaf0f8d279",
+      "size_bytes": 672
+    },
+    "installation_doc": {
+      "path": "docs\\INSTALLATION_AND_OPERATIONS.md",
+      "sha256": "b110e49c9b85c09a0e808051ef1ed75b08e3c54d1051555fb8c7523d22c64553",
+      "size_bytes": 392
+    },
+    "user_guide_doc": {
+      "path": "docs\\USER_GUIDE_AR_EN_FR.md",
+      "sha256": "bc3b8ab66a0ecc5430a22347b96e9b172dbbabac29e5861409d24a2e992fe720",
+      "size_bytes": 642
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "connected_pretrain_steps": 60,
+  "sft_steps": 30,
+  "optimizer_continuity": true,
+  "seed": 1337
+}

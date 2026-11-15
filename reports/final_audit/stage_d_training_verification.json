@@ -1,0 +1,43 @@
+{
+  "stage": "Stage D — Connected Training Pipeline & Reproducibility Verification",
+  "status": "TRAINING_PIPELINE_VERIFIED",
+  "certification_token": "TRAINING_VERIFIED",
+  "timestamp_utc": "2026-11-13T23:58:11Z",
+  "all_gates_passed": true,
+  "gates": {
+    "optimizer_and_scheduler_continuity_verified": true,
+    "pretrain_validation_loss_improved": true,
+    "sft_unseen_validation_loss_improved": true,
+    "deterministic_reproducibility_verified": true,
+    "v1_2_checkpoint_saved_and_verified": true
+  },
+  "connected_pretraining": {
+    "stage1_steps": 30,
+    "resumed_from_step": 30,
+    "optimizer_state_restored": true,
+    "stage2_final_step": 60,
+    "initial_val_loss": 2.895955,
+    "stage1_val_loss": 2.601611,
+    "stage2_val_loss": 2.519302,
+    "initial_perplexity": 18.1008,
+    "stage2_perplexity": 12.4199
+  },
+  "zero_leakage_sft_alignment": {
+    "sft_steps": 27,
+    "unseen_val_loss_before": 3.004279,
+    "unseen_val_loss_after": 2.529588,
+    "unseen_perplexity_before": 20.1717,
+    "unseen_perplexity_after": 12.5483
+  },
+  "reproducibility_check": {
+    "run_1_loss": 4.83926582,
+    "run_2_loss": 4.83926582,
+    "exact_match": true
+  },
+  "final_v1_2_checkpoint": {
+    "path": "checkpoints\\v1_2\\nourai_v1_2_model.pt",
+    "sha256": "3474a8f8d118984cf99d9887f5c171d2b3fd597ed659005ba19eb523a9f9f01a",
+    "size_bytes": 3391299,
+    "rss_memory_mib": null
+  }
+}

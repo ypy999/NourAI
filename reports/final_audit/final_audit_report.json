@@ -1,0 +1,527 @@
+{
+  "audit_metadata": {
+    "audit_stage": "Stage A — NourAI Final Forensic Audit (Read-Only)",
+    "audit_status": "FINAL_AUDIT_COMPLETE",
+    "read_only_verified": true,
+    "cuda_initialized": false,
+    "training_executed_during_audit": false,
+    "existing_files_modified": 0,
+    "existing_files_deleted": 0,
+    "workspace_path": "D:\\NourAI",
+    "audit_timestamp_utc": "2026-11-13T23:31:00Z",
+    "overall_verdict": "INFRASTRUCTURE_AND_PIPELINE_VERIFIED_WITH_CRITICAL_TRAINING_AND_INTEGRATION_GAPS"
+  },
+  "axis_1_project_inventory_and_environment": {
+    "top_level_directories_present": [
+      "api",
+      "checkpoints",
+      "configs",
+      "corpus",
+      "data",
+      "datasets",
+      "deployment",
+      "docs",
+      "evaluation",
+      "inference",
+      "model",
+      "nourai",
+      "releases",
+      "reports",
+      "tests",
+      "tokenizer",
+      "training",
+      "ui"
+    ],
+    "target_layout_missing_items": [
+      "security/",
+      "scripts/",
+      "requirements/",
+      "LICENSE",
+      "pyproject.toml"
+    ],
+    "root_files_present": [
+      ".gitignore",
+      "README.md",
+      "requirements.txt"
+    ],
+    "total_files_excluding_venv_git_pycache": 2034,
+    "extension_counts": {
+      ".jsonl": 719,
+      ".json": 483,
+      ".py": 188,
+      ".md": 128,
+      ".sqlite3": 116,
+      ".txt": 114,
+      ".bz2": 87,
+      ".pt": 40,
+      ".zip": 29,
+      ".csv": 28,
+      ".html": 28,
+      ".bin": 24,
+      ".xml": 23,
+      "<no_ext>": 7,
+      ".tmp": 6,
+      ".sqlite3-shm": 3,
+      ".sqlite3-wal": 3,
+      ".log": 3,
+      ".tsv": 2,
+      ".bak": 1,
+      ".css": 1,
+      ".js": 1
+    },
+    "empty_non_init_files_count": 21,
+    "notable_empty_files": [
+      "data/processed/phase8/imported/tatoeba_cc0_multilingual.jsonl",
+      "reports/write_test.tmp",
+      "data/processed/.backup/phase9_pre_remediation_20260410T012014Z/metadata/corpus_index.sqlite3-wal",
+      "data/processed/.backup/phase10_pre_external_expansion/metadata/corpus_index.sqlite3-wal",
+      "data/processed/.backup/phase10_1_pre_real_ingestion/metadata/corpus_index.sqlite3-wal"
+    ],
+    "configs_validation": {
+      "total_json_configs": 13,
+      "valid_utf8_json_count": 13,
+      "invalid_json_count": 0,
+      "files": [
+        "configs/config.json",
+        "configs/corpus_import.json",
+        "configs/data_cleaning.json",
+        "configs/data_collection.json",
+        "configs/dataset_sources.json",
+        "configs/deduplication.json",
+        "configs/evaluation.json",
+        "configs/inference.json",
+        "configs/model.json",
+        "configs/phase10_7_split_policy.json",
+        "configs/tokenizer.json",
+        "configs/training.json",
+        "configs/verification.json"
+      ]
+    },
+    "runtime_environment": {
+      "python_version": "3.15.2 (tags/v3.15.2:62b0b58, Mar 12 2026, 17:04:01) [MSC v.1944 64 bit (AMD64)]",
+      "platform": "Windows-10-10.0.19045-SP0",
+      "sqlite_version": "3.53.4",
+      "installed_packages": {
+        "torch": "2.15.0",
+        "pytest": "9.2.0",
+        "numpy": "2.5.4",
+        "setuptools": "84.2.1",
+        "pip": "26.3"
+      }
+    },
+    "test_suite_execution": {
+      "command": "pytest -q -p no:cacheprovider --basetemp=<isolated_scratch_dir>",
+      "total_tests": 253,
+      "passed": 253,
+      "failed": 0,
+      "skipped": 0,
+      "phases_0_to_10_tests": 207,
+      "phases_11_to_24_tests": 46
+    }
+  },
+  "axis_2_corpus_and_data_audit": {
+    "registered_sources_in_config": 14,
+    "ingested_external_sources": 3,
+    "raw_archives_verified": {
+      "tatoeba_cc0": {
+        "path": "data/raw/external/tatoeba_cc0.tar.bz2",
+        "size_bytes": 7963537,
+        "sha256": "7e4251d06edd949db9e47cc360b472873da6c054af5dc4b9d2c9e06d024cd710",
+        "license": "CC0-1.0",
+        "imported_records": 55719
+      },
+      "qnl_arabic_ocr_v2": {
+        "zip_path": "data/raw/external/phase10_2/qnl_arabic_ocr_v2.zip",
+        "zip_size_bytes": 1065878922,
+        "zip_sha256": "352d7d2e1e3c64255a52b09560da97bb0360e43a327bd70298c7fa52b2437cb9",
+        "metadata_csv_path": "data/raw/external/phase10_2/qnl_metadata.csv",
+        "metadata_csv_size_bytes": 1887609,
+        "metadata_csv_sha256": "4f60c27cf4bb738786f249ad210601e43101b8d364a0d371f435c31372b06755",
+        "sampling_note": "Only 2% of archive (58 books, 52 retained after dedup/cleaning) was ingested in Phase 10.4",
+        "imported_records": 58
+      },
+      "wto_public_corpus_en_fr": {
+        "zip_path": "data/raw/external/phase10_2/wto_en_fr_corpus_2019_EN-FR.zip",
+        "zip_size_bytes": 1501806179,
+        "zip_sha256": "09f958e84a626cc294eaa0c3b87b2daa7abf1f786fc91d2978756264750545f5",
+        "sampling_note": "Only 2% of archive documents were ingested in Phase 10.5",
+        "imported_records": 58466
+      }
+    },
+    "phase10_2_preservation_verified": true,
+    "phase10_3_certified_splits": {
+      "train": {
+        "total_records": 93304,
+        "total_chars": 38979695,
+        "total_tokens": 69280742,
+        "by_language": {
+          "ar": {"records": 50, "chars": 30205797, "tokens": 53305428, "token_share_pct": 76.94},
+          "en": {"records": 58214, "chars": 3746458, "tokens": 6363901, "token_share_pct": 9.19},
+          "fr": {"records": 35036, "chars": 2367652, "tokens": 5075783, "token_share_pct": 7.33},
+          "other": {"records": 4, "chars": 2659788, "tokens": 4535630, "token_share_pct": 6.55}
+        }
+      },
+      "validation": {
+        "total_records": 10315,
+        "total_chars": 727098,
+        "total_tokens": 1353798,
+        "by_language": {
+          "ar": {"records": 286, "chars": 15284, "tokens": 27430, "token_share_pct": 2.03},
+          "en": {"records": 6333, "chars": 438328, "tokens": 747972, "token_share_pct": 55.25},
+          "fr": {"records": 3696, "chars": 273486, "tokens": 578396, "token_share_pct": 42.72}
+        }
+      },
+      "test": {
+        "total_records": 10282,
+        "total_chars": 2673307,
+        "total_tokens": 4815861,
+        "by_language": {
+          "ar": {"records": 248, "chars": 1953953, "tokens": 3485199, "token_share_pct": 72.37},
+          "en": {"records": 6339, "chars": 435472, "tokens": 740602, "token_share_pct": 15.38},
+          "fr": {"records": 3695, "chars": 283882, "tokens": 590060, "token_share_pct": 12.25}
+        }
+      },
+      "leakage_audit": {
+        "exact_cross_split_leakage": 0,
+        "near_duplicate_cross_split_leakage": 0,
+        "qnl_book_level_grouping_in_train": 52,
+        "qnl_book_level_grouping_in_validation": 0,
+        "qnl_book_level_grouping_in_test": 2
+      }
+    },
+    "phase13_actual_training_splits": {
+      "utilization_of_phase10_3_train_tokens_pct": 0.286,
+      "train": {
+        "total_records": 540,
+        "total_chars": 115255,
+        "total_tokens": 198169,
+        "by_language": {
+          "ar": {"records": 180, "chars": 92160, "tokens": 166006, "token_share_pct": 83.77},
+          "en": {"records": 180, "chars": 13537, "tokens": 22587, "token_share_pct": 11.40},
+          "fr": {"records": 180, "chars": 9558, "tokens": 9576, "token_share_pct": 4.83}
+        }
+      },
+      "validation": {
+        "total_records": 108,
+        "total_chars": 22992,
+        "total_tokens": 39534,
+        "by_language": {
+          "ar": {"records": 36, "chars": 18432, "tokens": 33307, "token_share_pct": 84.25},
+          "en": {"records": 36, "chars": 2167, "tokens": 3741, "token_share_pct": 9.46},
+          "fr": {"records": 36, "chars": 2393, "tokens": 2486, "token_share_pct": 6.29}
+        }
+      },
+      "test": {
+        "total_records": 108,
+        "total_chars": 23003,
+        "total_tokens": 38185,
+        "by_language": {
+          "ar": {"records": 36, "chars": 18432, "tokens": 33249, "token_share_pct": 87.07},
+          "en": {"records": 36, "chars": 2219, "tokens": 2463, "token_share_pct": 6.45},
+          "fr": {"records": 36, "chars": 2352, "tokens": 2473, "token_share_pct": 6.48}
+        }
+      }
+    },
+    "phase16_and_phase24_synthetic_template_splits": {
+      "unique_instruction_templates": 18,
+      "phase16_train_records": 288,
+      "phase16_train_repetition_factor": 16,
+      "phase16_val_records": 72,
+      "phase16_test_records": 72,
+      "phase24_train_records": 180,
+      "phase24_val_records": 54,
+      "critical_finding": "Phase 16 and Phase 24 datasets are 100% synthetic repetitions of 18 hardcoded templates in training/finetuning_alignment.py. Validation and test splits share identical target responses with training, differing only by a [VALIDATION-k] or [TEST-k] prefix in the prompt."
+    }
+  },
+  "axis_3_tokenizer_audit": {
+    "implementation": "tokenizer/byte_tokenizer.py (ByteTokenizer)",
+    "vocab_size": 260,
+    "special_tokens": {
+      "<PAD>": 0,
+      "<BOS>": 1,
+      "<EOS>": 2,
+      "<UNK>": 3
+    },
+    "byte_offset": 4,
+    "round_trip_lossless_verified": true,
+    "categories_tested": [
+      "arabic_standard_and_diacritics",
+      "english",
+      "french_accents",
+      "mixed_ar_en_fr",
+      "punctuation",
+      "numbers",
+      "special_symbols",
+      "long_texts",
+      "invalid_utf8_fallback_errors_replace"
+    ],
+    "efficiency_analysis": {
+      "arabic_tokens_per_char": 1.80,
+      "english_tokens_per_char": 1.00,
+      "french_tokens_per_char": 1.05,
+      "bottleneck": "Byte-level tokenization requires ~1.8 tokens per Arabic character (2 UTF-8 bytes per Arabic letter), shrinking effective context length (128 tokens = ~70 Arabic chars) and increasing autoregressive error compounding."
+    }
+  },
+  "axis_4_model_architecture_audit": {
+    "implementation": "model/gpt.py (GPT Decoder-Only Pre-LN Transformer)",
+    "profiles_verified": {
+      "default_phase11": {
+        "vocab_size": 260,
+        "context_length": 128,
+        "d_model": 128,
+        "n_heads": 4,
+        "n_layers": 4,
+        "d_ff": 512,
+        "parameter_count": 843008,
+        "fp32_size_mb": 3.22
+      },
+      "small_phase14": {
+        "vocab_size": 260,
+        "context_length": 256,
+        "d_model": 256,
+        "n_heads": 8,
+        "n_layers": 6,
+        "d_ff": 1024,
+        "parameter_count": 4871168,
+        "fp32_size_mb": 18.58
+      },
+      "base_phase14": {
+        "vocab_size": 260,
+        "context_length": 512,
+        "d_model": 512,
+        "n_heads": 8,
+        "n_layers": 8,
+        "d_ff": 2048,
+        "parameter_count": 25615360,
+        "fp32_size_mb": 97.71
+      }
+    },
+    "causal_mask_verified": true,
+    "weight_initialization_verified": true,
+    "save_load_checkpoint_verified": true
+  },
+  "axis_5_training_engine_and_history_forensics": {
+    "trainer_engine_verified": true,
+    "total_cumulative_steps_across_all_phases": 118,
+    "phases_breakdown": {
+      "phase13_initial": {
+        "steps": 40,
+        "tokens_processed": 81920,
+        "initial_val_loss": 5.544903,
+        "final_val_loss": 3.012476,
+        "checkpoint": "checkpoints/phase13/phase13_model.pt",
+        "sha256": "c2433b3b551486ab95e3a4649c007ba3e252e415284c96b21a5060b8cc904db0"
+      },
+      "phase14_optimized": {
+        "steps": 30,
+        "tokens_processed": 61440,
+        "initial_val_loss": 3.012476,
+        "final_val_loss": 1.967502,
+        "checkpoint": "checkpoints/phase14/phase14_optimized_model.pt",
+        "sha256": "71f13339e8d20389aa334d399622719d80e0a7e4a3d9fd0cf1515a8d1a0b6c63",
+        "optimizer_state_continuity": false
+      },
+      "phase16_sft_aligned": {
+        "steps": 32,
+        "tokens_processed": 40960,
+        "initial_sft_val_loss": 3.809986,
+        "final_sft_val_loss": 2.404616,
+        "checkpoint": "checkpoints/phase16/phase16_sft_aligned_model.pt",
+        "sha256": "9c3d4131ba73107db80d4945da86109a3c4850fd83aaaf4da26856c57ed07b1c",
+        "optimizer_state_continuity": false
+      },
+      "phase24_v1_1_continual": {
+        "steps": 16,
+        "tokens_processed": 20480,
+        "initial_val_loss": 2.400668,
+        "final_val_loss": 2.084699,
+        "checkpoint": "checkpoints/phase24/nourai_v1_1_model.pt",
+        "sha256": "c3998170bf7fd8d7fb7d42006ba7578916fa3de7c025d5f7bb64545d3c8591c1",
+        "optimizer_state_continuity": false
+      }
+    },
+    "critical_training_findings": [
+      "Optimizer and scheduler states (AdamW moments m_t, v_t and global_step) were discarded between Phase 13 -> Phase 14 -> Phase 16 -> Phase 24 because each stage called GPT.load_checkpoint() on the weights-only .pt file instead of Trainer.resume() on last.pt.",
+      "Total training across the entire project is only 118 optimizer steps (~204,800 tokens), covering less than 0.3% of the 69.28M tokens in phase10_3/splits/train.jsonl.",
+      "Phase 16 and Phase 24 overfit on 18 synthetic templates, causing catastrophic degradation in English/French generation (emitting <|user|> / <|assistant|> tag fragments and Arabic 'ال' loops)."
+    ]
+  },
+  "axis_6_and_7_multilingual_and_ai_capabilities_audit": {
+    "teacher_forced_metrics_vs_generation_reality": {
+      "teacher_forced_perplexity_improved": true,
+      "open_ended_generation_coherent": false,
+      "deterministic_greedy_outputs": {
+        "phase13_initial": {
+          "ar": "الالالالالالالال",
+          "en": "                                ",
+          "fr": "                                "
+        },
+        "phase14_optimized": {
+          "ar": "الالالالالالالال",
+          "en": "e e e e e e e e e e e e e e e e ",
+          "fr": "e e e e e e e e e e e e e e e e "
+        },
+        "phase16_sft_aligned": {
+          "ar": "الالالالالالالال",
+          "en": "<\nالالالالالالالا",
+          "fr": "<\nالالالالالالالا"
+        },
+        "phase24_v1_1_continual": {
+          "ar": "الالالالالالالال",
+          "en": "<||||||||||||||||||||||||||||||a",
+          "fr": "<||||||||||||||||||||||ase s le "
+        }
+      },
+      "root_cause": "An 843K-parameter byte-level model trained for 118 steps on an 84% Arabic-byte corpus learns unigram/bigram byte frequencies (reducing teacher-forced cross-entropy loss from 5.54 to 1.97) but cannot form multi-word syntax, semantics, translation, summarization, coding, or mathematical reasoning."
+    },
+    "human_evaluation_protocol_present": false
+  },
+  "axis_8_inference_engine_audit": {
+    "implementation": "inference/engine.py (InferenceEngine)",
+    "verified_features": [
+      "checkpoint_loading_and_warm_cache",
+      "greedy_top_k_top_p_temperature_repetition_penalty",
+      "incremental_utf8_byte_stream_decoder",
+      "context_window_truncation_and_memory_guard"
+    ],
+    "missing_features": [
+      "stop_sequences_support (stopping generation on <|user|>, <|endoftext|>, or custom strings)",
+      "external_cancellation_or_abort_hook_during_streaming"
+    ]
+  },
+  "axis_9_api_backend_and_ui_audit": {
+    "backend_implementation": "api/backend.py (NourAIBackend)",
+    "ui_implementation": "ui/index.html + ui/chat_app.py",
+    "critical_integration_bugs": [
+      {
+        "id": "BUG-UI-AUTH-401",
+        "severity": "CRITICAL",
+        "description": "api/backend.py requires 'Authorization: Bearer <token>' on /api/v1/chat and /api/v1/chat/stream (returning 401 Unauthorized otherwise), but ui/index.html sends no Authorization header and has no login/token UI. Clicking Send in a live browser fails with 401 and renders an empty assistant message."
+      },
+      {
+        "id": "BUG-BACKEND-IN-MEMORY-ONLY",
+        "severity": "HIGH",
+        "description": "NourAIBackend stores users (UserManager._users) and sessions (SessionManager._sessions) only in RAM dicts. ProductionDatabase (data/production/nourai_production.sqlite3) is not wired into NourAIBackend."
+      },
+      {
+        "id": "GAP-UI-CONTROLS",
+        "severity": "MEDIUM",
+        "description": "ui/index.html lacks conversation deletion, conversation renaming, copy-response button, loading session list from /api/v1/sessions, and error banner display on non-200 responses."
+      }
+    ]
+  },
+  "axis_10_security_and_privacy_audit": {
+    "verified_controls": [
+      "PBKDF2-HMAC-SHA256 password hashing (100,000 iterations + random 16-byte salt)",
+      "HMAC-SHA256 signed Bearer tokens with expiration",
+      "Role-Based Access Control (admin vs user)",
+      "Sliding-window per-client rate limiter",
+      "XSS and SQLi payload rejection filters",
+      "Pre-inference safety refusal for harmful/jailbreak prompts"
+    ],
+    "missing_controls": [
+      "User account and conversation deletion endpoints (DELETE /api/v1/sessions/<id>, DELETE /api/v1/users/me)",
+      "Secret key rotation / environment variable injection in live server startup",
+      "Persistent audit logging of failed authentication attempts to SQLite"
+    ]
+  },
+  "axis_11_production_and_deployment_audit": {
+    "sqlite_wal_and_backups_verified": true,
+    "critical_findings": [
+      {
+        "id": "GAP-TLS-NOT-WRAPPED",
+        "severity": "HIGH",
+        "description": "deployment/production.py start_live_http_server() runs a plain HTTP server (http://127.0.0.1:<port>) without wrapping server.socket with ssl_context.wrap_socket(). build_tls_context() only inspects an in-memory SSLContext object."
+      },
+      {
+        "id": "GAP-SINGLE-OS-VERIFICATION",
+        "severity": "LOW",
+        "description": "Verified only on Windows 10 AMD64 CPU; no Dockerfile, systemd unit, or Linux/macOS CI validation exists."
+      }
+    ]
+  },
+  "axis_12_tests_releases_and_maintenance_audit": {
+    "releases_verified_on_disk": {
+      "v1.0.0": {
+        "manifest": "releases/v1.0.0/release_manifest.json",
+        "model_sha256": "9c3d4131ba73107db80d4945da86109a3c4850fd83aaaf4da26856c57ed07b1c",
+        "status": "CHECKSUM_MATCHES_PHASE16_MODEL"
+      },
+      "v1.1.0": {
+        "manifest": "releases/v1.1.0/release_manifest.json",
+        "model_sha256": "c3998170bf7fd8d7fb7d42006ba7578916fa3de7c025d5f7bb64545d3c8591c1",
+        "status": "CHECKSUM_MATCHES_PHASE24_MODEL"
+      }
+    },
+    "critical_findings": [
+      "Phase 23 maintenance (run_phase23_post_release_maintenance) uses a hardcoded simulated incident (TRANSIENT_TIMEOUT_WARN) and 3 hardcoded feedback rows rather than organic telemetry.",
+      "No automated rollback script or CLI command exists to switch active production weights from v1.1.0 back to v1.0.0."
+    ]
+  },
+  "phase_by_phase_verdicts": {
+    "Phase_0_to_9": "VERIFIED_REAL",
+    "Phase_10_3_to_10_12": "VERIFIED_REAL_WITH_TOKEN_IMBALANCE_NOTE",
+    "Phase_11_Architecture": "VERIFIED_REAL",
+    "Phase_12_Training_Engine": "VERIFIED_REAL",
+    "Phase_13_Initial_Training": "PARTIAL_REAL_SEVERE_UNDER_TRAINING_40_STEPS",
+    "Phase_14_Optimization_Scaling": "PARTIAL_REAL_OPTIMIZER_RESET_AND_30_STEPS",
+    "Phase_15_Multilingual_Evaluation": "PARTIAL_REAL_METRICS_BUT_INCOHERENT_GENERATION",
+    "Phase_16_Finetuning_Alignment": "SYNTHETIC_18_TEMPLATES_OVERFIT_AND_EVAL_LEAKAGE",
+    "Phase_17_Inference_Engine": "VERIFIED_REAL_MISSING_STOP_SEQUENCES",
+    "Phase_18_API_Backend": "PARTIAL_REAL_IN_MEMORY_ONLY",
+    "Phase_19_User_Interface": "PARTIAL_BROKEN_LIVE_AUTH_401_AND_MISSING_CONTROLS",
+    "Phase_20_Security_Performance": "VERIFIED_REAL_IN_PROCESS_FILTERS",
+    "Phase_21_Production_Deployment": "PARTIAL_PLAIN_HTTP_AND_UNWIRED_SQLITE_SESSIONS",
+    "Phase_22_Release_v1_0_0": "VERIFIED_ARTIFACTS_ON_DISK",
+    "Phase_23_Post_Release_Maintenance": "SIMULATED_INCIDENT_AND_FEEDBACK",
+    "Phase_24_Continual_Learning_v1_1_0": "SYNTHETIC_TEMPLATES_16_STEPS"
+  },
+  "remediation_roadmap_stages_b_to_l": [
+    {
+      "stage": "Stage B — Data Verification & Balanced Multilingual Split Construction",
+      "priority": "P0",
+      "actions": [
+        "Chunk long QNL Arabic books into uniform passage windows (256-512 chars) and balance token budgets across Arabic, English, and French (33.3% / 33.3% / 33.3% by byte tokens, not just record counts).",
+        "Build a clean, leak-free instruction/QA/summarization/translation dataset from real corpus passages without repeating 18 synthetic templates across train/val/test."
+      ]
+    },
+    {
+      "stage": "Stage C — Model Verification & Tokenizer/Context Enhancement",
+      "priority": "P1",
+      "actions": [
+        "Verify context_length >= 256 for Arabic byte sequences and ensure Trainer.resume() preserves optimizer and scheduler state across multi-stage runs."
+      ]
+    },
+    {
+      "stage": "Stage D & E — Real Pre-Training, Continual Training & SFT Alignment",
+      "priority": "P0",
+      "actions": [
+        "Train on balanced multilingual token splits with proper checkpoint resumption (last.pt) until open-ended generation produces valid words and phrases in AR/EN/FR.",
+        "Fine-tune on distinct, non-overlapping instruction/eval sets."
+      ]
+    },
+    {
+      "stage": "Stage F, G & H — Multilingual, Capability & Safety Evaluation",
+      "priority": "P1",
+      "actions": [
+        "Evaluate open-ended generation quality (distinct-n, word validity, language identification accuracy, instruction compliance) alongside teacher-forced perplexity."
+      ]
+    },
+    {
+      "stage": "Stage I, J & K — Inference, API/UI Integration & Production Hardening",
+      "priority": "P0",
+      "actions": [
+        "Add stop_sequences and cancellation support to InferenceEngine.",
+        "Wire NourAIBackend UserManager and SessionManager directly to ProductionDatabase SQLite tables.",
+        "Fix ui/index.html authentication (auto-guest/login Bearer token flow), add session delete/rename/copy buttons, and wire TLS socket wrapping + rollback CLI."
+      ]
+    },
+    {
+      "stage": "Stage L — Release v1.2.0 Certification",
+      "priority": "P1",
+      "actions": [
+        "Package verified weights, full test suite, and honest benchmark documentation into releases/v1.2.0/."
+      ]
+    }
+  ]
+}

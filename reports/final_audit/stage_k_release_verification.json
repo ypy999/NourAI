@@ -1,0 +1,70 @@
+{
+  "stage": "Stage K — Release Verification (v1.0.0, v1.1.0, v1.2.0) & Rollback",
+  "status": "RELEASE_VERIFIED",
+  "certification_token": "RELEASE_VERIFIED",
+  "timestamp_utc": "2026-11-14T00:03:29Z",
+  "all_gates_passed": true,
+  "gates": {
+    "v1_0_0_bundle_complete_and_verified": true,
+    "v1_1_0_bundle_complete_and_verified": true,
+    "v1_2_0_bundle_complete_and_verified": true,
+    "rollback_and_reactivation_verified": true
+  },
+  "releases": {
+    "v1.0.0": {
+      "version": "v1.0.0",
+      "release_dir": "releases\\v1.0.0",
+      "checkpoint": "checkpoints\\phase16\\phase16_sft_aligned_model.pt",
+      "checkpoint_sha256": "8118cea64f080842a5ab68114b5833ebddf6b36fc441200c52f53c2a46d1c196",
+      "all_10_artifacts_present": true
+    },
+    "v1.1.0": {
+      "version": "v1.1.0",
+      "release_dir": "releases\\v1.1.0",
+      "checkpoint": "checkpoints\\phase24\\phase24_v1_1_continual_model.pt",
+      "checkpoint_sha256": "07a09212fcf46af2ec1b330e726b8015b7814f9e6733296df89d4d3f53272003",
+      "all_10_artifacts_present": true
+    },
+    "v1.2.0": {
+      "version": "v1.2.0",
+      "release_dir": "releases\\v1.2.0",
+      "checkpoint": "checkpoints\\v1_2\\nourai_v1_2_model.pt",
+      "checkpoint_sha256": "3474a8f8d118984cf99d9887f5c171d2b3fd597ed659005ba19eb523a9f9f01a",
+      "all_10_artifacts_present": true
+    }
+  },
+  "rollback_drill": [
+    {
+      "active_version": "v1.2.0",
+      "checkpoint_path": "checkpoints\\v1_2\\nourai_v1_2_model.pt",
+      "checkpoint_sha256": "3474a8f8d118984cf99d9887f5c171d2b3fd597ed659005ba19eb523a9f9f01a",
+      "verified_parameters": 843008,
+      "smoke_tokens_generated": 6,
+      "switched_at_utc": "2026-11-14T00:03:29Z"
+    },
+    {
+      "active_version": "v1.1.0",
+      "checkpoint_path": "checkpoints\\phase24\\phase24_v1_1_continual_model.pt",
+      "checkpoint_sha256": "07a09212fcf46af2ec1b330e726b8015b7814f9e6733296df89d4d3f53272003",
+      "verified_parameters": 843008,
+      "smoke_tokens_generated": 6,
+      "switched_at_utc": "2026-11-14T00:03:29Z"
+    },
+    {
+      "active_version": "v1.0.0",
+      "checkpoint_path": "checkpoints\\phase16\\phase16_sft_aligned_model.pt",
+      "checkpoint_sha256": "8118cea64f080842a5ab68114b5833ebddf6b36fc441200c52f53c2a46d1c196",
+      "verified_parameters": 843008,
+      "smoke_tokens_generated": 6,
+      "switched_at_utc": "2026-11-14T00:03:29Z"
+    },
+    {
+      "active_version": "v1.2.0",
+      "checkpoint_path": "checkpoints\\v1_2\\nourai_v1_2_model.pt",
+      "checkpoint_sha256": "3474a8f8d118984cf99d9887f5c171d2b3fd597ed659005ba19eb523a9f9f01a",
+      "verified_parameters": 843008,
+      "smoke_tokens_generated": 6,
+      "switched_at_utc": "2026-11-14T00:03:29Z"
+    }
+  ]
+}

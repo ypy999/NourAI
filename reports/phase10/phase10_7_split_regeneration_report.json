@@ -1,0 +1,67 @@
+{
+  "phase": "10.7",
+  "title": "Dataset Split Policy & Regeneration",
+  "status": "COMPLETE",
+  "created_at_utc": "2026-11-13T20:47:30+00:00",
+  "run_id": "run-multilingual:phase10_3-1337",
+  "run_manifest_path": "data/processed/phase10_3/run_manifest.json",
+  "approved_manifest_path": "data/approved/multilingual_phase10_3.manifest.json",
+  "split_policy": {
+    "requested_ratios": {
+      "train": 0.9,
+      "validation": 0.05,
+      "test": 0.05
+    },
+    "actual_ratios": {
+      "train": 0.9000096459920903,
+      "validation": 0.04999517700395486,
+      "test": 0.04999517700395486
+    },
+    "random_seed": 1337,
+    "grouping_field": "document_id"
+  },
+  "corpus_counts": {
+    "imported_by_source": {
+      "tatoeba_cc0": 55719,
+      "qnl_arabic_ocr_v2": 58,
+      "wto_public_corpus_en_fr": 58466
+    },
+    "total_imported_records": 114243,
+    "duplicates_removed_globally": 10573,
+    "unique_records_split": 103670,
+    "split_counts": {
+      "train": 93304,
+      "validation": 5183,
+      "test": 5183
+    }
+  },
+  "validation_and_audit": {
+    "validate_splits_valid": true,
+    "duplicate_leakage": 0,
+    "document_group_leakage": 0,
+    "check_split_decisions_findings": [],
+    "verify_run_manifest_valid": true,
+    "audit_summary": {
+      "artifacts": 16,
+      "bytes": 1006190461,
+      "by_kind": {
+        "imported": 3,
+        "provenance_sidecar": 7,
+        "normalized": 3,
+        "split": 3
+      },
+      "by_reproducibility": {
+        "YES": 9,
+        "N/A": 7
+      }
+    }
+  },
+  "acceptance_criteria": {
+    "split_ratios_match_approved_config": true,
+    "random_seed_1337_verified": true,
+    "zero_duplicate_and_group_leakage": true,
+    "all_payload_artifacts_reproducible_yes": true,
+    "run_manifest_verified": true,
+    "phase10_2_untouched": true
+  }
+}

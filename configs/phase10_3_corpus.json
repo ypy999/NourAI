@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "approved_source_ids": [
+    "tatoeba_cc0",
+    "qnl_arabic_ocr_v2",
+    "wto_public_corpus_en_fr"
+  ],
+  "target_languages": [
+    "ara",
+    "eng",
+    "fra"
+  ],
+  "text_fields": [
+    "text",
+    "content",
+    "sentence"
+  ],
+  "max_download_bytes": 2147483648,
+  "max_json_bytes": 67108864,
+  "max_zip_member_bytes": 2147483648,
+  "batch_records": 4096,
+  "download": {
+    "timeout_seconds": 30,
+    "retries": 3,
+    "resume_partial": true
+  },
+  "supported_formats": [
+    "txt",
+    "text",
+    "jsonl",
+    "ndjson",
+    "json",
+    "csv",
+    "parquet",
+    "zip",
+    "tsv.bz2",
+    "tar.bz2",
+    "zip_txt_with_official_metadata_csv",
+    "zip_tab_delimited_parallel_corpus"
+  ],
+  "language_settings": {
+    "ara": {
+      "enabled": true,
+      "minimum_characters": 1
+    },
+    "eng": {
+      "enabled": true,
+      "minimum_characters": 1
+    },
+    "fra": {
+      "enabled": true,
+      "minimum_characters": 1
+    }
+  },
+  "normalization": {
+    "unicode_form": "NFC",
+    "newline_form": "LF"
+  },
+  "deduplication": {
+    "exact": true,
+    "normalized": true,
+    "profile": "phase7_nfc_casefold_whitespace"
+  },
+  "quality": {
+    "scoring_implementation": "data.quality.RECORD_WEIGHTS",
+    "evaluate_all_records": true
+  },
+  "license_policy": {
+    "require_verified_for_approved": true,
+    "unknown_license_allowed": false,
+    "manual_review_required_for_mixed_licenses": true
+  },
+  "split_ratios": {
+    "train": 0.9,
+    "validation": 0.05,
+    "test": 0.05
+  },
+  "random_seed": 1337,
+  "max_document_chars": 5000000,
+  "adapter_options": {
+    "qnl_arabic_ocr_v2": {
+      "sampling_mode": "deterministic_sample",
+      "seed": 1337,
+      "sample_fraction": 0.02,
+      "min_documents": 3
+    },
+    "wto_public_corpus_en_fr": {
+      "sampling_mode": "stratified_chunk00",
+      "seed": 1337,
+      "sample_fraction": 0.02,
+      "min_per_domain": 3
+    }
+  },
+  "raw_directory": "data/raw/external",
+  "imported_directory": "data/processed/phase10_3/imported",
+  "normalized_directory": "data/processed/phase10_3/normalized",
+  "splits_directory": "data/processed/phase10_3/splits",
+  "approved_directory": "data/approved",
+  "rejected_directory": "data/processed/phase10_3/rejected",
+  "metadata_database": "data/metadata/phase10_3_corpus.sqlite3",
+  "reports_directory": "reports/phase10",
+  "report_json": "reports/phase10/phase10_3_reproducibility_report.json",
+  "report_markdown": "reports/phase10/phase10_3_reproducibility_report.md",
+  "dashboard_html": "reports/phase10/phase10_3_corpus_dashboard.html"
+}

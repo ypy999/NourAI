@@ -1,0 +1,31 @@
+{
+  "phase": "10.3",
+  "title": "Data Pipeline Reproducibility & Run Manifest",
+  "status": "COMPLETE",
+  "completed_at_utc": "2026-11-13T19:06:00+00:00",
+  "summary": {
+    "tests_passed": 207,
+    "tests_failed": 0,
+    "new_tests_added": 6,
+    "phase10_2_untouched": true,
+    "raw_archives_untouched": true,
+    "cuda_used": false,
+    "training_started": false
+  },
+  "files_created": [
+    "configs/phase10_3_corpus.json",
+    "tests/test_phase10_3_pipeline_reproducibility.py",
+    "reports/phase10/phase10_3_reproducibility_report.json",
+    "reports/phase10/phase10_3_reproducibility_report.md"
+  ],
+  "files_modified": [
+    "corpus/reproducibility.py",
+    "corpus/pipeline.py"
+  ],
+  "capabilities_added": [
+    "build_run_manifest and verify_run_manifest in corpus/reproducibility.py",
+    "compact traceable normalization (retain_stage_texts=False with .normalized.json sidecar and SHA-256 chain)",
+    "multi-source prepare_splits in corpus/pipeline.py with per-source license and provenance verification",
+    "hard write-protection guards blocking any write into data/processed/phase10_2"
+  ]
+}

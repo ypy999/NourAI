@@ -1,6 +1,8 @@
 """Disk-backed fixed-length next-token dataset."""
+from array import array
 import json
 import sqlite3
+import sys
 import tempfile
 from pathlib import Path
 
@@ -14,14 +16,18 @@ from data.source_registry import SourceRegistry
 
 
 class TokenSequenceDataset(Dataset):
-    def __init__(self, jsonl_path, config=None, tokenizer=None):
+    def __init__(self, jsonl_path, config=None, tokenizer=None, *, cache_dir=None, preload_tokens=False):
         self.path = Path(jsonl_path)
         if not self.path.is_file():
             raise FileNotFoundError(f"dataset file not found: {self.path}")
         self.config = config if isinstance(config, ProjectConfig) else load_config(config, tokenizer)
         self.tokenizer = tokenizer or ByteTokenizer()
         self.config.validate(self.tokenizer)
-        self._temp = tempfile.TemporaryDirectory(prefix="nourai-token-cache-")
+        self.preload_tokens = bool(preload_tokens)
+        self._preloaded_u16 = None
+        if cache_dir is not None:
+            Path(cache_dir).mkdir(parents=True, exist_ok=True)
+        self._temp = tempfile.TemporaryDirectory(prefix="nourai-token-cache-", dir=cache_dir)
         self._token_path = Path(self._temp.name) / "tokens.u16"
         self._metadata_path = Path(self._temp.name) / "provenance.sqlite3"
         source_registry = SourceRegistry()
@@ -41,9 +47,12 @@ class TokenSequenceDataset(Dataset):
                     provenance = canonical_record(item, source_file=self.path, source_line=line_no,
                                                   source_registry=source_registry)
                     tokens = self.tokenizer.encode(item["text"], add_eos=True)
-                    if any(token < 0 or token >= self.config.vocab_size or token > 65535 for token in tokens):
+                    if not tokens or min(tokens) < 0 or max(tokens) >= self.config.vocab_size or max(tokens) > 65535:
                         raise ValueError("tokenizer returned IDs outside supported vocabulary/uint16 range")
-                    out.write(bytearray().join(int(token).to_bytes(2, "little") for token in tokens))
+                    if sys.byteorder == "little":
+                        out.write(array("H", tokens).tobytes())
+                    else:
+                        out.write(bytearray().join(int(token).to_bytes(2, "little") for token in tokens))
                     metadata = {name: provenance.get(name) for name in PROVENANCE_FIELDS if name not in ("text", "raw_text")}
                     metadata.update({"provenance_missing": provenance["provenance_missing"],
                                      "record_id_method": provenance.get("record_id_method"),
@@ -64,6 +73,9 @@ class TokenSequenceDataset(Dataset):
             self._temp.cleanup()
             raise ValueError(f"dataset needs at least {self.sequence_length + 1} tokens for one training example")
         self._token_count = token_count
+        if self.preload_tokens:
+            raw_all = self._token_path.read_bytes()
+            self._preloaded_u16 = torch.frombuffer(bytearray(raw_all), dtype=torch.uint16)
 
     def __len__(self):
         return self._sample_count
@@ -72,6 +84,9 @@ class TokenSequenceDataset(Dataset):
         if isinstance(index, bool) or not isinstance(index, int) or not 0 <= index < len(self):
             raise IndexError("dataset index out of range")
         start = index * self.sequence_length
+        if self._preloaded_u16 is not None:
+            chunk = self._preloaded_u16[start : start + self.sequence_length + 1].to(torch.int64)
+            return chunk[:-1], chunk[1:]
         with self._token_path.open("rb") as tokens_file:
             tokens_file.seek(start * 2)
             raw = tokens_file.read((self.sequence_length + 1) * 2)

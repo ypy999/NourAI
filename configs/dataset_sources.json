@@ -346,6 +346,7 @@
     "name": "Qatar National Library Arabic OCR Corpus v2 (2,894 cataloged works)",
     "url": "https://manara.qnl.qa/articles/dataset/Arabic_OCR_Corpus_2_894_items_from_QNL_Collection_/26984785",
     "download_url": "https://ndownloader.figshare.com/files/50403846",
+    "metadata_download_url": "https://ndownloader.figshare.com/files/49137445",
     "metadata_api_url": "https://api.figshare.com/v2/articles/26984785",
     "format": "zip_txt_with_official_metadata_csv",
     "license_id": "PUBLIC_DOMAIN_TEXTS; CC0-1.0_METADATA",

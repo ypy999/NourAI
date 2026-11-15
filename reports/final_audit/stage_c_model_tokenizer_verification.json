@@ -1,0 +1,123 @@
+{
+  "stage": "Stage C — Tokenizer & Model Architecture Verification",
+  "tokenizer_status": "TOKENIZER_VERIFIED",
+  "model_architecture_status": "MODEL_ARCHITECTURE_VERIFIED",
+  "certification_token": "MODEL_VERIFIED",
+  "timestamp_utc": "2026-11-13T23:56:03Z",
+  "all_gates_passed": true,
+  "tokenizer_gates": {
+    "vocab_size_260_verified": true,
+    "special_tokens_verified": true,
+    "all_categories_lossless_round_trip": true,
+    "invalid_utf8_safe_fallback": true
+  },
+  "tokenizer_round_trip_and_efficiency": {
+    "arabic": {
+      "exact_match": true,
+      "valid_id_range": true,
+      "char_length": 119,
+      "token_count": 220,
+      "tokens_per_char": 1.8487
+    },
+    "english": {
+      "exact_match": true,
+      "valid_id_range": true,
+      "char_length": 94,
+      "token_count": 94,
+      "tokens_per_char": 1.0
+    },
+    "french": {
+      "exact_match": true,
+      "valid_id_range": true,
+      "char_length": 101,
+      "token_count": 109,
+      "tokens_per_char": 1.0792
+    },
+    "mixed": {
+      "exact_match": true,
+      "valid_id_range": true,
+      "char_length": 75,
+      "token_count": 87,
+      "tokens_per_char": 1.16
+    },
+    "punctuation": {
+      "exact_match": true,
+      "valid_id_range": true,
+      "char_length": 55,
+      "token_count": 75,
+      "tokens_per_char": 1.3636
+    },
+    "numbers": {
+      "exact_match": true,
+      "valid_id_range": true,
+      "char_length": 44,
+      "token_count": 54,
+      "tokens_per_char": 1.2273
+    },
+    "special_symbols": {
+      "exact_match": true,
+      "valid_id_range": true,
+      "char_length": 24,
+      "token_count": 34,
+      "tokens_per_char": 1.4167
+    },
+    "long_text": {
+      "exact_match": true,
+      "valid_id_range": true,
+      "char_length": 1479,
+      "token_count": 2679,
+      "tokens_per_char": 1.8114
+    }
+  },
+  "model_gates": {
+    "all_profiles_parameter_counts_match": true,
+    "weight_tying_verified": true,
+    "forward_backward_and_grad_stability": true,
+    "causal_mask_zero_future_leakage": true,
+    "checkpoint_save_restore_exact": true
+  },
+  "model_profiles": {
+    "Default": {
+      "n_layers": 4,
+      "n_heads": 4,
+      "d_model": 128,
+      "d_ff": 512,
+      "context_length": 128,
+      "parameter_count": 843008,
+      "expected_parameter_count": 843008,
+      "parameter_count_match": true,
+      "weight_tying_verified": true,
+      "forward_backward_finite": true,
+      "no_future_token_leakage": true,
+      "checkpoint_restore_exact": true
+    },
+    "Small": {
+      "n_layers": 6,
+      "n_heads": 8,
+      "d_model": 256,
+      "d_ff": 1024,
+      "context_length": 256,
+      "parameter_count": 4871168,
+      "expected_parameter_count": 4871168,
+      "parameter_count_match": true,
+      "weight_tying_verified": true,
+      "forward_backward_finite": true,
+      "no_future_token_leakage": true,
+      "checkpoint_restore_exact": true
+    },
+    "Base": {
+      "n_layers": 8,
+      "n_heads": 8,
+      "d_model": 512,
+      "d_ff": 2048,
+      "context_length": 512,
+      "parameter_count": 25615360,
+      "expected_parameter_count": 25615360,
+      "parameter_count_match": true,
+      "weight_tying_verified": true,
+      "forward_backward_finite": true,
+      "no_future_token_leakage": true,
+      "checkpoint_restore_exact": true
+    }
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "phase": "10.9",
+  "title": "Document Leakage & Similarity Audit",
+  "status": "PASS",
+  "created_at_utc": "2026-11-13T21:06:36.394357+00:00",
+  "splits_directory": "D:\\NourAI\\data\\processed\\phase10_3\\splits",
+  "split_record_counts": {
+    "train": 93304,
+    "validation": 5183,
+    "test": 5183
+  },
+  "unique_documents_with_explicit_id": 134,
+  "documents_by_split": {
+    "train": 114,
+    "validation": 11,
+    "test": 9
+  },
+  "unique_translation_groups": 25668,
+  "bilingual_translation_groups_with_both_languages": 22228,
+  "translation_groups_by_split": {
+    "train": 25313,
+    "validation": 159,
+    "test": 196
+  },
+  "leakage_counts": {
+    "exact_hash_leakage": 0,
+    "normalized_hash_leakage": 0,
+    "document_id_leakage": 0,
+    "translation_group_leakage": 0,
+    "split_group_id_leakage": 0
+  },
+  "similarity_audit": {
+    "method": "5-word min-hash shingle signature (up to 8 shingles per record >= 60 chars)",
+    "eval_records_checked": 4761,
+    "full_signature_matches_in_train": 2,
+    "near_duplicate_rate": 0.0004200798151648813
+  },
+  "acceptance_criteria": {
+    "exact_leakage_zero": true,
+    "normalized_leakage_zero": true,
+    "document_id_leakage_zero": true,
+    "translation_group_leakage_zero": true,
+    "split_group_id_leakage_zero": true
+  }
+}

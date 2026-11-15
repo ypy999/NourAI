@@ -1,0 +1,107 @@
+{
+  "phase": "10.12",
+  "title": "Phase 10 Final Certification",
+  "status": "PASS",
+  "certification_verdict": "CERTIFIED_FOR_PHASE_11_ARCHITECTURE_AND_INITIAL_TRAINING",
+  "created_at_utc": "2026-11-13T21:15:25.058386+00:00",
+  "run_id": "run-multilingual:phase10_3-1337",
+  "failed_gates": [],
+  "reproduction_plan_ready": true,
+  "gates": {
+    "phase_10_3_pipeline_reproducibility": {
+      "status": "PASS",
+      "reproducible_payload_files": 9
+    },
+    "phase_10_4_qnl_adapter": {
+      "status": "PASS",
+      "adapter_version": "qnl_arabic_ocr_v2_adapter_v1"
+    },
+    "phase_10_5_wto_adapter": {
+      "status": "PASS",
+      "adapter_version": "wto_en_fr_adapter_v1"
+    },
+    "phase_10_6_provenance_recovery": {
+      "status": "PASS",
+      "sources_synced": 14,
+      "records_indexed": 103670
+    },
+    "phase_10_7_split_policy_regeneration": {
+      "status": "PASS",
+      "split_counts": {
+        "test": 5183,
+        "train": 93304,
+        "validation": 5183
+      },
+      "policy_findings": []
+    },
+    "phase_10_8_artifact_integrity": {
+      "status": "PASS",
+      "sqlite_files_checked": 12,
+      "files_deleted": 0
+    },
+    "phase_10_9_leakage_and_similarity": {
+      "status": "PASS",
+      "leakage_counts": {
+        "exact_hash_leakage": 0,
+        "normalized_hash_leakage": 0,
+        "document_id_leakage": 0,
+        "translation_group_leakage": 0,
+        "split_group_id_leakage": 0
+      }
+    },
+    "phase_10_10_multilingual_quality": {
+      "status": "PASS",
+      "split_language_record_counts": {
+        "train": {
+          "arabic": 54,
+          "english": 58214,
+          "french": 35036
+        },
+        "validation": {
+          "arabic": 3,
+          "english": 4334,
+          "french": 846
+        },
+        "test": {
+          "arabic": 3,
+          "english": 4282,
+          "french": 898
+        }
+      },
+      "split_language_character_counts": {
+        "train": {
+          "arabic": 34016080,
+          "english": 6295539,
+          "french": 4889320
+        },
+        "validation": {
+          "arabic": 2051149,
+          "english": 374037,
+          "french": 63727
+        },
+        "test": {
+          "arabic": 1807383,
+          "english": 371512,
+          "french": 71626
+        }
+      }
+    },
+    "phase_10_11_training_readiness": {
+      "status": "PASS",
+      "tokenizer_tested": 146,
+      "device": "cpu"
+    }
+  },
+  "constraints_verified": {
+    "worked_inside_d_nourai": true,
+    "phase10_2_untouched": true,
+    "zero_data_or_reports_deleted": true,
+    "training_not_started": true,
+    "cuda_not_used": true,
+    "raw_archives_not_redownloaded": true
+  },
+  "technical_advisories_for_phase_11_to_13": [
+    "Arabic records in QNL are whole multi-page books (58 books = ~36.1M characters across train/validation/test), whereas English/French records are sentence/paragraph segments (~103.6K segments). TokenSequenceDataset automatically chunks long books into fixed context_length windows, providing balanced token-level coverage across Arabic, English, and French.",
+    "All frozen Phase 10.2 files and orphan .partial/.parts files remain quarantined via corpus.integrity.is_quarantined_or_frozen_path() and must never be passed to create_dataloaders()."
+  ]
+}

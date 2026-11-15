@@ -36,7 +36,7 @@ def load_phase8_config(path=None):
     missing = required - set(value)
     if missing:
         raise ValueError(f"phase8 config is missing keys: {', '.join(sorted(missing))}")
-    unknown = set(value) - (required | {"schema_version"})
+    unknown = set(value) - (required | {"schema_version", "adapter_options", "max_document_chars"})
     if unknown:
         raise ValueError(f"unknown phase8 config keys: {', '.join(sorted(unknown))}")
     if value.get("schema_version") != 1:
@@ -76,9 +76,9 @@ def load_phase8_config(path=None):
 
 
 def import_source_file(source_id, source_path, output_path, *, project_root, languages=None,
-                       config=None, resume=False):
+                       config=None, resume=False, metadata_csv_path=None, qnl_options=None, wto_options=None):
     """Resumably stream records into JSONL; raw text and per-record provenance are retained."""
-    source = require_approved_source(source_id)
+    registry_entry = require_approved_source(source_id)
     config = config or load_phase8_config()
     root = Path(project_root).resolve()
     from data.license_manager import LicenseManager
@@ -88,6 +88,7 @@ def import_source_file(source_id, source_path, output_path, *, project_root, lan
         source = license_manager.ensure_approved(source_id)
     finally:
         license_manager.close()
+    source_format = registry_entry.get("format") if Path(source_path).suffix.casefold() == ".zip" else None
     source_path = Path(source_path).resolve()
     provenance = verify_download_provenance(source_id, source_path)
     output_path = Path(output_path)
@@ -98,12 +99,18 @@ def import_source_file(source_id, source_path, output_path, *, project_root, lan
         relative = output_path.resolve().relative_to(root)
     except ValueError as exc:
         raise ValueError("import output must remain inside project root") from exc
+    if str(relative).replace(os.sep, "/").startswith("data/processed/phase10_2"):
+        raise PermissionError("refusing to write imported output inside the frozen Phase 10.2 tree")
     if source_path == output_path.resolve():
         raise ValueError("source and imported output paths must differ")
     output_path.parent.mkdir(parents=True, exist_ok=True)
     allowed_languages = set(languages or config["target_languages"])
     fingerprint_payload = {"text_fields": config["text_fields"], "max_json_bytes": config["max_json_bytes"],
                           "max_zip_member_bytes": config["max_zip_member_bytes"], "allowed_languages": sorted(allowed_languages)}
+    if qnl_options:
+        fingerprint_payload["qnl_options"] = qnl_options
+    if wto_options:
+        fingerprint_payload["wto_options"] = wto_options
     fingerprint = hashlib.sha256(json.dumps(fingerprint_payload, sort_keys=True).encode("utf-8")).hexdigest()
     partial = output_path.with_name(output_path.name + ".part")
     checkpoint = output_path.with_name(output_path.name + ".resume.json")
@@ -144,6 +151,7 @@ def import_source_file(source_id, source_path, output_path, *, project_root, lan
                  "source_url": source["url"], "dataset_version": source.get("release_version"),
                  "source_file": str(source_path), "license_id": source["license_id"],
                  "config_fingerprint": fingerprint,
+                 "adapter_options": qnl_options or wto_options or None,
                  "imported_at": datetime.now(timezone.utc).isoformat(), "records_seen": 0, "scanned_items": 0,
                  "accepted_records": 0, "filtered_language_records": 0, "empty_records": 0,
                  "errors": [], "errors_truncated": 0, "languages": {}, "characters": 0, "partial_bytes": 0}
@@ -155,7 +163,11 @@ def import_source_file(source_id, source_path, output_path, *, project_root, lan
     with partial.open(mode) as output:
         for cursor, item in enumerate(iter_source_records(source_path, text_fields=tuple(config["text_fields"]),
                                            max_json_bytes=config["max_json_bytes"],
-                                           max_zip_member_bytes=config["max_zip_member_bytes"]), 1):
+                                           max_zip_member_bytes=config["max_zip_member_bytes"],
+                                           source_format=source_format,
+                                           metadata_csv_path=metadata_csv_path,
+                                           qnl_options=qnl_options,
+                                           wto_options=wto_options), 1):
             if cursor <= int(stats.get("scanned_items", 0)):
                 continue
             stats["scanned_items"] = cursor
@@ -170,24 +182,35 @@ def import_source_file(source_id, source_path, output_path, *, project_root, lan
                 if not isinstance(text, str) or not text.strip():
                     stats["empty_records"] += 1
                 else:
-                    lang = item.get("language_code")
+                    lang = item.get("language_code") or item.get("source_language_code")
                     if allowed_languages and lang is not None and lang not in allowed_languages:
                         stats["filtered_language_records"] += 1
                     else:
+                        if item.get("adapter_version"):
+                            stats["adapter_version"] = item["adapter_version"]
                         row = make_raw_record(text, source_id=source_id, dataset_version=source.get("release_version"),
                             license_id=source["license_id"], source_url=source["url"],
                             source_record_id=item.get("source_record_id", item.get("sentence_id")), source_language_code=lang or item.get("language_code"),
                             source_record_number=item.get("record_number"), source_timestamp=item.get("contributor_timestamp"),
                             imported_at=stats["imported_at"])
-                        row.update({key: item[key] for key in ("document_id", "sentence_domain", "domain", "domains") if key in item})
+                        adapter_keys = (
+                            "document_id", "original_document_id", "sentence_domain", "domain", "domains",
+                            "source_file_member", "qnl_metadata", "arabic_script_ratio", "provenance_id_source",
+                            "document_id_status", "translation_group_id", "translation_group_method",
+                            "segment_id", "wto_record_id", "document_path", "document_filename",
+                            "document_year", "alignment_match", "document_id_source_field",
+                            "split_language", "detected_language", "detected_language_method",
+                            "adapter_version",
+                        )
+                        row.update({key: item[key] for key in adapter_keys if key in item})
                         row["source_name"] = source.get("name")
                         row["license_status"] = source.get("state", source.get("status"))
                         row["source_file"] = str(source_path)
-                        row["source_line"] = item.get("record_number")
+                        row["source_line"] = item.get("source_line") if "source_line" in item else item.get("record_number")
                         row["text"] = text  # Phase 7 DataPipeline compatibility; this is still raw source text.
                         row["language_estimate"] = estimate_language(text, source_language_code=lang)
                         row = canonical_record(row, source_file=source_path,
-                                               source_line=item.get("record_number"),
+                                               source_line=row["source_line"],
                                                source_registry=SourceRegistry())
                         output.write((json.dumps(row, ensure_ascii=False, allow_nan=False) + "\n").encode("utf-8"))
                         stats["accepted_records"] += 1
@@ -219,6 +242,7 @@ def import_source_file(source_id, source_path, output_path, *, project_root, lan
     from data.storage_manager import CorpusMetadataStore
     metadata_store = CorpusMetadataStore(root, config["metadata_database"])
     try:
+        metadata_store.sync_catalog()
         metadata_store.register_source({"source_id": source_id, **source})
         dataset_id = f"{source_id}:{provenance['sha256'][:12]}"
         metadata_store.register_dataset(dataset_id, source["name"], str(source.get("release_version") or "unversioned"),
@@ -249,8 +273,8 @@ def _write_json_atomic(path, payload):
             os.unlink(temp)
 
 
-def normalize_imported_file(imported_path, output_path, *, project_root, config=None):
-    """Persist traceable raw/normalized/cleaned fields before the Phase 7 splitter."""
+def normalize_imported_file(imported_path, output_path, *, project_root, config=None, retain_stage_texts=True):
+    """Persist traceable raw/normalized/cleaned fields (or compact hashes) before the Phase 7 splitter."""
     started = time.perf_counter()
     from data.normalization import transform_record
     config = config or load_phase8_config()
@@ -264,14 +288,40 @@ def normalize_imported_file(imported_path, output_path, *, project_root, config=
         relative = output_path.relative_to(root)
     except ValueError as exc:
         raise ValueError("normalized output must stay inside project root") from exc
-    if output_path.exists():
-        raise FileExistsError(f"refusing to overwrite normalized output: {output_path}")
+    if str(relative).replace(os.sep, "/").startswith("data/processed/phase10_2"):
+        raise PermissionError("refusing to write normalized output inside the frozen Phase 10.2 tree")
     project_config = load_config(root / "configs" / "default.json", ByteTokenizer())
     cleaning = {"remove_control_chars": project_config.cleaning_remove_control_chars,
                 "collapse_whitespace": project_config.cleaning_collapse_whitespace,
                 "preserve_paragraphs": project_config.cleaning_preserve_paragraphs}
-    stats = {"input_file": str(imported_path), "output_file": str(output_path), "records_seen": 0,
-             "accepted_records": 0, "rejected_records": 0, "errors": [], "errors_truncated": 0}
+    input_sha = sha256_file(imported_path)
+    sidecar_meta = output_path.with_name(output_path.name + ".normalized.json")
+    if output_path.exists():
+        if sidecar_meta.is_file():
+            try:
+                completed = json.loads(sidecar_meta.read_text(encoding="utf-8"))
+                if (
+                    completed.get("input_sha256") == input_sha
+                    and completed.get("output_sha256") == sha256_file(output_path)
+                    and completed.get("retain_stage_texts") == bool(retain_stage_texts)
+                    and completed.get("normalization_form") == config["normalization"]["unicode_form"]
+                    and completed.get("cleaning_configuration") == cleaning
+                ):
+                    return {**completed, "already_present": True}
+            except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+                pass
+        raise FileExistsError(f"refusing to overwrite normalized output: {output_path}")
+    import_sidecar = imported_path.with_name(imported_path.name + ".import.json")
+    source_id = None
+    if import_sidecar.is_file():
+        try:
+            source_id = json.loads(import_sidecar.read_text(encoding="utf-8")).get("source_id")
+        except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+            source_id = None
+    stats = {"source_id": source_id, "input_file": str(imported_path), "input_sha256": input_sha,
+             "output_file": str(output_path), "retain_stage_texts": bool(retain_stage_texts),
+             "records_seen": 0, "accepted_records": 0, "rejected_records": 0,
+             "errors": [], "errors_truncated": 0}
 
     def transformed(*, rejected=False, record_errors=False):
         with imported_path.open("rb") as stream:
@@ -292,9 +342,14 @@ def normalize_imported_file(imported_path, output_path, *, project_root, config=
                     continue
                 if not rejected:
                     stats["records_seen"] += 1
+                    if stats["source_id"] is None and result.get("source_id"):
+                        stats["source_id"] = result.get("source_id")
                 is_rejected = not result["cleaned_text"].strip()
                 if is_rejected == rejected:
                     result["record_status"] = "REJECTED_EMPTY_AFTER_CLEANING" if is_rejected else "NORMALIZED_CLEANED"
+                    if not retain_stage_texts and not is_rejected:
+                        for stage_field in ("raw_text", "normalized_text", "cleaned_text"):
+                            result.pop(stage_field, None)
                     if not rejected:
                         stats["accepted_records"] += 1
                     else:
@@ -308,44 +363,36 @@ def normalize_imported_file(imported_path, output_path, *, project_root, config=
         storage.atomic_jsonl(str(rejected_path.relative_to(root)), transformed(rejected=True))
         stats["rejected_file"] = str(rejected_path)
     stats["output_bytes"] = output.stat().st_size
+    stats["output_sha256"] = sha256_file(output)
     stats["normalization_form"] = config["normalization"]["unicode_form"]
     stats["cleaning_configuration"] = cleaning
     stats["processing_seconds"] = time.perf_counter() - started
+    sidecar_meta = output.with_name(output.name + ".normalized.json")
+    _write_json_atomic(sidecar_meta, stats)
+    stats["sidecar_file"] = str(sidecar_meta)
     return stats
 
 
-def prepare_splits(imported_files, *, project_root, config=None, resume=False, checkpoint_path=None):
+def prepare_splits(imported_files, *, project_root, config=None, resume=False, checkpoint_path=None,
+                   retain_stage_texts=True, run_id=None, run_manifest_path=None):
     """Normalize with trace metadata, then reuse Phase 7 cleaner/deduplicator/splitter."""
     config = config or load_phase8_config()
     root = Path(project_root).resolve()
     output = (root / config["splits_directory"]).resolve()
     try:
-        output.relative_to(root)
+        rel_splits = output.relative_to(root)
     except ValueError as exc:
         raise ValueError("split output must remain inside project root") from exc
+    if str(rel_splits).replace(os.sep, "/").startswith("data/processed/phase10_2"):
+        raise PermissionError("refusing to write splits inside the frozen Phase 10.2 tree")
     if output.exists() and not resume:
         raise FileExistsError(f"split directory already exists; select a new run path: {output}")
-    normalized_root = (root / config["normalized_directory"]).resolve()
-    normalized_root.mkdir(parents=True, exist_ok=True)
-    normalized_files = []
-    normalization_stats = []
-    for imported in imported_files:
-        imported = Path(imported).resolve()
-        normalized_name = imported.stem + ".normalized.cleaned.jsonl"
-        normalized_path = normalized_root / normalized_name
-        normalization_stats.append(normalize_imported_file(imported, normalized_path, project_root=root, config=config))
-        normalized_files.append(normalized_path)
-    project_config = load_config(root / "configs" / "default.json", ByteTokenizer())
-    result = split_sources(normalized_files, output, config=project_config,
-                         ratios=config["split_ratios"], seed=config["random_seed"],
-                         stratify=True, checkpoint_path=checkpoint_path, resume=resume,
-                         checkpoint_batch_size=config["batch_records"])
-    result.normalized_files = [str(path) for path in normalized_files]
-    result.normalization_statistics = normalization_stats
     from data.storage_manager import CorpusMetadataStore
     from data.source_registry import SourceRegistry
     from data.manifest import build_manifest, write_manifest
     from .acquisition import verify_download_provenance
+    from .reproducibility import build_run_manifest, write_json_atomic
+
     registry = SourceRegistry()
     source_meta = []
     for imported in imported_files:
@@ -354,57 +401,192 @@ def prepare_splits(imported_files, *, project_root, config=None, resume=False, c
         if not meta_path.is_file():
             raise ValueError(f"import provenance metadata is missing: {meta_path}")
         source_meta.append(json.loads(meta_path.read_text(encoding="utf-8")))
-    source_ids = {item.get("source_id") for item in source_meta}
-    if len(source_ids) != 1:
-        raise ValueError("a Phase 8 run currently accepts one license-verified source at a time")
-    source_id = next(iter(source_ids))
-    source_entry = registry.get(source_id)
-    if not registry.verified_for_ingestion(source_id):
-        raise PermissionError(f"source {source_id} is not approved by the active source registry")
-    source_license = {"source_id":source_id,"license_id":source_entry["license_id"],"state":"VERIFIED"}
+    if not source_meta:
+        raise ValueError("prepare_splits requires at least one imported source file")
+    source_ids_ordered = []
+    for item in source_meta:
+        sid = item.get("source_id")
+        if not sid:
+            raise ValueError("import metadata is missing source_id")
+        if sid not in source_ids_ordered:
+            source_ids_ordered.append(sid)
+
     from data.license_manager import LicenseManager
-    license_manager = LicenseManager(root/config["metadata_database"])
+    license_manager = LicenseManager(root / config["metadata_database"])
+    source_entries = {}
+    source_licenses = {}
+    verified_raw_meta = {}
     try:
         license_manager.seed_catalog(registry)
-        source_license = license_manager.ensure_approved(source_id)
+        for sid in source_ids_ordered:
+            entry = registry.get(sid)
+            if not registry.verified_for_ingestion(sid):
+                raise PermissionError(f"source {sid} is not approved by the active source registry")
+            source_entries[sid] = entry
+            source_licenses[sid] = license_manager.ensure_approved(sid)
     finally:
         license_manager.close()
-    dataset_id = f"{source_entry['source_id']}:phase8"
+
+    for meta_item in source_meta:
+        sid = meta_item["source_id"]
+        verified_raw_meta[sid] = verify_download_provenance(sid, Path(meta_item["source_file"]))
+
+    normalized_root = (root / config["normalized_directory"]).resolve()
+    normalized_root.mkdir(parents=True, exist_ok=True)
+    normalized_files = []
+    normalization_stats = []
+    for imported in imported_files:
+        imported = Path(imported).resolve()
+        normalized_name = imported.stem + ".normalized.cleaned.jsonl"
+        normalized_path = normalized_root / normalized_name
+        normalization_stats.append(
+            normalize_imported_file(imported, normalized_path, project_root=root, config=config,
+                                    retain_stage_texts=retain_stage_texts)
+        )
+        normalized_files.append(normalized_path)
+
+    project_config = load_config(root / "configs" / "default.json", ByteTokenizer())
+    if len(source_ids_ordered) > 1 or "max_document_chars" in config:
+        import dataclasses
+
+        project_config = dataclasses.replace(
+            project_config,
+            max_document_chars=max(
+                project_config.max_document_chars,
+                int(config.get("max_document_chars", 5_000_000)),
+            ),
+        )
+    result = split_sources(normalized_files, output, config=project_config,
+                         ratios=config["split_ratios"], seed=config["random_seed"],
+                         stratify=True, checkpoint_path=checkpoint_path, resume=resume,
+                         checkpoint_batch_size=config["batch_records"])
+    result.normalized_files = [str(path) for path in normalized_files]
+    result.normalization_statistics = normalization_stats
+
+    multi_source = len(source_ids_ordered) > 1
+    primary_sid = source_ids_ordered[0]
+    primary_entry = source_entries[primary_sid]
+    dataset_id = "multilingual:phase10_3" if multi_source else f"{primary_sid}:phase8"
+    dataset_name = "NourAI Multilingual Corpus (Phase 10.3)" if multi_source else primary_entry["name"]
+    dataset_version = (
+        "phase10_3-" + "-".join(f"{sid}:{verified_raw_meta[sid]['sha256'][:8]}" for sid in source_ids_ordered)
+        if multi_source
+        else str(primary_entry.get("release_version") or verified_raw_meta[primary_sid]["sha256"][:12])
+    )
+    dataset_license_id = "; ".join(source_entries[sid]["license_id"] for sid in source_ids_ordered)
+
     store = CorpusMetadataStore(root, config["metadata_database"])
     try:
-        store.register_source(source_entry)
-        store.register_dataset(dataset_id, source_entry["name"], str(source_entry.get("release_version") or "unversioned"),
-                              source_entry["source_id"], source_entry["license_id"], status="CONDITIONALLY_READY",
-                              metadata={"unique_records":result.unique_records,"split_counts":result.split_counts})
+        store.sync_catalog(registry)
+        for sid in source_ids_ordered:
+            store.register_source(source_entries[sid])
+        store.register_dataset(dataset_id, dataset_name, dataset_version,
+                              primary_sid, dataset_license_id, status="CONDITIONALLY_READY",
+                              metadata={"unique_records": result.unique_records, "split_counts": result.split_counts,
+                                        "sources": source_ids_ordered})
         for normalized, stat in zip(normalized_files, normalization_stats):
             store.register_file(dataset_id, normalized, stage="NORMALIZED_CLEANED", record_count=stat["accepted_records"], metadata=stat)
-        split_paths = {name: output / f"{name}.jsonl" for name in ("train","validation","test")}
+        split_paths = {name: output / f"{name}.jsonl" for name in ("train", "validation", "test")}
         for split, path in split_paths.items():
-            file_meta=store.register_file(dataset_id,path,stage="SPLIT_"+split.upper(),record_count=result.split_counts[split],metadata={"seed":result.seed})
-            store.index_jsonl_metadata(dataset_id,path,split=split,default_license_id=source_entry["license_id"])
-        meta=verify_download_provenance(source_id,Path(source_meta[0]["source_file"]))
-        manifest=build_manifest(dataset_name=source_entry["name"],dataset_version=str(source_entry.get("release_version") or meta["sha256"][:12]),
-             source={"source_id":source_entry["source_id"],"url":source_entry["url"],"sha256":meta["sha256"]},
-             license={"license_id":source_license["license_id"],"state":source_license["state"],"evidence_url":source_entry["source_license_url"]},
-             language_statistics={"source_language_codes":source_meta[0].get("languages",{}),"confidence":"source-provided, not independently verified"},
-             split_statistics=result.split_counts,pipeline_statistics={"accepted_records":result.unique_records,"duplicates_removed":result.duplicate_records},
-             split_ratios=result.requested_ratios,random_seed=result.seed,
-             processed_files=[str(path) for path in split_paths.values()],cleaning_config=project_config.to_dict(),
-             warnings=list(result.warnings),processing_status="conditionally_ready_for_review")
-        manifest["training_eligible"] = False
-        manifest["training_blockers"] = ["Arabic validation/test coverage is empty (only 2 Arabic source records).", "The corpus is a sentence subset, not a representative pretraining corpus."]
-        manifest["corpus_readiness_status"] = "CONDITIONALLY_READY"
-        manifest["source_retrieved_at"] = meta.get("retrieved_at")
-        manifest["license_verification_method"] = source_entry.get("verification_method")
-        approved_dir=(root/config["approved_directory"])
-        approved_dir.mkdir(parents=True,exist_ok=True)
-        manifest_path=approved_dir/(source_entry["source_id"]+"_phase8.manifest.json")
-        write_manifest(manifest,manifest_path)
-        store.record_operation("phase7_process_split", "COMPLETE", source_id=source_entry["source_id"], details={"manifest":str(manifest_path),"split_counts":result.split_counts})
-        result.manifest_path=str(manifest_path)
-        result.metadata_database=str(store.path)
+            store.register_file(dataset_id, path, stage="SPLIT_" + split.upper(), record_count=result.split_counts[split], metadata={"seed": result.seed})
+            store.index_jsonl_metadata(dataset_id, path, split=split, default_license_id=dataset_license_id)
+
+        if multi_source:
+            source_payload = [
+                {"source_id": sid, "url": source_entries[sid]["url"], "sha256": verified_raw_meta[sid]["sha256"]}
+                for sid in source_ids_ordered
+            ]
+            license_payload = [
+                {"source_id": sid, "license_id": source_licenses[sid]["license_id"],
+                 "state": source_licenses[sid]["state"], "evidence_url": source_entries[sid]["source_license_url"]}
+                for sid in source_ids_ordered
+            ]
+            combined_langs = Counter()
+            for item in source_meta:
+                for k, v in (item.get("languages") or {}).items():
+                    combined_langs[k] += int(v)
+            lang_stats = {"source_language_codes": dict(combined_langs), "confidence": "source-provided and deterministic adapter metadata"}
+        else:
+            meta = verified_raw_meta[primary_sid]
+            source_payload = {"source_id": primary_entry["source_id"], "url": primary_entry["url"], "sha256": meta["sha256"]}
+            license_payload = {"license_id": source_licenses[primary_sid]["license_id"],
+                               "state": source_licenses[primary_sid]["state"],
+                               "evidence_url": primary_entry["source_license_url"]}
+            lang_stats = {"source_language_codes": source_meta[0].get("languages", {}), "confidence": "source-provided, not independently verified"}
+
+        manifest = build_manifest(
+            dataset_name=dataset_name,
+            dataset_version=dataset_version,
+            source=source_payload,
+            license=license_payload,
+            language_statistics=lang_stats,
+            split_statistics=result.split_counts,
+            pipeline_statistics={"accepted_records": result.unique_records, "duplicates_removed": result.duplicate_records},
+            split_ratios=result.requested_ratios,
+            random_seed=result.seed,
+            processed_files=[str(path) for path in split_paths.values()],
+            cleaning_config=project_config.to_dict(),
+            warnings=list(result.warnings),
+            processing_status="conditionally_ready_for_review",
+        )
+        if not multi_source:
+            manifest["training_eligible"] = False
+            manifest["training_blockers"] = [
+                "Arabic validation/test coverage is empty (only 2 Arabic source records).",
+                "The corpus is a sentence subset, not a representative pretraining corpus.",
+            ]
+            manifest["corpus_readiness_status"] = "CONDITIONALLY_READY"
+            manifest["source_retrieved_at"] = verified_raw_meta[primary_sid].get("retrieved_at")
+            manifest["license_verification_method"] = primary_entry.get("verification_method")
+        else:
+            manifest["corpus_readiness_status"] = "CONDITIONALLY_READY"
+            manifest["sources"] = source_ids_ordered
+
+        approved_dir = root / config["approved_directory"]
+        approved_dir.mkdir(parents=True, exist_ok=True)
+        manifest_filename = "multilingual_phase10_3.manifest.json" if multi_source else f"{primary_entry['source_id']}_phase8.manifest.json"
+        manifest_path = approved_dir / manifest_filename
+        if manifest_path.exists():
+            manifest_path = approved_dir / f"{manifest_path.stem}_{result.seed}.json"
+        write_manifest(manifest, manifest_path)
+        store.record_operation("phase7_process_split", "COMPLETE", source_id=",".join(source_ids_ordered),
+                               details={"manifest": str(manifest_path), "split_counts": result.split_counts})
+        result.manifest_path = str(manifest_path)
+        result.metadata_database = str(store.path)
     finally:
         store.close()
+
+    run_manifest = build_run_manifest(
+        root,
+        run_id=run_id or f"run-{dataset_id}-{result.seed}",
+        config=config,
+        sources=[
+            {
+                "source_id": m["source_id"],
+                "license_id": source_entries[m["source_id"]]["license_id"],
+                "raw_path": m["source_file"],
+                "raw_sha256": m["source_sha256"],
+            }
+            for m in source_meta
+        ],
+        imports=source_meta,
+        normalizations=normalization_stats,
+        splits={
+            name: {"path": output / f"{name}.jsonl", "records": result.split_counts[name]}
+            for name in ("train", "validation", "test")
+        },
+        split_decisions={
+            "requested_ratios": result.requested_ratios,
+            "seed": result.seed,
+            "grouping_field": "document_id",
+        },
+        adapter_versions={m["source_id"]: m.get("adapter_version", "generic_v1") for m in source_meta},
+    )
+    target_run_manifest = Path(run_manifest_path) if run_manifest_path else (output.parent / "run_manifest.json")
+    if not target_run_manifest.is_absolute():
+        target_run_manifest = (root / target_run_manifest).resolve()
+    write_json_atomic(target_run_manifest, run_manifest)
+    result.run_manifest_path = str(target_run_manifest)
     return result
 
 

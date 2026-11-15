@@ -1,0 +1,217 @@
+{
+  "phase": "13",
+  "title": "Initial Model Training",
+  "timestamp": "2026-11-13T21:53:11Z",
+  "status": "CERTIFIED_FOR_PHASE_14_TRAINING_OPTIMIZATION",
+  "certification_verdict": "CERTIFIED_FOR_PHASE_14_TRAINING_OPTIMIZATION",
+  "all_checks_passed": true,
+  "checklist": {
+    "prerequisites_verified": true,
+    "initial_config_defined": true,
+    "model_and_batch_size_fixed": true,
+    "training_steps_fixed": true,
+    "training_environment_ready": true,
+    "multilingual_corpus_trained": true,
+    "checkpoints_saved": true,
+    "training_and_validation_loss_monitored": true
+  },
+  "prerequisites": {
+    "phase10_12": {
+      "report_path": "reports\\phase10\\phase10_12_certification_report.json",
+      "status": "CERTIFIED_FOR_PHASE_11_ARCHITECTURE_AND_INITIAL_TRAINING",
+      "verified": true
+    },
+    "phase11": {
+      "report_path": "reports\\phase11\\phase11_architecture_report.json",
+      "status": "CERTIFIED_FOR_PHASE_12_TRAINING_ENGINE",
+      "verified": true
+    },
+    "phase12": {
+      "report_path": "reports\\phase12\\phase12_training_engine_report.json",
+      "status": "CERTIFIED_FOR_PHASE_13_INITIAL_MODEL_TRAINING",
+      "verified": true
+    }
+  },
+  "model_summary": {
+    "architecture": "GPT Decoder-only Transformer",
+    "preset": "default",
+    "total_parameters": 843008,
+    "vocab_size": 260,
+    "context_length": 128,
+    "d_model": 128,
+    "n_heads": 4,
+    "n_layers": 4,
+    "dropout": 0.05
+  },
+  "training_hyperparameters": {
+    "batch_size": 8,
+    "gradient_accumulation_steps": 2,
+    "effective_tokens_per_step": 2048,
+    "learning_rate": 0.002,
+    "weight_decay": 0.01,
+    "scheduler_type": "linear_warmup_cosine",
+    "warmup_steps": 6,
+    "max_training_steps": 40,
+    "gradient_clip_norm": 1.0,
+    "device": "cpu",
+    "precision": "fp32",
+    "random_seed": 1337
+  },
+  "dataset_summary": {
+    "splits": {
+      "train": {
+        "path": "data\\processed\\phase13\\splits\\train.jsonl",
+        "total_records": 540,
+        "language_counts": {
+          "arabic": 180,
+          "english": 180,
+          "french": 180
+        },
+        "source_counts": {
+          "qnl_arabic_ocr_v2": 180,
+          "tatoeba_cc0": 256,
+          "wto_public_corpus_en_fr": 104
+        },
+        "sha256": "05be6cc93a045182b074cb5cd129904a6a0c4ab42e215931ee63ccd93a30aa8a"
+      },
+      "validation": {
+        "path": "data\\processed\\phase13\\splits\\validation.jsonl",
+        "total_records": 108,
+        "language_counts": {
+          "arabic": 36,
+          "english": 36,
+          "french": 36
+        },
+        "source_counts": {
+          "qnl_arabic_ocr_v2": 36,
+          "tatoeba_cc0": 58,
+          "wto_public_corpus_en_fr": 14
+        },
+        "sha256": "4a57962666ead2968b5c25c6e6fe8a6f989ab4aafd8e528524fd8ad8ac322cc2"
+      },
+      "test": {
+        "path": "data\\processed\\phase13\\splits\\test.jsonl",
+        "total_records": 108,
+        "language_counts": {
+          "arabic": 36,
+          "english": 36,
+          "french": 36
+        },
+        "source_counts": {
+          "qnl_arabic_ocr_v2": 36,
+          "tatoeba_cc0": 54,
+          "wto_public_corpus_en_fr": 18
+        },
+        "sha256": "2fcf17a02d8cabcd71eb76b88ed516320e0d7a0ff3d5f34f15369f74dec8935e"
+      }
+    },
+    "train_sequences": 1548,
+    "validation_sequences": 310,
+    "train_batches_per_epoch": 194,
+    "validation_batches": 39
+  },
+  "training_metrics": {
+    "completed_steps": 40,
+    "completed_epochs": 0,
+    "elapsed_seconds": 33.784,
+    "mean_tokens_per_second": 4415.7,
+    "initial_training_loss": 5.538386,
+    "final_training_loss": 3.087153,
+    "training_loss_reduction": 2.451233,
+    "initial_validation_loss": 5.545163,
+    "final_validation_loss": 2.189916,
+    "best_validation_loss": 2.189916,
+    "validation_loss_reduction": 3.355247,
+    "initial_perplexity": 255.9962,
+    "final_perplexity": 8.9345,
+    "validation_curve": [
+      {
+        "step": 10,
+        "epoch": 0,
+        "validation_loss": 3.411581,
+        "perplexity": 30.3131
+      },
+      {
+        "step": 20,
+        "epoch": 0,
+        "validation_loss": 2.533971,
+        "perplexity": 12.6035
+      },
+      {
+        "step": 30,
+        "epoch": 0,
+        "validation_loss": 2.235307,
+        "perplexity": 9.3494
+      },
+      {
+        "step": 40,
+        "epoch": 0,
+        "validation_loss": 2.189916,
+        "perplexity": 8.9345
+      }
+    ],
+    "training_step_curve_sample": [
+      {
+        "step": 1,
+        "training_loss": 5.538386,
+        "learning_rate": 0.00066667,
+        "gradient_norm": 9.4164
+      },
+      {
+        "step": 5,
+        "training_loss": 5.006949,
+        "learning_rate": 0.002,
+        "gradient_norm": 3.0597
+      },
+      {
+        "step": 10,
+        "training_loss": 4.59139,
+        "learning_rate": 0.00193247,
+        "gradient_norm": 120.859
+      },
+      {
+        "step": 15,
+        "training_loss": 4.139111,
+        "learning_rate": 0.0016737,
+        "gradient_norm": 2.3232
+      },
+      {
+        "step": 20,
+        "training_loss": 3.797079,
+        "learning_rate": 0.00127366,
+        "gradient_norm": 1.5689
+      },
+      {
+        "step": 25,
+        "training_loss": 3.539036,
+        "learning_rate": 0.00081625,
+        "gradient_norm": 1.1569
+      },
+      {
+        "step": 30,
+        "training_loss": 3.335382,
+        "learning_rate": 0.00039737,
+        "gradient_norm": 0.8255
+      },
+      {
+        "step": 35,
+        "training_loss": 3.197386,
+        "learning_rate": 0.00010484,
+        "gradient_norm": 0.661
+      },
+      {
+        "step": 40,
+        "training_loss": 3.087153,
+        "learning_rate": 0.0,
+        "gradient_norm": 0.5943
+      }
+    ]
+  },
+  "artifacts": {
+    "last_checkpoint": "checkpoints\\phase13\\last.pt",
+    "best_checkpoint": "checkpoints\\phase13\\best.pt",
+    "model_checkpoint": "checkpoints\\phase13\\phase13_model.pt",
+    "history_checkpoint_count": 6,
+    "events_log": "reports\\phase13\\training_events.jsonl"
+  }
+}

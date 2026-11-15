@@ -1,8 +1,8 @@
-"""Single entry point for constructing a model from project JSON settings."""
+"""Single entry point for constructing a model from project JSON settings or named presets."""
 from pathlib import Path
 
 from configs.configuration import ProjectConfig, load_config
-from model.transformer import GPT, GPTConfig
+from model.transformer import ARCHITECTURE_PRESETS, GPT, GPTConfig
 from tokenizer.byte_tokenizer import ByteTokenizer
 
 
@@ -19,3 +19,11 @@ def create_model(config_path=None, tokenizer=None):
         dropout=project.dropout,
     )
     return GPT(model_config), project
+
+
+def create_model_from_preset(preset_name: str = "default", tokenizer=None, **overrides):
+    tokenizer = tokenizer or ByteTokenizer()
+    cfg = GPTConfig.from_preset(preset_name, **overrides)
+    if cfg.vocab_size != tokenizer.vocab_size:
+        raise ValueError(f"vocab_size ({cfg.vocab_size}) does not match tokenizer ({tokenizer.vocab_size})")
+    return GPT(cfg), cfg

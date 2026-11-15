@@ -1,0 +1,70 @@
+{
+  "stage": "Stage G — Inference Engine Verification",
+  "status": "INFERENCE_VERIFIED",
+  "certification_token": "INFERENCE_VERIFIED",
+  "timestamp_utc": "2026-11-14T00:03:26Z",
+  "all_gates_passed": true,
+  "gates": {
+    "checkpoint_loaded": true,
+    "streaming_and_generation_verified": true,
+    "stop_sequences_supported": true,
+    "external_cancellation_supported": true,
+    "invalid_config_error_handled": true,
+    "telemetry_measured": true
+  },
+  "benchmark": {
+    "prompt": "<|user|>\nما هي عاصمة دولة قطر؟\n<|assistant|>\n",
+    "generated_text": "الايامالالال",
+    "generated_token_ids": [
+      216,
+      167,
+      217,
+      132,
+      216,
+      167,
+      217,
+      138,
+      216,
+      167,
+      217,
+      133,
+      216,
+      167,
+      217,
+      132,
+      216,
+      167,
+      217,
+      132,
+      216,
+      167,
+      217,
+      132
+    ],
+    "generated_token_count": 24,
+    "strategy": "greedy",
+    "finish_reason": "max_tokens",
+    "ttft_ms": 3.856,
+    "elapsed_ms": 114.503,
+    "cpu_time_ms": 171.875,
+    "tokens_per_second": 209.6,
+    "ram_mib": 249.89,
+    "vram_mib": 0.0
+  },
+  "stop_sequence_test": {
+    "finish_reason": "stop_sequence",
+    "tokens_emitted": 2
+  },
+  "cancellation_test": {
+    "finish_reason": "cancelled",
+    "chunks_before_abort": 4
+  },
+  "memory_status": {
+    "device": "cpu",
+    "context_length_limit": 128,
+    "parameter_count": 843008,
+    "model_weights_mib": 3.2158,
+    "process_rss_mib": 250.0,
+    "vram_allocated_mib": 0.0
+  }
+}

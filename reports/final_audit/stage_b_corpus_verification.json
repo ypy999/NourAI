@@ -1,0 +1,178 @@
+{
+  "stage": "Stage B — Data & Corpus Verification",
+  "status": "CORPUS_VERIFIED",
+  "certification_token": "DATA_VERIFIED",
+  "timestamp_utc": "2026-11-13T23:56:00Z",
+  "all_gates_passed": true,
+  "gates": {
+    "raw_sources_and_sha256_verified": true,
+    "phase10_2_preserved": true,
+    "utf8_and_nfc_verified": true,
+    "zero_cross_split_leakage": true,
+    "multilingual_token_balance_achieved": true,
+    "sft_zero_prompt_and_response_overlap": true,
+    "backups_created_and_verified": true
+  },
+  "verified_raw_sources": {
+    "tatoeba_cc0": {
+      "path": "data/raw/external/tatoeba_cc0.tar.bz2",
+      "url": "https://downloads.tatoeba.org/exports/sentences.tar.bz2",
+      "license": "CC0-1.0",
+      "exists": true,
+      "size_bytes": 7963537,
+      "sha256": "7e4251d06edd949db9e47cc360b472873da6c054af5dc4b9d2c9e06d024cd710",
+      "checksum_match": true
+    },
+    "qnl_arabic_ocr_v2": {
+      "path": "data/raw/external/phase10_2/qnl_arabic_ocr_v2.zip",
+      "url": "https://github.com/Qatar-National-Library/Arabic-OCR-Dataset",
+      "license": "CC-BY-4.0",
+      "exists": true,
+      "size_bytes": 1065878922,
+      "sha256": "352d7d2e1e3c64255a52b09560da97bb0360e43a327bd70298c7fa52b2437cb9",
+      "checksum_match": true
+    },
+    "wto_public_corpus_en_fr": {
+      "path": "data/raw/external/phase10_2/wto_en_fr_corpus_2019_EN-FR.zip",
+      "url": "https://www.wto.org/english/res_e/reser_e/wto_en_fr_corpus_e.htm",
+      "license": "WTO-Public-Use",
+      "exists": true,
+      "size_bytes": 1501806179,
+      "sha256": "09f958e84a626cc294eaa0c3b87b2daa7abf1f786fc91d2978756264750545f5",
+      "checksum_match": true
+    }
+  },
+  "v1_2_token_balanced_corpus": {
+    "train": {
+      "total_records": 1296,
+      "total_tokens": 135375,
+      "sha256": "507f2f128ac09168c6ab48f34aa812e13bdc30411cde95731d402161076a60de",
+      "by_language": {
+        "ar": {
+          "records": 163,
+          "tokens": 45289,
+          "token_share_pct": 33.45,
+          "mean_char_length": 166.55,
+          "p50_char_length": 166,
+          "p90_char_length": 170
+        },
+        "en": {
+          "records": 444,
+          "tokens": 45023,
+          "token_share_pct": 33.26,
+          "mean_char_length": 100.25,
+          "p50_char_length": 74,
+          "p90_char_length": 218
+        },
+        "fr": {
+          "records": 689,
+          "tokens": 45063,
+          "token_share_pct": 33.29,
+          "mean_char_length": 62.11,
+          "p50_char_length": 59,
+          "p90_char_length": 98
+        }
+      }
+    },
+    "validation": {
+      "total_records": 218,
+      "total_tokens": 27078,
+      "sha256": "be4d042f546865b5305d6d3ca6d5bec6b939a9fcf6b9b98a0aa9e686970d82e2",
+      "by_language": {
+        "ar": {
+          "records": 30,
+          "tokens": 9019,
+          "token_share_pct": 33.31,
+          "mean_char_length": 167.43,
+          "p50_char_length": 167,
+          "p90_char_length": 170
+        },
+        "en": {
+          "records": 110,
+          "tokens": 9019,
+          "token_share_pct": 33.31,
+          "mean_char_length": 80.88,
+          "p50_char_length": 53,
+          "p90_char_length": 186
+        },
+        "fr": {
+          "records": 78,
+          "tokens": 9040,
+          "token_share_pct": 33.39,
+          "mean_char_length": 111.5,
+          "p50_char_length": 78,
+          "p90_char_length": 251
+        }
+      }
+    },
+    "test": {
+      "total_records": 274,
+      "total_tokens": 27147,
+      "sha256": "0df986960609fac1e8a1ddbc6d834f584b80c9afdbe6602b76a8b045cc15c28e",
+      "by_language": {
+        "ar": {
+          "records": 30,
+          "tokens": 9057,
+          "token_share_pct": 33.36,
+          "mean_char_length": 166.8,
+          "p50_char_length": 167,
+          "p90_char_length": 169
+        },
+        "en": {
+          "records": 122,
+          "tokens": 9031,
+          "token_share_pct": 33.27,
+          "mean_char_length": 72.86,
+          "p50_char_length": 46,
+          "p90_char_length": 157
+        },
+        "fr": {
+          "records": 122,
+          "tokens": 9059,
+          "token_share_pct": 33.37,
+          "mean_char_length": 70.73,
+          "p50_char_length": 66,
+          "p90_char_length": 105
+        }
+      }
+    }
+  },
+  "v1_2_sft_dataset": {
+    "splits_dir": "data\\processed\\v1_2_sft\\splits",
+    "train_records": 72,
+    "validation_records": 36,
+    "test_records": 36,
+    "cross_split_prompt_overlap": 0,
+    "cross_split_response_overlap": 0,
+    "tasks_covered": [
+      "qa",
+      "summarization",
+      "translation",
+      "math",
+      "coding",
+      "reasoning"
+    ],
+    "languages_covered": [
+      "arabic",
+      "english",
+      "french"
+    ]
+  },
+  "backups": {
+    "train": {
+      "backup_path": "data\\backups\\v1_2_corpus_snapshot\\v1_2_corpus_train.jsonl",
+      "sha256": "507f2f128ac09168c6ab48f34aa812e13bdc30411cde95731d402161076a60de",
+      "matches_source": true
+    },
+    "validation": {
+      "backup_path": "data\\backups\\v1_2_corpus_snapshot\\v1_2_corpus_validation.jsonl",
+      "sha256": "be4d042f546865b5305d6d3ca6d5bec6b939a9fcf6b9b98a0aa9e686970d82e2",
+      "matches_source": true
+    },
+    "test": {
+      "backup_path": "data\\backups\\v1_2_corpus_snapshot\\v1_2_corpus_test.jsonl",
+      "sha256": "0df986960609fac1e8a1ddbc6d834f584b80c9afdbe6602b76a8b045cc15c28e",
+      "matches_source": true
+    }
+  }
+}

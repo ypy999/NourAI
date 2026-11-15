@@ -1,0 +1,40 @@
+{
+  "phase": "12",
+  "title": "Training Engine Finalization",
+  "default_device": "cpu",
+  "default_precision": "fp32",
+  "supported_precisions": ["fp32", "bf16", "fp16"],
+  "supported_schedulers": ["linear_warmup_cosine", "cosine", "constant"],
+  "optimizer": {
+    "type": "AdamW",
+    "learning_rate": 0.0003,
+    "weight_decay": 0.01,
+    "betas": [0.9, 0.999],
+    "epsilon": 1e-8
+  },
+  "gradient": {
+    "accumulation_steps_default": 1,
+    "clip_norm_default": 1.0,
+    "error_if_nonfinite": true
+  },
+  "checkpointing": {
+    "format_version": 1,
+    "keep_history": 3,
+    "safe_deserialization_weights_only": true,
+    "atomic_replace_with_fsync": true
+  },
+  "synthetic_mini_training": {
+    "model_preset": "default",
+    "context_length": 16,
+    "batch_size": 4,
+    "max_training_steps": 24,
+    "learning_rate": 0.005,
+    "gradient_accumulation_steps": 2,
+    "warmup_steps": 4,
+    "scheduler_type": "linear_warmup_cosine"
+  },
+  "constraints": {
+    "real_corpus_training_started": false,
+    "cuda_used": false
+  }
+}

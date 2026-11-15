@@ -1,0 +1,6 @@
+{
+  "version": "v1.1.0",
+  "rollback_target": "v1.0.0",
+  "rollback_command": "python scripts/rollback_release.py --version v1.0.0",
+  "verification_probe": "InferenceEngine.from_checkpoint + SHA-256 verification"
+}

@@ -1,0 +1,56 @@
+{
+  "phase": "10.6",
+  "title": "Provenance & Metadata Recovery",
+  "status": "COMPLETE",
+  "created_at_utc": "2026-11-13T20:47:00+00:00",
+  "database_path": "data/metadata/phase10_3_corpus.sqlite3",
+  "schema_upgrades": {
+    "records_columns_added": [
+      "document_id",
+      "translation_group_id",
+      "domain",
+      "ingestion_timestamp",
+      "content_hash"
+    ],
+    "indexes_added": [
+      "idx_records_dataset_document",
+      "idx_records_dataset_tgroup",
+      "idx_records_dataset_domain"
+    ],
+    "catalog_sync": "All 14 sources from configs/dataset_sources.json synchronized into sources and license_current"
+  },
+  "store_status": {
+    "sources": 14,
+    "datasets": 4,
+    "files": 12,
+    "records_indexed": 217913,
+    "by_license": {
+      "CC0-1.0": 111435,
+      "PUBLIC_DOMAIN_TEXTS; CC0-1.0_METADATA": 116,
+      "WTO_PUBLIC_CORPUS_TERMS": 106362
+    },
+    "by_status": {
+      "IMPORTED": 114243,
+      "SPLIT": 103670
+    }
+  },
+  "multilingual_phase10_3_provenance": {
+    "dataset_id": "multilingual:phase10_3",
+    "records_indexed": 103670,
+    "with_source_record_id": 103670,
+    "with_document_id": 47954,
+    "with_translation_group_id": 47896,
+    "with_domain": 47896,
+    "with_ingestion_timestamp": 103670,
+    "with_content_hash": 103670
+  },
+  "acceptance_criteria": {
+    "all_14_catalog_sources_synced": true,
+    "zero_missing_source_record_id": true,
+    "zero_missing_content_hash": true,
+    "zero_missing_ingestion_timestamp": true,
+    "qnl_and_wto_document_ids_100_percent_indexed": true,
+    "wto_translation_groups_and_domains_100_percent_indexed": true,
+    "phase10_2_untouched": true
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "version": "1.2.0",
+  "release_tag": "v1.2.0",
+  "released_at": "2026-11-14T00:03:29Z",
+  "supported_languages": [
+    "arabic",
+    "english",
+    "french"
+  ],
+  "model_checkpoint": {
+    "path": "checkpoints\\v1_2\\nourai_v1_2_model.pt",
+    "sha256": "3474a8f8d118984cf99d9887f5c171d2b3fd597ed659005ba19eb523a9f9f01a",
+    "size_bytes": 3391299
+  },
+  "artifacts": {
+    "aligned_model_checkpoint": {
+      "path": "checkpoints\\v1_2\\nourai_v1_2_model.pt",
+      "sha256": "3474a8f8d118984cf99d9887f5c171d2b3fd597ed659005ba19eb523a9f9f01a",
+      "size_bytes": 3391299
+    }
+  },
+  "checkpoint_sha256": "6228c42a78a26625c50c5bc2a66fddd6c3f4d43e6ab1a34daf83fc1df0a95409"
+}

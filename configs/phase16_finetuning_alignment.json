@@ -1,0 +1,22 @@
+{
+  "phase": "16",
+  "title": "Model Fine-tuning & Alignment",
+  "prerequisite_report": "reports/phase15/phase15_multilingual_evaluation_report.json",
+  "base_checkpoint": "checkpoints/phase14/phase14_optimized_model.pt",
+  "instruction_data_dir": "data/processed/phase16",
+  "checkpoint_dir": "checkpoints/phase16",
+  "report_dir": "reports/phase16",
+  "sft_hyperparameters": {
+    "context_length": 128,
+    "batch_size": 8,
+    "gradient_accumulation_steps": 1,
+    "learning_rate": 0.001,
+    "weight_decay": 0.01,
+    "warmup_steps": 4,
+    "max_training_steps": 32,
+    "validation_interval": 8,
+    "checkpoint_interval": 8,
+    "scheduler_type": "linear_warmup_cosine",
+    "random_seed": 1337
+  }
+}

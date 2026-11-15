@@ -1,0 +1,19 @@
+{
+  "phase": "21",
+  "title": "Deployment & Production",
+  "prerequisite_report": "reports/phase20/phase20_security_performance_report.json",
+  "production_db_path": "data/production/nourai_production.sqlite3",
+  "backup_dir": "data/production/backups",
+  "report_dir": "reports/phase21",
+  "server": {
+    "bind_host": "127.0.0.1",
+    "port": 8080,
+    "workers": 4,
+    "request_timeout_seconds": 30
+  },
+  "https_tls": {
+    "min_protocol": "TLSv1.3",
+    "hsts_header": "max-age=31536000; includeSubDomains",
+    "ciphers": "TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256"
+  }
+}

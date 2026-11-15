@@ -1,0 +1,8 @@
+{
+  "dataset": "phase24_continual",
+  "languages": [
+    "ar",
+    "en",
+    "fr"
+  ]
+}

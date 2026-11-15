@@ -1,4 +1,5 @@
-"""CPU-first training loop with validation, accumulation and resumable checkpoints."""
+"""CPU-first training loop with validation, accumulation, conditional AMP, and resumable checkpoints."""
+from contextlib import nullcontext
 import math
 import random
 import time
@@ -14,16 +15,78 @@ from .scheduler import create_scheduler
 from .validator import validate
 
 
+def resolve_precision_profile(device, precision, *, allow_cpu_amp=False, allow_cuda=False):
+    """Resolve execution device, autocast dtype, and GradScaler usage."""
+    resolved_device = device
+    if resolved_device == "auto":
+        resolved_device = "cuda" if (allow_cuda and torch.cuda.is_available()) else "cpu"
+    if resolved_device != "cpu":
+        if not (resolved_device == "cuda" and allow_cuda and torch.cuda.is_available()):
+            raise RuntimeError("this training run is configured for CPU only; CUDA was not initialized")
+    if precision == "fp32":
+        return {
+            "device": resolved_device,
+            "device_type": "cuda" if resolved_device.startswith("cuda") else "cpu",
+            "precision": "fp32",
+            "amp_enabled": False,
+            "amp_dtype": None,
+            "use_grad_scaler": False,
+        }
+    if resolved_device == "cpu":
+        if not allow_cpu_amp or precision != "bf16":
+            raise ValueError("mixed precision is not enabled for CPU training; select precision='fp32'")
+        return {
+            "device": "cpu",
+            "device_type": "cpu",
+            "precision": "bf16",
+            "amp_enabled": True,
+            "amp_dtype": torch.bfloat16,
+            "use_grad_scaler": False,
+        }
+    if precision == "bf16":
+        return {
+            "device": resolved_device,
+            "device_type": "cuda",
+            "precision": "bf16",
+            "amp_enabled": True,
+            "amp_dtype": torch.bfloat16,
+            "use_grad_scaler": False,
+        }
+    if precision == "fp16":
+        return {
+            "device": resolved_device,
+            "device_type": "cuda",
+            "precision": "fp16",
+            "amp_enabled": True,
+            "amp_dtype": torch.float16,
+            "use_grad_scaler": True,
+        }
+    raise ValueError(f"unsupported precision mode: {precision}")
+
+
 class Trainer:
     def __init__(self, model, config, train_loader, validation_loader,
-                 checkpoint_manager=None, logger=None):
-        if config.device != "cpu":
-            raise RuntimeError("this training run is configured for CPU only; CUDA was not initialized")
-        if config.precision != "fp32":
-            raise ValueError("mixed precision is not enabled for CPU training; select precision='fp32'")
+                 checkpoint_manager=None, logger=None, *,
+                 allow_cpu_amp=False, allow_cuda=False):
+        profile = resolve_precision_profile(
+            config.device,
+            config.precision,
+            allow_cpu_amp=allow_cpu_amp,
+            allow_cuda=allow_cuda,
+        )
         if len(train_loader) == 0 or len(validation_loader) == 0:
             raise ValueError("training and validation loaders must both contain batches")
-        self.model = model.to("cpu")
+        self.device = profile["device"]
+        self.device_type = profile["device_type"]
+        self.amp_enabled = profile["amp_enabled"]
+        self.amp_dtype = profile["amp_dtype"]
+        self.use_grad_scaler = profile["use_grad_scaler"]
+        self.scaler = (
+            torch.amp.GradScaler(self.device_type, enabled=True)
+            if self.use_grad_scaler
+            else None
+        )
+        self.model = model.to(self.device)
         self.config = config
         self.train_loader, self.validation_loader = train_loader, validation_loader
         self.optimizer = create_optimizer(model, config)
@@ -41,13 +104,18 @@ class Trainer:
         self._resumed = False
         self._stop_requested = False
 
+    def _autocast_context(self):
+        if self.amp_enabled and self.amp_dtype is not None:
+            return torch.amp.autocast(device_type=self.device_type, dtype=self.amp_dtype)
+        return nullcontext()
+
     def request_stop(self):
         """Request a graceful stop at the next optimizer boundary."""
         self._stop_requested = True
 
-    def resume(self, path=None):
+    def resume(self, path=None, *, strict_config=True):
         payload = self.checkpoints.load(path, model=self.model, optimizer=self.optimizer,
-                                        scheduler=self.scheduler, config=self.config, restore_rng=True)
+                                        scheduler=self.scheduler, config=self.config if strict_config else None, restore_rng=True)
         self.epoch = int(payload.get("trainer_state", {}).get("epoch", payload["epoch"] + 1))
         self.batch_in_epoch = int(payload.get("trainer_state", {}).get("batch_in_epoch", 0))
         self.global_step = int(payload["global_step"])
@@ -74,7 +142,8 @@ class Trainer:
         reports = []
         stop = False
         self.optimizer.zero_grad(set_to_none=True)
-        for epoch in range(self.epoch, self.config.epochs):
+        resumed_epoch = self.epoch
+        for epoch in range(resumed_epoch, self.config.epochs):
             self.epoch = epoch
             epoch_started = time.perf_counter()
             generator = getattr(self.train_loader, "generator", None)
@@ -84,33 +153,44 @@ class Trainer:
             training = LossAccumulator()
             started = time.perf_counter()
             tokens_since_log = 0
-            start_batch = self.batch_in_epoch if epoch == self.epoch else 0
             # The stored cursor is consumed only for the epoch being resumed.
-            if epoch != self.epoch:
-                start_batch = 0
+            start_batch = self.batch_in_epoch if epoch == resumed_epoch else 0
             validated_at_step = -1
             next_batch = start_batch
             for batch_index, (input_ids, target_ids) in enumerate(self.train_loader):
                 if batch_index < start_batch:
                     continue
-                input_ids, target_ids = input_ids.to("cpu"), target_ids.to("cpu")
-                group_start = batch_index - batch_index % self.config.gradient_accumulation_steps
-                group_size = min(self.config.gradient_accumulation_steps, len(self.train_loader) - group_start)
-                _, loss = self.model(input_ids, target_ids)
+                input_ids, target_ids = input_ids.to(self.device), target_ids.to(self.device)
+                group_start = max(start_batch, batch_index - batch_index % self.config.gradient_accumulation_steps)
+                group_end = min(len(self.train_loader), (batch_index // self.config.gradient_accumulation_steps + 1) * self.config.gradient_accumulation_steps)
+                group_size = max(1, group_end - group_start)
+                with self._autocast_context():
+                    _, loss = self.model(input_ids, target_ids)
                 if loss is None or not torch.isfinite(loss):
                     raise FloatingPointError(f"non-finite training loss at epoch {epoch}, batch {batch_index}")
                 token_count = target_ids.numel()
-                training.update(loss.item(), token_count)
+                loss_value = float(loss.detach().cpu().item())
+                training.update(loss_value, token_count)
                 tokens_since_log += token_count
-                (loss / group_size).backward()
+                scaled_loss = loss / group_size
+                if self.scaler is not None:
+                    self.scaler.scale(scaled_loss).backward()
+                else:
+                    scaled_loss.backward()
                 last_batch = batch_index + 1 == len(self.train_loader)
                 optimizer_boundary = (batch_index + 1) % self.config.gradient_accumulation_steps == 0 or last_batch
                 if not optimizer_boundary:
                     continue
+                if self.scaler is not None:
+                    self.scaler.unscale_(self.optimizer)
                 grad_norm = torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.config.gradient_clip_norm, error_if_nonfinite=True)
                 if not torch.isfinite(grad_norm):
                     raise FloatingPointError("non-finite gradient norm")
-                self.optimizer.step()
+                if self.scaler is not None:
+                    self.scaler.step(self.optimizer)
+                    self.scaler.update()
+                else:
+                    self.optimizer.step()
                 self.scheduler.step()
                 self.optimizer.zero_grad(set_to_none=True)
                 self.global_step += 1
@@ -120,12 +200,13 @@ class Trainer:
                                  "learning_rate": self.optimizer.param_groups[0]["lr"],
                                  "step_time_seconds": elapsed,
                                  "tokens_per_second": tokens_since_log / elapsed,
-                                 "memory_mb": memory_usage_mb(), "gradient_norm": float(grad_norm)})
+                                 "memory_mb": memory_usage_mb(), "gradient_norm": float(grad_norm),
+                                 "precision": self.config.precision})
                 tokens_since_log = 0
                 started = time.perf_counter()
                 next_batch = batch_index + 1
                 if self.global_step % self.config.validation_interval == 0:
-                    val = validate(self.model, self.validation_loader, "cpu")
+                    val = validate(self.model, self.validation_loader, self.device, amp_dtype=self.amp_dtype)
                     record = {"epoch": epoch, "step": self.global_step, **val}
                     reports.append(record); self.history.append(record)
                     improved, should_stop = self.early_stopping.update(val["validation_loss"])
@@ -148,7 +229,7 @@ class Trainer:
             self.batch_in_epoch = 0 if epoch_complete else next_batch
             self.epoch = epoch + 1 if epoch_complete else epoch
             if validated_at_step != self.global_step and self.global_step:
-                val = validate(self.model, self.validation_loader, "cpu")
+                val = validate(self.model, self.validation_loader, self.device, amp_dtype=self.amp_dtype)
                 record = {"epoch": epoch, "step": self.global_step, **val}
                 reports.append(record); self.history.append(record)
                 improved, should_stop = self.early_stopping.update(val["validation_loss"])

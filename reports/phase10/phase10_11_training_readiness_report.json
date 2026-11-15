@@ -1,0 +1,78 @@
+{
+  "phase": "10.11",
+  "title": "Training Readiness Validation",
+  "status": "PASS",
+  "created_at_utc": "2026-11-13T21:14:51.402057+00:00",
+  "training_started": false,
+  "cuda_used": false,
+  "device_verified": "cpu",
+  "errors": [],
+  "tokenizer_validation": {
+    "vocab_size": 260,
+    "records_tested": 146,
+    "tokens_generated": 376096,
+    "lossless_roundtrip_failures": 0,
+    "out_of_range_tokens": 0,
+    "by_language_tested": {
+      "arabic": 26,
+      "english": 60,
+      "french": 60
+    }
+  },
+  "dataloader_validation": {
+    "train": {
+      "sequences_available": 2210,
+      "total_tokens_in_slice": 282961,
+      "first_batch_input_shape": [
+        8,
+        128
+      ],
+      "first_batch_target_shape": [
+        8,
+        128
+      ],
+      "causal_shift_verified": true,
+      "sequence_provenance_verified": true
+    },
+    "validation": {
+      "sequences_available": 364,
+      "total_tokens_in_slice": 46659,
+      "first_batch_input_shape": [
+        8,
+        128
+      ],
+      "first_batch_target_shape": [
+        8,
+        128
+      ],
+      "causal_shift_verified": true,
+      "sequence_provenance_verified": true
+    },
+    "test": {
+      "sequences_available": 361,
+      "total_tokens_in_slice": 46330,
+      "first_batch_input_shape": [
+        8,
+        128
+      ],
+      "first_batch_target_shape": [
+        8,
+        128
+      ],
+      "causal_shift_verified": true,
+      "sequence_provenance_verified": true
+    }
+  },
+  "run_manifest_verification": {
+    "valid": true,
+    "errors": [],
+    "run_id": "run-multilingual:phase10_3-1337"
+  },
+  "acceptance_criteria": {
+    "tokenizer_lossless_roundtrip_100_percent": true,
+    "all_three_languages_tokenized": true,
+    "dataloader_batches_and_causal_shift_verified": true,
+    "no_quarantined_or_frozen_paths_used": true,
+    "cpu_only_no_training_started": true
+  }
+}

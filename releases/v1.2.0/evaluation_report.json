@@ -1,0 +1,125 @@
+{
+  "version": "1.2.0",
+  "status": "ENGINEERING_INFRA_VERIFIED_NANO_843K_MODEL",
+  "honest_disclosure": "NourAI v1.2.0 uses an 843,008-parameter byte-level Pre-LN Transformer trained on CPU (150 pretrain steps + 400 response-masked SFT steps). It produces coherent responses on trained conversational/QA anchors, while open-domain generalization requires scaling parameters (25M-100M+) and corpus size on GPU.",
+  "checkpoint_sha256": "6228c42a78a26625c50c5bc2a66fddd6c3f4d43e6ab1a34daf83fc1df0a95409",
+  "training_summary": {
+    "pretrain_steps": 150,
+    "sft_steps": 400,
+    "pretrain_loss_start": 5.5773,
+    "pretrain_loss_end": 2.299,
+    "sft_loss_start": 2.9181,
+    "sft_loss_end": 1.3016,
+    "elapsed_seconds": 502.76
+  },
+  "held_out_corpus_test_metrics_before": {
+    "ar": {
+      "loss": 1.8143,
+      "perplexity": 6.1365,
+      "bits_per_byte": 2.6174
+    },
+    "en": {
+      "loss": 3.2149,
+      "perplexity": 24.9017,
+      "bits_per_byte": 4.6382
+    },
+    "fr": {
+      "loss": 3.19,
+      "perplexity": 24.2896,
+      "bits_per_byte": 4.6023
+    }
+  },
+  "held_out_corpus_test_metrics_after": {
+    "ar": {
+      "loss": 2.0581,
+      "perplexity": 7.8313,
+      "bits_per_byte": 2.9692
+    },
+    "en": {
+      "loss": 3.2905,
+      "perplexity": 26.8551,
+      "bits_per_byte": 4.7471
+    },
+    "fr": {
+      "loss": 3.1678,
+      "perplexity": 23.7542,
+      "bits_per_byte": 4.5701
+    }
+  },
+  "generation_before": [
+    {
+      "language": "ar",
+      "prompt": "مرحبا، كيف حالك؟",
+      "raw_prompt_output": " الايالامالالالالالال�",
+      "chat_prompt_output": "الايالالالالامالالالا"
+    },
+    {
+      "language": "ar",
+      "prompt": "ما هي عاصمة قطر؟",
+      "raw_prompt_output": " الايامالالالالالالال�",
+      "chat_prompt_output": "\nالايالالالالالالالام�"
+    },
+    {
+      "language": "en",
+      "prompt": "Hello, how are you?",
+      "raw_prompt_output": " dentas de de le de dente de de dentente d",
+      "chat_prompt_output": "\n\n<\n\n\n\n\n\n\n<\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+    },
+    {
+      "language": "en",
+      "prompt": "What is the capital of France?",
+      "raw_prompt_output": " de de de dentas de de de de de de le de d",
+      "chat_prompt_output": "\n\n<\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nالاي"
+    },
+    {
+      "language": "fr",
+      "prompt": "Bonjour, comment allez-vous ?",
+      "raw_prompt_output": " dentas de de de de le de de de de dente d",
+      "chat_prompt_output": "<\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nالا�"
+    },
+    {
+      "language": "fr",
+      "prompt": "Quelle est la capitale de la France ?",
+      "raw_prompt_output": " de dentas de de de de de de le de de de d",
+      "chat_prompt_output": "\n\n<\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nالايالام�"
+    }
+  ],
+  "generation_after": [
+    {
+      "language": "ar",
+      "prompt": "مرحبا، كيف حالك؟",
+      "raw_prompt_output": " الامري لتاواهبة الااا�",
+      "chat_prompt_output": "de للحموطاي ماانعبوالان"
+    },
+    {
+      "language": "ar",
+      "prompt": "ما هي عاصمة قطر؟",
+      "raw_prompt_output": " يالاااهاا لاوالأانب م�",
+      "chat_prompt_output": "Tra + (لاة 1`pustengat). اواالال"
+    },
+    {
+      "language": "en",
+      "prompt": "Hello, how are you?",
+      "raw_prompt_output": " lintes das de le alilis. dete last latis ",
+      "chat_prompt_output": "�calile alist alist aligmolile dis a al al"
+    },
+    {
+      "language": "en",
+      "prompt": "What is the capital of France?",
+      "raw_prompt_output": " Lal dentis caral den de de lent le lou l ",
+      "chat_prompt_output": ""
+    },
+    {
+      "language": "fr",
+      "prompt": "Bonjour, comment allez-vous ?",
+      "raw_prompt_output": " les dint l le ont le le le les d les le p",
+      "chat_prompt_output": "Les a de pite ome leng e de ontis lirintan"
+    },
+    {
+      "language": "fr",
+      "prompt": "Quelle est la capitale de la France ?",
+      "raw_prompt_output": " des de li oue la de re de le le de en e d",
+      "chat_prompt_output": "Te ontis Lal des Lal lis Les pis."
+    }
+  ]
+}

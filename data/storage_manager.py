@@ -18,14 +18,43 @@ class CorpusMetadataStore:
           CREATE TABLE IF NOT EXISTS sources(source_id TEXT PRIMARY KEY,name TEXT NOT NULL,url TEXT,license_id TEXT,status TEXT NOT NULL,payload_json TEXT NOT NULL,updated_at TEXT NOT NULL);
           CREATE TABLE IF NOT EXISTS datasets(dataset_id TEXT PRIMARY KEY,name TEXT NOT NULL,version TEXT NOT NULL,source_id TEXT NOT NULL,license_id TEXT NOT NULL,status TEXT NOT NULL,metadata_json TEXT NOT NULL,created_at TEXT NOT NULL,FOREIGN KEY(source_id) REFERENCES sources(source_id));
           CREATE TABLE IF NOT EXISTS files(file_id INTEGER PRIMARY KEY AUTOINCREMENT,dataset_id TEXT NOT NULL,path TEXT NOT NULL UNIQUE,stage TEXT NOT NULL,bytes INTEGER NOT NULL,sha256 TEXT,record_count INTEGER,metadata_json TEXT NOT NULL,created_at TEXT NOT NULL,FOREIGN KEY(dataset_id) REFERENCES datasets(dataset_id));
-          CREATE TABLE IF NOT EXISTS records(record_id INTEGER PRIMARY KEY AUTOINCREMENT,dataset_id TEXT NOT NULL,source_record_id TEXT,raw_sha256 TEXT,language TEXT,language_confidence REAL,language_method TEXT,quality_score REAL,license_id TEXT NOT NULL,record_status TEXT NOT NULL,split TEXT,metadata_json TEXT NOT NULL,FOREIGN KEY(dataset_id) REFERENCES datasets(dataset_id),UNIQUE(dataset_id,source_record_id,raw_sha256,split));
+          CREATE TABLE IF NOT EXISTS records(record_id INTEGER PRIMARY KEY AUTOINCREMENT,dataset_id TEXT NOT NULL,source_record_id TEXT,raw_sha256 TEXT,language TEXT,language_confidence REAL,language_method TEXT,quality_score REAL,license_id TEXT NOT NULL,record_status TEXT NOT NULL,split TEXT,metadata_json TEXT NOT NULL,document_id TEXT,translation_group_id TEXT,domain TEXT,ingestion_timestamp TEXT,content_hash TEXT,FOREIGN KEY(dataset_id) REFERENCES datasets(dataset_id),UNIQUE(dataset_id,source_record_id,raw_sha256,split));
           CREATE INDEX IF NOT EXISTS idx_records_dataset_split ON records(dataset_id,split);
           CREATE INDEX IF NOT EXISTS idx_records_raw_sha ON records(raw_sha256);
           CREATE UNIQUE INDEX IF NOT EXISTS idx_records_identity ON records(dataset_id,source_record_id,raw_sha256,COALESCE(split,''));
           CREATE INDEX IF NOT EXISTS idx_files_dataset_stage ON files(dataset_id,stage);
           CREATE TABLE IF NOT EXISTS operations(operation_id INTEGER PRIMARY KEY AUTOINCREMENT,operation TEXT NOT NULL,status TEXT NOT NULL,source_id TEXT,details_json TEXT NOT NULL,created_at TEXT NOT NULL);
         """)
+        self._ensure_records_schema()
         self.connection.commit()
+
+    def _ensure_records_schema(self):
+        existing_cols = {
+            row[1] for row in self.connection.execute("PRAGMA table_info(records)").fetchall()
+        }
+        for col_name in ("document_id", "translation_group_id", "domain", "ingestion_timestamp", "content_hash"):
+            if col_name not in existing_cols:
+                self.connection.execute(f"ALTER TABLE records ADD COLUMN {col_name} TEXT")
+        self.connection.executescript("""
+          CREATE INDEX IF NOT EXISTS idx_records_dataset_document ON records(dataset_id,document_id);
+          CREATE INDEX IF NOT EXISTS idx_records_dataset_tgroup ON records(dataset_id,translation_group_id);
+          CREATE INDEX IF NOT EXISTS idx_records_dataset_domain ON records(dataset_id,domain);
+        """)
+
+    def sync_catalog(self, registry=None):
+        """Synchronize all catalog sources from configs/dataset_sources.json into license_current and sources."""
+        from .license_manager import LicenseManager
+        from .source_registry import SourceRegistry
+
+        registry = registry or SourceRegistry()
+        lm = LicenseManager(self.path)
+        try:
+            lm.seed_catalog(registry)
+        finally:
+            lm.close()
+        for source in registry.list_sources():
+            self.register_source(source)
+        return self.connection.execute("SELECT COUNT(*) FROM sources").fetchone()[0]
 
     def resolve(self, path):
         path = Path(path)
@@ -75,14 +104,40 @@ class CorpusMetadataStore:
                 raw_hash = row.get("raw_text_sha256") or hashlib.sha256(text.encode("utf-8")).hexdigest()
                 if not estimate:
                     from .multilingual import estimate_language
-                    estimate = estimate_language(text, source_language_code=row.get("source_language_code"))
+                    estimate = estimate_language(text, source_language_code=row.get("source_language_code") or row.get("original_language"))
                 # Missing source IDs remain missing; line numbers are provenance metadata,
                 # not source record identities.
                 source_record_id = row.get("source_record_id") or None
-                batch.append((dataset_id,source_record_id,raw_hash,
-                    estimate.get("language"),estimate.get("confidence"),estimate.get("method"),None,
-                    row.get("license_id",default_license_id),"SPLIT" if split else "IMPORTED",split,
-                    json.dumps({"source_language_code":row.get("source_language_code"),"record_number":line_number},ensure_ascii=False)))
+                document_id = row.get("document_id") or row.get("original_document_id") or None
+                translation_group_id = row.get("translation_group_id") or None
+                domain = row.get("domain") or row.get("sentence_domain") or None
+                ingestion_timestamp = row.get("ingestion_timestamp") or row.get("imported_at") or None
+                content_hash = row.get("content_hash") or row.get("cleaned_text_sha256") or row.get("raw_text_sha256") or raw_hash
+                extra_meta = {
+                    "source_language_code": row.get("source_language_code") or row.get("original_language"),
+                    "record_number": line_number,
+                }
+                for key in ("source_id", "source_file_member", "adapter_version", "split_group_id", "provenance_id_source"):
+                    if row.get(key) is not None:
+                        extra_meta[key] = row.get(key)
+                batch.append((
+                    dataset_id,
+                    source_record_id,
+                    raw_hash,
+                    estimate.get("language"),
+                    estimate.get("confidence"),
+                    estimate.get("method"),
+                    None,
+                    row.get("license_id", default_license_id),
+                    "SPLIT" if split else "IMPORTED",
+                    split,
+                    json.dumps(extra_meta, ensure_ascii=False),
+                    document_id,
+                    translation_group_id,
+                    domain,
+                    ingestion_timestamp,
+                    content_hash,
+                ))
                 count += 1
                 if len(batch) >= batch_size:
                     self._insert_records(batch)
@@ -93,7 +148,36 @@ class CorpusMetadataStore:
 
     def _insert_records(self, rows):
         with self.connection:
-            self.connection.executemany("INSERT OR IGNORE INTO records(dataset_id,source_record_id,raw_sha256,language,language_confidence,language_method,quality_score,license_id,record_status,split,metadata_json) VALUES(?,?,?,?,?,?,?,?,?,?,?)", rows)
+            self.connection.executemany(
+                "INSERT OR IGNORE INTO records("
+                "dataset_id,source_record_id,raw_sha256,language,language_confidence,language_method,"
+                "quality_score,license_id,record_status,split,metadata_json,"
+                "document_id,translation_group_id,domain,ingestion_timestamp,content_hash"
+                ") VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                rows,
+            )
+
+    def provenance_summary(self, dataset_id=None):
+        where = "WHERE dataset_id=?" if dataset_id else ""
+        params = (dataset_id,) if dataset_id else ()
+        total = self.connection.execute(f"SELECT COUNT(*) FROM records {where}", params).fetchone()[0]
+        def _count_non_null(column):
+            cond = f"{where} AND {column} IS NOT NULL AND {column} != ''" if where else f"WHERE {column} IS NOT NULL AND {column} != ''"
+            return self.connection.execute(f"SELECT COUNT(*) FROM records {cond}", params).fetchone()[0]
+
+        return {
+            "dataset_id": dataset_id,
+            "records_indexed": total,
+            "with_source_record_id": _count_non_null("source_record_id"),
+            "with_document_id": _count_non_null("document_id"),
+            "with_translation_group_id": _count_non_null("translation_group_id"),
+            "with_domain": _count_non_null("domain"),
+            "with_ingestion_timestamp": _count_non_null("ingestion_timestamp"),
+            "with_content_hash": _count_non_null("content_hash"),
+            "by_split": dict(self.connection.execute(f"SELECT COALESCE(split,'UNSPLIT'),COUNT(*) FROM records {where} GROUP BY COALESCE(split,'UNSPLIT')", params)),
+            "by_license": dict(self.connection.execute(f"SELECT license_id,COUNT(*) FROM records {where} GROUP BY license_id", params)),
+            "by_domain": dict(self.connection.execute(f"SELECT COALESCE(domain,'UNSPECIFIED'),COUNT(*) FROM records {where} GROUP BY COALESCE(domain,'UNSPECIFIED')", params)),
+        }
 
     def record_operation(self, operation, status, *, source_id=None, details=None):
         with self.connection:

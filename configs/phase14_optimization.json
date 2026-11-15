@@ -1,0 +1,27 @@
+{
+  "phase": "14",
+  "title": "Training Optimization & Scaling",
+  "prerequisite_report": "reports/phase13/phase13_initial_training_report.json",
+  "phase13_model_checkpoint": "checkpoints/phase13/phase13_model.pt",
+  "working_splits_dir": "data/processed/phase13/splits",
+  "checkpoint_dir": "checkpoints/phase14",
+  "report_dir": "reports/phase14",
+  "batch_size_candidates": [4, 8, 16],
+  "grad_accum_candidates": [
+    {"batch_size": 4, "gradient_accumulation_steps": 4},
+    {"batch_size": 8, "gradient_accumulation_steps": 2},
+    {"batch_size": 16, "gradient_accumulation_steps": 1}
+  ],
+  "scaling_presets": ["default", "small", "base"],
+  "optimized_training": {
+    "batch_size": 16,
+    "gradient_accumulation_steps": 1,
+    "learning_rate": 0.0012,
+    "warmup_steps": 4,
+    "max_training_steps": 30,
+    "validation_interval": 10,
+    "checkpoint_interval": 10,
+    "preload_tokens": true,
+    "scheduler_type": "linear_warmup_cosine"
+  }
+}

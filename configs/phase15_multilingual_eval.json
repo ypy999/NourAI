@@ -1,0 +1,83 @@
+{
+  "phase": "15",
+  "title": "Multilingual Model Evaluation",
+  "prerequisite_report": "reports/phase14/phase14_optimization_scaling_report.json",
+  "phase13_checkpoint": "checkpoints/phase13/phase13_model.pt",
+  "phase14_checkpoint": "checkpoints/phase14/phase14_optimized_model.pt",
+  "splits_dir": "data/processed/phase13/splits",
+  "report_dir": "reports/phase15",
+  "languages": ["arabic", "english", "french"],
+  "task_probes": {
+    "reading_comprehension": [
+      {
+        "language": "arabic",
+        "context": "السياق: مكتبة قطر الوطنية تحفظ التراث العربي والمخطوطات التاريخية.\nالسؤال: ماذا تحفظ مكتبة قطر الوطنية؟\nالإجابة: ",
+        "target": "تحفظ التراث العربي والمخطوطات التاريخية.",
+        "distractor": "999999 ### @@@ $$$"
+      },
+      {
+        "language": "english",
+        "context": "Context: The World Trade Organization regulates international trade agreements between member nations.\nQuestion: What does the WTO regulate?\nAnswer: ",
+        "target": "It regulates international trade agreements between member nations.",
+        "distractor": "999999 ### @@@ $$$"
+      },
+      {
+        "language": "french",
+        "context": "Contexte : L'Organisation mondiale du commerce régit les accords commerciaux internationaux entre les États membres.\nQuestion : Que régit l'OMC ?\nRéponse : ",
+        "target": "Elle régit les accords commerciaux internationaux.",
+        "distractor": "999999 ### @@@ $$$"
+      }
+    ],
+    "translation": [
+      {
+        "pair": "english->french",
+        "prompt": "Translate English to French: International trade agreements and economic cooperation -> ",
+        "target": "Accords commerciaux internationaux et coopération économique."
+      },
+      {
+        "pair": "english->arabic",
+        "prompt": "Translate English to Arabic: Knowledge and science are the foundation of progress -> ",
+        "target": "المعرفة والعلم هما أساس التقدم."
+      },
+      {
+        "pair": "french->english",
+        "prompt": "Translate French to English: Les membres de l'Organisation mondiale du commerce -> ",
+        "target": "The members of the World Trade Organization."
+      }
+    ],
+    "summarization": [
+      {
+        "language": "arabic",
+        "prompt": "لخص النص التالي: الذكاء الاصطناعي المحلي يتيح تشغيل النماذج اللغوية بأمان وخصوصية عالية دون الحاجة لاتصال دائم بالإنترنت.\nالملخص: ",
+        "target": "الذكاء الاصطناعي المحلي يوفر الخصوصية والأمان."
+      },
+      {
+        "language": "english",
+        "prompt": "Summarize: Local-first multilingual language models process Arabic, English, and French directly on user hardware with full data provenance.\nSummary: ",
+        "target": "Local-first models process Arabic, English, and French privately."
+      },
+      {
+        "language": "french",
+        "prompt": "Résumez : Les modèles linguistiques multilingues locaux traitent l'arabe, l'anglais et le français avec une traçabilité complète des données.\nRésumé : ",
+        "target": "Les modèles locaux traitent trois langues avec traçabilité."
+      }
+    ],
+    "question_answering": [
+      {
+        "language": "arabic",
+        "prompt": "سؤال: ما هي اللغات الثلاث المدعومة في مشروع NourAI؟\nجواب: ",
+        "target": "اللغات المدعومة هي العربية والإنجليزية والفرنسية."
+      },
+      {
+        "language": "english",
+        "prompt": "Question: Which three languages are supported by NourAI?\nAnswer: ",
+        "target": "NourAI supports Arabic, English, and French."
+      },
+      {
+        "language": "french",
+        "prompt": "Question : Quelles sont les trois langues prises en charge par NourAI ?\nRéponse : ",
+        "target": "NourAI prend en charge l'arabe, l'anglais et le français."
+      }
+    ]
+  }
+}

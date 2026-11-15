@@ -1,0 +1,31 @@
+{
+  "phase": "10.5",
+  "title": "WTO Adapter Implementation",
+  "status": "COMPLETE",
+  "created_at_utc": "2026-11-13T20:32:00+00:00",
+  "adapter_version": "wto_en_fr_adapter_v1",
+  "source_id": "wto_public_corpus_en_fr",
+  "components_created_or_updated": [
+    "corpus/adapters/wto_adapter.py",
+    "corpus/adapters/__init__.py",
+    "corpus/importers.py",
+    "corpus/pipeline.py",
+    "corpus/reproducibility.py",
+    "tests/test_phase10_5_wto_adapter.py"
+  ],
+  "capabilities_verified": {
+    "continuation_line_reconstruction": "Reconstructs multi-line segments in Eng-Fra_UTF8/Eng-Fra-UTF8-00.txt using ^\\d+\\t\\d+\\t\\d+\\t boundary detection with 0 parse errors across 895,126 records",
+    "unpaired_segment_filtering": "Skips 159,317 unpaired rows where SegSrc or SegTgt is empty after stripping",
+    "domain_stratified_sampling": "Deterministically selects min(available, max(3, ceil(available * 0.02))) documents per IdxDomain ranked by SHA-256(seed:domain:IdxID), yielding 124 documents across 16 domains on chunk00",
+    "bilingual_pair_provenance": "Emits paired eng and fra records sharing document_id=IdxID and translation_group_id=IdxID:SegID with unique source_record_id=ID:eng and ID:fra",
+    "reproducibility_plan_status": "Upgrades wto_public_corpus_en_fr to SUPPORTED when a valid ZIP archive is present; build_plan() now reports ready=True with 0 blockers across all 3 approved sources"
+  },
+  "acceptance_criteria": {
+    "continuation_reconstruction_errors_zero": true,
+    "deterministic_domain_sampling_verified": true,
+    "document_and_translation_group_integrity_verified": true,
+    "build_plan_ready_all_three_sources": true,
+    "phase10_2_untouched": true,
+    "pytest_suite_passed": true
+  }
+}

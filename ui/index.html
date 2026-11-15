@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="html-root">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NourAI v1.2.0 — نموذج لغوي محلي متعدد اللغات</title>
+  <style>
+    :root {
+      --bg-primary: #0f172a;
+      --bg-panel: #1e293b;
+      --bg-input: #334155;
+      --accent: #38bdf8;
+      --danger: #ef4444;
+      --success: #22c55e;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #475569;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-main);
+      display: grid;
+      grid-template-columns: 290px 1fr 310px;
+      min-height: 100vh;
+    }
+    aside.sidebar, aside.settings-panel {
+      background: var(--bg-panel);
+      border-inline-end: 1px solid var(--border);
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+    main.chat-area {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    header.chat-header {
+      padding: 0.85rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-panel);
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    #error-banner {
+      display: none;
+      background: rgba(239, 68, 68, 0.2);
+      border-bottom: 1px solid var(--danger);
+      color: #fecaca;
+      padding: 0.65rem 1.25rem;
+      font-size: 0.88rem;
+      justify-content: space-between;
+      align-items: center;
+    }
+    #chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+    .message-bubble {
+      max-width: 82%;
+      padding: 0.85rem 1rem;
+      border-radius: 0.75rem;
+      line-height: 1.65;
+      unicode-bidi: plaintext;
+      position: relative;
+      white-space: pre-wrap;
+    }
+    .message-user {
+      align-self: flex-start;
+      background: #0284c7;
+      color: #fff;
+    }
+    .message-assistant {
+      align-self: flex-end;
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+    }
+    .bubble-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.4rem;
+      margin-top: 0.5rem;
+    }
+    .mini-btn {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 0.35rem;
+      cursor: pointer;
+      background: var(--bg-input);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .mini-btn:hover { color: var(--text-main); border-color: var(--accent); }
+    footer.chat-input-bar {
+      padding: 1rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 0.6rem;
+      background: var(--bg-panel);
+      align-items: center;
+    }
+    input, select, textarea, button {
+      font: inherit;
+      color: var(--text-main);
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      padding: 0.55rem 0.75rem;
+    }
+    textarea#prompt-input { flex: 1; resize: none; height: 52px; }
+    button.primary-btn {
+      background: var(--accent);
+      color: #0f172a;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button.danger-btn {
+      background: var(--danger);
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .session-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .session-item {
+      padding: 0.6rem;
+      border-radius: 0.5rem;
+      background: var(--bg-input);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.88rem;
+      border: 1px solid transparent;
+    }
+    .session-item.active { border-color: var(--accent); }
+    .session-title {
+      flex: 1;
+      cursor: pointer;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      font-size: 0.86rem;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 0.18rem 0.55rem;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      background: rgba(34, 197, 94, 0.2);
+      color: #86efac;
+      border: 1px solid var(--success);
+    }
+    @media (max-width: 768px) {
+      body {
+        grid-template-columns: 1fr;
+      }
+      aside.sidebar, aside.settings-panel {
+        border-inline-end: none;
+        border-bottom: 1px solid var(--border);
+      }
+      main.chat-area {
+        height: 75vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar" aria-label="Conversation History">
+    <h2 id="ui-history-title">سجل المحادثات</h2>
+    <button class="primary-btn" id="new-session-btn" onclick="createNewSession()">+ محادثة جديدة</button>
+    <ul class="session-list" id="session-history-list"></ul>
+  </aside>
+
+  <main class="chat-area">
+    <header class="chat-header">
+      <div>
+        <strong id="ui-app-title">NourAI — نموذج لغوي محلي متعدد اللغات</strong>
+        <span id="model-status-badge" class="status-badge">متصل (v1.2.0)</span>
+        <span id="stream-status-indicator" style="font-size:0.8rem;color:var(--text-muted);margin-inline-start:0.5rem;">جاهز</span>
+      </div>
+      <div>
+        <label for="language-selector" id="ui-lang-label">اللغة:</label>
+        <select id="language-selector" onchange="switchLanguage(this.value)">
+          <option value="arabic">العربية (RTL)</option>
+          <option value="english">English (LTR)</option>
+          <option value="french">Français (LTR)</option>
+        </select>
+      </div>
+    </header>
+
+    <div id="error-banner" role="alert">
+      <span id="error-banner-text"></span>
+      <button class="mini-btn" onclick="hideError()">✕</button>
+    </div>
+
+    <section id="chat-messages" aria-live="polite"></section>
+
+    <footer class="chat-input-bar">
+      <textarea id="prompt-input" dir="auto" placeholder="اكتب رسالتك بالعربية أو الإنجليزية أو الفرنسية..."></textarea>
+      <button class="primary-btn" id="send-btn" onclick="sendStreamingMessage()">إرسال</button>
+      <button class="danger-btn" id="stop-btn" onclick="stopGeneration()" title="إيقاف التوليد">إيقاف</button>
+    </footer>
+  </main>
+
+  <aside class="settings-panel" aria-label="Model Settings">
+    <h2 id="ui-settings-title">إعدادات النموذج</h2>
+    <div class="control-group">
+      <label for="engine-mode-select">وضع الاستجابة (Response Source)</label>
+      <select id="engine-mode-select">
+        <option value="neural">النموذج العصبي المباشر (Neural Model — Default)</option>
+        <option value="fallback">المساعد القاعدي الاحتياطي (Rule-Based Fallback)</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <label for="strategy-select">استراتيجية التوليد (Sampling Strategy)</label>
+      <select id="strategy-select">
+        <option value="top_p">Top-P (Nucleus)</option>
+        <option value="top_k">Top-K</option>
+        <option value="greedy">Greedy</option>
+        <option value="temperature">Temperature</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <label for="temperature-input">درجة العشوائية (Temperature)</label>
+      <input type="number" id="temperature-input" value="0.8" min="0.1" max="2.0" step="0.1" />
+    </div>
+    <div class="control-group">
+      <label for="top-k-input">معامل Top-K</label>
+      <input type="number" id="top-k-input" value="16" min="1" max="100" step="1" />
+    </div>
+    <div class="control-group">
+      <label for="top-p-input">معامل Top-P</label>
+      <input type="number" id="top-p-input" value="0.9" min="0.1" max="1.0" step="0.05" />
+    </div>
+    <div class="control-group">
+      <label for="max-tokens-input">أقصى عدد للرموز (Max New Tokens)</label>
+      <input type="number" id="max-tokens-input" value="32" min="4" max="64" step="4" />
+    </div>
+  </aside>
+
+  <script>
+    const I18N = {
+      arabic: {
+        dir: "rtl",
+        lang: "ar",
+        title: "NourAI — نموذج لغوي محلي متعدد اللغات",
+        history: "سجل المحادثات",
+        newSession: "+ محادثة جديدة",
+        settings: "إعدادات النموذج",
+        placeholder: "اكتب رسالتك بالعربية أو الإنجليزية أو الفرنسية...",
+        send: "إرسال",
+        stop: "إيقاف",
+        ready: "جاهز",
+        streaming: "جاري التوليد التدريجي...",
+        copy: "نسخ الإجابة",
+        copied: "تم النسخ ✓",
+        renamePrompt: "أدخل الاسم الجديد للمحادثة:"
+      },
+      english: {
+        dir: "ltr",
+        lang: "en",
+        title: "NourAI — Local-first Multilingual LLM",
+        history: "Conversation History",
+        newSession: "+ New Conversation",
+        settings: "Model Settings",
+        placeholder: "Type your message in Arabic, English, or French...",
+        send: "Send",
+        stop: "Stop",
+        ready: "Ready",
+        streaming: "Streaming tokens...",
+        copy: "Copy Answer",
+        copied: "Copied ✓",
+        renamePrompt: "Enter new conversation title:"
+      },
+      french: {
+        dir: "ltr",
+        lang: "fr",
+        title: "NourAI — Modèle Linguistique Multilingue Local",
+        history: "Historique des Conversations",
+        newSession: "+ Nouvelle Conversation",
+        settings: "Paramètres du Modèle",
+        placeholder: "Écrivez votre message en arabe, anglais ou français...",
+        send: "Envoyer",
+        stop: "Arrêter",
+        ready: "Prêt",
+        streaming: "Génération progressive...",
+        copy: "Copier la réponse",
+        copied: "Copié ✓",
+        renamePrompt: "Entrez le nouveau titre de la conversation :"
+      }
+    };
+
+    let currentLanguage = "arabic";
+    let sessions = [];
+    let activeSessionId = null;
+    let authToken = null;
+    let stopStreamingFlag = false;
+
+    function showError(msg) {
+      const banner = document.getElementById("error-banner");
+      document.getElementById("error-banner-text").textContent = msg;
+      banner.style.display = "flex";
+    }
+
+    function hideError() {
+      document.getElementById("error-banner").style.display = "none";
+    }
+
+    async function ensureAuthenticated() {
+      if (authToken) return authToken;
+      try {
+        const res = await fetch("/api/v1/auth/guest", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({})
+        });
+        if (!res.ok) throw new Error("Authentication failed (" + res.status + ")");
+        const data = await res.json();
+        authToken = data.access_token;
+        return authToken;
+      } catch (err) {
+        showError(err.message);
+        return null;
+      }
+    }
+
+    async function checkModelHealth() {
+      try {
+        const res = await fetch("/api/v1/health");
+        if (res.ok) {
+          const data = await res.json();
+          document.getElementById("model-status-badge").textContent = "متصل (" + (data.version || "v1.2.0") + ")";
+        }
+      } catch (err) {
+        document.getElementById("model-status-badge").textContent = "غير متصل";
+      }
+    }
+
+    async function refreshSessionList() {
+      const token = await ensureAuthenticated();
+      if (!token) return;
+      try {
+        const res = await fetch("/api/v1/sessions", {
+          headers: { "Authorization": "Bearer " + token }
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        sessions = data.sessions || [];
+        renderSessionList();
+      } catch (err) {
+        showError(err.message);
+      }
+    }
+
+    function renderSessionList() {
+      const list = document.getElementById("session-history-list");
+      list.innerHTML = "";
+      for (const s of sessions) {
+        const li = document.createElement("li");
+        li.className = "session-item" + (s.session_id === activeSessionId ? " active" : "");
+        const titleSpan = document.createElement("span");
+        titleSpan.className = "session-title";
+        titleSpan.textContent = s.title || s.session_id;
+        titleSpan.onclick = () => selectSession(s.session_id);
+
+        const renameBtn = document.createElement("button");
+        renameBtn.className = "mini-btn";
+        renameBtn.textContent = "✎";
+        renameBtn.title = "Rename";
+        renameBtn.onclick = (e) => { e.stopPropagation(); renameSession(s.session_id, s.title); };
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "mini-btn";
+        delBtn.textContent = "🗑";
+        delBtn.title = "Delete";
+        delBtn.onclick = (e) => { e.stopPropagation(); deleteSession(s.session_id); };
+
+        li.appendChild(titleSpan);
+        li.appendChild(renameBtn);
+        li.appendChild(delBtn);
+        list.appendChild(li);
+      }
+    }
+
+    async function selectSession(sessionId) {
+      const token = await ensureAuthenticated();
+      if (!token) return;
+      activeSessionId = sessionId;
+      renderSessionList();
+      try {
+        const res = await fetch("/api/v1/sessions/" + sessionId, {
+          headers: { "Authorization": "Bearer " + token }
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        const container = document.getElementById("chat-messages");
+        container.innerHTML = "";
+        for (const msg of (data.session.messages || [])) {
+          appendMessageBubble(msg.role, msg.content);
+        }
+      } catch (err) {
+        showError(err.message);
+      }
+    }
+
+    async function renameSession(sessionId, oldTitle) {
+      const newTitle = prompt(I18N[currentLanguage].renamePrompt, oldTitle || "");
+      if (!newTitle || !newTitle.trim()) return;
+      const token = await ensureAuthenticated();
+      if (!token) return;
+      const res = await fetch("/api/v1/sessions/" + sessionId + "/rename", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({ title: newTitle.trim() })
+      });
+      if (res.ok) await refreshSessionList();
+      else showError("Failed to rename session");
+    }
+
+    async function deleteSession(sessionId) {
+      const token = await ensureAuthenticated();
+      if (!token) return;
+      const res = await fetch("/api/v1/sessions/" + sessionId, {
+        method: "DELETE",
+        headers: { "Authorization": "Bearer " + token }
+      });
+      if (res.ok) {
+        if (activeSessionId === sessionId) {
+          activeSessionId = null;
+          document.getElementById("chat-messages").innerHTML = "";
+        }
+        await refreshSessionList();
+      } else {
+        showError("Failed to delete session");
+      }
+    }
+
+    async function stopGeneration() {
+      stopStreamingFlag = true;
+      const token = await ensureAuthenticated();
+      if (!token) return;
+      await fetch("/api/v1/chat/stop", {
+        method: "POST",
+        headers: { "Authorization": "Bearer " + token }
+      });
+    }
+
+    function switchLanguage(lang) {
+      const cfg = I18N[lang] || I18N.arabic;
+      currentLanguage = lang;
+      const root = document.getElementById("html-root");
+      root.setAttribute("dir", cfg.dir);
+      root.setAttribute("lang", cfg.lang);
+      document.getElementById("ui-app-title").textContent = cfg.title;
+      document.getElementById("ui-history-title").textContent = cfg.history;
+      document.getElementById("new-session-btn").textContent = cfg.newSession;
+      document.getElementById("ui-settings-title").textContent = cfg.settings;
+      document.getElementById("prompt-input").setAttribute("placeholder", cfg.placeholder);
+      document.getElementById("send-btn").textContent = cfg.send;
+      document.getElementById("stop-btn").textContent = cfg.stop;
+      document.getElementById("stream-status-indicator").textContent = cfg.ready;
+    }
+
+    async function sendStreamingMessage() {
+      hideError();
+      const input = document.getElementById("prompt-input");
+      const text = input.value.trim();
+      if (!text) return;
+      const token = await ensureAuthenticated();
+      if (!token) return;
+
+      input.value = "";
+      stopStreamingFlag = false;
+      appendMessageBubble("user", text);
+      const assistantObj = appendMessageBubble("assistant", "");
+      const statusEl = document.getElementById("stream-status-indicator");
+      statusEl.textContent = I18N[currentLanguage].streaming;
+
+      try {
+        const response = await fetch("/api/v1/chat/stream", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+          },
+          body: JSON.stringify({
+            session_id: activeSessionId,
+            language: currentLanguage,
+            message: text,
+            use_fallback_assistant: document.getElementById("engine-mode-select").value === "fallback",
+            strategy: document.getElementById("strategy-select").value,
+            temperature: parseFloat(document.getElementById("temperature-input").value),
+            top_k: parseInt(document.getElementById("top-k-input").value, 10),
+            top_p: parseFloat(document.getElementById("top-p-input").value),
+            max_new_tokens: parseInt(document.getElementById("max-tokens-input").value, 10)
+          })
+        });
+        const payload = await response.json();
+        if (!response.ok) {
+          showError(payload.error || "Request failed");
+          statusEl.textContent = I18N[currentLanguage].ready;
+          return;
+        }
+        activeSessionId = payload.session_id || activeSessionId;
+        if (payload.stream_chunks) {
+          for (const chunk of payload.stream_chunks) {
+            if (stopStreamingFlag) break;
+            assistantObj.textNode.textContent += chunk.text_delta;
+            await new Promise(r => setTimeout(r, 12));
+          }
+        }
+        await refreshSessionList();
+      } catch (err) {
+        showError(err.message);
+      }
+      statusEl.textContent = I18N[currentLanguage].ready;
+    }
+
+    function copyAnswer(text, btnEl) {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text);
+      }
+      const prev = btnEl.textContent;
+      btnEl.textContent = I18N[currentLanguage].copied;
+      setTimeout(() => { btnEl.textContent = prev; }, 1200);
+    }
+
+    function appendMessageBubble(role, text) {
+      const container = document.getElementById("chat-messages");
+      const div = document.createElement("div");
+      div.className = "message-bubble message-" + role;
+      div.setAttribute("dir", "auto");
+      const textSpan = document.createElement("div");
+      textSpan.textContent = text;
+      div.appendChild(textSpan);
+
+      if (role === "assistant") {
+        const actions = document.createElement("div");
+        actions.className = "bubble-actions";
+        const copyBtn = document.createElement("button");
+        copyBtn.className = "mini-btn";
+        copyBtn.textContent = I18N[currentLanguage].copy;
+        copyBtn.onclick = () => copyAnswer(textSpan.textContent, copyBtn);
+        actions.appendChild(copyBtn);
+        div.appendChild(actions);
+      }
+
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+      return { bubble: div, textNode: textSpan };
+    }
+
+    function createNewSession() {
+      activeSessionId = null;
+      document.getElementById("chat-messages").innerHTML = "";
+      renderSessionList();
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      checkModelHealth();
+      refreshSessionList();
+    });
+  </script>
+</body>
+</html>

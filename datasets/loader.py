@@ -8,15 +8,15 @@ from tokenizer.byte_tokenizer import ByteTokenizer
 from .dataset import TokenSequenceDataset
 
 
-def create_dataloaders(processed_dir, config=None, tokenizer=None, num_workers=0):
+def create_dataloaders(processed_dir, config=None, tokenizer=None, num_workers=0, *, cache_dir=None, preload_tokens=False):
     tokenizer = tokenizer or ByteTokenizer()
     project = config if isinstance(config, ProjectConfig) else load_config(config, tokenizer)
     project.validate(tokenizer)
     if isinstance(num_workers, bool) or not isinstance(num_workers, int) or num_workers < 0:
         raise ValueError("num_workers must be a non-negative integer")
     root = Path(processed_dir)
-    train = TokenSequenceDataset(root / "train.jsonl", project, tokenizer)
-    validation = TokenSequenceDataset(root / "validation.jsonl", project, tokenizer)
+    train = TokenSequenceDataset(root / "train.jsonl", project, tokenizer, cache_dir=cache_dir, preload_tokens=preload_tokens)
+    validation = TokenSequenceDataset(root / "validation.jsonl", project, tokenizer, cache_dir=cache_dir, preload_tokens=preload_tokens)
     train_generator = torch.Generator().manual_seed(project.random_seed)
     validation_generator = torch.Generator().manual_seed(project.random_seed + 1)
     return (

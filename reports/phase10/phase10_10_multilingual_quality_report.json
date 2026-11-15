@@ -1,0 +1,87 @@
+{
+  "phase": "10.10",
+  "title": "Multilingual Data Quality Validation",
+  "status": "PASS",
+  "created_at_utc": "2026-11-13T21:07:17.270134+00:00",
+  "split_language_record_counts": {
+    "train": {
+      "arabic": 54,
+      "english": 58214,
+      "french": 35036
+    },
+    "validation": {
+      "arabic": 3,
+      "english": 4334,
+      "french": 846
+    },
+    "test": {
+      "arabic": 3,
+      "english": 4282,
+      "french": 898
+    }
+  },
+  "split_language_character_counts": {
+    "train": {
+      "arabic": 34016080,
+      "english": 6295539,
+      "french": 4889320
+    },
+    "validation": {
+      "arabic": 2051149,
+      "english": 374037,
+      "french": 63727
+    },
+    "test": {
+      "arabic": 1807383,
+      "english": 371512,
+      "french": 71626
+    }
+  },
+  "language_quality_summary": {
+    "arabic": {
+      "records": 60,
+      "characters": 37874612,
+      "min_chars": 24,
+      "max_chars": 2168744,
+      "mean_chars": 631243.53,
+      "mean_quality_score": 100.0
+    },
+    "english": {
+      "records": 66830,
+      "characters": 7041088,
+      "min_chars": 1,
+      "max_chars": 3210,
+      "mean_chars": 105.36,
+      "mean_quality_score": 100.0
+    },
+    "french": {
+      "records": 36780,
+      "characters": 5024673,
+      "min_chars": 1,
+      "max_chars": 3768,
+      "mean_chars": 136.61,
+      "mean_quality_score": 100.0
+    }
+  },
+  "qnl_arabic_ocr_quality": {
+    "total_documents": 58,
+    "min_arabic_script_ratio": 0.04095202027927251,
+    "max_arabic_script_ratio": 0.8270197072477138,
+    "mean_arabic_script_ratio": 0.722923,
+    "flagged_below_0_20": 4
+  },
+  "encoding_integrity": {
+    "replacement_char_records": 0,
+    "surrogate_char_records": 0,
+    "non_nfc_records": 0,
+    "empty_text_records": 0
+  },
+  "unknown_language_records": 0,
+  "script_contamination_warnings": 0,
+  "acceptance_criteria": {
+    "all_splits_cover_arabic_english_french": true,
+    "zero_utf8_or_nfc_encoding_errors": true,
+    "zero_unknown_language_records": true,
+    "qnl_arabic_script_ratio_verified": true
+  }
+}

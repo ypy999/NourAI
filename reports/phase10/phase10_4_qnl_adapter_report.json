@@ -1,0 +1,29 @@
+{
+  "phase": "10.4",
+  "title": "QNL Adapter Implementation",
+  "status": "COMPLETE",
+  "completed_at_utc": "2026-11-13T19:16:00+00:00",
+  "adapter_version": "qnl_arabic_ocr_v2_adapter_v1",
+  "summary": {
+    "tests_passed": 211,
+    "tests_failed": 0,
+    "new_tests_added": 4,
+    "real_catalog_rows_verified": 2894,
+    "embedded_checksum_manifest_verified": true,
+    "phase10_2_untouched": true,
+    "raw_archives_untouched": true
+  },
+  "files_created": [
+    "corpus/adapters/__init__.py",
+    "corpus/adapters/qnl_adapter.py",
+    "tests/test_phase10_4_qnl_adapter.py",
+    "reports/phase10/phase10_4_qnl_adapter_report.json",
+    "reports/phase10/phase10_4_qnl_adapter_report.md"
+  ],
+  "files_modified": [
+    "corpus/importers.py",
+    "corpus/pipeline.py",
+    "corpus/reproducibility.py"
+  ],
+  "defect_corrected": "The vanished ad-hoc script in Phase 10.2 accidentally computed non-Arabic ratio (1 - arabic_chars/len(text), e.g. 0.214829 for i10027154). qnl_adapter.py computes the true Unicode Arabic script ratio (0.785171 for i10027154)."
+}

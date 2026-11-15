@@ -42,13 +42,19 @@ desktop.ini
 # The data/ package contains Python source that MUST be tracked. Only the
 # downloaded archives, processed corpora and SQLite metadata are excluded.
 data/raw/
-data/processed/
+data/processed/*
+!data/processed/v1_2_corpus/
+!data/processed/v1_2_sft/
 data/metadata/
 data/rejected/
 data/tmp/
+data/production/
+data/backups/
 data/*.sqlite3
 data/*.sqlite3-shm
 data/*.sqlite3-wal
+checkpoints/**/history/
+reports/pytest_tmp/
 
 # --- Download / processing temporaries ---------------------------------------
 *.part

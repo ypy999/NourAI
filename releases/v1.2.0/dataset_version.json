@@ -1,0 +1,6 @@
+{
+  "corpus_dataset": "data/processed/v1_2_corpus/splits",
+  "sft_dataset": "data/processed/v1_2_sft/splits",
+  "token_balanced": true,
+  "zero_cross_split_leakage": true
+}

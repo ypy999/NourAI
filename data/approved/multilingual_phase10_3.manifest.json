@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "dataset_name": "NourAI Multilingual Corpus (Phase 10.3)",
+  "dataset_version": "phase10_3-tatoeba_cc0:7e4251d0-qnl_arabic_ocr_v2:352d7d2e-wto_public_corpus_en_fr:09f958e8",
+  "source": [
+    {
+      "source_id": "tatoeba_cc0",
+      "url": "https://downloads.tatoeba.org/exports/sentences_CC0.tar.bz2",
+      "sha256": "7e4251d06edd949db9e47cc360b472873da6c054af5dc4b9d2c9e06d024cd710"
+    },
+    {
+      "source_id": "qnl_arabic_ocr_v2",
+      "url": "https://manara.qnl.qa/articles/dataset/Arabic_OCR_Corpus_2_894_items_from_QNL_Collection_/26984785",
+      "sha256": "352d7d2e1e3c64255a52b09560da97bb0360e43a327bd70298c7fa52b2437cb9"
+    },
+    {
+      "source_id": "wto_public_corpus_en_fr",
+      "url": "https://www.wto.org/english/res_e/corpus_e/corpus_e.htm",
+      "sha256": "09f958e84a626cc294eaa0c3b87b2daa7abf1f786fc91d2978756264750545f5"
+    }
+  ],
+  "license": [
+    {
+      "source_id": "tatoeba_cc0",
+      "license_id": "CC0-1.0",
+      "state": "VERIFIED",
+      "evidence_url": "https://tatoeba.org/en/downloads"
+    },
+    {
+      "source_id": "qnl_arabic_ocr_v2",
+      "license_id": "PUBLIC_DOMAIN_TEXTS; CC0-1.0_METADATA",
+      "state": "VERIFIED",
+      "evidence_url": "https://manara.qnl.qa/articles/dataset/Arabic_OCR_Corpus_2_894_items_from_QNL_Collection_/26984785"
+    },
+    {
+      "source_id": "wto_public_corpus_en_fr",
+      "license_id": "WTO_PUBLIC_CORPUS_TERMS",
+      "state": "VERIFIED",
+      "evidence_url": "https://www.wto.org/english/res_e/corpus_e/corpus_e.htm"
+    }
+  ],
+  "collection_date": null,
+  "language_distribution": {
+    "source_language_codes": {
+      "eng": 70748,
+      "fra": 43435,
+      "ara": 60
+    },
+    "confidence": "source-provided and deterministic adapter metadata"
+  },
+  "record_count": 103670,
+  "character_count": 0,
+  "token_count": 0,
+  "file_size_bytes": 318721054,
+  "files": [
+    "D:\\NourAI\\data\\processed\\phase10_3\\splits\\train.jsonl",
+    "D:\\NourAI\\data\\processed\\phase10_3\\splits\\validation.jsonl",
+    "D:\\NourAI\\data\\processed\\phase10_3\\splits\\test.jsonl"
+  ],
+  "cleaning_configuration": {
+    "vocab_size": 260,
+    "context_length": 128,
+    "d_model": 128,
+    "n_heads": 4,
+    "n_layers": 4,
+    "dropout": 0.1,
+    "batch_size": 8,
+    "learning_rate": 0.0003,
+    "device": "cpu",
+    "validation_fraction": 0.1,
+    "random_seed": 1337,
+    "max_document_chars": 5000000,
+    "io_batch_lines": 512,
+    "cleaning_unicode_normalization": "NFC",
+    "cleaning_remove_control_chars": true,
+    "cleaning_collapse_whitespace": true,
+    "cleaning_preserve_paragraphs": false,
+    "cleaning_min_chars": 1,
+    "cleaning_reject_short": false,
+    "epochs": 3,
+    "weight_decay": 0.01,
+    "adam_betas": [
+      0.9,
+      0.999
+    ],
+    "adam_epsilon": 1e-08,
+    "warmup_steps": 0,
+    "gradient_accumulation_steps": 1,
+    "gradient_clip_norm": 1.0,
+    "scheduler_type": "cosine",
+    "precision": "fp32",
+    "validation_interval": 100,
+    "checkpoint_interval": 100,
+    "early_stopping": false,
+    "early_stopping_patience": 3,
+    "early_stopping_min_delta": 0.0,
+    "max_training_steps": 0,
+    "checkpoint_keep": 3
+  },
+  "deduplication_results": null,
+  "quality_statistics": null,
+  "tokenizer_statistics": null,
+  "split_statistics": {
+    "train": 93304,
+    "validation": 5183,
+    "test": 5183
+  },
+  "split_ratios": {
+    "train": 0.9,
+    "validation": 0.05,
+    "test": 0.05
+  },
+  "random_seed": 1337,
+  "tokenizer_version": "byte-tokenizer-utf8-v1",
+  "processing_status": "conditionally_ready_for_review",
+  "warnings": [],
+  "errors": [],
+  "training_eligible": true,
+  "training_blockers": [],
+  "corpus_readiness_status": "CONDITIONALLY_READY",
+  "sources": [
+    "tatoeba_cc0",
+    "qnl_arabic_ocr_v2",
+    "wto_public_corpus_en_fr"
+  ]
+}

@@ -48,8 +48,10 @@ def _verify_source_identity(metadata, source):
         if value != source["url"]:
             raise AcquisitionError(f"download provenance mismatch for {field}")
     recorded_download = metadata.get("download_url")
-    registry_download = source.get("download_url")
-    if recorded_download and registry_download and recorded_download != registry_download:
+    allowed_downloads = {
+        url for url in (source.get("download_url"), source.get("metadata_download_url")) if url
+    }
+    if recorded_download and allowed_downloads and recorded_download not in allowed_downloads:
         raise AcquisitionError("download provenance mismatch for download_url")
     return present[0][0]
 

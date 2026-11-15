@@ -216,10 +216,25 @@ class DataPipeline:
                             stats.short_records += 1
                             if self.config.cleaning_reject_short:
                                 continue
+                        is_compact_normalized = (
+                            path.suffix.lower() == ".jsonl"
+                            and isinstance(obj, dict)
+                            and "raw_text" not in obj
+                            and "normalized_text" not in obj
+                            and "cleaned_text" not in obj
+                            and all(k in obj for k in ("raw_text_sha256", "normalized_text_sha256", "cleaned_text_sha256"))
+                        )
+                        prior_raw_sha = obj.get("raw_text_sha256") if is_compact_normalized else None
+                        prior_norm_sha = obj.get("normalized_text_sha256") if is_compact_normalized else None
                         output_record = canonical_record(obj if path.suffix.lower() == ".jsonl" else {"text": text},
                                                          cleaned_text=cleaned, source_file=path.resolve(),
                                                          source_line=line_number,
                                                          source_registry=self.source_registry)
+                        if is_compact_normalized:
+                            output_record["raw_text_sha256"] = prior_raw_sha
+                            output_record["normalized_text_sha256"] = prior_norm_sha
+                            for stage_key in ("raw_text", "normalized_text", "cleaned_text"):
+                                output_record.pop(stage_key, None)
                         # Keep legacy keys while preserving all canonical fields.
                         output_record["source"] = str(path.resolve())
                         output_record["line_number"] = line_number

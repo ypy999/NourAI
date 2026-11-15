@@ -153,9 +153,30 @@ def _iter_stream(stream, logical_name, text_fields, max_json_bytes):
 
 def iter_source_records(path, *, text_fields=("text", "content", "sentence"),
                         max_json_bytes=64 * 1024 * 1024, max_zip_member_bytes=2 * 1024**3,
-                        max_archive_total_bytes=4 * 1024**3):
+                        max_archive_total_bytes=4 * 1024**3, source_format=None,
+                        metadata_csv_path=None, qnl_options=None, wto_options=None):
     """Yield record/error mappings. ZIP entries are streamed, never extracted."""
     path = Path(path)
+    if source_format == "zip_txt_with_official_metadata_csv" or (
+        source_format is None
+        and path.suffix.casefold() == ".zip"
+        and path.with_name(f"{path.stem}_metadata.csv").is_file()
+    ):
+        from .adapters.qnl_adapter import iter_qnl_archive_records
+
+        yield from iter_qnl_archive_records(
+            path,
+            metadata_csv_path=metadata_csv_path,
+            max_member_bytes=max_zip_member_bytes,
+            max_total_bytes=max(max_archive_total_bytes, 8 * 1024**3),
+            **(qnl_options or {}),
+        )
+        return
+    if source_format == "zip_tab_delimited_parallel_corpus":
+        from .adapters.wto_adapter import iter_wto_archive_records
+
+        yield from iter_wto_archive_records(path, **(wto_options or {}))
+        return
     suffixes = "".join(path.suffixes).casefold()
     if suffixes.endswith(".bz2"):
         try:

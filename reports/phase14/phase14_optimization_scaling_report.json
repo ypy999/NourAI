@@ -1,0 +1,170 @@
+{
+  "phase": "14",
+  "title": "Training Optimization & Scaling",
+  "timestamp": "2026-11-13T21:56:47Z",
+  "status": "CERTIFIED_FOR_PHASE_15_MULTILINGUAL_EVALUATION",
+  "certification_verdict": "CERTIFIED_FOR_PHASE_15_MULTILINGUAL_EVALUATION",
+  "all_checks_passed": true,
+  "checklist": {
+    "training_speed_improved": true,
+    "memory_profile_analyzed": true,
+    "dataloader_optimized": true,
+    "batch_size_tuned": true,
+    "gradient_accumulation_tuned": true,
+    "scalability_tested": true,
+    "configurations_compared_and_improved": true
+  },
+  "dataloader_optimization": {
+    "sequence_count": 1548,
+    "total_tokens_iterated": 198144,
+    "bitwise_identical": true,
+    "disk_iteration_seconds": 0.18131,
+    "preloaded_iteration_seconds": 0.03872,
+    "disk_tokens_per_second": 1092876.6,
+    "preloaded_tokens_per_second": 5117910.5,
+    "speedup_ratio": 4.68,
+    "preloaded_u16_buffer_mib": 0.378
+  },
+  "batch_and_accumulation_tuning": {
+    "batch_size_comparison": [
+      {
+        "batch_size": 4,
+        "gradient_accumulation_steps": 1,
+        "tokens_per_step": 256,
+        "elapsed_seconds": 2.3089,
+        "tokens_per_second": 443.51,
+        "final_validation_loss": 5.573799
+      },
+      {
+        "batch_size": 8,
+        "gradient_accumulation_steps": 1,
+        "tokens_per_step": 512,
+        "elapsed_seconds": 1.0917,
+        "tokens_per_second": 1875.98,
+        "final_validation_loss": 5.555611
+      },
+      {
+        "batch_size": 16,
+        "gradient_accumulation_steps": 1,
+        "tokens_per_step": 1024,
+        "elapsed_seconds": 0.9883,
+        "tokens_per_second": 4144.57,
+        "final_validation_loss": 5.534264
+      }
+    ],
+    "gradient_accumulation_comparison": [
+      {
+        "batch_size": 4,
+        "gradient_accumulation_steps": 4,
+        "effective_batch_sequences": 16,
+        "effective_tokens_per_step": 1024,
+        "elapsed_seconds": 2.0789,
+        "tokens_per_second": 1970.24,
+        "final_validation_loss": 5.53292
+      },
+      {
+        "batch_size": 8,
+        "gradient_accumulation_steps": 2,
+        "effective_batch_sequences": 16,
+        "effective_tokens_per_step": 1024,
+        "elapsed_seconds": 1.048,
+        "tokens_per_second": 3908.51,
+        "final_validation_loss": 5.530956
+      },
+      {
+        "batch_size": 16,
+        "gradient_accumulation_steps": 1,
+        "effective_batch_sequences": 16,
+        "effective_tokens_per_step": 1024,
+        "elapsed_seconds": 2.3789,
+        "tokens_per_second": 1721.83,
+        "final_validation_loss": 5.534264
+      }
+    ],
+    "recommended_configuration": {
+      "batch_size": 8,
+      "gradient_accumulation_steps": 2,
+      "tokens_per_second": 3908.51
+    }
+  },
+  "architecture_scaling": {
+    "presets_tested": [
+      "default",
+      "small",
+      "base"
+    ],
+    "scaling_table": [
+      {
+        "preset": "default",
+        "parameters": 843008,
+        "d_model": 128,
+        "n_heads": 4,
+        "n_layers": 4,
+        "context_length": 128,
+        "fp32_weights_mib": 3.216,
+        "fp16_weights_mib": 1.608,
+        "adamw_states_mib": 6.432,
+        "fp32_training_floor_mib": 12.863,
+        "step_latency_ms": 23.13,
+        "tokens_per_second": 2767.3
+      },
+      {
+        "preset": "small",
+        "parameters": 4871168,
+        "d_model": 256,
+        "n_heads": 8,
+        "n_layers": 6,
+        "context_length": 256,
+        "fp32_weights_mib": 18.582,
+        "fp16_weights_mib": 9.291,
+        "adamw_states_mib": 37.164,
+        "fp32_training_floor_mib": 74.328,
+        "step_latency_ms": 68.55,
+        "tokens_per_second": 933.6
+      },
+      {
+        "preset": "base",
+        "parameters": 25615360,
+        "d_model": 512,
+        "n_heads": 8,
+        "n_layers": 8,
+        "context_length": 512,
+        "fp32_weights_mib": 97.715,
+        "fp16_weights_mib": 48.857,
+        "adamw_states_mib": 195.43,
+        "fp32_training_floor_mib": 390.859,
+        "step_latency_ms": 293.3,
+        "tokens_per_second": 218.2
+      }
+    ]
+  },
+  "optimized_continuation_training": {
+    "completed_steps": 30,
+    "elapsed_seconds": 19.603,
+    "phase13_mean_tokens_per_second": 4415.7,
+    "phase14_mean_tokens_per_second": 4593.74,
+    "before_validation_loss": 2.189916,
+    "after_validation_loss": 1.969828,
+    "validation_loss_reduction": 0.220088,
+    "before_perplexity": 8.9345,
+    "after_perplexity": 7.1694,
+    "optimized_model_checkpoint": "checkpoints\\phase14\\phase14_optimized_model.pt",
+    "validation_curve": [
+      {
+        "step": 10,
+        "validation_loss": 2.055138,
+        "perplexity": 7.8079
+      },
+      {
+        "step": 20,
+        "validation_loss": 1.982679,
+        "perplexity": 7.2622
+      },
+      {
+        "step": 30,
+        "validation_loss": 1.969828,
+        "perplexity": 7.1694
+      }
+    ]
+  }
+}
