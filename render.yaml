@@ -3,7 +3,7 @@ services:
     name: nourai-studio
     runtime: python
     plan: free
-    buildCommand: pip install --no-cache-dir -r requirements/base.txt
+    buildCommand: pip install --no-cache-dir --extra-index-url https://download.pytorch.org/whl/cpu -r requirements/base.txt
     startCommand: python run_nourai.py --no-browser --host 0.0.0.0
     envVars:
       - key: PYTHON_VERSION
