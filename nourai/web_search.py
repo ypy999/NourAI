@@ -160,6 +160,128 @@ def search_duckduckgo_instant(query: str, max_results: int = 3) -> list[dict[str
     return results[:max_results]
 
 
+def _answer_conversational_or_identity(prompt: str, lang_code: str, newly_saved_memories: list[str] | None = None) -> str | None:
+    """Handle direct conversational, greeting, identity, and capability questions without searching Google."""
+    clean = re.sub(r"[؟?!.,،]+", " ", (prompt or "").strip().lower())
+    clean = re.sub(r"\s+", " ", clean).strip()
+
+    # Normalize common Arabic spelling variants (أ/إ/آ -> ا, ة -> ه, ذ/د in مادا)
+    norm_ar = (
+        clean.replace("أ", "ا")
+        .replace("إ", "ا")
+        .replace("آ", "ا")
+        .replace("ة", "ه")
+        .replace("مادا", "ماذا")
+    )
+
+    capability_triggers = (
+        "ماذا يمكنك",
+        "ماذا تستطيع",
+        "ما هي قدراتك",
+        "ماهي قدراتك",
+        "ما الذي يمكنك",
+        "كيف تساعدني",
+        "كيف يمكنك مساعدتي",
+        "وش تقدر",
+        "شو بتعمل",
+        "ماذا تفعل",
+        "ايش تسوي",
+        "what can you do",
+        "what are your capabilities",
+        "how can you help",
+        "que peux-tu faire",
+        "que pouvez-vous faire",
+    )
+    if any(t in norm_ar or t in clean for t in capability_triggers):
+        if lang_code == "ar":
+            return (
+                "أنا **NourAI**، مساعدك الذكي متعدد اللغات (العربية، الإنجليزية، والفرنسية). إليك ما يمكنني فعله لك:\n\n"
+                "1. **الإجابة عن الأسئلة والبحث الحي في الويب وقوقل:** اسألني عن أي شخصية، دولة، علم، أو خبر حديث.\n"
+                "2. **البرمجة والمعاينة الحية (Live Code Canvas):** أكتب أكواد Python وHTML/JS مع زر **▶️ معاينة** لتشغيلها مباشرة.\n"
+                "3. **تحليل الملفات المرفقة (📎 Local RAG):** ارفع أي ملف نصي أو برمجي واسألني عما بداخله.\n"
+                "4. **الترجمة والتلخيص والرياضيات:** أترجم بين العربية والإنجليزية والفرنسية، وألخص النصوص، وأحل المسائل الرياضية.\n"
+                "5. **الذاكرة الدائمة (🧠 Memory):** أتذكر اسمك وتفضيلاتك عبر جميع المحادثات."
+            )
+        if lang_code == "fr":
+            return (
+                "Je suis **NourAI**, votre assistant IA multilingue (arabe, anglais, français). Je peux :\n"
+                "1. Répondre à vos questions et chercher en direct sur le Web / Wikipédia.\n"
+                "2. Écrire du code Python/HTML avec aperçu en direct (▶️).\n"
+                "3. Analyser vos fichiers joints (📎), traduire, résumer et calculer."
+            )
+        return (
+            "I am **NourAI**, your multilingual AI assistant (Arabic, English, French). Here is what I can do:\n"
+            "1. **Live Web & Wikipedia Q&A:** Answer general questions with live sources.\n"
+            "2. **Coding & Live HTML Preview (▶️):** Write Python and interactive HTML/JS widgets.\n"
+            "3. **Document Analysis (📎), Translation, Summarization, Math & Persistent Memory (🧠).**"
+        )
+
+    identity_triggers = (
+        "من انت",
+        "ما هو nourai",
+        "ماهو nourai",
+        "عرف عن نفسك",
+        "عرفني بنفسك",
+        "ما اسمك",
+        "شو اسمك",
+        "who are you",
+        "what is nourai",
+        "what is your name",
+        "qui es-tu",
+        "qu'est-ce que nourai",
+    )
+    if any(t in norm_ar or t in clean for t in identity_triggers):
+        if lang_code == "ar":
+            return "أنا **NourAI (`v1.2.0`)**، نموذج ومساعد ذكاء اصطناعي متعدد اللغات يعمل باللغات العربية والإنجليزية والفرنسية، ومزوّد بشبكة عصبية (`4.87M` معامل) وبحث ويب حي وذاكرة دائمة."
+        if lang_code == "fr":
+            return "Je suis **NourAI (`v1.2.0`)**, un modèle et assistant IA multilingue prenant en charge l'arabe, l'anglais et le français."
+        return "I am **NourAI (`v1.2.0`)**, a multilingual AI model and assistant supporting Arabic, English, and French."
+
+    greeting_triggers = (
+        "مرحبا",
+        "اهلا",
+        "السلام عليكم",
+        "صباح الخير",
+        "مساء الخير",
+        "كيف حالك",
+        "كيفك",
+        "شلونك",
+        "اخبارك",
+        "hello",
+        "hi",
+        "hey",
+        "good morning",
+        "how are you",
+        "bonjour",
+        "salut",
+        "comment allez-vous",
+        "comment ca va",
+        "comment ça va",
+    )
+    if clean in greeting_triggers or norm_ar in greeting_triggers or any(
+        norm_ar.startswith(g) and len(norm_ar.split()) <= 5 for g in greeting_triggers
+    ):
+        if lang_code == "ar":
+            return "أهلاً بك في **NourAI**! أنا بخير وجاهز لمساعدتك. كيف يمكنني خدمتك اليوم؟"
+        if lang_code == "fr":
+            return "Bonjour ! Je suis **NourAI**, je vais très bien. Comment puis-je vous aider aujourd'hui ?"
+        return "Hello! Welcome to **NourAI**. I am doing great—how can I help you today?"
+
+    thanks_triggers = ("شكرا", "شكراً", "جزاك الله خيرا", "ممتاز", "رائع", "thank you", "thanks", "merci")
+    if clean in thanks_triggers or norm_ar in thanks_triggers:
+        if lang_code == "ar":
+            return "على الرحب والسعة! يسعدني دائماً مساعدتك."
+        if lang_code == "fr":
+            return "Je vous en prie ! N'hésitez pas si vous avez d'autres questions."
+        return "You're very welcome! Let me know if you need anything else."
+
+    if any(norm_ar.startswith(p) for p in ("تذكر ان", "لا تنس ان", "احفظ في ذاكرتك", "اسمي ", "انا اسمي ")):
+        if lang_code == "ar":
+            return "تم حفظ هذه المعلومة في ذاكرتي الدائمة 🧠، وسأتذكرها في محادثاتنا القادمة."
+
+    return None
+
+
 def _maybe_generate_html_artifact(prompt: str, lang_code: str) -> str | None:
     """Generate a complete runnable HTML/CSS/JS artifact when the user requests a web widget, calculator, or page."""
     lower = (prompt or "").lower()
@@ -396,6 +518,17 @@ class NourAIWebAndSmartEngine:
                 "task": "document_rag",
                 "response_source": "local_document_rag",
                 "citations": [{"source": "Uploaded Document", "title": c["filename"], "snippet": c["content"][:120], "url": ""} for c in rag_chunks[:3]],
+            }
+
+        # 1e. Check if it's a direct conversational / greeting / identity / capability question
+        conv_reply = _answer_conversational_or_identity(prompt, lang_code)
+        if conv_reply:
+            return {
+                "reply": conv_reply,
+                "language": lang_code,
+                "task": "conversation_and_capabilities",
+                "response_source": "nourai_assistant",
+                "citations": [],
             }
 
         # 2. If it's a deterministic local task (math, coding, translation, memory, contradiction), check local capability first
