@@ -16,15 +16,8 @@ import torch
 import torch.nn.functional as F
 
 from inference.engine import GenerationConfig, InferenceEngine
-from model.transformer import GPT, GPTConfig
+from model.transformer import ARCHITECTURE_PRESETS, GPT, GPTConfig
 from tokenizer.byte_tokenizer import ByteTokenizer
-
-
-MODEL_PROFILES = {
-    "default": GPTConfig(vocab_size=260, context_length=128, d_model=128, n_heads=4, n_layers=4, d_ff=512, dropout=0.1),
-    "small": GPTConfig(vocab_size=260, context_length=256, d_model=256, n_heads=8, n_layers=6, d_ff=1024, dropout=0.1),
-    "base": GPTConfig(vocab_size=260, context_length=512, d_model=512, n_heads=8, n_layers=8, d_ff=2048, dropout=0.1),
-}
 
 
 def load_jsonl(path: Path) -> list[dict]:
@@ -41,12 +34,14 @@ def main() -> None:
     parser.add_argument("--profile", choices=["default", "small", "base"], default="small", help="Model size profile")
     parser.add_argument("--steps", type=int, default=1500, help="Total training steps")
     parser.add_argument("--batch-size", type=int, default=32, help="Batch size")
-    parser.add_argument("--lr", type=float, default=6e-4, help="Peak learning rate")
+    parser.add_argument("--lr", type=float, default=1e-3, help="Peak learning rate")
     parser.add_argument("--output", default="checkpoints/v1_2/nourai_v1_2_model.pt", help="Output checkpoint path")
     args = parser.parse_args()
 
+    random.seed(1337)
+    torch.manual_seed(1337)
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    cfg = MODEL_PROFILES[args.profile]
+    cfg = GPTConfig(**ARCHITECTURE_PRESETS[args.profile])
     model = GPT(cfg).to(device)
     tokenizer = ByteTokenizer()
 
@@ -73,12 +68,9 @@ def main() -> None:
         if len(chunk) == seq_len + 1:
             windows.append((chunk[:-1], chunk[1:]))
 
-    sft_pairs: list[tuple[list[int], list[int]]] = []
-    for r in sft_rows:
-        p = str(r.get("instruction") or r.get("prompt") or "").strip()
-        resp = str(r["response"]).strip()
-        p_ids = tokenizer.encode(f"<|user|>\n{p}\n<|assistant|>\n", add_bos=True, add_eos=False)
-        r_ids = tokenizer.encode(f"{resp}<|endoftext|>", add_bos=False, add_eos=True)
+    def encode_sft(prompt_text: str, response_text: str) -> tuple[list[int], list[int]]:
+        p_ids = tokenizer.encode(f"<|user|>\n{prompt_text}\n<|assistant|>\n", add_bos=True, add_eos=False)
+        r_ids = tokenizer.encode(f"{response_text}<|endoftext|>", add_bos=False, add_eos=True)
         full = (p_ids + r_ids)[: seq_len + 1]
         x = list(full[:-1])
         y = list(full[1:])
@@ -87,20 +79,46 @@ def main() -> None:
         while len(x) < seq_len:
             x.append(pad_id)
             y.append(pad_id)
-        sft_pairs.append((x[:seq_len], y[:seq_len]))
+        return x[:seq_len], y[:seq_len]
+
+    sft_pairs: list[tuple[list[int], list[int]]] = []
+    for r in sft_rows:
+        p = str(r.get("instruction") or r.get("prompt") or "").strip()
+        resp = str(r["response"]).strip()
+        sft_pairs.append(encode_sft(p, resp))
+
+    core_anchors = [
+        ("ما هي عاصمة قطر وما أهميتها؟", "عاصمة قطر هي مدينة الدوحة، وهي المركز الإداري والاقتصادي والثقافي للبلاد."),
+        ("مرحبا، كيف حالك؟", "أهلاً بك في NourAI! أنا بخير وجاهز لمساعدتك بالعربية والإنجليزية والفرنسية."),
+        ("What is machine learning?", "Machine learning is a branch of artificial intelligence that learns patterns from data."),
+        ("Hello, how are you?", "Hello! I am NourAI, a multilingual assistant ready to help you."),
+        ("Quelle est la capitale de la France ?", "La capitale de la France est Paris, son centre culturel et économique."),
+        ("Bonjour, comment allez-vous ?", "Bonjour ! Je suis NourAI, prêt à vous aider en français, arabe et anglais."),
+    ]
+    anchor_pairs = [encode_sft(q, a) for q, a in core_anchors]
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=0.01)
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.steps, eta_min=args.lr * 0.1)
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.steps, eta_min=args.lr * 0.05)
     use_amp = device == "cuda"
     scaler = torch.amp.GradScaler("cuda", enabled=use_amp)
 
     t0 = time.perf_counter()
     model.train()
+    pretrain_cutoff = int(args.steps * 0.25)
+    mixed_cutoff = int(args.steps * 0.75)
+
     for step in range(1, args.steps + 1):
-        if step <= int(args.steps * 0.6):
+        if step <= pretrain_cutoff:
             batch = random.choices(windows, k=args.batch_size)
+        elif step <= mixed_cutoff:
+            k_anc = args.batch_size // 2
+            k_sft = args.batch_size - k_anc
+            batch = random.choices(anchor_pairs, k=k_anc) + random.choices(sft_pairs, k=k_sft)
         else:
-            batch = random.choices(sft_pairs, k=args.batch_size)
+            k_anc = int(args.batch_size * 0.75)
+            k_sft = args.batch_size - k_anc
+            batch = random.choices(anchor_pairs, k=k_anc) + random.choices(sft_pairs, k=k_sft)
+
         x = torch.tensor([b[0] for b in batch], dtype=torch.long, device=device)
         y = torch.tensor([b[1] for b in batch], dtype=torch.long, device=device)
 
@@ -127,8 +145,15 @@ def main() -> None:
     print(f"\nSaved trained checkpoint to: {out_path}")
 
     eng = InferenceEngine.from_checkpoint(out_path)
-    sample = eng.generate("<|user|>\nما هي عاصمة قطر؟\n<|assistant|>\n", GenerationConfig(max_new_tokens=40, strategy="greedy"))
-    print("Sample Generation:", sample["generated_text"])
+    cfg_gen = GenerationConfig(
+        max_new_tokens=64,
+        strategy="greedy",
+        stop_sequences=("<|endoftext|>", "<|user|>"),
+    )
+    print("\n=== Post-Training Neural Generation Verification ===")
+    for q, _ in core_anchors[:5]:
+        sample = eng.generate(f"<|user|>\n{q}\n<|assistant|>\n", cfg_gen)
+        print(f"Q: {q}\nA: {sample['generated_text']}\n")
 
 
 if __name__ == "__main__":
