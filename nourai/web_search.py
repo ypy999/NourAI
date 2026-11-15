@@ -776,6 +776,17 @@ class NourAIWebAndSmartEngine:
                 "citations": [],
             }
 
+        # 1a0. Check for SVG Diagram / Flowchart first so 'ارسم مخطط' triggers diagram instead of image (Feature 7)
+        svg_reply = _maybe_generate_svg_diagram(prompt, lang_code)
+        if svg_reply:
+            return {
+                "reply": svg_reply,
+                "language": lang_code,
+                "task": "svg_diagram",
+                "response_source": "diagram_engine",
+                "citations": [],
+            }
+
         # 1a. Check if user is asking for Free AI Image Generation (Feature 1)
         img_reply = _maybe_generate_ai_image(prompt, lang_code)
         if img_reply:
