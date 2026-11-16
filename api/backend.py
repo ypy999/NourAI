@@ -508,13 +508,25 @@ class NourAIBackend:
         body = body or {}
         parsed = urlparse(path)
         route = parsed.path.rstrip("/") or "/"
+        origin = (headers.get("Origin") or headers.get("origin") or "").strip()
+        allowed_origins = (
+            "https://ypyai-95ca7.web.app",
+            "https://ypyai-95ca7.firebaseapp.com",
+            "https://nourai-studio.onrender.com",
+        )
+        allow_origin = origin if (origin in allowed_origins or origin.startswith("http://127.0.0.1") or origin.startswith("http://localhost")) else "http://127.0.0.1"
         sec_headers = {
             "X-Content-Type-Options": "nosniff",
             "X-Frame-Options": "DENY",
             "Content-Security-Policy": "default-src 'self' 'unsafe-inline'",
             "Cache-Control": "no-store",
-            "Access-Control-Allow-Origin": "http://127.0.0.1",
+            "Access-Control-Allow-Origin": allow_origin,
+            "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization",
         }
+
+        if method == "OPTIONS":
+            return 204, sec_headers, {}
 
         # Public routes
         if method == "GET" and route == "/" and ui_html_provider is not None:

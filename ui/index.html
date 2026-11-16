@@ -657,6 +657,9 @@
       }
     };
 
+    const API_BASE = (window.location.hostname.endsWith("web.app") || window.location.hostname.endsWith("firebaseapp.com"))
+      ? "https://nourai-studio.onrender.com"
+      : "";
     let currentLanguage = "arabic";
     let sessions = [];
     let activeSessionId = null;
@@ -735,7 +738,7 @@
         return authToken;
       }
       try {
-        const res = await fetch("/api/v1/auth/guest", {
+        const res = await fetch(API_BASE + "/api/v1/auth/guest", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({})
@@ -755,7 +758,7 @@
       let token = await ensureAuthenticated();
       if (!token) return;
       try {
-        let res = await fetch("/api/v1/sessions", {
+        let res = await fetch(API_BASE + "/api/v1/sessions", {
           headers: { "Authorization": "Bearer " + token }
         });
         if (res.status === 401) {
@@ -765,7 +768,7 @@
           setCookie("nourai_active_session", "", -1);
           token = await ensureAuthenticated();
           if (!token) return;
-          res = await fetch("/api/v1/sessions", {
+          res = await fetch(API_BASE + "/api/v1/sessions", {
             headers: { "Authorization": "Bearer " + token }
           });
         }
@@ -850,7 +853,7 @@
       const token = await ensureAuthenticated();
       if (!token) return;
       try {
-        const res = await fetch("/api/v1/sessions/" + sessionId, {
+        const res = await fetch(API_BASE + "/api/v1/sessions/" + sessionId, {
           headers: { "Authorization": "Bearer " + token }
         });
         if (!res.ok) {
@@ -880,7 +883,7 @@
       if (!newTitle || !newTitle.trim()) return;
       const token = await ensureAuthenticated();
       if (!token) return;
-      const res = await fetch("/api/v1/sessions/" + sessionId + "/rename", {
+      const res = await fetch(API_BASE + "/api/v1/sessions/" + sessionId + "/rename", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -894,7 +897,7 @@
     async function deleteSession(sessionId) {
       const token = await ensureAuthenticated();
       if (!token) return;
-      const res = await fetch("/api/v1/sessions/" + sessionId, {
+      const res = await fetch(API_BASE + "/api/v1/sessions/" + sessionId, {
         method: "DELETE",
         headers: { "Authorization": "Bearer " + token }
       });
@@ -913,7 +916,7 @@
       stopStreamingFlag = true;
       const token = await ensureAuthenticated();
       if (!token) return;
-      await fetch("/api/v1/chat/stop", {
+      await fetch(API_BASE + "/api/v1/chat/stop", {
         method: "POST",
         headers: { "Authorization": "Bearer " + token }
       });
@@ -1021,7 +1024,7 @@
       const token = await ensureAuthenticated();
       if (!token) return;
       try {
-        const res = await fetch("/api/v1/code/run", {
+        const res = await fetch(API_BASE + "/api/v1/code/run", {
           method: "POST",
           headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
           body: JSON.stringify({ code: codeStr })
@@ -1079,7 +1082,7 @@
           top_p: parseFloat(document.getElementById("top-p-input").value),
           max_new_tokens: parseInt(document.getElementById("max-tokens-input").value, 10)
         };
-        let response = await fetch("/api/v1/chat/stream", {
+        let response = await fetch(API_BASE + "/api/v1/chat/stream", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -1091,7 +1094,7 @@
           activeSessionId = null;
           setCookie("nourai_active_session", "", -1);
           reqBody.session_id = null;
-          response = await fetch("/api/v1/chat/stream", {
+          response = await fetch(API_BASE + "/api/v1/chat/stream", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -1193,7 +1196,7 @@
       const token = await ensureAuthenticated();
       if (!token) return;
       try {
-        const mRes = await fetch("/api/v1/memories", { headers: { "Authorization": "Bearer " + token } });
+        const mRes = await fetch(API_BASE + "/api/v1/memories", { headers: { "Authorization": "Bearer " + token } });
         if (mRes.ok) {
           const mData = await mRes.json();
           const mems = mData.memories || [];
@@ -1219,7 +1222,7 @@
         } else {
           payloadBody.content = await file.text();
         }
-        const res = await fetch("/api/v1/documents", {
+        const res = await fetch(API_BASE + "/api/v1/documents", {
           method: "POST",
           headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
           body: JSON.stringify(payloadBody)

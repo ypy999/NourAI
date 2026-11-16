@@ -288,6 +288,9 @@ def start_live_http_server(
         def do_DELETE(self) -> None:
             self._dispatch("DELETE")
 
+        def do_OPTIONS(self) -> None:
+            self._dispatch("OPTIONS")
+
     server = ThreadingHTTPServer((host, int(port)), _Handler)
     scheme = "http"
     if enable_tls:
