@@ -852,40 +852,78 @@
     <div id="welcome-hero">
       <div class="hero-emblem">✦</div>
       <h1 class="hero-greeting" id="hero-title">كيف يمكنني مساعدتك اليوم؟</h1>
-      <div class="quick-chips">
-        <button class="chip" onclick="useStarterPrompt('خطط لي تطبيقاً ذكياً متكاملاً مع التصميم والكود والخطة')">🤝 استشر فريق الـ 5 مساعدين</button>
-        <button class="chip" onclick="useStarterPrompt('ارسم لي مدينة عربية مستقبلية')">🎨 ارسم صورة</button>
-        <button class="chip" onclick="useStarterPrompt('ابحث في قوقل عن الذكاء الاصطناعي')">🌐 ابحث في الويب</button>
-        <button class="chip" onclick="useStarterPrompt('اكتب دالة بايثون لحساب مضروب العدد factorial')">💻 اكتب كوداً</button>
+      <p style="font-size:0.88rem;color:var(--text-muted);margin:0.25rem 0 0.85rem;text-align:center;max-width:520px;line-height:1.6;">
+        اكتب سؤالك مباشرةً للدردشة العامة، أو اضغط على <strong>✨ الأدوات</strong> لاختيار أداة متخصصة.
+      </p>
+      <div style="width:100%;max-width:640px;margin-bottom:0.4rem;">
+        <div style="font-size:0.8rem;font-weight:700;color:var(--accent);margin-bottom:0.5rem;text-align:center;">🚀 ابدأ من هنا</div>
+        <div class="quick-chips">
+          <button class="chip" onclick="useStarterPrompt('اشرح لي الذكاء الاصطناعي ببساطة في 5 نقاط')">💡 اشرح لي ببساطة</button>
+          <button class="chip" onclick="useStarterPrompt('اكتب دالة بايثون لحساب مضروب العدد factorial')">💻 اكتب كوداً</button>
+          <button class="chip" onclick="useStarterPrompt('خطط لي مشروعاً صغيراً ناجحاً برأس مال بسيط')">🧭 ساعدني في التخطيط</button>
+          <button class="chip" style="border-color:var(--accent);color:var(--accent);" onclick="toggleSmartTools()">🧰 تصفح الأدوات المصنفة</button>
+        </div>
       </div>
     </div>
 
     <section id="chat-messages" aria-live="polite"></section>
 
     <footer class="composer-wrap">
-      <div id="smart-tools-menu" style="display:none;flex-wrap:wrap;gap:0.4rem;padding:0.6rem;margin-bottom:0.45rem;background:var(--bg-sidebar);border:1px solid var(--border);border-radius:1rem;">
-        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('حسن هذا السؤال واجعله احترافياً: ')">✨ تحسين السؤال</button>
-        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('اشرح لي ببساطة وكأنني مبتدئ: ')">💡 شرح ببساطة</button>
-        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('اختصر هذا النص في نقاط: ')">📝 اختصار النص</button>
-        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('غيّر أسلوب هذا النص إلى أسلوب رسمي احترافي: ')">🎭 تغيير الأسلوب</button>
-        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('اقترح لي أفكار مشاريع وأسماء تجارية في مجال: ')">🚀 مولد الأفكار</button>
-        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('اكتب كوداً برمجياً واشرحه لـ: ')">💻 مساعد البرمجة</button>
-        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('صحح الأخطاء الإملائية والنحوية في: ')">✍️ مدقق لغوي</button>
-        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('أنشئ اختباراً من هذا الدرس: ')">🎯 مولد الاختبارات</button>
-        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('اختبر هذه الفكرة وحلل نقاط القوة والمخاطر: ')">🧪 مختبر الأفكار</button>
-        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('ابدأ محاكاة مقابلة عمل لوظيفة: ')">🎤 محاكي المقابلات</button>
-        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('ساعدني في اتخاذ قرار مقارنة بين: ')">⚖️ مساعد القرارات</button>
-        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('ارسم خريطة ذهنية لـ: ')">🗺️ خريطة ذهنية</button>
-        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="document.getElementById(\'doc-upload-input\').click()">📄 اسأل ملفاتك</button>
-        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('مجلس الخبراء: ')">🏛️ مجلس الخبراء</button>
-        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('تطور الفكرة: ')">🌱 تطور الفكرة (5 نسخ)</button>
-        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('ماذا لو: ')">🔮 ماذا لو؟</button>
-        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('شبكة المعرفة: ')">🕸️ شبكة المعرفة</button>
-        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('التفكير بالعكس: ')">🔁 التفكير بالعكس</button>
-        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('فريق العمل: ')">👥 فريق العمل</button>
-        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('مناظرة: ')">⚖️ مناظرة الذكاء</button>
-        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('سلسلة المهام: ')">⛓️ سلسلة المهام</button>
-        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('بأسلوبي الرقمي: ')">🧬 النسخة الرقمية</button>
+      <div id="smart-tools-menu" style="display:none;flex-direction:column;gap:0.65rem;padding:0.75rem;margin-bottom:0.45rem;background:var(--bg-sidebar);border:1px solid var(--border);border-radius:1rem;max-height:46vh;overflow-y:auto;">
+        <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);padding-bottom:0.4rem;">
+          <span style="font-size:0.82rem;font-weight:700;">🧰 الأدوات المتخصصة (مصنفة)</span>
+          <button class="icon-btn" style="min-width:24px;height:24px;font-size:0.75rem;" onclick="toggleSmartTools()" title="إغلاق">✕</button>
+        </div>
+
+        <div>
+          <div style="font-size:0.74rem;font-weight:700;color:var(--text-muted);margin-bottom:0.35rem;">✍️ الكتابة والتحرير</div>
+          <div style="display:flex;flex-wrap:wrap;gap:0.35rem;">
+            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('حسن هذا السؤال واجعله احترافياً: ', '✨ تحسين السؤال')">✨ تحسين السؤال</button>
+            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('اشرح لي ببساطة وكأنني مبتدئ: ', '💡 شرح ببساطة')">💡 شرح ببساطة</button>
+            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('اختصر هذا النص في نقاط: ', '📝 اختصار النص')">📝 اختصار النص</button>
+            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('غيّر أسلوب هذا النص إلى أسلوب رسمي احترافي: ', '🎭 تغيير الأسلوب')">🎭 تغيير الأسلوب</button>
+            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('صحح الأخطاء الإملائية والنحوية في: ', '✍️ مدقق لغوي')">✍️ مدقق لغوي</button>
+            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('بأسلوبي الرقمي: ', '🧬 النسخة الرقمية')">🧬 النسخة الرقمية</button>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size:0.74rem;font-weight:700;color:var(--text-muted);margin-bottom:0.35rem;">🧠 التحليل والخبراء</div>
+          <div style="display:flex;flex-wrap:wrap;gap:0.35rem;">
+            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('مجلس الخبراء: ', '🏛️ مجلس الخبراء')">🏛️ مجلس الخبراء</button>
+            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('فريق العمل: ', '👥 فريق العمل')">👥 فريق العمل</button>
+            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('مناظرة: ', '⚖️ مناظرة الذكاء')">⚖️ مناظرة الذكاء</button>
+            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('تطور الفكرة: ', '🌱 تطور الفكرة')">🌱 تطور الفكرة (5 نسخ)</button>
+            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('ماذا لو: ', '🔮 ماذا لو؟')">🔮 ماذا لو؟</button>
+            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('التفكير بالعكس: ', '🔁 التفكير بالعكس')">🔁 التفكير بالعكس</button>
+            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('اختبر هذه الفكرة وحلل نقاط القوة والمخاطر: ', '🧪 مختبر الأفكار')">🧪 مختبر الأفكار</button>
+            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('ساعدني في اتخاذ قرار مقارنة بين: ', '⚖️ مساعد القرارات')">⚖️ مساعد القرارات</button>
+            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('سلسلة المهام: ', '⛓️ سلسلة المهام')">⛓️ سلسلة المهام</button>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size:0.74rem;font-weight:700;color:var(--text-muted);margin-bottom:0.35rem;">📚 الدراسة والملفات</div>
+          <div style="display:flex;flex-wrap:wrap;gap:0.35rem;">
+            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="document.getElementById('doc-upload-input').click()">📄 اسأل ملفاتك</button>
+            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('أنشئ اختباراً من هذا الدرس: ', '🎯 مولد الاختبارات')">🎯 مولد الاختبارات</button>
+            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('ارسم خريطة ذهنية لـ: ', '🗺️ خريطة ذهنية')">🗺️ خريطة ذهنية</button>
+            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('شبكة المعرفة: ', '🕸️ شبكة المعرفة')">🕸️ شبكة المعرفة</button>
+            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('ابدأ محاكاة مقابلة عمل لوظيفة: ', '🎤 محاكي المقابلات')">🎤 محاكي المقابلات</button>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size:0.74rem;font-weight:700;color:var(--text-muted);margin-bottom:0.35rem;">🎨 الإبداع والبرمجة</div>
+          <div style="display:flex;flex-wrap:wrap;gap:0.35rem;">
+            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('اكتب كوداً برمجياً واشرحه لـ: ', '💻 مساعد البرمجة')">💻 مساعد البرمجة</button>
+            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('اقترح لي أفكار مشاريع وأسماء تجارية في مجال: ', '🚀 مولد الأفكار')">🚀 مولد الأفكار</button>
+          </div>
+        </div>
+      </div>
+      <div id="active-mode-bar" style="display:none;align-items:center;justify-content:space-between;gap:0.5rem;padding:0.3rem 0.7rem;margin-bottom:0.35rem;background:rgba(16,185,129,0.12);border:1px solid var(--accent);border-radius:0.75rem;font-size:0.78rem;">
+        <span id="active-mode-label">🧰 أداة متخصصة</span>
+        <button class="icon-btn" style="min-width:auto;height:22px;padding:0 0.45rem;font-size:0.72rem;" onclick="clearActiveTool()" title="العودة للمحادثة العامة">✕ العودة للمحادثة</button>
       </div>
       <div id="attachment-preview-bar" style="display:none;align-items:center;gap:0.5rem;padding:0.35rem 0.65rem;margin-bottom:0.35rem;background:var(--bg-sidebar);border:1px solid var(--border);border-radius:0.75rem;font-size:0.8rem;">
         <img id="attachment-thumb" style="display:none;width:36px;height:36px;object-fit:cover;border-radius:0.4rem;" alt="preview" />
@@ -951,35 +989,40 @@
       <label for="auto-voice-toggle">🔊 الرد الصوتي التلقائي</label>
       <input type="checkbox" id="auto-voice-toggle" style="width:18px;height:18px;" onchange="setCookie('nourai_auto_voice', this.checked ? '1' : '0', 90)" />
     </div>
-    <div class="control-group">
-      <label for="strategy-select">استراتيجية التوليد</label>
-      <select id="strategy-select">
-        <option value="greedy">Greedy</option>
-        <option value="top_p">Top-P</option>
-        <option value="top_k">Top-K</option>
-        <option value="temperature">Temperature</option>
-      </select>
-    </div>
-    <div class="control-group">
-      <label for="temperature-input">Temperature</label>
-      <input type="number" id="temperature-input" value="0.7" min="0.1" max="2.0" step="0.1" />
-    </div>
-    <div class="control-group">
-      <label for="top-k-input">Top-K</label>
-      <input type="number" id="top-k-input" value="16" min="1" max="100" step="1" />
-    </div>
-    <div class="control-group">
-      <label for="top-p-input">Top-P</label>
-      <input type="number" id="top-p-input" value="0.9" min="0.1" max="1.0" step="0.05" />
-    </div>
-    <div class="control-group">
-      <label for="max-tokens-input">Max Tokens</label>
-      <input type="number" id="max-tokens-input" value="160" min="4" max="256" step="8" />
-    </div>
-    <div class="control-group">
-      <label for="gemini-key-input">Gemini API Key (اختياري)</label>
-      <input type="password" id="gemini-key-input" placeholder="AIzaSy..." onchange="setCookie('nourai_gemini_key', this.value, 30)" />
-    </div>
+    <details style="border:1px solid var(--border);border-radius:0.6rem;padding:0.55rem 0.7rem;background:rgba(255,255,255,0.02);">
+      <summary style="cursor:pointer;font-size:0.82rem;font-weight:600;color:var(--text-muted);user-select:none;">🛠️ إعدادات متقدمة (للمطورين)</summary>
+      <div style="display:flex;flex-direction:column;gap:0.75rem;margin-top:0.75rem;">
+        <div class="control-group">
+          <label for="strategy-select">استراتيجية التوليد</label>
+          <select id="strategy-select">
+            <option value="greedy">Greedy</option>
+            <option value="top_p">Top-P</option>
+            <option value="top_k">Top-K</option>
+            <option value="temperature">Temperature</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label for="temperature-input">Temperature</label>
+          <input type="number" id="temperature-input" value="0.7" min="0.1" max="2.0" step="0.1" />
+        </div>
+        <div class="control-group">
+          <label for="top-k-input">Top-K</label>
+          <input type="number" id="top-k-input" value="16" min="1" max="100" step="1" />
+        </div>
+        <div class="control-group">
+          <label for="top-p-input">Top-P</label>
+          <input type="number" id="top-p-input" value="0.9" min="0.1" max="1.0" step="0.05" />
+        </div>
+        <div class="control-group">
+          <label for="max-tokens-input">Max Tokens</label>
+          <input type="number" id="max-tokens-input" value="160" min="4" max="256" step="8" />
+        </div>
+        <div class="control-group">
+          <label for="gemini-key-input">Gemini API Key (اختياري)</label>
+          <input type="password" id="gemini-key-input" placeholder="AIzaSy..." onchange="setCookie('nourai_gemini_key', this.value, 30)" />
+        </div>
+      </div>
+    </details>
     <div class="control-group">
       <span>الذاكرة المحفوظة:</span>
       <div id="memories-list" style="font-size:0.75rem;color:var(--text-main);">—</div>
@@ -1138,13 +1181,30 @@
       m.style.display = m.style.display === "flex" ? "none" : "flex";
     }
 
-    function applySmartTool(prefix) {
+    function applySmartTool(prefix, label) {
       const input = document.getElementById("prompt-input");
       const current = input.value.trim();
       input.value = current ? (prefix + current) : prefix;
       document.getElementById("smart-tools-menu").style.display = "none";
+      const bar = document.getElementById("active-mode-bar");
+      const lbl = document.getElementById("active-mode-label");
+      if (bar && lbl) {
+        lbl.textContent = "🧰 الأداة النشطة: " + (label || "أداة متخصصة");
+        bar.style.display = "flex";
+      }
       input.focus();
       autoResizeTextarea(input);
+    }
+
+    function clearActiveTool() {
+      const bar = document.getElementById("active-mode-bar");
+      if (bar) bar.style.display = "none";
+      const input = document.getElementById("prompt-input");
+      if (input) {
+        input.value = "";
+        input.focus();
+        autoResizeTextarea(input);
+      }
     }
 
     function useStarterPrompt(text) {
@@ -2252,6 +2312,8 @@ function downloadWebm() {
       const sentImgB64 = pendingImageBase64;
       const sentImgMime = pendingImageMime;
       clearPendingAttachment();
+      const modeBar = document.getElementById("active-mode-bar");
+      if (modeBar) modeBar.style.display = "none";
 
       input.value = "";
       input.style.height = "auto";
