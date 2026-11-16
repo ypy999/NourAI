@@ -1872,16 +1872,17 @@ function downloadWebm() {
 <\/script></body></html>`;
     }
 
-    const NOURAI_MANDATORY_RULES = `أنت مساعد ذكاء اصطناعي ذكي ودقيق.
-قواعد الإجابة الإلزامية:
-- افهم سؤال المستخدم جيداً قبل الإجابة وأجب مباشرة دون الخروج عن الموضوع.
-- لا تخترع معاني للكلمات أو أسماء الأشخاص أبداً.
-- إذا سأل المستخدم عن شخص مشهور، قدم معلومات حقيقية موثقة عنه.
-- إذا كان السؤال غامضاً، اطلب توضيحاً بدلاً من التخمين.
+    const NOURAI_MANDATORY_RULES = `أنت NourAI، مساعد ذكاء اصطناعي متقدم.
+مهمتك ليست مجرد الرد على الأسئلة، بل فهمها وتحليلها وتقديم إجابات دقيقة ومفيدة.
+قواعد التفكير:
+- افهم السؤال جيداً قبل الإجابة وحدد هدف المستخدم الحقيقي.
+- حلل المشكلات المعقدة إلى خطوات صغيرة واضحة.
+- استخدم المعلومات الموجودة في سياق المحادثة واسترجع الذكريات ذات الصلة عند الحاجة.
+- تحقق من صحة المعلومات قبل تقديمها، وإذا لم تكن متأكداً صرّح بعدم اليقين ولا تخترع معلومات أو مصادر.
+- إذا كان السؤال يحتاج إلى معلومات حديثة أو موثقة، استخدم البحث إذا كان متاحاً؛ وإلا أجب مباشرة دون حشو.
+- إذا اكتشفت خطأ في إجابتك، صححه بوضوح.
 - لا تستخدم أسلوب المناظرة أو القاضي ولا تضف عناوين أو أقساماً غير ضرورية إلا إذا طلب المستخدم ذلك صراحة.
-- تجنب المقدمات الطويلة والتكرار، واستخدم لغة واضحة وبسيطة ومنظمة.
-- لا تقدم معلومات غير مؤكدة على أنها حقائق، وحافظ على سياق المحادثة.
-تنسيق الإجابة: ابدأ بالإجابة المباشرة، استخدم العناوين عند الحاجة فقط، استخدم النقاط للقوائم، استخدم الخط العريض للمعلومات المهمة، واجعل الإجابة بطول يتناسب مع السؤال.`;
+- قدم إجابة واضحة ومنظمة ومباشرة، ولا تكرر الكلام بلا فائدة.`;
 
     /* ---------- 7-Module Cognitive Architecture (NourAICoreEngine) ---------- */
     const NourAILongTermMemory = {
@@ -2297,31 +2298,39 @@ function downloadWebm() {
         }
       }
 
+      const engineMode = document.getElementById("engine-mode-select")?.value || "";
+      const explicitSearch = /^(ابحث في قوقل|ابحث في الويب|ابحث عن|ابحث|جوجل|قوقل|search\s+for|search\s+|google\s+)/i.test(q);
+      const factualLookup = /^(من هو|من هي|من يكون|متى ولد|متى تأسس|أين تقع|ما هي عاصمة|كم عدد سكان|who is|when did|where is|capital of)\b/i.test(q);
+      const isNonSearchTask = /(اكتب\s+كود|برمجة|بايثون|جافاسكربت|خطط|خطة|فكرة|اقترح|قصة|رسالة|بريد|لخص|ترجم|احسب|ساعدني|كيف\s+أبدأ)/i.test(q);
+      const shouldSearchWeb = explicitSearch || (engineMode === "web_ai" && !isNonSearchTask) || (factualLookup && !isNonSearchTask);
+
       let wikiSnippet = "";
       let wikiTitle = "";
       let wikiUrl = "";
-      try {
-        const cleanQ = q.replace(/^(ابحث في قوقل عن|ابحث عن|ما هو|ما هي|من هو|من هي|من يكون|أخبرني عن|معلومات عن)\s+/i, "").replace(/[؟?!.]+$/, "").trim();
-        const primaryLang = /[\u0600-\u06FF]/.test(q) ? "ar" : "en";
-        const langsToTry = primaryLang === "ar" ? ["ar", "en"] : ["en", "ar"];
-        for (const wLang of langsToTry) {
-          if (wikiSnippet) break;
-          const wRes = await fetchWithTimeout(`https://${wLang}.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(cleanQ)}&utf8=1&format=json&origin=*&srlimit=1`, {}, 2500);
-          if (wRes.ok) {
-            const wData = await wRes.json();
-            const hit = wData.query && wData.query.search && wData.query.search[0];
-            if (hit) {
-              wikiTitle = hit.title;
-              wikiUrl = `https://${wLang}.wikipedia.org/wiki/${encodeURIComponent(hit.title.replace(/ /g, "_"))}`;
-              const sumRes = await fetchWithTimeout(`https://${wLang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(hit.title.replace(/ /g, "_"))}`, {}, 2500);
-              if (sumRes.ok) {
-                const sumData = await sumRes.json();
-                wikiSnippet = sumData.extract || "";
+      if (shouldSearchWeb) {
+        try {
+          const cleanQ = q.replace(/^(ابحث في قوقل عن|ابحث في الويب عن|ابحث عن|ابحث|search for|search|google|ما هو|ما هي|من هو|من هي|من يكون|أخبرني عن|معلومات عن)\s+/i, "").replace(/[؟?!.]+$/, "").trim();
+          const primaryLang = /[\u0600-\u06FF]/.test(q) ? "ar" : "en";
+          const langsToTry = primaryLang === "ar" ? ["ar", "en"] : ["en", "ar"];
+          for (const wLang of langsToTry) {
+            if (wikiSnippet) break;
+            const wRes = await fetchWithTimeout(`https://${wLang}.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(cleanQ)}&utf8=1&format=json&origin=*&srlimit=1`, {}, 2500);
+            if (wRes.ok) {
+              const wData = await wRes.json();
+              const hit = wData.query && wData.query.search && wData.query.search[0];
+              if (hit) {
+                wikiTitle = hit.title;
+                wikiUrl = `https://${wLang}.wikipedia.org/wiki/${encodeURIComponent(hit.title.replace(/ /g, "_"))}`;
+                const sumRes = await fetchWithTimeout(`https://${wLang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(hit.title.replace(/ /g, "_"))}`, {}, 2500);
+                if (sumRes.ok) {
+                  const sumData = await sumRes.json();
+                  wikiSnippet = sumData.extract || "";
+                }
               }
             }
           }
-        }
-      } catch (e) {}
+        } catch (e) {}
+      }
 
       const isTeamMode = (document.getElementById("engine-mode-select").value === "team_ai" || persona === "team");
       const rLen = document.getElementById("reply-length-select")?.value || "medium";
