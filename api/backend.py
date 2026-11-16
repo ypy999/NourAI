@@ -518,7 +518,7 @@ class NourAIBackend:
         sec_headers = {
             "X-Content-Type-Options": "nosniff",
             "X-Frame-Options": "DENY",
-            "Content-Security-Policy": "default-src 'self' 'unsafe-inline'",
+            "Content-Security-Policy": "default-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https:",
             "Cache-Control": "no-store",
             "Access-Control-Allow-Origin": allow_origin,
             "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS",
@@ -538,6 +538,15 @@ class NourAIBackend:
                 {**sec_headers, "Content-Type": "text/html; charset=utf-8"},
                 "google-site-verification: googleba5e2e501ed82fe6.html",
             )
+
+        if method == "GET" and route == "/icon.svg":
+            icon_path = Path(__file__).resolve().parents[1] / "ui" / "icon.svg"
+            if icon_path.is_file():
+                return (
+                    200,
+                    {**sec_headers, "Content-Type": "image/svg+xml; charset=utf-8"},
+                    icon_path.read_text(encoding="utf-8"),
+                )
 
         if method == "GET" and route == "/robots.txt":
             return (

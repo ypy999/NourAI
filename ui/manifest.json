@@ -1,0 +1,19 @@
+{
+  "name": "NourAI",
+  "short_name": "NourAI",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#212121",
+  "theme_color": "#212121",
+  "description": "NourAI — مساعد ذكاء اصطناعي متعدد اللغات",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
