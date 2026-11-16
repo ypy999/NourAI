@@ -1883,14 +1883,127 @@ function downloadWebm() {
 - لا تقدم معلومات غير مؤكدة على أنها حقائق، وحافظ على سياق المحادثة.
 تنسيق الإجابة: ابدأ بالإجابة المباشرة، استخدم العناوين عند الحاجة فقط، استخدم النقاط للقوائم، استخدم الخط العريض للمعلومات المهمة، واجعل الإجابة بطول يتناسب مع السؤال.`;
 
-    function getRecentChatHistory() {
-      try {
-        const list = loadLocalSessions();
-        const cur = list.find(s => s.session_id === activeSessionId);
-        return (cur && cur.messages ? cur.messages : []).slice(-10);
-      } catch (e) {
-        return [];
+    /* ---------- 7-Module Cognitive Architecture (NourAICoreEngine) ---------- */
+    const NourAILongTermMemory = {
+      extractAndStore(text) {
+        if (!text || text.length < 4) return;
+        const patterns = [
+          /(?:اسمي|أنا\s+اسمي|اسمي\s+هو)\s+([^\n،.!?]{2,40})/i,
+          /(?:أعمل\s+(?:كـ|في)|مهنتي|تخصصي)\s+([^\n،.!?]{2,60})/i,
+          /(?:أفضل|أحب|اهتمامي|هدفي)\s+([^\n.!?]{3,80})/i,
+          /(?:تذكر\s+أن|احفظ\s+أن|لا\s+تنسَ\s+أن)\s+([^\n.!?]{3,100})/i,
+          /(?:my name is|i work as|i prefer|remember that)\s+([^\n,.!?]{2,80})/i
+        ];
+        const current = loadLocalMemories();
+        let changed = false;
+        for (const re of patterns) {
+          const m = text.match(re);
+          if (m && m[0]) {
+            const fact = m[0].trim();
+            if (!current.some(x => x.toLowerCase() === fact.toLowerCase())) {
+              current.unshift(fact);
+              changed = true;
+            }
+          }
+        }
+        if (changed) {
+          saveLocalMemories(current.slice(0, 25));
+          const memEl = document.getElementById("memories-list");
+          if (memEl) memEl.textContent = current.slice(0, 5).join(" • ") || "—";
+        }
+      },
+      recall() {
+        return loadLocalMemories().slice(0, 10);
       }
+    };
+
+    const NourAIContextManager = {
+      getTurns(limit = 12) {
+        try {
+          const list = loadLocalSessions();
+          const cur = list.find(s => s.session_id === activeSessionId);
+          return (cur && cur.messages ? cur.messages : []).slice(-limit);
+        } catch (e) {
+          return [];
+        }
+      },
+      summarizeOlderContext(turns) {
+        if (!turns || turns.length <= 4) return "";
+        const earlier = turns.slice(0, -4).filter(t => t.role === "user").map(t => String(t.content || "").slice(0, 60));
+        return earlier.length ? `Earlier session topics: ${earlier.join(" | ")}` : "";
+      }
+    };
+
+    const NourAIKnowledgeRetrieval = {
+      searchDocs(query) {
+        const docs = loadLocalDocs();
+        if (!docs.length || !query) return "";
+        const kws = query.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+        if (!kws.length) return "";
+        let best = [];
+        for (const doc of docs.slice(0, 3)) {
+          for (let i = 0; i < (doc.chunks || []).length; i++) {
+            const ch = doc.chunks[i];
+            const low = ch.toLowerCase();
+            const score = kws.reduce((acc, w) => acc + (low.includes(w) ? 1 : 0), 0);
+            if (score > 0) best.push({ doc: doc.filename, idx: i + 1, text: ch, score });
+          }
+        }
+        best.sort((a, b) => b.score - a.score);
+        return best.slice(0, 2).map(b => `[${b.doc} #${b.idx}]: ${b.text.slice(0, 450)}`).join("\n");
+      }
+    };
+
+    const NourAIReasoningEngine = {
+      analyze(query) {
+        const q = (query || "").trim();
+        const isMath = /(?:^احسب\s+|كم\s+يساوي|=|\d+\s*[+\-*/%]\s*\d+)/i.test(q);
+        const isPlanning = /(?:خطة|خطط|خطوات|كيف\s+أبدأ|خارطة\s+طريق|roadmap|plan\s+for|strategy)/i.test(q);
+        const isCoding = /(?:كود|برمجة|دالة|function|python|javascript|html|css|sql|bug|خطأ\s+برمجي)/i.test(q);
+        const isAmbiguous = q.split(/\s+/).length <= 2 && q.length < 10 && !/^(مرحبا|اهلا|السلام|hello|hi)/i.test(q);
+        let intent = "general";
+        if (isMath) intent = "math";
+        else if (isPlanning) intent = "planning";
+        else if (isCoding) intent = "coding";
+        else if (isAmbiguous) intent = "ambiguous";
+        return { intent, isPlanning, isCoding, isMath, isAmbiguous };
+      }
+    };
+
+    const NourAIPlanningEngine = {
+      getDirective(analysis) {
+        if (!analysis || !analysis.isPlanning) return "";
+        return "Planning Directive: Break the solution into clear, ordered, actionable steps with realistic priorities and next actions.";
+      }
+    };
+
+    const NourAIToolCalling = {
+      tryMath(query) {
+        const cleaned = (query || "").replace(/^(احسب|كم يساوي|calculate)\s*/i, "").replace(/[؟?=]/g, "").trim();
+        if (/^[0-9+\-*/().%\s]{3,80}$/.test(cleaned) && /[+\-*/%]/.test(cleaned)) {
+          try {
+            const val = Function(`"use strict"; return (${cleaned});`)();
+            if (typeof val === "number" && Number.isFinite(val)) {
+              return `🧮 **نتيجة الحساب (\`${cleaned}\`):** **${val}**`;
+            }
+          } catch (e) {}
+        }
+        return "";
+      }
+    };
+
+    const NourAISelfChecker = {
+      verify(answer) {
+        if (!answer) return "";
+        let out = String(answer)
+          .replace(/^(System|Assistant|NOURAI_MANDATORY_RULES)\s*:/gim, "")
+          .trim();
+        return cleanAnswerFormat(out);
+      }
+    };
+
+    function getRecentChatHistory() {
+      return NourAIContextManager.getTurns(12);
     }
 
     function getCloudGenerationConfig() {
@@ -2424,12 +2537,37 @@ function downloadWebm() {
       const teamInstruction = isTeamMode
         ? "Synthesize insights naturally and directly in a single cohesive answer without unnecessary headings or debate/judge formatting."
         : `Act as specialist: ${persona}.`;
-      const sysPrompt = `${teamInstruction} ${lenHint} ${toneHint} User memories: ${mems.join("; ")}.`;
-      const userWithCtx = wikiSnippet ? `Question: ${q}\nVerified Reference Context (${wikiTitle}): ${wikiSnippet}` : q;
+
+      // Run 7 Cognitive Subsystems: Memory extraction, Reasoning, Planning, Tool Calling, Knowledge Retrieval, Context
+      NourAILongTermMemory.extractAndStore(q);
+      const mathResult = NourAIToolCalling.tryMath(q);
+      if (mathResult) return mathResult;
+
+      const reasoning = NourAIReasoningEngine.analyze(q);
+      const planDirective = NourAIPlanningEngine.getDirective(reasoning);
+      const recalledMems = NourAILongTermMemory.recall();
+      const docExcerpt = NourAIKnowledgeRetrieval.searchDocs(q);
+      const ctxSummary = NourAIContextManager.summarizeOlderContext(NourAIContextManager.getTurns(12));
+
+      const sysPrompt = [
+        teamInstruction,
+        lenHint,
+        toneHint,
+        `Reasoning Focus: ${reasoning.intent}.`,
+        planDirective,
+        ctxSummary,
+        recalledMems.length ? `Long-Term User Memory: ${recalledMems.join("; ")}.` : ""
+      ].filter(Boolean).join(" ");
+
+      const contextParts = [];
+      if (wikiSnippet) contextParts.push(`Verified Reference Context (${wikiTitle}): ${wikiSnippet}`);
+      if (docExcerpt) contextParts.push(`Uploaded Document Knowledge:\n${docExcerpt}`);
+      const userWithCtx = contextParts.length ? `Question: ${q}\n\n${contextParts.join("\n\n")}` : q;
 
       const cloudAnswer = await callCloudLLM(sysPrompt, userWithCtx, geminiKey, true);
       if (cloudAnswer) {
-        return wikiUrl ? `${cloudAnswer}\n\n🌐 [المصدر: ${wikiTitle}](${wikiUrl})` : cloudAnswer;
+        const checked = NourAISelfChecker.verify(cloudAnswer);
+        return wikiUrl ? `${checked}\n\n🌐 [المصدر: ${wikiTitle}](${wikiUrl})` : checked;
       }
 
       if (wikiSnippet) {
