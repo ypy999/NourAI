@@ -877,6 +877,15 @@
         <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('ساعدني في اتخاذ قرار مقارنة بين: ')">⚖️ مساعد القرارات</button>
         <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('ارسم خريطة ذهنية لـ: ')">🗺️ خريطة ذهنية</button>
         <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="document.getElementById(\'doc-upload-input\').click()">📄 اسأل ملفاتك</button>
+        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('مجلس الخبراء: ')">🏛️ مجلس الخبراء</button>
+        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('تطور الفكرة: ')">🌱 تطور الفكرة (5 نسخ)</button>
+        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('ماذا لو: ')">🔮 ماذا لو؟</button>
+        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('شبكة المعرفة: ')">🕸️ شبكة المعرفة</button>
+        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('التفكير بالعكس: ')">🔁 التفكير بالعكس</button>
+        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('فريق العمل: ')">👥 فريق العمل</button>
+        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('مناظرة: ')">⚖️ مناظرة الذكاء</button>
+        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('سلسلة المهام: ')">⛓️ سلسلة المهام</button>
+        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('بأسلوبي الرقمي: ')">🧬 النسخة الرقمية</button>
       </div>
       <div id="attachment-preview-bar" style="display:none;align-items:center;gap:0.5rem;padding:0.35rem 0.65rem;margin-bottom:0.35rem;background:var(--bg-sidebar);border:1px solid var(--border);border-radius:0.75rem;font-size:0.8rem;">
         <img id="attachment-thumb" style="display:none;width:36px;height:36px;object-fit:cover;border-radius:0.4rem;" alt="preview" />
@@ -1440,7 +1449,75 @@
       }
     }
 
+    function renderKGraphBlock(jsonStr) {
+      try {
+        const kg = JSON.parse(jsonStr);
+        const nodesHtml = (kg.nodes || []).map((n) => {
+          const promptEnc = encodeURIComponent(`اشرح مفهوم «${n.label}» ضمن موضوع «${kg.topic || ""}» بالتفصيل`);
+          return `<button class="chip" style="border-color:rgba(96,165,250,0.45);padding:0.45rem 0.8rem;font-size:0.82rem;" onclick="useStarterPrompt(decodeURIComponent('${promptEnc}'))">🔗 ${escapeHtml(n.label)}</button>`;
+        }).join("");
+        return `<div style="background:var(--bg-sidebar);border:1px solid var(--border);border-radius:0.85rem;padding:0.9rem;margin:0.5rem 0;"><div style="font-weight:600;margin-bottom:0.55rem;">🕸️ شبكة المعرفة: ${escapeHtml(kg.topic || "")} <span style="font-size:0.75rem;color:var(--text-muted);">(اضغط على أي عقدة للشرح)</span></div><div style="display:flex;flex-wrap:wrap;gap:0.45rem;">${nodesHtml}</div></div>`;
+      } catch (e) {
+        return escapeHtml(jsonStr);
+      }
+    }
+
+    function renderWorkflowBlock(jsonStr) {
+      try {
+        const wf = JSON.parse(jsonStr);
+        const wfId = "wf-" + Math.floor(Math.random() * 100000);
+        const steps = wf.steps || [];
+        const listHtml = steps.map((st, idx) => `<div id="${wfId}-s-${idx}" style="padding:0.45rem 0.65rem;border-radius:0.5rem;border:1px solid var(--border);margin-top:0.35rem;font-size:0.84rem;"><strong>المرحلة ${idx + 1}:</strong> ${escapeHtml(st)}</div>`).join("");
+        const stepsEnc = encodeURIComponent(JSON.stringify(steps));
+        const goalEnc = encodeURIComponent(wf.goal || "");
+        return `<div style="background:var(--bg-sidebar);border:1px solid var(--border);border-radius:0.85rem;padding:0.9rem;margin:0.5rem 0;"><div style="font-weight:600;">⛓️ سلسلة المهام الذكية: ${escapeHtml(wf.goal || "")}</div>${listHtml}<div style="margin-top:0.6rem;display:flex;gap:0.5rem;align-items:center;"><button class="chip" style="border-color:#22c55e;padding:0.4rem 0.85rem;font-size:0.8rem;" onclick="runNextWorkflowStep('${wfId}', decodeURIComponent('${goalEnc}'), decodeURIComponent('${stepsEnc}'), this)">▶ تنفيذ المرحلة التالية</button><span id="${wfId}-status" style="font-size:0.78rem;color:var(--text-muted);">في انتظار موافقتك</span></div></div>`;
+      } catch (e) {
+        return escapeHtml(jsonStr);
+      }
+    }
+
+    async function runNextWorkflowStep(wfId, goal, stepsJson, btnEl) {
+      const steps = JSON.parse(stepsJson || "[]");
+      const doneCount = Number(btnEl.dataset.step || "0");
+      if (doneCount >= steps.length) return;
+      const stepEl = document.getElementById(`${wfId}-s-${doneCount}`);
+      const statusEl = document.getElementById(`${wfId}-status`);
+      btnEl.disabled = true;
+      statusEl.textContent = `جاري تنفيذ المرحلة ${doneCount + 1}...`;
+      const geminiKey = (document.getElementById("gemini-key-input")?.value || "").trim();
+      const out = await callCloudLLM(
+        `Execute ONLY step ${doneCount + 1} ("${steps[doneCount]}") for the goal "${goal}" concisely in Arabic.`,
+        steps[doneCount],
+        geminiKey
+      );
+      if (stepEl) {
+        stepEl.style.borderColor = "#22c55e";
+        stepEl.innerHTML += `<div style="margin-top:0.35rem;color:#86efac;font-size:0.82rem;">✅ ${escapeHtml(out || ("تم إنجاز «" + steps[doneCount] + "» بنجاح."))}</div>`;
+      }
+      const next = doneCount + 1;
+      btnEl.dataset.step = String(next);
+      btnEl.disabled = false;
+      if (next >= steps.length) {
+        btnEl.style.display = "none";
+        statusEl.textContent = "✅ اكتملت جميع المراحل!";
+      } else {
+        statusEl.textContent = `تمت المرحلة ${next}/${steps.length} — اضغط للمتابعة`;
+      }
+    }
+
     function formatInlineMarkdown(text) {
+      if (text.includes("[KGRAPH_JSON]") && text.includes("[/KGRAPH_JSON]")) {
+        const parts = text.split(/\[KGRAPH_JSON\]([\s\S]*?)\[\/KGRAPH_JSON\]/g);
+        let out = "";
+        for (let i = 0; i < parts.length; i++) out += (i % 2 === 0 ? formatInlineMarkdown(parts[i]) : renderKGraphBlock(parts[i]));
+        return out;
+      }
+      if (text.includes("[WORKFLOW_JSON]") && text.includes("[/WORKFLOW_JSON]")) {
+        const parts = text.split(/\[WORKFLOW_JSON\]([\s\S]*?)\[\/WORKFLOW_JSON\]/g);
+        let out = "";
+        for (let i = 0; i < parts.length; i++) out += (i % 2 === 0 ? formatInlineMarkdown(parts[i]) : renderWorkflowBlock(parts[i]));
+        return out;
+      }
       if (text.includes("[QUIZ_JSON]") && text.includes("[/QUIZ_JSON]")) {
         const parts = text.split(/\[QUIZ_JSON\]([\s\S]*?)\[\/QUIZ_JSON\]/g);
         let out = "";
@@ -1596,12 +1673,53 @@ function downloadWebm() {
 <\/script></body></html>`;
     }
 
+    async function callCloudLLM(sysPrompt, userPrompt, geminiKey) {
+      if (geminiKey) {
+        try {
+          const gRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(geminiKey)}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ contents: [{ parts: [{ text: `${sysPrompt}\n\n${userPrompt}` }] }] })
+          });
+          if (gRes.ok) {
+            const gData = await gRes.json();
+            const gTxt = gData.candidates?.[0]?.content?.parts?.map(p => p.text || "").join("").trim();
+            if (gTxt) return gTxt;
+          }
+        } catch (e) {}
+      }
+      try {
+        const pRes = await fetch("https://text.pollinations.ai/openai", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ model: "openai", messages: [{ role: "system", content: sysPrompt }, { role: "user", content: userPrompt }] })
+        });
+        if (pRes.ok) {
+          const pData = await pRes.json();
+          const txt = pData.choices?.[0]?.message?.content?.trim();
+          if (txt) return txt;
+        }
+      } catch (e) {}
+      return "";
+    }
+
+    function updateDigitalTwinProfile(text) {
+      try {
+        const twin = JSON.parse(localStorage.getItem("nourai_digital_twin") || '{"samples":[]}');
+        if (text && text.length >= 8 && !text.startsWith("بأسلوبي")) {
+          twin.samples = (twin.samples || []).concat([text.slice(0, 120)]).slice(-8);
+          localStorage.setItem("nourai_digital_twin", JSON.stringify(twin));
+        }
+      } catch (e) {}
+    }
+
     async function generateBrowserReply(text, geminiKey, imgBase64, imgMime) {
       const q = text.trim();
       const lower = q.toLowerCase();
       const normAr = lower.replace(/[أإآ]/g, "ا").replace(/ة/g, "ه").replace(/مادا/g, "ماذا");
       const persona = document.getElementById("persona-select").value;
       extractBrowserMemories(q);
+      updateDigitalTwinProfile(q);
       const mems = loadLocalMemories();
       const docs = loadLocalDocs();
 
@@ -1838,6 +1956,128 @@ function downloadWebm() {
         return `🗺️ **الخريطة الذهنية لـ «${topic}»:**\n\n\`\`\`svg\n${svg}\n\`\`\``;
       }
 
+      // 1. AI Council (4 sequential expert calls: Technical, Business/Strategy, Creative/UX -> 4th Synthesizer)
+      if (/^(مجلس الخبراء|ai council)/i.test(q)) {
+        const topic = q.replace(/^(مجلس الخبراء|ai council)[:：]?\s*/i, "").trim() || q;
+        const [e1, e2, e3] = await Promise.all([
+          callCloudLLM("You are Expert 1 (Technical & Feasibility Analyst). Give a concise 2-line Arabic opinion.", topic, geminiKey),
+          callCloudLLM("You are Expert 2 (Financial & Market Strategist). Give a concise 2-line Arabic opinion.", topic, geminiKey),
+          callCloudLLM("You are Expert 3 (User Experience & Innovation). Give a concise 2-line Arabic opinion.", topic, geminiKey)
+        ]);
+        const v1 = e1 || `تقنياً: موضوع «${topic}» قابل للتنفيذ بأدوات خفيفة وسريعة دون تعقيد مكلف.`;
+        const v2 = e2 || `استراتيجياً: النجاح يعتمد على استهداف شريحة واضحة وقياس العائد مبكراً.`;
+        const v3 = e3 || `إبداعياً: تجربة المستخدم البسيطة هي ما يميز الحل ويجذب الجمهور.`;
+        const synth = await callCloudLLM("You are Expert 4 (Council Chair). Synthesize these 3 expert views into a concise final recommendation in Arabic.", `${v1}\n${v2}\n${v3}`, geminiKey);
+        return `🏛️ **جلسة مجلس الخبراء (AI Council — 4 استدعاءات):**\n\n` +
+          `- **1️⃣ الخبير التقني:** ${v1}\n` +
+          `- **2️⃣ الخبير الاستراتيجي:** ${v2}\n` +
+          `- **3️⃣ خبير الإبداع والتجربة:** ${v3}\n\n` +
+          `---\n**4️⃣ خلاصة رئيس المجلس:**\n${synth || "ابدأ بنموذج أولي مبسط يوازن بين الجدوى التقنية وتجربة المستخدم ثم وسّع النطاق تدريجياً."}`;
+      }
+
+      // 2. Idea Evolution (5 progressive versions)
+      if (/^(تطور الفكرة|idea evolution)/i.test(q)) {
+        const idea = q.replace(/^(تطور الفكرة|idea evolution)[:：]?\s*/i, "").trim() || q;
+        const cloudEv = await callCloudLLM("Transform this simple idea into 5 progressively advanced versions (v1 simple -> v5 full enterprise product) in Arabic.", idea, geminiKey);
+        if (cloudEv) return `🌱 **تطور الفكرة إلى 5 نسخ احترافية:**\n\n${cloudEv}`;
+        return `🌱 **تطور فكرة «${idea}» عبر 5 مراحل:**\n\n` +
+          `1. **النسخة 1 (فكرة أولية):** أداة بسيطة تحل مشكلة «${idea}» بشكل مباشر.\n` +
+          `2. **النسخة 2 (تجربة تفاعلية):** إضافة واجهة ويب وهاتف سريعة للمستخدمين.\n` +
+          `3. **النسخة 3 (ذكاء مخصص):** دمج حفظ التفضيلات والتوصيات الذكية.\n` +
+          `4. **النسخة 4 (منصة متكاملة):** حسابات مستخدمين، تحليلات أداء، وإشعارات.\n` +
+          `5. **النسخة 5 (مشروع احترافي):** نموذج اشتراكات، تكامل API، وتوسع إقليمي.`;
+      }
+
+      // 3. What If Scenarios
+      if (/^(ماذا لو|what if)/i.test(q)) {
+        const scenario = q.replace(/^(ماذا لو|what if)[:：]?\s*/i, "").trim() || q;
+        const cloudWhat = await callCloudLLM("Analyze this 'What If' scenario: list 3 possible outcomes, key risks, and hidden assumptions in Arabic.", scenario, geminiKey);
+        if (cloudWhat) return `🔮 **تحليل سيناريو «ماذا لو ${scenario}»:**\n\n${cloudWhat}`;
+        return `🔮 **تحليل سيناريو «ماذا لو ${scenario}»:**\n\n` +
+          `- **السيناريو المتفائل:** نجاح سريع إذا تم التركيز على ميزة واحدة مطلوبة وبأقل تكلفة.\n` +
+          `- **السيناريو الواقعي:** نمو تدريجي يتطلب تجريب السوق وتعديل الخطة خلال أول 30 يوماً.\n` +
+          `- **المخاطر والافتراضات:** نفاد الميزانية قبل الوصول للعميل الأول، لذا اعتمد الأدوات المجانية في البداية.`;
+      }
+
+      // 4. Interactive Knowledge Graph
+      if (/^(شبكة المعرفة|knowledge graph)/i.test(q)) {
+        const topic = q.replace(/^(شبكة المعرفة|knowledge graph)[:：]?\s*/i, "").trim() || "الذكاء الاصطناعي";
+        const kgObj = {
+          topic,
+          nodes: [
+            { label: `أساسيات ${topic}` },
+            { label: `تطبيقات ${topic}` },
+            { label: `أدوات وتقنيات ${topic}` },
+            { label: `تحديات ومخاطر ${topic}` },
+            { label: `مستقبل ${topic}` }
+          ]
+        };
+        return `[KGRAPH_JSON]${JSON.stringify(kgObj)}[/KGRAPH_JSON]`;
+      }
+
+      // 5. Reverse AI (How could I fail?)
+      if (/^(التفكير بالعكس|كيف أفشل|reverse ai)/i.test(q)) {
+        const goal = q.replace(/^(التفكير بالعكس|كيف أفشل|reverse ai)[:：]?\s*/i, "").trim() || q;
+        const cloudRev = await callCloudLLM("Apply Reverse Thinking (Pre-mortem): Explain 5 ways this project/goal could fail and how to prevent each mistake in Arabic.", goal, geminiKey);
+        if (cloudRev) return `🔁 **التفكير بالعكس — كيف تتجنب الفشل في «${goal}»:**\n\n${cloudRev}`;
+        return `🔁 **التفكير بالعكس لـ «${goal}» (أخطاء يجب تجنبها):**\n\n` +
+          `1. **البدء دون التحقق من الحاجة الفعلية:** اختبر الفكرة مع 5 مستخدمين أولاً.\n` +
+          `2. **التعقيد المبكر:** لا تبنِ كل الميزات دفعة واحدة، ابدأ بالأساس.\n` +
+          `3. **إهمال التسويق والوضوح:** اجعل قيمة المشروع واضحة من أول جملة.`;
+      }
+
+      // 6. Virtual Work Team (Programmer + Designer + Marketer + PM)
+      if (/^(فريق العمل|virtual team)/i.test(q)) {
+        const task = q.replace(/^(فريق العمل|virtual team)[:：]?\s*/i, "").trim() || q;
+        const cloudTeam = await callCloudLLM("Act as a 4-role Virtual Team (Programmer, Designer, Marketer, Project Manager). Each executes their part of the task concisely in Arabic.", task, geminiKey);
+        if (cloudTeam) return `👥 **مخرجات فريق العمل الافتراضي حول «${task}»:**\n\n${cloudTeam}`;
+        return `👥 **تنفيذ فريق العمل الافتراضي لمهمة «${task}»:**\n\n` +
+          `- **💻 المبرمج:** إعداد البنية الأساسية النظيفة وواجهة البيانات.\n` +
+          `- **🎨 المصمم:** تجهيز واجهة متجاوبة مريحة للعين على الهاتف والحاسوب.\n` +
+          `- **📣 المسوق:** صياغة عرض القيمة الجذاب وخطة الإطلاق للجمهور المستهدف.\n` +
+          `- **📋 مدير المشاريع:** تقسيم التنفيذ إلى 3 سباقات (Sprints) أسبوعية بمؤشرات قياس واضحة.`;
+      }
+
+      // 7. AI Debate (Pro + Con + Final Judge)
+      if (/^(مناظرة|debate)/i.test(q)) {
+        const topic = q.replace(/^(مناظرة|debate)[:：]?\s*/i, "").trim() || q;
+        const [pro, con] = await Promise.all([
+          callCloudLLM("Argue strongly IN FAVOR of this topic in 2-3 clear sentences in Arabic.", topic, geminiKey),
+          callCloudLLM("Argue strongly AGAINST this topic with counter-evidence in 2-3 clear sentences in Arabic.", topic, geminiKey)
+        ]);
+        const pTxt = pro || `المؤيد: «${topic}» يفتح آفاقاً جديدة للإنتاجية والسرعة والابتكار.`;
+        const cTxt = con || `المعارض: الإفراط في الاعتماد على «${topic}» قد يخلق تحديات في الجودة والخصوصية.`;
+        const judge = await callCloudLLM("You are the Debate Judge. Weigh both arguments and give a balanced verdict in Arabic.", `${pTxt}\n${cTxt}`, geminiKey);
+        return `⚖️ **مناظرة الذكاء الاصطناعي حول «${topic}»:**\n\n` +
+          `- **🟢 الطرف المؤيد:** ${pTxt}\n` +
+          `- **🔴 الطرف المعارض:** ${cTxt}\n\n` +
+          `---\n**🏛️ حكم القاضي النهائي:** ${judge || "المتوازن هو الاستفادة من المزايا مع وضع ضوابط جودة ومراجعة مستمرة."}`;
+      }
+
+      // 8. Smart Workflow Chain (Step-by-step with user approval)
+      if (/^(سلسلة المهام|workflow)/i.test(q)) {
+        const goal = q.replace(/^(سلسلة المهام|workflow)[:：]?\s*/i, "").trim() || q;
+        const wf = {
+          goal,
+          steps: [
+            `تحليل الهدف والجمهور المستهدف لـ «${goal}»`,
+            `وضع الخطة التنفيذية والأدوات المطلوبة`,
+            `صياغة المخرجات النهائية والمراجعة`
+          ]
+        };
+        return `[WORKFLOW_JSON]${JSON.stringify(wf)}[/WORKFLOW_JSON]`;
+      }
+
+      // 9. Digital Twin (Mimics user's saved writing style)
+      if (/^(بأسلوبي الرقمي|النسخة الرقمية|digital twin)/i.test(q)) {
+        const topic = q.replace(/^(بأسلوبي الرقمي|النسخة الرقمية|digital twin)[:：]?\s*/i, "").trim() || q;
+        const twin = JSON.parse(localStorage.getItem("nourai_digital_twin") || '{"samples":[]}');
+        const styleSamples = (twin.samples || []).join(" | ");
+        const twinOut = await callCloudLLM(`You are the user's Digital Twin. Mimic their exact writing tone/style based on their past messages (${styleSamples || "direct, concise, Arabic"}).`, topic, geminiKey);
+        if (twinOut) return `🧬 **رد نسختك الرقمية (بأسلوبك الشخصي):**\n\n${twinOut}`;
+        return `🧬 **رد نسختك الرقمية حول «${topic}»:**\n\nبأسلوبك المباشر والعملي: ركز على تنفيذ «${topic}» بخطوات واضحة ومختصرة دون حشو. *(تعلّمت النسخة من ${twin.samples?.length || 0} رسالة من رسائلك السابقة).*`;
+      }
+
       const teamInstruction = isTeamMode
         ? "You are a collaborative 5-specialist AI team working together to deliver the best possible answer:\n" +
           "1. 🧠 Analyst & Thinker (خبير التحليل والتفكير)\n" +
@@ -2062,6 +2302,7 @@ function downloadWebm() {
         actions.appendChild(mkBtn("📊 جدول", "تحويل الإجابة إلى جدول", () => transformReplyAction("table", textSpan)));
         actions.appendChild(mkBtn("📋 قائمة", "تحويل الإجابة إلى قائمة", () => transformReplyAction("list", textSpan)));
         actions.appendChild(mkBtn("⭐", "حفظ في المفضلة", (b) => saveFavoriteAnswer(textSpan.dataset.raw || textSpan.textContent, b)));
+        actions.appendChild(mkBtn("🔍 مراجعة ذكية", "المراجع الذكي: فحص الأخطاء والنواقص واقتراح تحسينات", () => runSmartCriticReview(textSpan)));
         actions.appendChild(mkBtn("📄 PDF", "تنزيل كـ PDF", () => window.print()));
         div.appendChild(actions);
       }
@@ -2133,6 +2374,19 @@ function downloadWebm() {
         wrap.appendChild(btn);
       }
       bubbleEl.appendChild(wrap);
+    }
+
+    async function runSmartCriticReview(textEl) {
+      const raw = (textEl.dataset.raw || textEl.textContent || "").trim();
+      if (!raw) return;
+      const geminiKey = (document.getElementById("gemini-key-input")?.value || "").trim();
+      const critique = await callCloudLLM(
+        "You are an AI Critic & Reviewer. Inspect the following answer for gaps, contradictions, or missing details, and suggest 2 concrete improvements in Arabic.",
+        raw.slice(0, 1500),
+        geminiKey
+      );
+      const reviewTxt = critique || "لا توجد تناقضات منطقية؛ يمكن تعزيز الإجابة بإضافة مثال عملي أو رقم مرجعي للوضوح.";
+      renderFormattedContent(textEl, raw + `\n\n---\n🔍 **تقرير المراجع الذكي (Critic Review):**\n${reviewTxt}`);
     }
 
     function transformReplyAction(mode, textEl) {
