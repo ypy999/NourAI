@@ -1085,10 +1085,16 @@
       }
     };
 
-    const API_BASE = (window.location.hostname.endsWith("web.app") || window.location.hostname.endsWith("firebaseapp.com"))
-      ? "https://nourai-studio.onrender.com"
-      : "";
-    let backendOnline = true;
+    const isStaticHosted = window.location.hostname.endsWith("web.app") || window.location.hostname.endsWith("firebaseapp.com");
+    const customApiBase = (() => {
+      try {
+        const p = new URLSearchParams(window.location.search).get("api");
+        if (p) { localStorage.setItem("nourai_api_base", p); return p; }
+        return localStorage.getItem("nourai_api_base") || "";
+      } catch (e) { return ""; }
+    })();
+    const API_BASE = customApiBase || "";
+    let backendOnline = !isStaticHosted || !!customApiBase;
     let currentLanguage = "arabic";
     let sessions = [];
     let activeSessionId = null;
@@ -1249,6 +1255,9 @@
 
     async function ensureAuthenticated() {
       if (authToken) return authToken;
+      if (isStaticHosted && !customApiBase) {
+        return activateServerlessFallback();
+      }
       try {
         if (API_BASE !== "" && sessionStorage.getItem("nourai_serverless") === "1") {
           return activateServerlessFallback();

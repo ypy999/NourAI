@@ -1,0 +1,17 @@
+# NourAI
+
+> NourAI is a multilingual AI assistant web application supporting Arabic, English, and French, offering general chat, categorized smart tools, multi-agent reasoning modes, and document/code assistance.
+
+NourAI runs as a progressive web application with an Arabic-first RTL interface, categorized tools for writing, analysis, study, and coding, and optional developer settings.
+
+## Core Resources
+
+- [NourAI Web App](https://ypyai-95ca7.web.app/): Main interactive AI assistant interface.
+- [AI Catalog](https://ypyai-95ca7.web.app/ai-catalog.json): Machine-readable JSON catalog describing NourAI capabilities and resources.
+- [Web App Manifest](https://ypyai-95ca7.web.app/manifest.json): Progressive Web App metadata.
+- [Sitemap](https://ypyai-95ca7.web.app/sitemap.xml): XML sitemap for search engines.
+
+## Capabilities
+
+- [General Chat](https://ypyai-95ca7.web.app/): Direct Q&A and structured explanations in Arabic, English, and French.
+- [Smart Tools](https://ypyai-95ca7.web.app/): Categorized tools for prompt refinement, summarization, proofreading, quizzes, mind maps, coding, and multi-perspective analysis.

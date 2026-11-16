@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "name": "NourAI",
+  "description": "Multilingual AI assistant web application supporting Arabic, English, and French with general chat, categorized smart tools, multi-agent reasoning, and code/study assistance.",
+  "url": "https://ypyai-95ca7.web.app",
+  "default_language": "ar",
+  "supported_languages": ["ar", "en", "fr"],
+  "llms_txt": "https://ypyai-95ca7.web.app/llms.txt",
+  "sitemap": "https://ypyai-95ca7.web.app/sitemap.xml",
+  "manifest": "https://ypyai-95ca7.web.app/manifest.json",
+  "icon": "https://ypyai-95ca7.web.app/icon.svg",
+  "repository": "https://github.com/ypy999/NourAI",
+  "capabilities": [
+    {
+      "id": "general-chat",
+      "name": "General AI Chat",
+      "description": "Direct multilingual conversation with structured answers."
+    },
+    {
+      "id": "writing-tools",
+      "name": "Writing & Editing Tools",
+      "description": "Prompt enhancement, simplification, summarization, tone adjustment, and proofreading."
+    },
+    {
+      "id": "analysis-experts",
+      "name": "Analysis & Expert Modes",
+      "description": "AI Council, Virtual Team, Idea Evolution, What-If scenarios, Reverse Thinking, and Decision Assistant."
+    },
+    {
+      "id": "study-files",
+      "name": "Study & Document Tools",
+      "description": "File Q&A, quiz generation, mind maps, knowledge graphs, and interview simulation."
+    },
+    {
+      "id": "coding-creativity",
+      "name": "Coding & Creativity",
+      "description": "Code generation, explanation, live HTML preview, and business idea generation."
+    }
+  ]
+}
