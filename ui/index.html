@@ -2109,7 +2109,7 @@ function downloadWebm() {
     async function generateBrowserReply(text, geminiKey, imgBase64, imgMime) {
       const q = text.trim();
       const lower = q.toLowerCase();
-      const normAr = lower.replace(/[أإآ]/g, "ا").replace(/ة/g, "ه").replace(/مادا/g, "ماذا");
+      const normAr = lower.replace(/[\u064B-\u065F\u0670]/g, "").replace(/[أإآ]/g, "ا").replace(/ة/g, "ه").replace(/مادا/g, "ماذا");
       const persona = document.getElementById("persona-select").value;
       extractBrowserMemories(q);
       updateDigitalTwinProfile(q);
@@ -2191,7 +2191,7 @@ function downloadWebm() {
         return `📄 **المحتوى المستخرج من \`${latest.filename}\`:**\n\n${topChunks}`;
       }
 
-      if (/^(مرحبا|اهلا|السلام عليكم|كيف حالك|hello|hi|bonjour)/.test(normAr)) {
+      if (/^(مرحبا|اهلا|هلا|السلام عليكم|سلام|كيف حالك|كيفك|شلونك|اخبارك|صباح الخير|مساء الخير|hello|hi|hey|bonjour|salut)\b/i.test(normAr)) {
         return "أهلاً بك في **NourAI**! أنا بخير وجاهز لمساعدتك. كيف يمكنني خدمتك اليوم؟";
       }
       if (normAr.includes("ماذا يمكنك") || normAr.includes("قدراتك") || normAr.includes("what can you do")) {
@@ -2302,7 +2302,8 @@ function downloadWebm() {
       const explicitSearch = /^(ابحث في قوقل|ابحث في الويب|ابحث عن|ابحث|جوجل|قوقل|search\s+for|search\s+|google\s+)/i.test(q);
       const factualLookup = /^(من هو|من هي|من يكون|متى ولد|متى تأسس|أين تقع|ما هي عاصمة|كم عدد سكان|who is|when did|where is|capital of)\b/i.test(q);
       const isNonSearchTask = /(اكتب\s+كود|برمجة|بايثون|جافاسكربت|خطط|خطة|فكرة|اقترح|قصة|رسالة|بريد|لخص|ترجم|احسب|ساعدني|كيف\s+أبدأ)/i.test(q);
-      const shouldSearchWeb = explicitSearch || (engineMode === "web_ai" && !isNonSearchTask) || (factualLookup && !isNonSearchTask);
+      const isShortChat = q.split(/\s+/).length <= 2 && !explicitSearch && !factualLookup;
+      const shouldSearchWeb = explicitSearch || (factualLookup && !isNonSearchTask) || (engineMode === "web_ai" && !isNonSearchTask && !isShortChat);
 
       let wikiSnippet = "";
       let wikiTitle = "";
