@@ -1773,17 +1773,40 @@ function downloadWebm() {
 <\/script></body></html>`;
     }
 
-    async function callCloudLLM(sysPrompt, userPrompt, geminiKey) {
-      const cleanRules = " [Clean Answer Rules: Be direct with no long intro, remove redundancy, use clear headings/lists, bold key terms, format code in fenced blocks, format tables cleanly, fix spelling, and avoid excessive emojis.]";
-      const fullSys = sysPrompt + cleanRules;
+    const NOURAI_MANDATORY_RULES = `أنت مساعد ذكاء اصطناعي ذكي ودقيق.
+قواعد الإجابة الإلزامية:
+- افهم سؤال المستخدم جيداً قبل الإجابة وأجب مباشرة دون الخروج عن الموضوع.
+- لا تخترع معاني للكلمات أو أسماء الأشخاص أبداً.
+- إذا سأل المستخدم عن شخص مشهور، قدم معلومات حقيقية موثقة عنه.
+- إذا كان السؤال غامضاً، اطلب توضيحاً بدلاً من التخمين.
+- لا تستخدم أسلوب المناظرة أو القاضي ولا تضف عناوين أو أقساماً غير ضرورية إلا إذا طلب المستخدم ذلك صراحة.
+- تجنب المقدمات الطويلة والتكرار، واستخدم لغة واضحة وبسيطة ومنظمة.
+- لا تقدم معلومات غير مؤكدة على أنها حقائق، وحافظ على سياق المحادثة.
+تنسيق الإجابة: ابدأ بالإجابة المباشرة، استخدم العناوين عند الحاجة فقط، استخدم النقاط للقوائم، استخدم الخط العريض للمعلومات المهمة، واجعل الإجابة بطول يتناسب مع السؤال.`;
+
+    function getRecentChatHistory() {
+      try {
+        const list = loadLocalSessions();
+        const cur = list.find(s => s.session_id === activeSessionId);
+        return (cur && cur.messages ? cur.messages : []).slice(-4);
+      } catch (e) {
+        return [];
+      }
+    }
+
+    async function callCloudLLM(sysPrompt, userPrompt, geminiKey, includeHistory = false) {
+      const fullSys = `${NOURAI_MANDATORY_RULES}\n${sysPrompt}`;
+      const historyTurns = includeHistory ? getRecentChatHistory() : [];
       if (geminiKey) {
         try {
+          const histText = historyTurns.map(t => `${t.role === "user" ? "User" : "Assistant"}: ${t.content}`).join("\n");
+          const promptWithHist = histText ? `Conversation History:\n${histText}\n\nCurrent User Message: ${userPrompt}` : userPrompt;
           const gRes = await fetchWithTimeout(
             `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(geminiKey)}`,
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ contents: [{ parts: [{ text: `${fullSys}\n\n${userPrompt}` }] }] })
+              body: JSON.stringify({ contents: [{ parts: [{ text: `${fullSys}\n\n${promptWithHist}` }] }] })
             },
             6500
           );
@@ -1795,14 +1818,17 @@ function downloadWebm() {
         } catch (e) {}
       }
       try {
+        const msgs = [{ role: "system", content: fullSys }];
+        for (const t of historyTurns) msgs.push({ role: t.role, content: String(t.content || "").slice(0, 500) });
+        msgs.push({ role: "user", content: userPrompt });
         const pRes = await fetchWithTimeout(
           "https://text.pollinations.ai/openai",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ model: "openai", messages: [{ role: "system", content: fullSys }, { role: "user", content: userPrompt }] })
+            body: JSON.stringify({ model: "openai", messages: msgs })
           },
-          3500
+          4500
         );
         if (pRes.ok) {
           const pData = await pRes.json();
@@ -2015,19 +2041,23 @@ function downloadWebm() {
       let wikiTitle = "";
       let wikiUrl = "";
       try {
-        const cleanQ = q.replace(/^(ابحث في قوقل عن|ابحث عن|ما هو|ما هي|من هو|من هي)\s+/i, "").replace(/[؟?!.]+$/, "");
-        const wLang = /[\u0600-\u06FF]/.test(q) ? "ar" : "en";
-        const wRes = await fetch(`https://${wLang}.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(cleanQ)}&utf8=1&format=json&origin=*&srlimit=1`);
-        if (wRes.ok) {
-          const wData = await wRes.json();
-          const hit = wData.query && wData.query.search && wData.query.search[0];
-          if (hit) {
-            wikiTitle = hit.title;
-            wikiUrl = `https://${wLang}.wikipedia.org/wiki/${encodeURIComponent(hit.title.replace(/ /g, "_"))}`;
-            const sumRes = await fetch(`https://${wLang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(hit.title.replace(/ /g, "_"))}`);
-            if (sumRes.ok) {
-              const sumData = await sumRes.json();
-              wikiSnippet = sumData.extract || "";
+        const cleanQ = q.replace(/^(ابحث في قوقل عن|ابحث عن|ما هو|ما هي|من هو|من هي|من يكون|أخبرني عن|معلومات عن)\s+/i, "").replace(/[؟?!.]+$/, "").trim();
+        const primaryLang = /[\u0600-\u06FF]/.test(q) ? "ar" : "en";
+        const langsToTry = primaryLang === "ar" ? ["ar", "en"] : ["en", "ar"];
+        for (const wLang of langsToTry) {
+          if (wikiSnippet) break;
+          const wRes = await fetchWithTimeout(`https://${wLang}.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(cleanQ)}&utf8=1&format=json&origin=*&srlimit=1`, {}, 2500);
+          if (wRes.ok) {
+            const wData = await wRes.json();
+            const hit = wData.query && wData.query.search && wData.query.search[0];
+            if (hit) {
+              wikiTitle = hit.title;
+              wikiUrl = `https://${wLang}.wikipedia.org/wiki/${encodeURIComponent(hit.title.replace(/ /g, "_"))}`;
+              const sumRes = await fetchWithTimeout(`https://${wLang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(hit.title.replace(/ /g, "_"))}`, {}, 2500);
+              if (sumRes.ok) {
+                const sumData = await sumRes.json();
+                wikiSnippet = sumData.extract || "";
+              }
             }
           }
         }
@@ -2188,67 +2218,27 @@ function downloadWebm() {
         return `🧬 **رد نسختك الرقمية حول «${topic}»:**\n\nبأسلوبك المباشر والعملي: ركز على تنفيذ «${topic}» بخطوات واضحة ومختصرة دون حشو. *(تعلّمت النسخة من ${twin.samples?.length || 0} رسالة من رسائلك السابقة).*`;
       }
 
+      const isTeamMode = (document.getElementById("engine-mode-select").value === "team_ai" || persona === "team");
       const teamInstruction = isTeamMode
-        ? "You are a collaborative 5-specialist AI team working together to deliver the best possible answer:\n" +
-          "1. 🧠 Analyst & Thinker (خبير التحليل والتفكير)\n" +
-          "2. 💻 Pro Programmer (مبرمج محترف)\n" +
-          "3. 🎨 Creative Designer (مصمم إبداعي)\n" +
-          "4. 📚 Teacher & Researcher (مدرس وباحث)\n" +
-          "5. ✍️ Writer & Content Creator (كاتب وصانع محتوى)\n" +
-          "Synthesize their perspectives cleanly with clear headings in the user's language."
-        : `You are NourAI acting as specialist: ${persona}.`;
-      const sysPrompt = `${teamInstruction} ${lenHint} ${toneHint} User memories: ${mems.join("; ")}. Answer clearly in the user's language.`;
-      if (geminiKey) {
-        try {
-          const gRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(geminiKey)}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: `${sysPrompt}\nQuestion: ${q}\nWeb Context: ${wikiSnippet}` }] }]
-            })
-          });
-          if (gRes.ok) {
-            const gData = await gRes.json();
-            const gTxt = gData.candidates?.[0]?.content?.parts?.map(p => p.text || "").join("").trim();
-            if (gTxt) return wikiUrl ? `${gTxt}\n\n🌐 [${wikiTitle}](${wikiUrl})` : gTxt;
-          }
-        } catch (e) {}
+        ? "Synthesize insights naturally and directly in a single cohesive answer without unnecessary headings or debate/judge formatting."
+        : `Act as specialist: ${persona}.`;
+      const sysPrompt = `${teamInstruction} ${lenHint} ${toneHint} User memories: ${mems.join("; ")}.`;
+      const userWithCtx = wikiSnippet ? `Question: ${q}\nVerified Reference Context (${wikiTitle}): ${wikiSnippet}` : q;
+
+      const cloudAnswer = await callCloudLLM(sysPrompt, userWithCtx, geminiKey, true);
+      if (cloudAnswer) {
+        return wikiUrl ? `${cloudAnswer}\n\n🌐 [المصدر: ${wikiTitle}](${wikiUrl})` : cloudAnswer;
       }
 
       if (wikiSnippet) {
-        if (isTeamMode) {
-          return `🤝 **النتيجة التعاونية لفريق NourAI (5 مساعدين):**\n\n` +
-            `- **📚 المدرس والباحث:** ${wikiSnippet}\n` +
-            `- **🧠 خبير التحليل والتفكير:** يوضح الموضوع ارتباطاً مباشراً بتطبيقات عملية وأولويات واضحة بناءً على المعطيات الموثقة.\n` +
-            `- **✍️ الكاتب وصانع المحتوى:** تم تلخيص الفكرة بأسلوب سلس ومباشر.\n\n` +
-            `🌐 [المصدر المرجعي: ${wikiTitle}](${wikiUrl})`;
-        }
-        return `🔎 **${wikiTitle}:**\n\n${wikiSnippet}\n\n🌐 [اقرأ المزيد على ويكيبيديا](${wikiUrl})`;
+        return `**${wikiTitle}**\n\n${wikiSnippet}\n\n🌐 [المصدر: ويكيبيديا](${wikiUrl})`;
       }
 
-      try {
-        const pRes = await fetch("https://text.pollinations.ai/openai", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ model: "openai", messages: [{ role: "system", content: sysPrompt }, { role: "user", content: q }] })
-        });
-        if (pRes.ok) {
-          const pData = await pRes.json();
-          const txt = pData.choices?.[0]?.message?.content?.trim();
-          if (txt) return txt;
-        }
-      } catch (e) {}
-
-      if (isTeamMode) {
-        return `🤝 **تعاون فريق NourAI (5 مساعدين) حول «${q}»:**\n\n` +
-          `- **🧠 خبير التحليل والتفكير:** تقسيم الفكرة إلى أهداف واضحة، مدخلات، وخطوات تنفيذ قابلة للقياس.\n` +
-          `- **💻 المبرمج المحترف:** تجهيز البنية التقنية النظيفة وقابلية التوسع والأتمتة.\n` +
-          `- **🎨 المصمم الإبداعي:** تصميم واجهة عصرية سهلة الاستخدام ومتوافقة مع الهاتف.\n` +
-          `- **📚 المدرس والباحث:** توثيق المفاهيم الأساسية والمصادر المرجعية بدقة.\n` +
-          `- **✍️ الكاتب وصانع المحتوى:** صياغة الرسالة النهائية بأسلوب واضح ومقنع.\n\n` +
-          `*(نصيحة: أضف مفتاح Gemini المجاني في الإعدادات ⚙️ لتفعيل التوليد التفصيلي العميق من الفريق كاملاً).*`;
+      // If question is short or ambiguous and no verified answer was found, ask for clarification instead of guessing
+      if (q.split(/\s+/).length <= 3 || q.length < 10) {
+        return `سؤالك «**${q}**» غير واضح تماماً. هل يمكنك توضيح ما تقصده أو إضافة تفاصيل أكثر لأجيبك بدقة؟`;
       }
-      return "أهلاً بك! تم استلام سؤالك بنجاح. للبحث المباشر، جرّب سؤالاً معرفياً أو أضف مفتاح Gemini المجاني في الإعدادات (⚙️).";
+      return "لم أتمكن من التحقق من معلومات مؤكدة حول هذا السؤال حالياً. يرجى توضيح السؤال أو إضافة مفتاح Gemini المجاني في الإعدادات (⚙️) للحصول على إجابة دقيقة.";
     }
 
     async function sendStreamingMessage() {
