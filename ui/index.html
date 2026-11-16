@@ -1169,6 +1169,7 @@
 
     function activateServerlessFallback() {
       backendOnline = false;
+      try { sessionStorage.setItem("nourai_serverless", "1"); } catch (e) {}
       authToken = "local-browser-session";
       const badge = document.getElementById("model-status-badge");
       if (badge) badge.textContent = "سحابي";
@@ -1176,23 +1177,34 @@
       return authToken;
     }
 
+    async function fetchWithTimeout(url, options, ms = 4000) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), ms);
+      try {
+        return await fetch(url, { ...(options || {}), signal: controller.signal });
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
     async function ensureAuthenticated() {
       if (authToken) return authToken;
+      try {
+        if (API_BASE !== "" && sessionStorage.getItem("nourai_serverless") === "1") {
+          return activateServerlessFallback();
+        }
+      } catch (e) {}
       const savedToken = getCookie("nourai_token");
       if (savedToken && API_BASE === "") {
         authToken = savedToken;
         return authToken;
       }
       try {
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 5000);
-        const res = await fetch(API_BASE + "/api/v1/auth/guest", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({}),
-          signal: controller.signal
-        });
-        clearTimeout(timer);
+        const res = await fetchWithTimeout(
+          API_BASE + "/api/v1/auth/guest",
+          { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({}) },
+          API_BASE === "" ? 4000 : 1200
+        );
         if (!res.ok) throw new Error("Backend unavailable (" + res.status + ")");
         const data = await res.json();
         authToken = data.access_token;
@@ -1676,11 +1688,15 @@ function downloadWebm() {
     async function callCloudLLM(sysPrompt, userPrompt, geminiKey) {
       if (geminiKey) {
         try {
-          const gRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(geminiKey)}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ contents: [{ parts: [{ text: `${sysPrompt}\n\n${userPrompt}` }] }] })
-          });
+          const gRes = await fetchWithTimeout(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(geminiKey)}`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ contents: [{ parts: [{ text: `${sysPrompt}\n\n${userPrompt}` }] }] })
+            },
+            6500
+          );
           if (gRes.ok) {
             const gData = await gRes.json();
             const gTxt = gData.candidates?.[0]?.content?.parts?.map(p => p.text || "").join("").trim();
@@ -1689,11 +1705,15 @@ function downloadWebm() {
         } catch (e) {}
       }
       try {
-        const pRes = await fetch("https://text.pollinations.ai/openai", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ model: "openai", messages: [{ role: "system", content: sysPrompt }, { role: "user", content: userPrompt }] })
-        });
+        const pRes = await fetchWithTimeout(
+          "https://text.pollinations.ai/openai",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ model: "openai", messages: [{ role: "system", content: sysPrompt }, { role: "user", content: userPrompt }] })
+          },
+          3500
+        );
         if (pRes.ok) {
           const pData = await pRes.json();
           const txt = pData.choices?.[0]?.message?.content?.trim();
