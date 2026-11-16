@@ -883,6 +883,7 @@
     const API_BASE = (window.location.hostname.endsWith("web.app") || window.location.hostname.endsWith("firebaseapp.com"))
       ? "https://nourai-studio.onrender.com"
       : "";
+    let backendOnline = true;
     let currentLanguage = "arabic";
     let sessions = [];
     let activeSessionId = null;
@@ -965,33 +966,65 @@
       sendStreamingMessage();
     }
 
+    function loadLocalSessions() {
+      try {
+        return JSON.parse(localStorage.getItem("nourai_local_sessions") || "[]");
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveLocalSessions(list) {
+      try {
+        localStorage.setItem("nourai_local_sessions", JSON.stringify(list));
+      } catch (e) {}
+    }
+
+    function activateServerlessFallback() {
+      backendOnline = false;
+      authToken = "local-browser-session";
+      const badge = document.getElementById("model-status-badge");
+      if (badge) badge.textContent = "سحابي";
+      hideError();
+      return authToken;
+    }
+
     async function ensureAuthenticated() {
       if (authToken) return authToken;
       const savedToken = getCookie("nourai_token");
-      if (savedToken) {
+      if (savedToken && API_BASE === "") {
         authToken = savedToken;
         return authToken;
       }
       try {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 5000);
         const res = await fetch(API_BASE + "/api/v1/auth/guest", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({})
+          body: JSON.stringify({}),
+          signal: controller.signal
         });
-        if (!res.ok) throw new Error("Authentication failed (" + res.status + ")");
+        clearTimeout(timer);
+        if (!res.ok) throw new Error("Backend unavailable (" + res.status + ")");
         const data = await res.json();
         authToken = data.access_token;
+        backendOnline = true;
         setCookie("nourai_token", authToken, 7);
         return authToken;
       } catch (err) {
-        showError(err.message);
-        return null;
+        return activateServerlessFallback();
       }
     }
 
     async function refreshSessionList() {
       let token = await ensureAuthenticated();
       if (!token) return;
+      if (!backendOnline) {
+        sessions = loadLocalSessions();
+        renderSessionList();
+        return;
+      }
       try {
         let res = await fetch(API_BASE + "/api/v1/sessions", {
           headers: { "Authorization": "Bearer " + token }
@@ -1002,12 +1035,16 @@
           setCookie("nourai_token", "", -1);
           setCookie("nourai_active_session", "", -1);
           token = await ensureAuthenticated();
-          if (!token) return;
+          if (!token || !backendOnline) {
+            sessions = loadLocalSessions();
+            renderSessionList();
+            return;
+          }
           res = await fetch(API_BASE + "/api/v1/sessions", {
             headers: { "Authorization": "Bearer " + token }
           });
         }
-        if (!res.ok) return;
+        if (!res.ok) throw new Error("Sessions error");
         const data = await res.json();
         sessions = data.sessions || [];
         if (activeSessionId && !sessions.some(s => s.session_id === activeSessionId)) {
@@ -1016,7 +1053,9 @@
         }
         renderSessionList();
       } catch (err) {
-        showError(err.message);
+        activateServerlessFallback();
+        sessions = loadLocalSessions();
+        renderSessionList();
       }
     }
 
@@ -1087,6 +1126,20 @@
     async function selectSession(sessionId) {
       const token = await ensureAuthenticated();
       if (!token) return;
+      if (!backendOnline) {
+        const local = loadLocalSessions().find(s => s.session_id === sessionId);
+        if (!local) return;
+        activeSessionId = sessionId;
+        renderSessionList();
+        const container = document.getElementById("chat-messages");
+        container.innerHTML = "";
+        for (const msg of (local.messages || [])) {
+          const obj = appendMessageBubble(msg.role, "");
+          renderFormattedContent(obj.textNode, msg.content);
+        }
+        updateHeroVisibility();
+        return;
+      }
       try {
         const res = await fetch(API_BASE + "/api/v1/sessions/" + sessionId, {
           headers: { "Authorization": "Bearer " + token }
@@ -1278,6 +1331,85 @@
       }
     }
 
+    async function generateBrowserReply(text, geminiKey) {
+      const q = text.trim();
+      const lower = q.toLowerCase();
+      const normAr = lower.replace(/[أإآ]/g, "ا").replace(/ة/g, "ه").replace(/مادا/g, "ماذا");
+
+      if (/^(مرحبا|اهلا|السلام عليكم|كيف حالك|hello|hi|bonjour)/.test(normAr)) {
+        return "أهلاً بك في **NourAI**! أنا بخير وجاهز لمساعدتك. كيف يمكنني خدمتك اليوم؟";
+      }
+      if (normAr.includes("ماذا يمكنك") || normAr.includes("قدراتك") || normAr.includes("what can you do")) {
+        return "أنا **NourAI**، أستطيع مساعدتك في:\n\n1. **البحث المباشر في ويكيبيديا والويب** عن أي موضوع.\n2. **رسم الصور بالذكاء الاصطناعي** (مثال: `ارسم لي مدينة عربية مستقبلية`).\n3. **كتابة الأكواد ومعاينة HTML** والعمليات الحسابية.";
+      }
+      if (/^(ارسم|صمم صورة|اصنع صورة|draw |generate.*image)/i.test(q)) {
+        const subj = q.replace(/^(ارسم لي|ارسم|صمم صورة|اصنع صورة|draw|generate an image of)\s*/i, "").trim() || q;
+        const imgUrl = "https://image.pollinations.ai/prompt/" + encodeURIComponent(subj) + "?width=768&height=512&nologo=true";
+        return `🎨 **تم توليد الصورة لـ «${subj}»:**\n\n![${subj}](${imgUrl})\n\n[📥 فتح الصورة بالحجم الكامل](${imgUrl})`;
+      }
+      if (lower.includes("factorial") || lower.includes("مضروب")) {
+        return "إليك دالة بايثون لحساب مضروب العدد:\n\n```python\ndef factorial(n):\n    return 1 if n <= 1 else n * factorial(n - 1)\n\nprint(factorial(5))\n```";
+      }
+
+      let wikiSnippet = "";
+      let wikiTitle = "";
+      let wikiUrl = "";
+      try {
+        const cleanQ = q.replace(/^(ابحث في قوقل عن|ابحث عن|ما هو|ما هي|من هو|من هي)\s+/i, "").replace(/[؟?!.]+$/, "");
+        const wLang = /[\u0600-\u06FF]/.test(q) ? "ar" : "en";
+        const wRes = await fetch(`https://${wLang}.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(cleanQ)}&utf8=1&format=json&origin=*&srlimit=1`);
+        if (wRes.ok) {
+          const wData = await wRes.json();
+          const hit = wData.query && wData.query.search && wData.query.search[0];
+          if (hit) {
+            wikiTitle = hit.title;
+            wikiUrl = `https://${wLang}.wikipedia.org/wiki/${encodeURIComponent(hit.title.replace(/ /g, "_"))}`;
+            const sumRes = await fetch(`https://${wLang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(hit.title.replace(/ /g, "_"))}`);
+            if (sumRes.ok) {
+              const sumData = await sumRes.json();
+              wikiSnippet = sumData.extract || "";
+            }
+          }
+        }
+      } catch (e) {}
+
+      if (geminiKey) {
+        try {
+          const gRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(geminiKey)}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: `You are NourAI. Answer clearly in the user's language.\nQuestion: ${q}\nWeb Context: ${wikiSnippet}` }] }]
+            })
+          });
+          if (gRes.ok) {
+            const gData = await gRes.json();
+            const gTxt = gData.candidates?.[0]?.content?.parts?.map(p => p.text || "").join("").trim();
+            if (gTxt) return wikiUrl ? `${gTxt}\n\n🌐 [${wikiTitle}](${wikiUrl})` : gTxt;
+          }
+        } catch (e) {}
+      }
+
+      if (wikiSnippet) {
+        return `🔎 **${wikiTitle}:**\n\n${wikiSnippet}\n\n🌐 [اقرأ المزيد على ويكيبيديا](${wikiUrl})`;
+      }
+
+      try {
+        const pRes = await fetch("https://text.pollinations.ai/openai", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ model: "openai", messages: [{ role: "system", content: "You are NourAI, a helpful multilingual assistant." }, { role: "user", content: q }] })
+        });
+        if (pRes.ok) {
+          const pData = await pRes.json();
+          const txt = pData.choices?.[0]?.message?.content?.trim();
+          if (txt) return txt;
+        }
+      } catch (e) {}
+
+      return "أهلاً بك! تم استلام سؤالك بنجاح. للبحث المباشر، جرّب سؤالاً معرفياً أو أضف مفتاح Gemini المجاني في الإعدادات (⚙️).";
+    }
+
     async function sendStreamingMessage() {
       hideError();
       const input = document.getElementById("prompt-input");
@@ -1303,53 +1435,60 @@
       document.getElementById("stop-btn").style.display = "flex";
 
       try {
-        let reqBody = {
-          session_id: activeSessionId,
-          language: currentLanguage,
-          message: text,
-          enable_web_search: enableWebSearch,
-          use_fallback_assistant: useFallback,
-          gemini_api_key: geminiKey,
-          persona: document.getElementById("persona-select").value,
-          strategy: document.getElementById("strategy-select").value,
-          temperature: parseFloat(document.getElementById("temperature-input").value),
-          top_k: parseInt(document.getElementById("top-k-input").value, 10),
-          top_p: parseFloat(document.getElementById("top-p-input").value),
-          max_new_tokens: parseInt(document.getElementById("max-tokens-input").value, 10)
-        };
-        let response = await fetch(API_BASE + "/api/v1/chat/stream", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + token
-          },
-          body: JSON.stringify(reqBody)
-        });
-        if (response.status === 404 && activeSessionId) {
-          activeSessionId = null;
-          setCookie("nourai_active_session", "", -1);
-          reqBody.session_id = null;
-          response = await fetch(API_BASE + "/api/v1/chat/stream", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": "Bearer " + token
-            },
-            body: JSON.stringify(reqBody)
-          });
+        let replyText = "";
+        let payload = null;
+        if (backendOnline) {
+          try {
+            let reqBody = {
+              session_id: activeSessionId,
+              language: currentLanguage,
+              message: text,
+              enable_web_search: enableWebSearch,
+              use_fallback_assistant: useFallback,
+              gemini_api_key: geminiKey,
+              persona: document.getElementById("persona-select").value,
+              strategy: document.getElementById("strategy-select").value,
+              temperature: parseFloat(document.getElementById("temperature-input").value),
+              top_k: parseInt(document.getElementById("top-k-input").value, 10),
+              top_p: parseFloat(document.getElementById("top-p-input").value),
+              max_new_tokens: parseInt(document.getElementById("max-tokens-input").value, 10)
+            };
+            let response = await fetch(API_BASE + "/api/v1/chat/stream", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+              },
+              body: JSON.stringify(reqBody)
+            });
+            if (response.status === 404 && activeSessionId) {
+              activeSessionId = null;
+              setCookie("nourai_active_session", "", -1);
+              reqBody.session_id = null;
+              response = await fetch(API_BASE + "/api/v1/chat/stream", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": "Bearer " + token
+                },
+                body: JSON.stringify(reqBody)
+              });
+            }
+            if (!response.ok) throw new Error("HTTP " + response.status);
+            payload = await response.json();
+          } catch (netErr) {
+            if (API_BASE !== "") {
+              activateServerlessFallback();
+            } else {
+              throw netErr;
+            }
+          }
         }
-        const payload = await response.json();
-        if (!response.ok) {
-          showError(payload.error || "Request failed");
-          document.getElementById("send-btn").style.display = "flex";
-          document.getElementById("stop-btn").style.display = "none";
-          return;
-        }
-        activeSessionId = payload.session_id || activeSessionId;
-        setCookie("nourai_active_session", activeSessionId, 7);
 
-        let fullStreamed = "";
-        if (payload.stream_chunks) {
+        if (payload && payload.stream_chunks) {
+          activeSessionId = payload.session_id || activeSessionId;
+          setCookie("nourai_active_session", activeSessionId, 7);
+          let fullStreamed = "";
           for (const chunk of payload.stream_chunks) {
             if (stopStreamingFlag) break;
             fullStreamed += chunk.text_delta;
@@ -1357,6 +1496,19 @@
             const container = document.getElementById("chat-messages");
             container.scrollTop = container.scrollHeight;
             await new Promise(r => setTimeout(r, 12));
+          }
+        } else {
+          replyText = await generateBrowserReply(text, geminiKey);
+          renderFormattedContent(assistantObj.textNode, replyText);
+          const localList = loadLocalSessions();
+          if (!activeSessionId) {
+            activeSessionId = "local_" + Date.now();
+            localList.unshift({ session_id: activeSessionId, title: text.slice(0, 36), messages: [] });
+          }
+          const targetSess = localList.find(s => s.session_id === activeSessionId);
+          if (targetSess) {
+            targetSess.messages.push({ role: "user", content: text }, { role: "assistant", content: replyText });
+            saveLocalSessions(localList);
           }
         }
         await refreshSessionList();
