@@ -755,9 +755,14 @@
     <section id="chat-messages" aria-live="polite"></section>
 
     <footer class="composer-wrap">
+      <div id="attachment-preview-bar" style="display:none;align-items:center;gap:0.5rem;padding:0.35rem 0.65rem;margin-bottom:0.35rem;background:var(--bg-sidebar);border:1px solid var(--border);border-radius:0.75rem;font-size:0.8rem;">
+        <img id="attachment-thumb" style="display:none;width:36px;height:36px;object-fit:cover;border-radius:0.4rem;" alt="preview" />
+        <span id="attachment-name" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+        <button class="icon-btn" style="min-width:24px;height:24px;font-size:0.75rem;" onclick="clearPendingAttachment()" title="إزالة">✕</button>
+      </div>
       <div class="composer-pill">
-        <input type="file" id="doc-upload-input" accept=".txt,.md,.json,.csv,.py,.js,.html,.log,.docx,.pdf" style="display:none;" onchange="handleFileUpload(this)" />
-        <button class="icon-btn" onclick="document.getElementById('doc-upload-input').click()" aria-label="إرفاق ملف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+        <input type="file" id="doc-upload-input" accept="image/*,.txt,.md,.json,.csv,.py,.js,.html,.log,.docx,.pdf" style="display:none;" onchange="handleFileUpload(this)" />
+        <button class="icon-btn" onclick="document.getElementById('doc-upload-input').click()" aria-label="إرفاق ملف أو صورة" title="إرفاق صورة أو ملف PDF/DOCX"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
         <textarea
           id="prompt-input"
           dir="auto"
@@ -767,6 +772,7 @@
           onkeydown="handleComposerKeydown(event)"
           oninput="autoResizeTextarea(this)"
         ></textarea>
+        <button class="icon-btn" id="mic-btn" onclick="startVoiceInput()" aria-label="تحدث بالصوت" title="محادثة صوتية"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
         <button class="send-circle-btn" id="send-btn" onclick="sendStreamingMessage()" aria-label="إرسال"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
         <button class="stop-circle-btn" id="stop-btn" onclick="stopGeneration()" aria-label="إيقاف"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg></button>
       </div>
@@ -784,10 +790,15 @@
       <label for="persona-select">الشخصية / الدور (Persona)</label>
       <select id="persona-select" onchange="setCookie('nourai_persona', this.value, 90)">
         <option value="general">مساعد عام (افتراضي)</option>
+        <option value="study">وضع الدراسة (مدرس واختبارات)</option>
         <option value="coder">مبرمج ومهندس برمجيات</option>
-        <option value="teacher">معلم لغات وشرح مبسط</option>
+        <option value="translator">مترجم فوري متعدد اللغات</option>
         <option value="writer">مدقق لغوي وكاتب أكاديمي</option>
       </select>
+    </div>
+    <div class="control-group" style="flex-direction:row;align-items:center;justify-content:space-between;">
+      <label for="auto-voice-toggle">🔊 الرد الصوتي التلقائي</label>
+      <input type="checkbox" id="auto-voice-toggle" style="width:18px;height:18px;" onchange="setCookie('nourai_auto_voice', this.checked ? '1' : '0', 90)" />
     </div>
     <div class="control-group">
       <label for="strategy-select">استراتيجية التوليد</label>
@@ -889,6 +900,9 @@
     let activeSessionId = null;
     let authToken = null;
     let stopStreamingFlag = false;
+    let pendingImageBase64 = "";
+    let pendingImageMime = "";
+    let pendingImageName = "";
 
     /* Cookie Helper Functions */
     function setCookie(name, value, days) {
@@ -1331,16 +1345,179 @@
       }
     }
 
-    async function generateBrowserReply(text, geminiKey) {
+    function loadLocalMemories() {
+      try { return JSON.parse(localStorage.getItem("nourai_local_memories") || "[]"); } catch (e) { return []; }
+    }
+    function saveLocalMemories(list) {
+      try { localStorage.setItem("nourai_local_memories", JSON.stringify(list)); } catch (e) {}
+    }
+    function loadLocalDocs() {
+      try { return JSON.parse(localStorage.getItem("nourai_local_docs") || "[]"); } catch (e) { return []; }
+    }
+    function saveLocalDocs(list) {
+      try { localStorage.setItem("nourai_local_docs", JSON.stringify(list)); } catch (e) {}
+    }
+    function extractBrowserMemories(text) {
+      const patterns = [
+        /(?:اسمي|أنا اسمي)\s+([^\n.,،!؟]{2,35})/i,
+        /(?:تذكر أن|تذكر ان|لا تنس أن)\s+([^\n.!؟]{3,100})/i,
+        /(?:أعمل كـ|تخصصي هو|أفضل)\s+([^\n.,،!؟]{2,60})/i,
+        /(?:my name is|remember that|i work as)\s+([^\n.!?]{2,80})/i
+      ];
+      const existing = loadLocalMemories();
+      let added = false;
+      for (const pat of patterns) {
+        const m = text.match(pat);
+        if (m && m[1]) {
+          const fact = m[1].trim();
+          if (fact && !existing.includes(fact)) {
+            existing.push(fact);
+            added = true;
+          }
+        }
+      }
+      if (added) saveLocalMemories(existing.slice(-20));
+      return added;
+    }
+
+    function buildAnimatedVideoHtml(topic) {
+      const safeTopic = escapeHtml(topic);
+      return `<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="UTF-8" />
+<style>
+  body { margin:0; background:#0f172a; color:#fff; font-family:system-ui,sans-serif; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; gap:12px; }
+  canvas { border-radius:14px; border:1px solid #334155; max-width:94vw; box-shadow:0 15px 35px rgba(0,0,0,0.5); }
+  .bar { display:flex; gap:10px; }
+  button { padding:8px 16px; border-radius:999px; border:none; background:#6366f1; color:#fff; font-weight:600; cursor:pointer; }
+</style></head><body>
+<canvas id="cv" width="720" height="405"></canvas>
+<div class="bar"><button onclick="togglePlay()">⏯️ تشغيل / إيقاف</button><button onclick="downloadWebm()">📥 تنزيل الفيديو (WebM)</button></div>
+<script>
+const cv = document.getElementById("cv"), ctx = cv.getContext("2d");
+const scenes = [
+  { title: ${JSON.stringify(safeTopic)}, sub: "مقدمة الفكرة — NourAI Studio", c1: "#1e1b4b", c2: "#312e81" },
+  { title: "التحليل والابتكار الذكي", sub: "معالجة البيانات وبناء المفهوم", c1: "#0f172a", c2: "#0e7490" },
+  { title: "النتيجة النهائية ✨", sub: "تم الإنشاء بواسطة NourAI Cloud", c1: "#14532d", c2: "#4c1d95" }
+];
+let t = 0, playing = true;
+function draw() {
+  if (playing) t += 0.015;
+  const idx = Math.floor(t / 3) % scenes.length;
+  const sc = scenes[idx];
+  const g = ctx.createLinearGradient(0, 0, cv.width, cv.height);
+  g.addColorStop(0, sc.c1); g.addColorStop(1, sc.c2);
+  ctx.fillStyle = g; ctx.fillRect(0, 0, cv.width, cv.height);
+  for (let i = 0; i < 14; i++) {
+    ctx.fillStyle = "rgba(255,255,255,0.08)";
+    ctx.beginPath();
+    ctx.arc((i * 83 + t * 45) % cv.width, (i * 57 + Math.sin(t + i) * 35 + 200) % cv.height, 14 + (i % 5) * 6, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.fillStyle = "#ffffff"; ctx.textAlign = "center";
+  ctx.font = "bold 32px system-ui"; ctx.fillText(sc.title, cv.width / 2, cv.height / 2 - 12);
+  ctx.fillStyle = "#cbd5e1"; ctx.font = "20px system-ui"; ctx.fillText(sc.sub, cv.width / 2, cv.height / 2 + 34);
+  requestAnimationFrame(draw);
+}
+draw();
+function togglePlay() { playing = !playing; }
+function downloadWebm() {
+  const stream = cv.captureStream(30), rec = new MediaRecorder(stream), chunks = [];
+  rec.ondataavailable = e => chunks.push(e.data);
+  rec.onstop = () => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(chunks, { type: "video/webm" })); a.download = "nourai_video.webm"; a.click(); };
+  rec.start(); setTimeout(() => rec.stop(), 4000);
+}
+</script></body></html>`;
+    }
+
+    async function generateBrowserReply(text, geminiKey, imgBase64, imgMime) {
       const q = text.trim();
       const lower = q.toLowerCase();
       const normAr = lower.replace(/[أإآ]/g, "ا").replace(/ة/g, "ه").replace(/مادا/g, "ماذا");
+      const persona = document.getElementById("persona-select").value;
+      extractBrowserMemories(q);
+      const mems = loadLocalMemories();
+      const docs = loadLocalDocs();
+
+      // 1. Image Vision Analysis (if user attached an image)
+      if (imgBase64) {
+        if (geminiKey) {
+          try {
+            const gRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(geminiKey)}`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: q || "اشرح وحلل محتوى هذه الصورة بالتفصيل باللغة العربية." }, { inline_data: { mime_type: imgMime || "image/jpeg", data: imgBase64 } }] }]
+              })
+            });
+            if (gRes.ok) {
+              const gData = await gRes.json();
+              const gTxt = gData.candidates?.[0]?.content?.parts?.map(p => p.text || "").join("").trim();
+              if (gTxt) return `🖼️ **تحليل الصورة:**\n\n${gTxt}`;
+            }
+          } catch (e) {}
+        }
+        try {
+          const pRes = await fetch("https://text.pollinations.ai/openai", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              model: "openai",
+              messages: [{ role: "user", content: [{ type: "text", text: q || "Describe and analyze this image in Arabic." }, { type: "image_url", image_url: { url: `data:${imgMime || "image/jpeg"};base64,${imgBase64}` } }] }]
+            })
+          });
+          if (pRes.ok) {
+            const pData = await pRes.json();
+            const txt = pData.choices?.[0]?.message?.content?.trim();
+            if (txt) return `🖼️ **تحليل الصورة:**\n\n${txt}`;
+          }
+        } catch (e) {}
+        return "🖼️ تم استلام الصورة بنجاح! للحصول على تحليل بصري فائق الدقة لأي صورة، أضف مفتاح **Gemini API المجاني** في الإعدادات (⚙️).";
+      }
+
+      // 2. Text-to-Video Storyboard Generator
+      if (/^(انشئ فيديو|أنشئ فيديو|اصنع فيديو|صمم فيديو|create a video|generate a video)/i.test(q)) {
+        const topic = q.replace(/^(انشئ فيديو|أنشئ فيديو|اصنع فيديو|صمم فيديو|create a video|generate a video)\s*(عن|حول|about|on)?\s*/i, "").trim() || "الذكاء الاصطناعي";
+        const videoHtml = buildAnimatedVideoHtml(topic);
+        return `🎬 **تم إنشاء فيديو متحرك تفاعلي عن «${topic}»** (اضغط **▶️ معاينة** لتشغيل الفيديو أو تنزيله بصيغة WebM):\n\n\`\`\`html\n${videoHtml}\n\`\`\``;
+      }
+
+      // 3. Personal Memory Recall
+      if (mems.length && (normAr.includes("ما اسمي") || normAr.includes("ماذا تعرف عني") || lower.includes("what is my name"))) {
+        return "🧠 **الذاكرة الشخصية المحفوظة لك:**\n\n" + mems.map(m => "- " + m).join("\n");
+      }
+
+      // 4. Local Cloud PDF/Document Search (RAG)
+      if (docs.length && (normAr.includes("ملف") || normAr.includes("كتاب") || normAr.includes("pdf") || normAr.includes("لخص") || normAr.includes("مستند"))) {
+        const latest = docs[0];
+        const kws = q.split(/\s+/).filter(w => w.length > 2);
+        const scored = latest.chunks.map((c, idx) => ({
+          idx: idx + 1,
+          text: c,
+          score: kws.reduce((acc, w) => acc + (c.toLowerCase().includes(w.toLowerCase()) ? 1 : 0), 0)
+        })).sort((a, b) => b.score - a.score);
+        const topChunks = scored.slice(0, 2).map(s => `**[فقرة #${s.idx}]**: ${s.text}`).join("\n\n");
+        if (geminiKey) {
+          try {
+            const gRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(geminiKey)}`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ contents: [{ parts: [{ text: `Based on document "${latest.filename}":\n${topChunks}\n\nQuestion: ${q}` }] }] })
+            });
+            if (gRes.ok) {
+              const gData = await gRes.json();
+              const gTxt = gData.candidates?.[0]?.content?.parts?.map(p => p.text || "").join("").trim();
+              if (gTxt) return `📄 **من ملف \`${latest.filename}\`:**\n\n${gTxt}`;
+            }
+          } catch (e) {}
+        }
+        return `📄 **المحتوى المستخرج من \`${latest.filename}\`:**\n\n${topChunks}`;
+      }
 
       if (/^(مرحبا|اهلا|السلام عليكم|كيف حالك|hello|hi|bonjour)/.test(normAr)) {
         return "أهلاً بك في **NourAI**! أنا بخير وجاهز لمساعدتك. كيف يمكنني خدمتك اليوم؟";
       }
       if (normAr.includes("ماذا يمكنك") || normAr.includes("قدراتك") || normAr.includes("what can you do")) {
-        return "أنا **NourAI**، أستطيع مساعدتك في:\n\n1. **البحث المباشر في ويكيبيديا والويب** عن أي موضوع.\n2. **رسم الصور بالذكاء الاصطناعي** (مثال: `ارسم لي مدينة عربية مستقبلية`).\n3. **كتابة الأكواد ومعاينة HTML** والعمليات الحسابية.";
+        return "أنا **NourAI**، أستطيع مساعدتك في 10 مهام ذكية سحابياً:\n\n1. **البحث الذكي** في الويب وويكيبيديا مع المصادر.\n2. **توليد الصور** (`ارسم لي...`) و**إنشاء الفيديو المتحرك** (`اصنع فيديو عن...`).\n3. **تحليل الصور** (ارفق صورة من `+`) و**تحليل ملفات PDF/DOCX**.\n4. **التحدث بالصوت** (`🎤` و`🔊`)، **الترجمة الفورية**، **البرمجة**، **وضع الدراسة**، و**الذاكرة الشخصية**.";
       }
       if (/^(ارسم|صمم صورة|اصنع صورة|draw |generate.*image)/i.test(q)) {
         const subj = q.replace(/^(ارسم لي|ارسم|صمم صورة|اصنع صورة|draw|generate an image of)\s*/i, "").trim() || q;
@@ -1373,13 +1550,14 @@
         }
       } catch (e) {}
 
+      const sysPrompt = `You are NourAI (Persona: ${persona}). User memories: ${mems.join("; ")}. Answer clearly in the user's language.`;
       if (geminiKey) {
         try {
           const gRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(geminiKey)}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              contents: [{ parts: [{ text: `You are NourAI. Answer clearly in the user's language.\nQuestion: ${q}\nWeb Context: ${wikiSnippet}` }] }]
+              contents: [{ parts: [{ text: `${sysPrompt}\nQuestion: ${q}\nWeb Context: ${wikiSnippet}` }] }]
             })
           });
           if (gRes.ok) {
@@ -1398,7 +1576,7 @@
         const pRes = await fetch("https://text.pollinations.ai/openai", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ model: "openai", messages: [{ role: "system", content: "You are NourAI, a helpful multilingual assistant." }, { role: "user", content: q }] })
+          body: JSON.stringify({ model: "openai", messages: [{ role: "system", content: sysPrompt }, { role: "user", content: q }] })
         });
         if (pRes.ok) {
           const pData = await pRes.json();
@@ -1413,16 +1591,21 @@
     async function sendStreamingMessage() {
       hideError();
       const input = document.getElementById("prompt-input");
-      const text = input.value.trim();
-      if (!text) return;
+      const text = input.value.trim() || (pendingImageBase64 ? "حلل واشرح هذه الصورة بالتفصيل" : "");
+      if (!text && !pendingImageBase64) return;
       const token = await ensureAuthenticated();
       if (!token) return;
+
+      const sentImgB64 = pendingImageBase64;
+      const sentImgMime = pendingImageMime;
+      clearPendingAttachment();
 
       input.value = "";
       input.style.height = "auto";
       stopStreamingFlag = false;
 
-      appendMessageBubble("user", text);
+      const userDisplay = sentImgB64 ? `${text}\n🖼️ [صورة مرفقة]` : text;
+      appendMessageBubble("user", userDisplay);
       updateHeroVisibility();
 
       const selectedMode = document.getElementById("engine-mode-select").value;
@@ -1485,7 +1668,7 @@
           }
         }
 
-        if (payload && payload.stream_chunks) {
+        if (payload && payload.stream_chunks && !sentImgB64) {
           activeSessionId = payload.session_id || activeSessionId;
           setCookie("nourai_active_session", activeSessionId, 7);
           let fullStreamed = "";
@@ -1497,9 +1680,11 @@
             container.scrollTop = container.scrollHeight;
             await new Promise(r => setTimeout(r, 12));
           }
+          if (document.getElementById("auto-voice-toggle").checked) speakText(fullStreamed);
         } else {
-          replyText = await generateBrowserReply(text, geminiKey);
+          replyText = await generateBrowserReply(text, geminiKey, sentImgB64, sentImgMime);
           renderFormattedContent(assistantObj.textNode, replyText);
+          if (document.getElementById("auto-voice-toggle").checked) speakText(replyText);
           const localList = loadLocalSessions();
           if (!activeSessionId) {
             activeSessionId = "local_" + Date.now();
@@ -1507,7 +1692,7 @@
           }
           const targetSess = localList.find(s => s.session_id === activeSessionId);
           if (targetSess) {
-            targetSess.messages.push({ role: "user", content: text }, { role: "assistant", content: replyText });
+            targetSess.messages.push({ role: "user", content: userDisplay }, { role: "assistant", content: replyText });
             saveLocalSessions(localList);
           }
         }
@@ -1551,7 +1736,14 @@
         copyBtn.style.fontSize = "0.75rem";
         copyBtn.textContent = I18N[currentLanguage].copy;
         copyBtn.onclick = () => copyAnswer(textSpan.dataset.raw || textSpan.textContent, copyBtn);
+        const speakBtn = document.createElement("button");
+        speakBtn.className = "icon-btn";
+        speakBtn.style.fontSize = "0.75rem";
+        speakBtn.textContent = "🔊";
+        speakBtn.title = "استماع";
+        speakBtn.onclick = () => speakText(textSpan.dataset.raw || textSpan.textContent);
         actions.appendChild(copyBtn);
+        actions.appendChild(speakBtn);
         div.appendChild(actions);
       }
 
@@ -1592,6 +1784,67 @@
       } catch (e) {}
     }
 
+    function speakText(text) {
+      if (!("speechSynthesis" in window) || !text) return;
+      window.speechSynthesis.cancel();
+      const clean = text.replace(/```[\s\S]*?```/g, "").replace(/[*#_`]/g, "").replace(/https?:\/\/\S+/g, "");
+      const utter = new SpeechSynthesisUtterance(clean.slice(0, 600));
+      utter.lang = currentLanguage === "arabic" ? "ar-SA" : (currentLanguage === "french" ? "fr-FR" : "en-US");
+      window.speechSynthesis.speak(utter);
+    }
+
+    function startVoiceInput() {
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRec) {
+        showError("المتصفح لا يدعم الإدخال الصوتي المباشر.");
+        return;
+      }
+      const rec = new SpeechRec();
+      rec.lang = currentLanguage === "arabic" ? "ar-SA" : (currentLanguage === "french" ? "fr-FR" : "en-US");
+      const micBtn = document.getElementById("mic-btn");
+      if (micBtn) micBtn.style.color = "#ef4444";
+      rec.onend = () => { if (micBtn) micBtn.style.color = ""; };
+      rec.onresult = (ev) => {
+        const transcript = ev.results[0][0].transcript;
+        const input = document.getElementById("prompt-input");
+        input.value = (input.value ? input.value + " " : "") + transcript;
+        autoResizeTextarea(input);
+      };
+      rec.start();
+    }
+
+    function clearPendingAttachment() {
+      pendingImageBase64 = "";
+      pendingImageMime = "";
+      pendingImageName = "";
+      const bar = document.getElementById("attachment-preview-bar");
+      const thumb = document.getElementById("attachment-thumb");
+      if (bar) bar.style.display = "none";
+      if (thumb) { thumb.src = ""; thumb.style.display = "none"; }
+    }
+
+    async function extractPdfTextBrowser(arrayBuffer) {
+      if (!window.pdfjsLib) {
+        await new Promise((resolve, reject) => {
+          const s = document.createElement("script");
+          s.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+          s.onload = resolve;
+          s.onerror = reject;
+          document.head.appendChild(s);
+        });
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+      }
+      const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      let fullText = "";
+      const maxPages = Math.min(pdf.numPages, 25);
+      for (let i = 1; i <= maxPages; i++) {
+        const page = await pdf.getPage(i);
+        const content = await page.getTextContent();
+        fullText += content.items.map(it => it.str).join(" ") + "\n";
+      }
+      return fullText.trim();
+    }
+
     async function handleFileUpload(inputEl) {
       const file = inputEl.files && inputEl.files[0];
       if (!file) return;
@@ -1599,6 +1852,45 @@
       if (!token) return;
       try {
         const lowerName = file.name.toLowerCase();
+        if (file.type.startsWith("image/") || /\.(png|jpe?g|webp|gif)$/i.test(lowerName)) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const dataUrl = String(reader.result || "");
+            const parts = dataUrl.split(",");
+            pendingImageBase64 = parts[1] || "";
+            pendingImageMime = file.type || "image/jpeg";
+            pendingImageName = file.name;
+            const bar = document.getElementById("attachment-preview-bar");
+            const thumb = document.getElementById("attachment-thumb");
+            document.getElementById("attachment-name").textContent = "🖼️ " + file.name;
+            thumb.src = dataUrl;
+            thumb.style.display = "block";
+            bar.style.display = "flex";
+          };
+          reader.readAsDataURL(file);
+          inputEl.value = "";
+          return;
+        }
+
+        if (!backendOnline) {
+          let docText = "";
+          if (lowerName.endsWith(".pdf")) {
+            docText = await extractPdfTextBrowser(await file.arrayBuffer());
+          } else {
+            docText = await file.text();
+          }
+          const chunks = [];
+          for (let i = 0; i < docText.length && chunks.length < 40; i += 600) {
+            chunks.push(docText.slice(i, i + 600));
+          }
+          const docs = loadLocalDocs().filter(d => d.filename !== file.name);
+          docs.unshift({ filename: file.name, chunks });
+          saveLocalDocs(docs.slice(0, 5));
+          document.getElementById("prompt-input").value = `لخص ما ورد في الملف المرفق (${file.name})`;
+          inputEl.value = "";
+          return;
+        }
+
         let payloadBody = { filename: file.name };
         if (lowerName.endsWith(".docx") || lowerName.endsWith(".pdf")) {
           const buf = await file.arrayBuffer();
@@ -1646,6 +1938,10 @@
       const savedPersona = getCookie("nourai_persona");
       if (savedPersona) {
         document.getElementById("persona-select").value = savedPersona;
+      }
+      const savedAutoVoice = getCookie("nourai_auto_voice");
+      if (savedAutoVoice === "1") {
+        document.getElementById("auto-voice-toggle").checked = true;
       }
       await refreshSessionList();
       const savedSess = getCookie("nourai_active_session");
