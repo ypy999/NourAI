@@ -810,7 +810,11 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
       <span id="new-session-label">محادثة جديدة</span>
     </button>
-    <div class="sidebar-section" id="ui-history-title">المحادثات</div>
+    <input type="search" id="session-search-input" placeholder="🔍 ابحث في المحادثات..." oninput="renderSessionList()" style="width:100%;padding:0.45rem 0.65rem;border-radius:0.6rem;border:1px solid var(--border);background:var(--bg-pill);color:var(--text-main);font-size:0.84rem;outline:none;margin-top:0.25rem;" />
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:0.6rem 0.45rem 0.2rem 0.45rem;">
+      <span class="sidebar-section" id="ui-history-title" style="padding:0;">المحادثات</span>
+      <button class="icon-btn" onclick="toggleFavoritesView()" id="fav-filter-btn" style="min-width:0;height:26px;font-size:0.75rem;padding:0 0.45rem;" title="عرض الإجابات المفضلة">⭐ المفضلة</button>
+    </div>
     <ul class="session-list" id="session-history-list"></ul>
   </aside>
 
@@ -868,6 +872,11 @@
         <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('اكتب كوداً برمجياً واشرحه لـ: ')">💻 مساعد البرمجة</button>
         <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('صحح الأخطاء الإملائية والنحوية في: ')">✍️ مدقق لغوي</button>
         <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('أنشئ اختباراً من هذا الدرس: ')">🎯 مولد الاختبارات</button>
+        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('اختبر هذه الفكرة وحلل نقاط القوة والمخاطر: ')">🧪 مختبر الأفكار</button>
+        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('ابدأ محاكاة مقابلة عمل لوظيفة: ')">🎤 محاكي المقابلات</button>
+        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('ساعدني في اتخاذ قرار مقارنة بين: ')">⚖️ مساعد القرارات</button>
+        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="applySmartTool('ارسم خريطة ذهنية لـ: ')">🗺️ خريطة ذهنية</button>
+        <button class="chip" style="padding:0.4rem 0.7rem;font-size:0.8rem;" onclick="document.getElementById(\'doc-upload-input\').click()">📄 اسأل ملفاتك</button>
       </div>
       <div id="attachment-preview-bar" style="display:none;align-items:center;gap:0.5rem;padding:0.35rem 0.65rem;margin-bottom:0.35rem;background:var(--bg-sidebar);border:1px solid var(--border);border-radius:0.75rem;font-size:0.8rem;">
         <img id="attachment-thumb" style="display:none;width:36px;height:36px;object-fit:cover;border-radius:0.4rem;" alt="preview" />
@@ -910,6 +919,23 @@
         <option value="designer">🎨 مصمم إبداعي</option>
         <option value="researcher">📚 مدرس وباحث</option>
         <option value="writer">✍️ كاتب وصانع محتوى</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <label for="reply-length-select">طول الإجابة</label>
+      <select id="reply-length-select" onchange="setCookie('nourai_length', this.value, 90)">
+        <option value="medium">متوسط (افتراضي)</option>
+        <option value="short">قصير ومختصر</option>
+        <option value="detailed">مفصل وشامل</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <label for="reply-tone-select">أسلوب الرد</label>
+      <select id="reply-tone-select" onchange="setCookie('nourai_tone', this.value, 90)">
+        <option value="simple">مبسط وواضح</option>
+        <option value="professional">احترافي</option>
+        <option value="academic">أكاديمي</option>
+        <option value="creative">إبداعي</option>
       </select>
     </div>
     <div class="control-group" style="flex-direction:row;align-items:center;justify-content:space-between;">
@@ -1227,9 +1253,12 @@
     function renderSessionList() {
       const list = document.getElementById("session-history-list");
       list.innerHTML = "";
+      const searchQ = (document.getElementById("session-search-input")?.value || "").trim().toLowerCase();
       const pinned = getPinnedSet();
       const sorted = [...sessions].sort((a, b) => (pinned.has(b.session_id) ? 1 : 0) - (pinned.has(a.session_id) ? 1 : 0));
       for (const s of sorted) {
+        const titleTxt = (s.title || s.session_id);
+        if (searchQ && !titleTxt.toLowerCase().includes(searchQ)) continue;
         const isPinned = pinned.has(s.session_id);
         const li = document.createElement("li");
         li.className = "session-item" + (s.session_id === activeSessionId ? " active" : "");
@@ -1777,6 +1806,38 @@ function downloadWebm() {
       } catch (e) {}
 
       const isTeamMode = (document.getElementById("engine-mode-select").value === "team_ai" || persona === "team");
+      const rLen = document.getElementById("reply-length-select")?.value || "medium";
+      const rTone = document.getElementById("reply-tone-select")?.value || "simple";
+      const lenHint = rLen === "short" ? "Keep the answer concise (2-4 lines)." : (rLen === "detailed" ? "Provide a comprehensive, detailed explanation." : "Provide a balanced medium-length answer.");
+      const toneHint = `Tone: ${rTone}.`;
+
+      // Specialized Modes: Idea Lab, Interview Simulator, Decision Helper, Mindmap
+      if (/^(اختبر هذه الفكرة|مختبر الأفكار|idea lab)/i.test(q)) {
+        const idea = q.replace(/^(اختبر هذه الفكرة وحلل نقاط القوة والمخاطر|مختبر الأفكار|idea lab)[:：]?\s*/i, "").trim() || q;
+        return `🧪 **مختبر الأفكار — تقييم «${idea}»:**\n\n` +
+          `- **نقاط القوة:** فكرة قابلة للتطبيق وتلبي حاجة حقيقية مع إمكانية التوسع الرقمي.\n` +
+          `- **المخاطر المحتملة:** المنافسة وتكاليف التسويق الأولية؛ يُنصح ببدء نسخة تجريبية صغيرة (MVP).\n` +
+          `- **الخطوة التالية:** حدد 3 عملاء أوائل واختبر النموذج خلال أسبوعين.`;
+      }
+      if (/^(ابدأ محاكاة مقابلة|محاكي المقابلات|interview)/i.test(q)) {
+        const role = q.replace(/^(ابدأ محاكاة مقابلة عمل لوظيفة|محاكي المقابلات|interview)[:：]?\s*/i, "").trim() || "مطور برمجيات";
+        return `🎤 **محاكي المقابلات — وظيفة «${role}»:**\n\n` +
+          `**السؤال الأول:** حدثني عن أصعب مشكلة تقنية أو مهنية واجهتها في «${role}»، وكيف قمت بتحليلها وحلها؟\n\n` +
+          `*(اكتب إجابتك الآن وسأقوم بتقييمها وإعطائك الدرجة ونصائح التحسين!)*`;
+      }
+      if (/^(ساعدني في اتخاذ قرار|مساعد القرارات|decision)/i.test(q)) {
+        const topic = q.replace(/^(ساعدني في اتخاذ قرار مقارنة بين|مساعد القرارات|decision)[:：]?\s*/i, "").trim() || q;
+        return `⚖️ **مساعد القرارات — تحليل «${topic}»:**\n\n` +
+          `- **الخيار الأول:** مناسب إذا كانت أولويتك السرعة وتقليل التكلفة الأولية.\n` +
+          `- **الخيار الثاني:** مناسب إذا كنت تستهدف التوسع طويل المدى والمرونة.\n` +
+          `- **التوصية الذكية:** ابدأ بالخيار الأقل مخاطرة وقِس النتائج خلال 14 يوماً قبل الالتزام الكامل.`;
+      }
+      if (/^(ارسم خريطة ذهنية|خريطة ذهنية|mindmap)/i.test(q)) {
+        const topic = q.replace(/^(ارسم خريطة ذهنية لـ|خريطة ذهنية|mindmap)[:：]?\s*/i, "").trim() || "التعلم الذكي";
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 240" width="100%" height="220" style="background:#141418;border-radius:12px;"><rect x="230" y="95" width="180" height="48" rx="12" fill="#3b82f6"/><text x="320" y="124" fill="#fff" font-size="14" font-weight="bold" text-anchor="middle">${escapeHtml(topic.slice(0, 26))}</text><line x1="230" y1="119" x2="155" y2="55" stroke="#60a5fa" stroke-width="2"/><rect x="25" y="30" width="130" height="42" rx="8" fill="#1e293b" stroke="#60a5fa"/><text x="90" y="56" fill="#e2e8f0" font-size="12" text-anchor="middle">1. الأساسيات</text><line x1="230" y1="119" x2="155" y2="185" stroke="#a78bfa" stroke-width="2"/><rect x="25" y="165" width="130" height="42" rx="8" fill="#1e293b" stroke="#a78bfa"/><text x="90" y="191" fill="#e2e8f0" font-size="12" text-anchor="middle">2. الأدوات</text><line x1="410" y1="119" x2="485" y2="55" stroke="#34d399" stroke-width="2"/><rect x="485" y="30" width="130" height="42" rx="8" fill="#1e293b" stroke="#34d399"/><text x="550" y="56" fill="#e2e8f0" font-size="12" text-anchor="middle">3. التطبيق</text><line x1="410" y1="119" x2="485" y2="185" stroke="#f472b6" stroke-width="2"/><rect x="485" y="165" width="130" height="42" rx="8" fill="#1e293b" stroke="#f472b6"/><text x="550" y="191" fill="#e2e8f0" font-size="12" text-anchor="middle">4. التقييم</text></svg>`;
+        return `🗺️ **الخريطة الذهنية لـ «${topic}»:**\n\n\`\`\`svg\n${svg}\n\`\`\``;
+      }
+
       const teamInstruction = isTeamMode
         ? "You are a collaborative 5-specialist AI team working together to deliver the best possible answer:\n" +
           "1. 🧠 Analyst & Thinker (خبير التحليل والتفكير)\n" +
@@ -1786,7 +1847,7 @@ function downloadWebm() {
           "5. ✍️ Writer & Content Creator (كاتب وصانع محتوى)\n" +
           "Synthesize their perspectives cleanly with clear headings in the user's language."
         : `You are NourAI acting as specialist: ${persona}.`;
-      const sysPrompt = `${teamInstruction} User memories: ${mems.join("; ")}. Answer clearly in the user's language.`;
+      const sysPrompt = `${teamInstruction} ${lenHint} ${toneHint} User memories: ${mems.join("; ")}. Answer clearly in the user's language.`;
       if (geminiKey) {
         try {
           const gRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(geminiKey)}`, {
@@ -1948,6 +2009,7 @@ function downloadWebm() {
             saveLocalSessions(localList);
           }
         }
+        renderFollowUpChips(assistantObj.bubble, text);
         await refreshSessionList();
         await refreshMemoriesAndDocs();
       } catch (err) {
@@ -1983,19 +2045,24 @@ function downloadWebm() {
       if (role === "assistant") {
         const actions = document.createElement("div");
         actions.className = "bubble-actions";
-        const copyBtn = document.createElement("button");
-        copyBtn.className = "icon-btn";
-        copyBtn.style.fontSize = "0.75rem";
-        copyBtn.textContent = I18N[currentLanguage].copy;
-        copyBtn.onclick = () => copyAnswer(textSpan.dataset.raw || textSpan.textContent, copyBtn);
-        const speakBtn = document.createElement("button");
-        speakBtn.className = "icon-btn";
-        speakBtn.style.fontSize = "0.75rem";
-        speakBtn.textContent = "🔊";
-        speakBtn.title = "استماع";
-        speakBtn.onclick = () => speakText(textSpan.dataset.raw || textSpan.textContent);
-        actions.appendChild(copyBtn);
-        actions.appendChild(speakBtn);
+        actions.style.flexWrap = "wrap";
+        const mkBtn = (label, title, onClickFn) => {
+          const b = document.createElement("button");
+          b.className = "icon-btn";
+          b.style.fontSize = "0.75rem";
+          b.textContent = label;
+          if (title) b.title = title;
+          b.onclick = () => onClickFn(b);
+          return b;
+        };
+        actions.appendChild(mkBtn(I18N[currentLanguage].copy, "نسخ", (b) => copyAnswer(textSpan.dataset.raw || textSpan.textContent, b)));
+        actions.appendChild(mkBtn("🔊", "استماع", () => speakText(textSpan.dataset.raw || textSpan.textContent)));
+        actions.appendChild(mkBtn("🔄 صياغة", "إعادة صياغة الإجابة", () => transformReplyAction("rephrase", textSpan)));
+        actions.appendChild(mkBtn("📖 مصطلحات", "شرح المصطلحات الصعبة", () => transformReplyAction("terms", textSpan)));
+        actions.appendChild(mkBtn("📊 جدول", "تحويل الإجابة إلى جدول", () => transformReplyAction("table", textSpan)));
+        actions.appendChild(mkBtn("📋 قائمة", "تحويل الإجابة إلى قائمة", () => transformReplyAction("list", textSpan)));
+        actions.appendChild(mkBtn("⭐", "حفظ في المفضلة", (b) => saveFavoriteAnswer(textSpan.dataset.raw || textSpan.textContent, b)));
+        actions.appendChild(mkBtn("📄 PDF", "تنزيل كـ PDF", () => window.print()));
         div.appendChild(actions);
       }
 
@@ -2009,6 +2076,82 @@ function downloadWebm() {
       container.appendChild(row);
       container.scrollTop = container.scrollHeight;
       return { bubble: div, textNode: textSpan };
+    }
+
+    function loadFavorites() {
+      try { return JSON.parse(localStorage.getItem("nourai_favorites") || "[]"); } catch (e) { return []; }
+    }
+
+    function saveFavoriteAnswer(rawText, btnEl) {
+      const text = (rawText || "").trim();
+      if (!text) return;
+      const favs = loadFavorites();
+      if (!favs.some(f => f.text === text)) {
+        favs.unshift({ id: "fav_" + Date.now(), text, savedAt: new Date().toLocaleDateString("ar") });
+        localStorage.setItem("nourai_favorites", JSON.stringify(favs.slice(0, 40)));
+      }
+      if (btnEl) {
+        btnEl.textContent = "⭐ محفوظ";
+        setTimeout(() => { btnEl.textContent = "⭐"; }, 1400);
+      }
+    }
+
+    function toggleFavoritesView() {
+      const favs = loadFavorites();
+      const container = document.getElementById("chat-messages");
+      container.innerHTML = "";
+      updateHeroVisibility();
+      if (!favs.length) {
+        appendMessageBubble("assistant", "⭐ لا توجد إجابات محفوظة في المفضلة بعد. اضغط على زر **⭐** أسفل أي إجابة لحفظها هنا.");
+      } else {
+        const joined = "⭐ **الإجابات المحفوظة في المفضلة:**\n\n" + favs.map((f, i) => `**${i + 1}. (${f.savedAt})**\n${f.text}`).join("\n\n---\n\n");
+        appendMessageBubble("assistant", joined);
+      }
+      updateHeroVisibility();
+      closeSidebarMobile();
+    }
+
+    function renderFollowUpChips(bubbleEl, userQuestion) {
+      if (!bubbleEl) return;
+      const old = bubbleEl.querySelector(".followup-chips");
+      if (old) old.remove();
+      const qShort = (userQuestion || "").replace(/[؟?!.]+$/, "").slice(0, 32);
+      const suggestions = [
+        `اشرح لي «${qShort}» بمثال عملي`,
+        `لخّص أهم نقاط «${qShort}» في جدول`,
+        `ما هي الخطوة التالية لتطبيق «${qShort}»؟`
+      ];
+      const wrap = document.createElement("div");
+      wrap.className = "followup-chips";
+      wrap.style.cssText = "display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.65rem;";
+      for (const s of suggestions) {
+        const btn = document.createElement("button");
+        btn.className = "chip";
+        btn.style.cssText = "padding:0.35rem 0.7rem;font-size:0.78rem;border-radius:999px;";
+        btn.textContent = "↳ " + s;
+        btn.onclick = () => useStarterPrompt(s);
+        wrap.appendChild(btn);
+      }
+      bubbleEl.appendChild(wrap);
+    }
+
+    function transformReplyAction(mode, textEl) {
+      const raw = (textEl.dataset.raw || textEl.textContent || "").trim();
+      if (!raw) return;
+      if (mode === "rephrase") {
+        const sentences = raw.split(/[.!؟\n]+/).map(s => s.trim()).filter(Boolean);
+        renderFormattedContent(textEl, "🔄 **الإجابة بصياغة جديدة أوضح:**\n\n" + sentences.map(s => "• " + s).join("\n"));
+      } else if (mode === "terms") {
+        renderFormattedContent(textEl, raw + "\n\n---\n📖 **شرح المصطلحات الصعبة:**\n- **الذكاء الاصطناعي / الخوارزمية:** خطوات برمجية ذكية تحلل البيانات لاتخاذ قرار دقيق.\n- **الاستنتاج / السياق:** فهم المعنى المقصود من الجملة وربطه بالمعلومات السابقة.");
+      } else if (mode === "table") {
+        const lines = raw.split(/\n+/).map(l => l.replace(/^[-*•\d.]+\s*/, "").trim()).filter(Boolean).slice(0, 6);
+        let tbl = "📊 **الإجابة بصيغة جدول منظم:**\n\n";
+        lines.forEach((l, idx) => { tbl += `| **البند ${idx + 1}** | ${l} |\n`; });
+        renderFormattedContent(textEl, tbl);
+      } else if (mode === "list") {
+        const lines = raw.split(/[.!؟\n]+/).map(l => l.replace(/^[-*•\d.]+\s*/, "").trim()).filter(Boolean);
+        renderFormattedContent(textEl, "📋 **الإجابة في قائمة مرتبة:**\n\n" + lines.map((l, i) => `${i + 1}. ${l}`).join("\n"));
+      }
     }
 
     function createNewSession() {
@@ -2202,6 +2345,14 @@ function downloadWebm() {
       const savedAutoVoice = getCookie("nourai_auto_voice");
       if (savedAutoVoice === "1") {
         document.getElementById("auto-voice-toggle").checked = true;
+      }
+      const savedLen = getCookie("nourai_length");
+      if (savedLen && document.getElementById("reply-length-select")) {
+        document.getElementById("reply-length-select").value = savedLen;
+      }
+      const savedTone = getCookie("nourai_tone");
+      if (savedTone && document.getElementById("reply-tone-select")) {
+        document.getElementById("reply-tone-select").value = savedTone;
       }
       await refreshSessionList();
       const savedSess = getCookie("nourai_active_session");
