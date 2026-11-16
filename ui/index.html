@@ -819,6 +819,7 @@
       <div class="hdr-start">
         <button class="icon-btn" onclick="toggleSidebar()" aria-label="القائمة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg></button>
         <select id="engine-mode-select" class="model-select" onchange="saveModeCookie()" aria-label="النموذج">
+          <option value="team_ai">NourAI فريق الـ 5 مساعدين</option>
           <option value="web_ai">NourAI ويب</option>
           <option value="neural">NourAI عصبي</option>
           <option value="fallback">NourAI محلي</option>
@@ -848,10 +849,10 @@
       <div class="hero-emblem">✦</div>
       <h1 class="hero-greeting" id="hero-title">كيف يمكنني مساعدتك اليوم؟</h1>
       <div class="quick-chips">
+        <button class="chip" onclick="useStarterPrompt('خطط لي تطبيقاً ذكياً متكاملاً مع التصميم والكود والخطة')">🤝 استشر فريق الـ 5 مساعدين</button>
         <button class="chip" onclick="useStarterPrompt('ارسم لي مدينة عربية مستقبلية')">🎨 ارسم صورة</button>
         <button class="chip" onclick="useStarterPrompt('ابحث في قوقل عن الذكاء الاصطناعي')">🌐 ابحث في الويب</button>
         <button class="chip" onclick="useStarterPrompt('اكتب دالة بايثون لحساب مضروب العدد factorial')">💻 اكتب كوداً</button>
-        <button class="chip" onclick="useStarterPrompt('لخص النص: الذكاء الاصطناعي يغيّر طريقة عملنا وتعلمنا ويفتح فرصاً جديدة في كل المجالات.')">📝 لخّص نصاً</button>
       </div>
     </div>
 
@@ -892,11 +893,12 @@
     <div class="control-group">
       <label for="persona-select">الشخصية / الدور (Persona)</label>
       <select id="persona-select" onchange="setCookie('nourai_persona', this.value, 90)">
-        <option value="general">مساعد عام (افتراضي)</option>
-        <option value="study">وضع الدراسة (مدرس واختبارات)</option>
-        <option value="coder">مبرمج ومهندس برمجيات</option>
-        <option value="translator">مترجم فوري متعدد اللغات</option>
-        <option value="writer">مدقق لغوي وكاتب أكاديمي</option>
+        <option value="team">✦ تعاون الفريق الكامل (5 مساعدين)</option>
+        <option value="analyst">🧠 خبير للتحليل والتفكير</option>
+        <option value="coder">💻 مبرمج محترف</option>
+        <option value="designer">🎨 مصمم إبداعي</option>
+        <option value="researcher">📚 مدرس وباحث</option>
+        <option value="writer">✍️ كاتب وصانع محتوى</option>
       </select>
     </div>
     <div class="control-group" style="flex-direction:row;align-items:center;justify-content:space-between;">
@@ -1660,7 +1662,17 @@ function downloadWebm() {
         }
       } catch (e) {}
 
-      const sysPrompt = `You are NourAI (Persona: ${persona}). User memories: ${mems.join("; ")}. Answer clearly in the user's language.`;
+      const isTeamMode = (document.getElementById("engine-mode-select").value === "team_ai" || persona === "team");
+      const teamInstruction = isTeamMode
+        ? "You are a collaborative 5-specialist AI team working together to deliver the best possible answer:\n" +
+          "1. 🧠 Analyst & Thinker (خبير التحليل والتفكير)\n" +
+          "2. 💻 Pro Programmer (مبرمج محترف)\n" +
+          "3. 🎨 Creative Designer (مصمم إبداعي)\n" +
+          "4. 📚 Teacher & Researcher (مدرس وباحث)\n" +
+          "5. ✍️ Writer & Content Creator (كاتب وصانع محتوى)\n" +
+          "Synthesize their perspectives cleanly with clear headings in the user's language."
+        : `You are NourAI acting as specialist: ${persona}.`;
+      const sysPrompt = `${teamInstruction} User memories: ${mems.join("; ")}. Answer clearly in the user's language.`;
       if (geminiKey) {
         try {
           const gRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(geminiKey)}`, {
@@ -1679,6 +1691,13 @@ function downloadWebm() {
       }
 
       if (wikiSnippet) {
+        if (isTeamMode) {
+          return `🤝 **النتيجة التعاونية لفريق NourAI (5 مساعدين):**\n\n` +
+            `- **📚 المدرس والباحث:** ${wikiSnippet}\n` +
+            `- **🧠 خبير التحليل والتفكير:** يوضح الموضوع ارتباطاً مباشراً بتطبيقات عملية وأولويات واضحة بناءً على المعطيات الموثقة.\n` +
+            `- **✍️ الكاتب وصانع المحتوى:** تم تلخيص الفكرة بأسلوب سلس ومباشر.\n\n` +
+            `🌐 [المصدر المرجعي: ${wikiTitle}](${wikiUrl})`;
+        }
         return `🔎 **${wikiTitle}:**\n\n${wikiSnippet}\n\n🌐 [اقرأ المزيد على ويكيبيديا](${wikiUrl})`;
       }
 
@@ -1695,6 +1714,15 @@ function downloadWebm() {
         }
       } catch (e) {}
 
+      if (isTeamMode) {
+        return `🤝 **تعاون فريق NourAI (5 مساعدين) حول «${q}»:**\n\n` +
+          `- **🧠 خبير التحليل والتفكير:** تقسيم الفكرة إلى أهداف واضحة، مدخلات، وخطوات تنفيذ قابلة للقياس.\n` +
+          `- **💻 المبرمج المحترف:** تجهيز البنية التقنية النظيفة وقابلية التوسع والأتمتة.\n` +
+          `- **🎨 المصمم الإبداعي:** تصميم واجهة عصرية سهلة الاستخدام ومتوافقة مع الهاتف.\n` +
+          `- **📚 المدرس والباحث:** توثيق المفاهيم الأساسية والمصادر المرجعية بدقة.\n` +
+          `- **✍️ الكاتب وصانع المحتوى:** صياغة الرسالة النهائية بأسلوب واضح ومقنع.\n\n` +
+          `*(نصيحة: أضف مفتاح Gemini المجاني في الإعدادات ⚙️ لتفعيل التوليد التفصيلي العميق من الفريق كاملاً).*`;
+      }
       return "أهلاً بك! تم استلام سؤالك بنجاح. للبحث المباشر، جرّب سؤالاً معرفياً أو أضف مفتاح Gemini المجاني في الإعدادات (⚙️).";
     }
 
@@ -1719,8 +1747,8 @@ function downloadWebm() {
       updateHeroVisibility();
 
       const selectedMode = document.getElementById("engine-mode-select").value;
-      const enableWebSearch = selectedMode === "web_ai";
-      const useFallback = selectedMode === "fallback" || selectedMode === "web_ai";
+      const enableWebSearch = selectedMode === "web_ai" || selectedMode === "team_ai";
+      const useFallback = selectedMode === "fallback" || selectedMode === "web_ai" || selectedMode === "team_ai";
       const geminiKey = (document.getElementById("gemini-key-input").value || "").trim();
       const assistantObj = appendMessageBubble("assistant", "");
 
