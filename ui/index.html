@@ -1517,6 +1517,62 @@
       }
     }
 
+    function cleanAnswerText(raw) {
+      if (!raw) return "";
+      const codeBlocks = [];
+      let text = raw.replace(/```[\s\S]*?```/g, (m) => {
+        codeBlocks.push(m);
+        return `@@CODE_BLOCK_${codeBlocks.length - 1}@@`;
+      });
+
+      // 1 & 9. Remove unnecessary filler intros & redundant lines
+      text = text.replace(/^(?:بالتأكيد[!،.\s]*|يسعدني مساعدتك[!،.\s]*|بكل سرور[!،.\s]*|مرحباً[!،.\s]*إليك[^:\n]*[:\n]+)/i, "").trim();
+
+      // 7. Fix common Arabic spelling errors
+      const fixes = {
+        "مادا": "ماذا", "هاذا": "هذا", "هاذه": "هذه", "لاكن": "لكن",
+        "ذالك": "ذلك", "انشاء الله": "إن شاء الله", "ان شاء الله": "إن شاء الله",
+        "شكرا جزيلا": "شكراً جزيلاً", "فى ": "في ", "على ان ": "على أن "
+      };
+      for (const [wrong, right] of Object.entries(fixes)) {
+        text = text.split(wrong).join(right);
+      }
+
+      // 8. Avoid excessive emojis (collapse repeated emojis & strip purely decorative bursts)
+      text = text.replace(/([\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}])(?:\s*\1)+/gu, "$1");
+
+      // Deduplicate identical consecutive lines
+      const lines = text.split("\n");
+      const deduped = [];
+      let prev = "";
+      for (const line of lines) {
+        const t = line.trim();
+        if (t && t === prev) continue;
+        deduped.push(line);
+        prev = t;
+      }
+      text = deduped.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+
+      // Restore code blocks intact
+      text = text.replace(/@@CODE_BLOCK_(\d+)@@/g, (_, idx) => codeBlocks[Number(idx)] || "");
+      return text;
+    }
+
+    function renderMarkdownTable(tableLines) {
+      const rows = tableLines
+        .map(l => l.trim().replace(/^\|/, "").replace(/\|$/, "").split("|").map(c => c.trim()))
+        .filter(cells => cells.length > 0 && !cells.every(c => /^[-:]+$/.test(c)));
+      if (!rows.length) return "";
+      let html = '<div style="overflow-x:auto;margin:0.6rem 0;"><table style="width:100%;border-collapse:collapse;font-size:0.88rem;border:1px solid var(--border);">';
+      rows.forEach((cells, rIdx) => {
+        const tag = rIdx === 0 ? "th" : "td";
+        const bg = rIdx === 0 ? "background:var(--bg-hover);font-weight:700;" : "";
+        html += "<tr>" + cells.map(c => `<${tag} style="border:1px solid var(--border);padding:0.45rem 0.65rem;text-align:start;${bg}">${c}</${tag}>`).join("") + "</tr>";
+      });
+      html += "</table></div>";
+      return html;
+    }
+
     function formatInlineMarkdown(text) {
       if (text.includes("[KGRAPH_JSON]") && text.includes("[/KGRAPH_JSON]")) {
         const parts = text.split(/\[KGRAPH_JSON\]([\s\S]*?)\[\/KGRAPH_JSON\]/g);
@@ -1543,16 +1599,48 @@
       s = s.replace(/!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)/g, '<img src="$2" alt="$1" class="generated-img" loading="lazy" />');
       s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" style="color:#93c5fd;text-decoration:underline;">$1</a>');
       s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
-      return s.replace(/\n/g, "<br/>");
+      s = s.replace(/`([^`]+)`/g, '<code style="background:rgba(255,255,255,0.08);padding:0.1rem 0.35rem;border-radius:0.3rem;font-size:0.86em;">$1</code>');
+
+      const lines = s.split("\n");
+      const out = [];
+      let i = 0;
+      while (i < lines.length) {
+        const ln = lines[i].trim();
+        if (ln.startsWith("|") && ln.endsWith("|")) {
+          const tbl = [];
+          while (i < lines.length && lines[i].trim().startsWith("|")) {
+            tbl.push(lines[i]);
+            i++;
+          }
+          out.push(renderMarkdownTable(tbl));
+          continue;
+        }
+        if (/^###\s+(.+)$/.test(ln)) {
+          out.push(`<h4 style="margin:0.65rem 0 0.25rem 0;font-size:1rem;font-weight:700;">${ln.replace(/^###\s+/, "")}</h4>`);
+        } else if (/^##\s+(.+)$/.test(ln)) {
+          out.push(`<h3 style="margin:0.75rem 0 0.3rem 0;font-size:1.08rem;font-weight:700;">${ln.replace(/^##\s+/, "")}</h3>`);
+        } else if (/^[-•]\s+(.+)$/.test(ln)) {
+          out.push(`<div style="padding-inline-start:0.85rem;margin:0.15rem 0;">• ${ln.replace(/^[-•]\s+/, "")}</div>`);
+        } else if (ln === "---") {
+          out.push('<hr style="border:none;border-top:1px solid var(--border);margin:0.65rem 0;" />');
+        } else if (ln === "") {
+          out.push('<div style="height:0.35rem;"></div>');
+        } else {
+          out.push(`<div>${ln}</div>`);
+        }
+        i++;
+      }
+      return out.join("");
     }
 
     function renderFormattedContent(targetEl, rawText) {
-      targetEl.dataset.raw = rawText;
-      if (!rawText.includes("```")) {
-        targetEl.innerHTML = formatInlineMarkdown(rawText);
+      const cleaned = cleanAnswerText(rawText);
+      targetEl.dataset.raw = cleaned;
+      if (!cleaned.includes("```")) {
+        targetEl.innerHTML = formatInlineMarkdown(cleaned);
         return;
       }
-      const parts = rawText.split(/```(\w*)\n?([\s\S]*?)```/g);
+      const parts = cleaned.split(/```(\w*)\n?([\s\S]*?)```/g);
       let html = "";
       for (let i = 0; i < parts.length; i += 3) {
         const normalText = parts[i] || "";
@@ -1686,6 +1774,8 @@ function downloadWebm() {
     }
 
     async function callCloudLLM(sysPrompt, userPrompt, geminiKey) {
+      const cleanRules = " [Clean Answer Rules: Be direct with no long intro, remove redundancy, use clear headings/lists, bold key terms, format code in fenced blocks, format tables cleanly, fix spelling, and avoid excessive emojis.]";
+      const fullSys = sysPrompt + cleanRules;
       if (geminiKey) {
         try {
           const gRes = await fetchWithTimeout(
@@ -1693,7 +1783,7 @@ function downloadWebm() {
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ contents: [{ parts: [{ text: `${sysPrompt}\n\n${userPrompt}` }] }] })
+              body: JSON.stringify({ contents: [{ parts: [{ text: `${fullSys}\n\n${userPrompt}` }] }] })
             },
             6500
           );
@@ -1710,7 +1800,7 @@ function downloadWebm() {
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ model: "openai", messages: [{ role: "system", content: sysPrompt }, { role: "user", content: userPrompt }] })
+            body: JSON.stringify({ model: "openai", messages: [{ role: "system", content: fullSys }, { role: "user", content: userPrompt }] })
           },
           3500
         );
@@ -2322,6 +2412,7 @@ function downloadWebm() {
         actions.appendChild(mkBtn("📊 جدول", "تحويل الإجابة إلى جدول", () => transformReplyAction("table", textSpan)));
         actions.appendChild(mkBtn("📋 قائمة", "تحويل الإجابة إلى قائمة", () => transformReplyAction("list", textSpan)));
         actions.appendChild(mkBtn("⭐", "حفظ في المفضلة", (b) => saveFavoriteAnswer(textSpan.dataset.raw || textSpan.textContent, b)));
+        actions.appendChild(mkBtn("🧹 تنسيق ذكي", "Clean Answer: تنسيق الإجابة وحذف التكرار", () => renderFormattedContent(textSpan, cleanAnswerText(textSpan.dataset.raw || textSpan.textContent))));
         actions.appendChild(mkBtn("🔍 مراجعة ذكية", "المراجع الذكي: فحص الأخطاء والنواقص واقتراح تحسينات", () => runSmartCriticReview(textSpan)));
         actions.appendChild(mkBtn("📄 PDF", "تنزيل كـ PDF", () => window.print()));
         div.appendChild(actions);
