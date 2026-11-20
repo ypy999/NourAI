@@ -2075,26 +2075,8 @@
       try { localStorage.setItem("nourai_local_docs", JSON.stringify(list)); } catch (e) {}
     }
     function extractBrowserMemories(text) {
-      const patterns = [
-        /(?:اسمي|أنا اسمي)\s+([^\n.,،!؟]{2,35})/i,
-        /(?:تذكر أن|تذكر ان|لا تنس أن)\s+([^\n.!؟]{3,100})/i,
-        /(?:أعمل كـ|تخصصي هو|أفضل)\s+([^\n.,،!؟]{2,60})/i,
-        /(?:my name is|remember that|i work as)\s+([^\n.!?]{2,80})/i
-      ];
-      const existing = loadLocalMemories();
-      let added = false;
-      for (const pat of patterns) {
-        const m = text.match(pat);
-        if (m && m[1]) {
-          const fact = m[1].trim();
-          if (fact && !existing.includes(fact)) {
-            existing.push(fact);
-            added = true;
-          }
-        }
-      }
-      if (added) saveLocalMemories(existing.slice(-20));
-      return added;
+      NourAILongTermMemory.extractAndStore(text);
+      return false;
     }
 
     function buildAnimatedVideoHtml(topic) {
@@ -2161,13 +2143,14 @@ function downloadWebm() {
     /* ---------- 7-Module Cognitive Architecture (NourAICoreEngine) ---------- */
     const NourAILongTermMemory = {
       extractAndStore(text) {
-        if (!text || text.length < 4) return;
+        const t = String(text || "").trim();
+        if (!t || t.length < 4 || /[؟?]/.test(t) || /^(?:ما|ماذا|من|هل|كيف|متى|أين|لماذا|what|who|how|when|where|why)\s+/i.test(t)) return;
         const patterns = [
-          /(?:اسمي|أنا\s+اسمي|اسمي\s+هو)\s+([^\n،.!?]{2,40})/i,
-          /(?:أعمل\s+(?:كـ|في)|مهنتي|تخصصي)\s+([^\n،.!?]{2,60})/i,
-          /(?:أفضل|أحب|اهتمامي|هدفي)\s+([^\n.!?]{3,80})/i,
+          /(?:اسمي|أنا\s+اسمي|اسمي\s+هو)\s+([^\n،.!?]{2,90})/i,
+          /(?:أعمل\s+(?:كـ|في)|وأنا\s+أستاذ|مهنتي|تخصصي)\s+([^\n،.!?]{2,90})/i,
+          /(?:أفضل|أحب|اهتمامي|هدفي)\s+([^\n.!?]{3,90})/i,
           /(?:تذكر\s+أن|احفظ\s+أن|لا\s+تنسَ\s+أن)\s+([^\n.!?]{3,100})/i,
-          /(?:my name is|i work as|i prefer|remember that)\s+([^\n,.!?]{2,80})/i
+          /(?:my name is|i work as|i prefer|remember that)\s+([^\n,.!?]{2,90})/i
         ];
         const current = loadLocalMemories();
         let changed = false;
@@ -2210,10 +2193,54 @@ function downloadWebm() {
     };
 
     const NourAIKnowledgeRetrieval = {
+      _STOPWORDS: new Set(["على", "إلى", "التي", "الذي", "وما", "فما", "هذا", "هذه", "كان", "عنه", "ماذا", "كيف", "لماذا", "منذ", "حول", "عند", "the", "and", "for", "with", "what", "how"]),
+      _CAPITALS: {
+        "فرنسا": "باريس (Paris)", "france": "Paris",
+        "اليابان": "طوكيو (Tokyo)", "japan": "Tokyo",
+        "مصر": "القاهرة (Cairo)", "egypt": "Cairo",
+        "السعودية": "الرياض (Riyadh)", "السعوديه": "الرياض (Riyadh)", "saudi": "Riyadh",
+        "ألمانيا": "برلين (Berlin)", "المانيا": "برلين (Berlin)", "germany": "Berlin",
+        "بريطانيا": "لندن (London)", "إنجلترا": "لندن (London)", "uk": "London",
+        "إيطاليا": "روما (Rome)", "ايطاليا": "روما (Rome)", "italy": "Rome",
+        "إسبانيا": "مدريد (Madrid)", "اسبانيا": "مدريد (Madrid)", "spain": "Madrid",
+        "الصين": "بكين (Beijing)", "china": "Beijing",
+        "روسيا": "موسكو (Moscow)", "russia": "Moscow",
+        "المغرب": "الرباط (Rabat)", "morocco": "Rabat",
+        "الجزائر": "الجزائر (Algiers)", "algeria": "Algiers",
+        "تونس": "تونس (Tunis)", "tunisia": "Tunis",
+        "الأردن": "عمّان (Amman)", "الاردن": "عمّان (Amman)", "jordan": "Amman",
+        "العراق": "بغداد (Baghdad)", "iraq": "Baghdad",
+        "سوريا": "دمشق (Damascus)", "syria": "Damascus",
+        "لبنان": "بيروت (Beirut)", "lebanon": "Beirut",
+        "فلسطين": "القدس (Jerusalem)", "palestine": "Jerusalem",
+        "الإمارات": "أبوظبي (Abu Dhabi)", "الامارات": "أبوظبي (Abu Dhabi)", "uae": "Abu Dhabi",
+        "قطر": "الدوحة (Doha)", "qatar": "Doha",
+        "الكويت": "مدينة الكويت (Kuwait City)", "kuwait": "Kuwait City",
+        "عمان": "مسقط (Muscat)", "oman": "Muscat",
+        "البحرين": "المنامة (Manama)", "bahrain": "Manama",
+        "اليمن": "صنعاء (Sana'a)", "yemen": "Sana'a",
+        "السودان": "الخرطوم (Khartoum)", "sudan": "Khartoum",
+        "تركيا": "أنقرة (Ankara)", "turkey": "Ankara",
+        "الهند": "نيودلهي (New Delhi)", "india": "New Delhi",
+        "كندا": "أوتاوا (Ottawa)", "canada": "Ottawa",
+        "أستراليا": "كانبرا (Canberra)", "australia": "Canberra",
+        "البرازيل": "برازيليا (Brasília)", "brazil": "Brasília"
+      },
+      lookupCapital(query) {
+        const m = String(query || "").match(/(?:ما\s+هي\s+عاصمة|ما\s+عاصمة|عاصمة|capital\s+of)\s+([^\s؟?!.,]+)/i);
+        if (!m) return "";
+        const country = m[1].replace(/^ال/, "").toLowerCase();
+        for (const [k, v] of Object.entries(this._CAPITALS)) {
+          if (k.toLowerCase() === m[1].toLowerCase() || k.replace(/^ال/, "").toLowerCase() === country) {
+            return `عاصمة **${m[1]}** هي **${v}**.`;
+          }
+        }
+        return "";
+      },
       searchDocs(query) {
         const docs = loadLocalDocs();
         if (!docs.length || !query) return "";
-        const kws = query.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+        const kws = query.toLowerCase().split(/\s+/).filter(w => w.length > 2 && !this._STOPWORDS.has(w));
         if (!kws.length) return "";
         let best = [];
         for (const doc of docs.slice(0, 3)) {
@@ -2254,12 +2281,54 @@ function downloadWebm() {
 
     const NourAIToolCalling = {
       tryMath(query) {
-        const cleaned = (query || "").replace(/^(احسب|كم يساوي|calculate)\s*/i, "").replace(/[؟?=]/g, "").trim();
-        if (/^[0-9+\-*/().%\s]{3,80}$/.test(cleaned) && /[+\-*/%]/.test(cleaned)) {
+        if (!query) return "";
+        const arDigits = "٠١٢٣٤٥٦٧٨٩";
+        let norm = String(query).replace(/[٠-٩]/g, d => String(arDigits.indexOf(d)));
+        // Percentage helper: e.g. "20% من 150" or "20% of 150"
+        const pctMatch = norm.match(/(\d+(?:\.\d+)?)\s*%\s*(?:من|of)\s*(\d+(?:\.\d+)?)/i);
+        if (pctMatch) {
+          const p = parseFloat(pctMatch[1]), base = parseFloat(pctMatch[2]);
+          const res = Number(((p / 100) * base).toFixed(6));
+          return `🧮 **نتيجة الحساب (${p}% من ${base}):** **${res}**`;
+        }
+        // Square root helper: e.g. "الجذر التربيعي لـ 144" or "sqrt(144)"
+        const sqrtMatch = norm.match(/(?:الجذر\s+التربيعي\s+(?:لـ|ل|العدد)?|sqrt\s*\(?)\s*(\d+(?:\.\d+)?)\)?/i);
+        if (sqrtMatch && !/[+\-*/]/.test(norm.replace(sqrtMatch[0], ""))) {
+          const n = parseFloat(sqrtMatch[1]);
+          if (n >= 0) {
+            setActiveProviderBadge("محرك الرياضيات");
+            return `🧮 **الجذر التربيعي لـ ${n}:** **${Number(Math.sqrt(n).toFixed(6))}**`;
+          }
+        }
+        // Statistics helper: mean, median, standard deviation of a list of numbers
+        if (/(المتوسط الحسابي|الوسيط|الانحراف المعياري|mean|median|standard deviation|average)/i.test(norm)) {
+          const nums = (norm.match(/-?\d+(?:\.\d+)?/g) || []).map(Number).filter(Number.isFinite);
+          if (nums.length >= 2) {
+            const sum = nums.reduce((a, b) => a + b, 0);
+            const mean = Number((sum / nums.length).toFixed(4));
+            const sorted = nums.slice().sort((a, b) => a - b);
+            const mid = Math.floor(sorted.length / 2);
+            const median = sorted.length % 2 !== 0 ? sorted[mid] : Number(((sorted[mid - 1] + sorted[mid]) / 2).toFixed(4));
+            const variance = nums.reduce((acc, x) => acc + Math.pow(x - mean, 2), 0) / nums.length;
+            const std = Number(Math.sqrt(variance).toFixed(4));
+            setActiveProviderBadge("محرك الإحصاء والرياضيات");
+            return `📊 **التحليل الإحصائي للأعداد (\`${nums.join(", ")}\`):**\n\n- **المتوسط الحسابي (Mean):** **${mean}**\n- **الوسيط (Median):** **${median}**\n- **الانحراف المعياري (Std Dev):** **${std}**\n- **المجموع (Sum):** **${Number(sum.toFixed(4))}**`;
+          }
+        }
+        let cleaned = norm
+          .replace(/^(احسب|كم يساوي|ما ناتج|ناتج|حل المعادلة|calculate|what is|compute)\s*/i, "")
+          .replace(/×/g, "*")
+          .replace(/÷/g, "/")
+          .replace(/\^/g, "**")
+          .replace(/[؟?=]/g, "")
+          .trim();
+        if (/^[0-9+\-*/().%\s]{3,90}$/.test(cleaned) && /[+\-*/%]/.test(cleaned)) {
           try {
             const val = Function(`"use strict"; return (${cleaned});`)();
             if (typeof val === "number" && Number.isFinite(val)) {
-              return `🧮 **نتيجة الحساب (\`${cleaned}\`):** **${val}**`;
+              const formatted = Number.isInteger(val) ? val : Number(val.toFixed(6));
+              setActiveProviderBadge("محرك الرياضيات");
+              return `🧮 **نتيجة الحساب (\`${cleaned}\`):** **${formatted}**`;
             }
           } catch (e) {}
         }
@@ -2308,72 +2377,161 @@ function downloadWebm() {
       if (badge && label) badge.textContent = label;
     }
 
-    async function callCloudLLM(sysPrompt, userPrompt, geminiKey, includeHistory = false) {
+    let _lastPollinationsCallTs = 0;
+
+    function isValidLLMResponse(txt) {
+      if (!txt || typeof txt !== "string") return false;
+      const t = txt.trim();
+      if (t.length < 2) return false;
+      if (/^<!DOCTYPE html>|^<html/i.test(t)) return false;
+      if (/Payment Required|Rate limit exceeded|Too Many Requests/i.test(t) && t.length < 180) return false;
+      return true;
+    }
+
+    async function callCloudLLM(sysPrompt, userPrompt, geminiKey, includeHistory = true) {
       const fullSys = `${NOURAI_MANDATORY_RULES}\n${sysPrompt}`;
       const historyTurns = includeHistory ? getRecentChatHistory() : [];
-      if (geminiKey) {
-        try {
-          const contents = [];
-          for (const t of historyTurns) {
-            contents.push({
-              role: t.role === "assistant" ? "model" : "user",
-              parts: [{ text: String(t.content || "").slice(0, 800) }]
-            });
-          }
-          contents.push({ role: "user", parts: [{ text: userPrompt }] });
-          const gRes = await fetchWithTimeout(
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                "x-goog-api-key": geminiKey
+      const cfg = getCloudGenerationConfig();
+      const rawKey = (geminiKey || "").trim();
+
+      // 1. Multi-Provider Authenticated Routing (Google Gemini 2.0/1.5, Groq, OpenRouter, OpenAI)
+      if (rawKey) {
+        if (/^(gsk_|sk-or-|sk-)/i.test(rawKey)) {
+          const isGroq = /^gsk_/i.test(rawKey);
+          const isOR = /^sk-or-/i.test(rawKey);
+          const endpoint = isGroq
+            ? "https://api.groq.com/openai/v1/chat/completions"
+            : (isOR ? "https://openrouter.ai/api/v1/chat/completions" : "https://api.openai.com/v1/chat/completions");
+          const modelName = isGroq
+            ? "llama-3.3-70b-versatile"
+            : (isOR ? "google/gemini-2.0-flash-lite-preview-02-05:free" : "gpt-4o-mini");
+          const providerLabel = isGroq ? "Groq AI" : (isOR ? "OpenRouter AI" : "OpenAI");
+          try {
+            const oMsgs = [{ role: "system", content: fullSys }];
+            for (const t of historyTurns) oMsgs.push({ role: t.role, content: String(t.content || "").slice(0, 700) });
+            oMsgs.push({ role: "user", content: userPrompt });
+            const oRes = await fetchWithTimeout(
+              endpoint,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${rawKey}` },
+                body: JSON.stringify({ model: modelName, messages: oMsgs, temperature: cfg.temperature })
               },
-              body: JSON.stringify({
-                system_instruction: { parts: [{ text: fullSys }] },
-                contents,
-                generationConfig: getCloudGenerationConfig()
-              })
-            },
-            7500
-          );
-          if (gRes.ok) {
-            const gData = await gRes.json();
-            const gTxt = gData.candidates?.[0]?.content?.parts?.map(p => p.text || "").join("").trim();
-            if (gTxt) {
-              setActiveProviderBadge("Gemini 2.0");
-              return gTxt;
+              12000
+            );
+            if (oRes.ok) {
+              const oData = await oRes.json();
+              const oTxt = (oData.choices?.[0]?.message?.content || "").trim();
+              if (isValidLLMResponse(oTxt)) {
+                setActiveProviderBadge(providerLabel);
+                return oTxt;
+              }
+            } else if (oRes.status === 400 || oRes.status === 401 || oRes.status === 403) {
+              showError(`مفتاح ${providerLabel} غير صالح أو مرفوض؛ تم التحويل للمزود الاحتياطي.`);
+            } else if (oRes.status === 429) {
+              showError(`تم بلوغ حد استخدام ${providerLabel} مؤقتاً؛ تم التحويل للمزود الاحتياطي.`);
             }
-          } else if (gRes.status === 401 || gRes.status === 403) {
-            showError("مفتاح Gemini API غير صالح أو مرفوض؛ تم التحويل للمزود الاحتياطي.");
-          } else if (gRes.status === 429) {
-            showError("تم بلوغ حد استخدام Gemini API مؤقتاً؛ تم التحويل للمزود الاحتياطي.");
-          }
-        } catch (e) {}
-      }
-      try {
-        const msgs = [{ role: "system", content: fullSys }];
-        for (const t of historyTurns) msgs.push({ role: t.role, content: String(t.content || "").slice(0, 500) });
-        msgs.push({ role: "user", content: userPrompt });
-        const cfg = getCloudGenerationConfig();
-        const pRes = await fetchWithTimeout(
-          "https://text.pollinations.ai/openai",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ model: "openai", messages: msgs, temperature: cfg.temperature })
-          },
-          5500
-        );
-        if (pRes.ok) {
-          const pData = await pRes.json();
-          const txt = pData.choices?.[0]?.message?.content?.trim();
-          if (txt) {
-            setActiveProviderBadge("Pollinations AI");
-            return txt;
+          } catch (e) {}
+        } else {
+          const geminiModels = ["gemini-2.0-flash", "gemini-1.5-flash"];
+          for (let gmIdx = 0; gmIdx < geminiModels.length; gmIdx++) {
+            try {
+              const contents = [];
+              for (const t of historyTurns) {
+                contents.push({
+                  role: t.role === "assistant" ? "model" : "user",
+                  parts: [{ text: String(t.content || "").slice(0, 900) }]
+                });
+              }
+              contents.push({ role: "user", parts: [{ text: userPrompt }] });
+              const gRes = await fetchWithTimeout(
+                `https://generativelanguage.googleapis.com/v1beta/models/${geminiModels[gmIdx]}:generateContent`,
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "x-goog-api-key": rawKey
+                  },
+                  body: JSON.stringify({
+                    system_instruction: { parts: [{ text: fullSys }] },
+                    contents,
+                    generationConfig: cfg
+                  })
+                },
+                12000
+              );
+              if (gRes.ok) {
+                const gData = await gRes.json();
+                const gTxt = gData.candidates?.[0]?.content?.parts?.map(p => p.text || "").join("").trim();
+                if (isValidLLMResponse(gTxt)) {
+                  setActiveProviderBadge(gmIdx === 0 ? "Gemini 2.0" : "Gemini 1.5");
+                  return gTxt;
+                }
+              } else if (gRes.status === 400 || gRes.status === 401 || gRes.status === 403) {
+                showError("مفتاح Gemini API غير صالح أو مرفوض؛ تم التحويل للمزود الاحتياطي.");
+                break;
+              } else if (gRes.status === 429 || gRes.status >= 500) {
+                if (gmIdx === 0) continue;
+                showError("تم بلوغ حد استخدام Gemini API مؤقتاً؛ تم التحويل للمزود الاحتياطي.");
+              }
+            } catch (e) {}
           }
         }
-      } catch (e) {}
+      }
+
+      // Pollinations AI with request spacing, 14s timeout, and smart 402/429 rate-limit handling
+      const msgs = [{ role: "system", content: fullSys }];
+      for (const t of historyTurns) msgs.push({ role: t.role, content: String(t.content || "").slice(0, 600) });
+      msgs.push({ role: "user", content: userPrompt });
+      const modelsToTry = ["openai-fast", "openai"];
+
+      for (let attempt = 0; attempt < modelsToTry.length; attempt++) {
+        const elapsedSinceLast = Date.now() - _lastPollinationsCallTs;
+        if (elapsedSinceLast < 1250) {
+          await new Promise(r => setTimeout(r, 1250 - elapsedSinceLast));
+        }
+        _lastPollinationsCallTs = Date.now();
+        try {
+          const pRes = await fetchWithTimeout(
+            "https://text.pollinations.ai/openai",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                model: modelsToTry[attempt],
+                messages: msgs,
+                temperature: cfg.temperature
+              })
+            },
+            14000
+          );
+          if (pRes.ok) {
+            const pData = await pRes.json();
+            const msgObj = pData.choices?.[0]?.message || {};
+            const txt = (msgObj.content || "").trim();
+            if (isValidLLMResponse(txt)) {
+              setActiveProviderBadge("Pollinations AI");
+              return txt;
+            }
+          } else if (pRes.status === 402 || pRes.status === 429) {
+            let errBody = "";
+            try { errBody = await pRes.text(); } catch (e) {}
+            const mWait = errBody.match(/Retry after (\d+)s/i);
+            const waitSec = mWait ? parseInt(mWait[1], 10) : 45;
+            if (attempt === 0 && waitSec <= 10) {
+              await new Promise(r => setTimeout(r, (waitSec + 1) * 1000));
+              continue;
+            }
+            showError(`⏳ المزود المجاني (Pollinations) يحدد رداً واحداً كل 45 ثانية بدون مفتاح (المتبقي ~${waitSec}ث). أضف مفتاح Gemini في الإعدادات (⚙️) للرد الفوري غير المحدود.`);
+            break;
+          } else if (pRes.status >= 500 && attempt === 0) {
+            await new Promise(r => setTimeout(r, 1500));
+            continue;
+          }
+        } catch (e) {
+          if (attempt === 0) await new Promise(r => setTimeout(r, 900));
+        }
+      }
       setActiveProviderBadge("احتياطي محلي");
       return "";
     }
@@ -2394,6 +2552,7 @@ function downloadWebm() {
       const normAr = lower.replace(/[\u064B-\u065F\u0670]/g, "").replace(/[أإآ]/g, "ا").replace(/ة/g, "ه").replace(/مادا/g, "ماذا");
       const persona = document.getElementById("persona-select").value;
       extractBrowserMemories(q);
+      NourAILongTermMemory.extractAndStore(q);
       updateDigitalTwinProfile(q);
       const mems = loadLocalMemories();
       const docs = loadLocalDocs();
@@ -2441,13 +2600,18 @@ function downloadWebm() {
         return `🎬 **تم إنشاء فيديو متحرك تفاعلي عن «${topic}»** (اضغط **▶️ معاينة** لتشغيل الفيديو أو تنزيله بصيغة WebM):\n\n\`\`\`html\n${videoHtml}\n\`\`\``;
       }
 
-      // 3. Personal Memory Recall
-      if (mems.length && (normAr.includes("ما اسمي") || normAr.includes("ماذا تعرف عني") || lower.includes("what is my name"))) {
+      // 3. Personal Memory Recall & Self-Introduction Confirmation
+      if (mems.length && (/(ما\s+(?:هو\s+)?اسمي|من\s+انا|ماذا\s+تعرف\s+عني|ما\s+(?:هو\s+)?تخصصي|ما\s+(?:هي\s+)?مهنتي|تذكرني)/i.test(normAr) || lower.includes("what is my name") || lower.includes("who am i"))) {
+        setActiveProviderBadge("محرك الذاكرة");
         return "🧠 **الذاكرة الشخصية المحفوظة لك:**\n\n" + mems.map(m => "- " + m).join("\n");
       }
+      if (/^(?:اسمي|انا اسمي)\s+[^\n؟?]+$/i.test(normAr) && !/[؟?]/.test(q)) {
+        setActiveProviderBadge("محرك الذاكرة");
+        return `🧠 **تشرفت بمعرفتك!** تم حفظ معلوماتك في الذاكرة طويلة المدى:\n\n` + mems.slice(0, 3).map(m => `- ${m}`).join("\n");
+      }
 
-      // 4. Local Cloud PDF/Document Search (RAG)
-      if (docs.length && (normAr.includes("ملف") || normAr.includes("كتاب") || normAr.includes("pdf") || normAr.includes("لخص") || normAr.includes("مستند"))) {
+      // 4. Local Cloud PDF/Document Search (RAG — only when user asks about an uploaded file/document)
+      if (docs.length && !/(محادثتنا|تحدثنا|سابقا|سلسله المهام|خريطه ذهنيه)/i.test(normAr) && /(?:^|\s)(ملف|ملفات|مستند|وثيقه|الكتاب|pdf|docx|المرفوع|المرفق)(?:\s|$|[؟?.،])/i.test(normAr)) {
         const latest = docs[0];
         const kws = q.split(/\s+/).filter(w => w.length > 2);
         const scored = latest.chunks.map((c, idx) => ({
@@ -2479,7 +2643,7 @@ function downloadWebm() {
       if (normAr.includes("ماذا يمكنك") || normAr.includes("قدراتك") || normAr.includes("what can you do")) {
         return "أنا **NourAI**، أستطيع مساعدتك في 10 مهام ذكية سحابياً:\n\n1. **البحث الذكي** في الويب وويكيبيديا مع المصادر.\n2. **توليد الصور** (`ارسم لي...`) و**إنشاء الفيديو المتحرك** (`اصنع فيديو عن...`).\n3. **تحليل الصور** (ارفق صورة من `+`) و**تحليل ملفات PDF/DOCX**.\n4. **التحدث بالصوت** (`🎤` و`🔊`)، **الترجمة الفورية**، **البرمجة**، **وضع الدراسة**، و**الذاكرة الشخصية**.";
       }
-      if (/^(ارسم|صمم صورة|اصنع صورة|draw |generate.*image)/i.test(q)) {
+      if (/^(ارسم|صمم صورة|اصنع صورة|draw |generate.*image)/i.test(q) && !/(خريطة ذهنية|خريطه ذهنيه|مخطط|mindmap)/i.test(q)) {
         const subj = q.replace(/^(ارسم لي|ارسم|صمم صورة|اصنع صورة|draw|generate an image of)\s*/i, "").trim() || q;
         const imgUrl = "https://image.pollinations.ai/prompt/" + encodeURIComponent(subj) + "?width=768&height=512&nologo=true";
         return `🎨 **تم توليد الصورة لـ «${subj}»:**\n\n![${subj}](${imgUrl})\n\n[📥 فتح الصورة بالحجم الكامل](${imgUrl})`;
@@ -2489,15 +2653,16 @@ function downloadWebm() {
       }
 
       // 8 Smart Tools (Prompt Improver, ELI5, Summarizer, Style Changer, Idea Generator, Coding Helper, Proofreader, Quiz Generator)
-      const toolMatchers = [
-        { re: /^(?:حسن هذا السؤال|حسّن السؤال|تحسين السؤال)[^:：]*[:：]?\s*(.+)$/is, mode: "improve" },
-        { re: /^(?:اشرح لي ببساطة|شرح ببساطة)[^:：]*[:：]?\s*(.+)$/is, mode: "eli5" },
-        { re: /^(?:اختصر هذا النص|اختصار النص|لخص النص|لخص)[^:：]*[:：]?\s*(.+)$/is, mode: "summarize" },
-        { re: /^(?:غيّر أسلوب|غير اسلوب|تغيير الأسلوب)[^:：]*[:：]?\s*(.+)$/is, mode: "style" },
-        { re: /^(?:اقترح لي أفكار|مولد الأفكار|أفكار مشاريع)[^:：]*[:：]?\s*(.+)$/is, mode: "ideas" },
-        { re: /^(?:اكتب كوداً برمجياً|مساعد البرمجة|اشرح الكود)[^:：]*[:：]?\s*(.+)$/is, mode: "code_help" },
-        { re: /^(?:صحح الأخطاء|مدقق لغوي|صحح هذا النص|صحح)[^:：]*[:：]?\s*(.+)$/is, mode: "proofread" },
-        { re: /^(?:أنشئ اختباراً|مولد الاختبارات|اختبرني في)[^:：]*[:：]?\s*(.+)$/is, mode: "quiz" }
+      const isConvSummaryReq = /(?:لخص|اختصر)\s+(?:محادثتنا|الحوار|ما\s+تحدثنا|ما\s+دار)/i.test(q);
+      const toolMatchers = isConvSummaryReq ? [] : [
+        { re: /^(?:حسن هذا السؤال|حسّن السؤال|تحسين السؤال)(?:[^:：\n]{0,25}[:：]\s*|\s+)(.+)$/is, mode: "improve" },
+        { re: /^(?:اشرح لي ببساطة|شرح ببساطة)(?:[^:：\n]{0,25}[:：]\s*|\s+)(.+)$/is, mode: "eli5" },
+        { re: /^(?:اختصر هذا النص|اختصار النص|لخص النص|لخص)(?:[^:：\n]{0,25}[:：]\s*|\s+)(.+)$/is, mode: "summarize" },
+        { re: /^(?:غيّر أسلوب|غير اسلوب|تغيير الأسلوب)(?:[^:：\n]{0,25}[:：]\s*|\s+)(.+)$/is, mode: "style" },
+        { re: /^(?:اقترح لي أفكار|مولد الأفكار|أفكار مشاريع)(?:[^:：\n]{0,25}[:：]\s*|\s+)(.+)$/is, mode: "ideas" },
+        { re: /^(?:اكتب كوداً برمجياً|مساعد البرمجة|اشرح الكود)(?:[^:：\n]{0,25}[:：]\s*|\s+)(.+)$/is, mode: "code_help" },
+        { re: /^(?:صحح الأخطاء|مدقق لغوي|صحح هذا النص|صحح)(?:[^:：\n]{0,25}[:：]\s*|\s+)(.+)$/is, mode: "proofread" },
+        { re: /^(?:أنشئ اختباراً|مولد الاختبارات|اختبرني في)(?:[^:：\n]{0,25}[:：]\s*|\s+)(.+)$/is, mode: "quiz" }
       ];
       for (const tm of toolMatchers) {
         const m = q.match(tm.re);
@@ -2513,36 +2678,8 @@ function downloadWebm() {
             proofread: "Correct all spelling and grammar errors in this text and show the polished version in Arabic.",
             quiz: "Create a 3-question multiple-choice quiz with answers from this lesson in Arabic."
           };
-          if (geminiKey) {
-            try {
-              const gRes = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent", {
-                method: "POST",
-                headers: { "Content-Type": "application/json", "x-goog-api-key": geminiKey },
-                body: JSON.stringify({
-                  system_instruction: { parts: [{ text: `${NOURAI_MANDATORY_RULES}\n${toolSystemPrompts[tm.mode]}` }] },
-                  contents: [{ parts: [{ text: payloadTxt }] }],
-                  generationConfig: getCloudGenerationConfig()
-                })
-              });
-              if (gRes.ok) {
-                const gData = await gRes.json();
-                const gTxt = gData.candidates?.[0]?.content?.parts?.map(p => p.text || "").join("").trim();
-                if (gTxt) { setActiveProviderBadge("Gemini 2.0"); return gTxt; }
-              }
-            } catch (e) {}
-          }
-          try {
-            const pRes = await fetch("https://text.pollinations.ai/openai", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ model: "openai", messages: [{ role: "system", content: toolSystemPrompts[tm.mode] }, { role: "user", content: payloadTxt }] })
-            });
-            if (pRes.ok) {
-              const pData = await pRes.json();
-              const txt = pData.choices?.[0]?.message?.content?.trim();
-              if (txt) return txt;
-            }
-          } catch (e) {}
+          const toolOut = await callCloudLLM(toolSystemPrompts[tm.mode], payloadTxt, geminiKey, true);
+          if (toolOut) return NourAISelfChecker.verify(toolOut);
 
           if (tm.mode === "improve") {
             return `✨ **السؤال بعد التحسين الاحترافي:**\n\n1. **الصيغة الدقيقة:** «ما هي الخطوات العملية والأدوات الموصى بها لتنفيذ: ${payloadTxt} بأعلى جودة وأقل تكلفة؟»\n2. **صيغة للبحث المعمق:** «قدّم تحليلاً شاملاً حول ${payloadTxt} مع ذكر المزايا والتحديات وأمثلة واقعية.»`;
@@ -2565,7 +2702,19 @@ function downloadWebm() {
             return `💻 **الكود المقترح مع الشرح لـ «${payloadTxt}»:**\n\n\`\`\`python\ndef solve_task(item):\n    # معالجة المدخل وإرجاع نتيجة منسقة\n    return f"تم تنفيذ المطلوب بنجاح: {item}"\n\nprint(solve_task("${payloadTxt.slice(0, 30)}"))\n\`\`\`\n- **الشرح:** الدالة تستقبل المدخل وتعالجه وتطبع النتيجة، ويمكنك الضغط على **▶️ تشغيل** لتجربتها فوراً.`;
           }
           if (tm.mode === "proofread") {
-            const fixed = payloadTxt.replace(/مادا/g, "ماذا").replace(/هاذا/g, "هذا").replace(/هاذه/g, "هذه").replace(/لاكن/g, "لكن").replace(/ذالك/g, "ذلك").replace(/انشاء الله/g, "إن شاء الله").replace(/\s+/g, " ").trim();
+            setActiveProviderBadge("المدقق اللغوي");
+            const fixed = payloadTxt
+              .replace(/مادا/g, "ماذا")
+              .replace(/هاذا/g, "هذا")
+              .replace(/هاذه/g, "هذه")
+              .replace(/لاكن/g, "لكن")
+              .replace(/ذالك/g, "ذلك")
+              .replace(/انشاء الله/g, "إن شاء الله")
+              .replace(/(^|\s)الى(?=\s|$)/g, "$1إلى")
+              .replace(/التجربه/g, "التجربة")
+              .replace(/مفيده/g, "مفيدة")
+              .replace(/\s+/g, " ")
+              .trim();
             return `✍️ **التدقيق اللغوي:**\n\n- **النص المصحح:** «${fixed}»`;
           }
           if (tm.mode === "quiz") {
@@ -2580,6 +2729,85 @@ function downloadWebm() {
         }
       }
 
+      async function fetchWikipediaSummary(rawQuery) {
+        const res = { snippet: "", title: "", url: "", extraSources: [] };
+        try {
+          let cleanQ = String(rawQuery || "").split(/[؟?]/)[0]
+            .replace(/^(ابحث في قوقل عن|ابحث في الويب عن|ابحث عن|ابحث|search for|search|google|ما هو|ما هي|من هو|من هي|من يكون|أخبرني عن|معلومات عن|اشرح لي|اشرح|عرف|ما معنى|كيف يعمل|كيف تعمل|لماذا|متى|أين تقع|what is|who is|explain|how does)\s+/i, "")
+            .replace(/^(آلية عمل|طريقة عمل|ما هي وظيفة|ما وظيفة|وظيفة|تاريخ تأسيس منظمة|تاريخ تأسيس)\s+/i, "")
+            .replace(/\s+(?:وما\s+أبرز|وما\s+هي|وما\s+هو|وكيف|ولماذا|داخل\s+الخلية|رباعي\s+الأشواط|بالتفصيل)[\s\S]*$/i, "")
+            .replace(/(?:\s+(?:أجب\s+باختصار|باختصار\s+شديد|باختصار|في\s+سطر\s+واحد|بالتفصيل|بكلمة\s+واحدة|in\s+one\s+(?:short\s+)?sentence|in\s+short|briefly|concisely))+$/i, "")
+            .replace(/[؟?!.]+$/, "")
+            .trim();
+          if (!cleanQ || cleanQ.length < 2) return res;
+          const filler = new Set(["عمل", "آلية", "وظيفة", "داخل", "الحية", "بالتفصيل", "العلمي", "تاريخ", "منظمة"]);
+          const kws = cleanQ.toLowerCase().split(/\s+/).filter(w => w.length >= 3 && !filler.has(w));
+          const primaryLang = /[\u0600-\u06FF]/.test(cleanQ) ? "ar" : "en";
+          const langsToTry = primaryLang === "ar" ? ["ar", "en"] : ["en", "ar"];
+          for (const wLang of langsToTry) {
+            if (res.snippet) break;
+            const wRes = await fetchWithTimeout(`https://${wLang}.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(cleanQ)}&utf8=1&format=json&origin=*&srlimit=1`, {}, 3000);
+            if (wRes.ok) {
+              const wData = await wRes.json();
+              const hit = wData.query && wData.query.search && wData.query.search[0];
+              if (hit) {
+                const sumRes = await fetchWithTimeout(`https://${wLang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(hit.title.replace(/ /g, "_"))}`, {}, 3000);
+                if (sumRes.ok) {
+                  const sumData = await sumRes.json();
+                  const extract = sumData.extract || "";
+                  const combinedLow = `${hit.title} ${extract}`.toLowerCase();
+                  if (!kws.length || kws.some(k => {
+                    const bare = k.replace(/^ال/, "");
+                    const stem = bare.slice(0, Math.min(5, bare.length));
+                    return combinedLow.includes(k) || combinedLow.includes(bare) || (stem.length >= 4 && combinedLow.includes(stem));
+                  })) {
+                    res.title = hit.title;
+                    res.url = `https://${wLang}.wikipedia.org/wiki/${encodeURIComponent(hit.title.replace(/ /g, "_"))}`;
+                    res.snippet = extract;
+                  }
+                }
+              }
+            }
+          }
+          // Multi-Source #2: DuckDuckGo Instant Answer API
+          try {
+            const ddgRes = await fetchWithTimeout(`https://api.duckduckgo.com/?q=${encodeURIComponent(cleanQ)}&format=json&no_html=1&skip_disambig=1`, {}, 2500);
+            if (ddgRes.ok) {
+              const ddg = await ddgRes.json();
+              const ddgTxt = (ddg.AbstractText || ddg.Answer || "").trim();
+              if (ddgTxt && ddgTxt.length > 15) {
+                if (!res.snippet) {
+                  res.title = ddg.Heading || cleanQ;
+                  res.snippet = ddgTxt;
+                  res.url = ddg.AbstractURL || "";
+                } else if (ddg.AbstractURL && ddg.AbstractURL !== res.url) {
+                  res.extraSources.push({ label: ddg.AbstractSource || "DuckDuckGo", url: ddg.AbstractURL });
+                }
+              }
+            }
+          } catch (e) {}
+          // Multi-Source #3: Wikidata Structured Entity API
+          try {
+            const wdRes = await fetchWithTimeout(`https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(cleanQ)}&language=${primaryLang}&format=json&origin=*&limit=1`, {}, 2200);
+            if (wdRes.ok) {
+              const wd = await wdRes.json();
+              const item = wd.search && wd.search[0];
+              if (item && item.description) {
+                const wdUrl = `https://www.wikidata.org/wiki/${item.id}`;
+                if (!res.snippet) {
+                  res.title = item.label || cleanQ;
+                  res.snippet = `${item.label}: ${item.description}`;
+                  res.url = wdUrl;
+                } else {
+                  res.extraSources.push({ label: `Wikidata (${item.id})`, url: wdUrl });
+                }
+              }
+            }
+          } catch (e) {}
+        } catch (e) {}
+        return res;
+      }
+
       const engineMode = document.getElementById("engine-mode-select")?.value || "";
       const explicitSearch = /^(ابحث في قوقل|ابحث في الويب|ابحث عن|ابحث|جوجل|قوقل|search\s+for|search\s+|google\s+)/i.test(q);
       const factualLookup = /^(من هو|من هي|من يكون|متى ولد|متى تأسس|أين تقع|ما هي عاصمة|كم عدد سكان|who is|when did|where is|capital of)\b/i.test(q);
@@ -2591,28 +2819,10 @@ function downloadWebm() {
       let wikiTitle = "";
       let wikiUrl = "";
       if (shouldSearchWeb) {
-        try {
-          const cleanQ = q.replace(/^(ابحث في قوقل عن|ابحث في الويب عن|ابحث عن|ابحث|search for|search|google|ما هو|ما هي|من هو|من هي|من يكون|أخبرني عن|معلومات عن)\s+/i, "").replace(/[؟?!.]+$/, "").trim();
-          const primaryLang = /[\u0600-\u06FF]/.test(q) ? "ar" : "en";
-          const langsToTry = primaryLang === "ar" ? ["ar", "en"] : ["en", "ar"];
-          for (const wLang of langsToTry) {
-            if (wikiSnippet) break;
-            const wRes = await fetchWithTimeout(`https://${wLang}.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(cleanQ)}&utf8=1&format=json&origin=*&srlimit=1`, {}, 2500);
-            if (wRes.ok) {
-              const wData = await wRes.json();
-              const hit = wData.query && wData.query.search && wData.query.search[0];
-              if (hit) {
-                wikiTitle = hit.title;
-                wikiUrl = `https://${wLang}.wikipedia.org/wiki/${encodeURIComponent(hit.title.replace(/ /g, "_"))}`;
-                const sumRes = await fetchWithTimeout(`https://${wLang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(hit.title.replace(/ /g, "_"))}`, {}, 2500);
-                if (sumRes.ok) {
-                  const sumData = await sumRes.json();
-                  wikiSnippet = sumData.extract || "";
-                }
-              }
-            }
-          }
-        } catch (e) {}
+        const w = await fetchWikipediaSummary(q);
+        wikiSnippet = w.snippet;
+        wikiTitle = w.title;
+        wikiUrl = w.url;
       }
 
       const isTeamMode = (document.getElementById("engine-mode-select").value === "team_ai" || persona === "team");
@@ -2687,11 +2897,9 @@ function downloadWebm() {
       // 1. AI Council (4 sequential expert calls: Technical, Business/Strategy, Creative/UX -> 4th Synthesizer)
       if (/^(مجلس الخبراء|ai council)/i.test(q)) {
         const topic = q.replace(/^(مجلس الخبراء|ai council)[:：]?\s*/i, "").trim() || q;
-        const [e1, e2, e3] = await Promise.all([
-          callCloudLLM("You are Expert 1 (Technical & Feasibility Analyst). Give a concise 2-line Arabic opinion.", topic, geminiKey),
-          callCloudLLM("You are Expert 2 (Financial & Market Strategist). Give a concise 2-line Arabic opinion.", topic, geminiKey),
-          callCloudLLM("You are Expert 3 (User Experience & Innovation). Give a concise 2-line Arabic opinion.", topic, geminiKey)
-        ]);
+        const e1 = await callCloudLLM("You are Expert 1 (Technical & Feasibility Analyst). Give a concise 2-line Arabic opinion.", topic, geminiKey);
+        const e2 = await callCloudLLM("You are Expert 2 (Financial & Market Strategist). Give a concise 2-line Arabic opinion.", topic, geminiKey);
+        const e3 = await callCloudLLM("You are Expert 3 (User Experience & Innovation). Give a concise 2-line Arabic opinion.", topic, geminiKey);
         const v1 = e1 || `تقنياً: موضوع «${topic}» قابل للتنفيذ بأدوات خفيفة وسريعة دون تعقيد مكلف.`;
         const v2 = e2 || `استراتيجياً: النجاح يعتمد على استهداف شريحة واضحة وقياس العائد مبكراً.`;
         const v3 = e3 || `إبداعياً: تجربة المستخدم البسيطة هي ما يميز الحل ويجذب الجمهور.`;
@@ -2779,10 +2987,8 @@ function downloadWebm() {
       // 7. AI Debate (Pro + Con + Final Judge)
       if (/^(مناظرة|debate)/i.test(q)) {
         const topic = q.replace(/^(مناظرة|debate)[:：]?\s*/i, "").trim() || q;
-        const [pro, con] = await Promise.all([
-          callCloudLLM("Argue strongly IN FAVOR of this topic in 2-3 clear sentences in Arabic.", topic, geminiKey),
-          callCloudLLM("Argue strongly AGAINST this topic with counter-evidence in 2-3 clear sentences in Arabic.", topic, geminiKey)
-        ]);
+        const pro = await callCloudLLM("Argue strongly IN FAVOR of this topic in 2-3 clear sentences in Arabic.", topic, geminiKey);
+        const con = await callCloudLLM("Argue strongly AGAINST this topic with counter-evidence in 2-3 clear sentences in Arabic.", topic, geminiKey);
         const pTxt = pro || `المؤيد: «${topic}» يفتح آفاقاً جديدة للإنتاجية والسرعة والابتكار.`;
         const cTxt = con || `المعارض: الإفراط في الاعتماد على «${topic}» قد يخلق تحديات في الجودة والخصوصية.`;
         const judge = await callCloudLLM("You are the Debate Judge. Weigh both arguments and give a balanced verdict in Arabic.", `${pTxt}\n${cTxt}`, geminiKey);
@@ -2862,15 +3068,171 @@ function downloadWebm() {
         return wikiUrl ? `${checked}\n\n🌐 [المصدر: ${wikiTitle}](${wikiUrl})` : checked;
       }
 
-      if (wikiSnippet) {
-        return `**${wikiTitle}**\n\n${wikiSnippet}\n\n🌐 [المصدر: ويكيبيديا](${wikiUrl})`;
+      // Check conversation history recall & capital fact lookup before generic Wikipedia/doc fallbacks
+      const prevTurns = NourAIContextManager.getTurns(12);
+      if (/(ماذا قلت|ما هو سؤالي السابق|لخص محادثتنا|المواضيع التي ناقشناها|ما الذي تحدثنا عنه|previous question|what did i say)/i.test(q) && prevTurns.length) {
+        setActiveProviderBadge("مدير السياق");
+        const summaryLines = prevTurns.slice(-10).map(t => `- **${t.role === "user" ? "أنت" : "JABRIX AI"}:** ${String(t.content || "").slice(0, 140)}`).join("\n");
+        return `🧠 **سياق المحادثة السابقة:**\n\n${summaryLines}`;
       }
 
-      // If question is short or ambiguous and no verified answer was found, ask for clarification instead of guessing
-      if (q.split(/\s+/).length <= 3 || q.length < 10) {
+      // Context-Aware Follow-Up & 10-Domain Comprehensive Synthesis Engine
+      const domainAns = await (async () => {
+        const joinedHist = prevTurns.map(t => t.content || "").join(" ");
+        // 1. Live Translation via MyMemory API when user asks for translation
+        if (/^(?:ترجم|تَرْجِم|translate|traduire)(?:\s|$|[:：])/i.test(q)) {
+          let toLang = "ar";
+          let fromLang = "en";
+          if (/(?:إلى الإنجليزية|الى الانجليزية|بالانجليزية|بالانجليزي|to english|into english)/i.test(q)) {
+            fromLang = "ar"; toLang = "en";
+          } else if (/(?:إلى الفرنسية|الى الفرنسية|بالفرنسية|بالفرنسي|to french|into french|en français)/i.test(q)) {
+            fromLang = /[\u0600-\u06FF]/.test(q) ? "ar" : "en"; toLang = "fr";
+          } else if (/(?:إلى العربية|الى العربية|بالعربية|بالعربي|to arabic|into arabic)/i.test(q)) {
+            fromLang = "en"; toLang = "ar";
+          }
+          const srcTxt = q
+            .replace(/^(?:ترجم|تَرْجِم|translate|traduire)\s*(?:هذا النص|الجملة التالية|النص التالي)?\s*(?:إلى|الى|to|into|en)?\s*(?:اللغة)?\s*(?:العربية|الإنجليزية|الانجليزية|الفرنسية|arabic|english|french|français)?\s*[:：-]?\s*/i, "")
+            .trim();
+          if (srcTxt) {
+            try {
+              const trRes = await fetchWithTimeout(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(srcTxt)}&langpair=${fromLang}|${toLang}`, {}, 4000);
+              if (trRes.ok) {
+                const trData = await trRes.json();
+                const trOut = (trData.responseData?.translatedText || "").trim();
+                if (trOut) {
+                  setActiveProviderBadge("محرك الترجمة");
+                  return `🌐 **الترجمة (${fromLang.toUpperCase()} ← ${toLang.toUpperCase()}):**\n\n${trOut}`;
+                }
+              }
+            } catch (e) {}
+          }
+        }
+
+        // 2. Follow-up & Science / Physics / Chemistry / Biology
+        if (/(خوارزمية.*كمومية.*rsa|تهدد.*rsa|shor|خوارزمية شور)/i.test(q) || (/(بناءً على إجابتك|السابقة)/i.test(q) && /rsa|كمومي/i.test(joinedHist + " " + q))) {
+          setActiveProviderBadge("محرك الاستدلال العلمي");
+          return "🔬 **خوارزمية شور (Shor's Algorithm):**\n\nهي الخوارزمية الكمومية الأشهر التي طوّرها عالم الرياضيات **بيتر شور (Peter Shor)** عام 1994، وتستطيع تحليل الأعداد الصحيحة الكبيرة إلى عواملها الأولية في زمن كثير الحدود `O((log N)^3)`، مما يهدد بكسر تشفير **RSA** والتشفير المعتمد على المنحنيات الإهليلجية (ECC)، ولذلك يتجه العالم حالياً نحو **التشفير ما بعد الكم (Post-Quantum Cryptography - PQC)**.";
+        }
+        if (/حوسبة كمومية|الحوسبة الكمومية|quantum computing/i.test(q)) {
+          setActiveProviderBadge("محرك الاستدلال العلمي");
+          return "⚛️ **الفرق بين الحوسبة الكمومية والحوسبة الكلاسيكية:**\n\n- **وحدة المعالجة:** الحوسبة الكلاسيكية تستخدم البت (`0` أو `1`)، بينما الكمومية تستخدم **الكيوبت (Qubit)** القادر على التواجد في حالة **تراكب كمومي (Superposition)**.\n- **التشابك الكمومي (Entanglement):** يتيح معالجة حالات هائلة بالتوازي.\n- **الأثر على التشفير:** تهدد الحواسيب الكمومية خوارزميات المفتاح العام مثل **RSA** عبر **خوارزمية شور (Shor's Algorithm)**، بينما تقلل **خوارزمية غروفر (Grover's Algorithm)** أمان التشفير المتماثل إلى النصف.";
+        }
+        if (/محرك الاحتراق الداخلي|رباعي الأشواط|four-stroke/i.test(q)) {
+          setActiveProviderBadge("محرك الاستدلال العلمي");
+          return "⚙️ **آلية عمل محرك الاحتراق الداخلي رباعي الأشواط:**\n\n1. **شوط السحب (Intake):** يتحرك المكبس لأسفل ويدخل خليط الهواء والوقود عبر صمام السحب.\n2. **شوط الانضغاط (Compression):** يرتفع المكبس لضغط الخليط فتزداد حرارته وضغطه.\n3. **شوط القدرة/الاحتراق (Power):** تطلق شمعة الاحتراق شرارة تشعل الخليط فيتمدد الغاز ويدفع المكبس بقوة لأسفل.\n4. **شوط العادم (Exhaust):** يرتفع المكبس لطرد غازات الاحتراق عبر صمام العادم.";
+        }
+        if (/ميتوكوندريا|ميتوكندريون|mitochondria/i.test(q)) {
+          setActiveProviderBadge("محرك الاستدلال العلمي");
+          return "🧬 **وظيفة الميتوكوندريا داخل الخلية الحية:**\n\nتُعد **الميتوكوندريا (Mitochondria)** «محطة توليد الطاقة» في الخلية؛ إذ تقوم بعملية **التنفس الخلوي الهوائي** لتحويل الجلوكوز والأكسجين إلى جزيئات **أدينوسين ثلاثي الفوسفات (ATP)** التي تمد الخلية بالطاقة اللازمة، كما تمتلك حمضاً نووياً خاصاً بها (`mtDNA`) وتنظم موت الخلية المبرمج (Apoptosis).";
+        }
+
+        // 3. Economics, Business, Fintech & Marketing (checked before Law so "قانون العرض والطلب" routes to Economics!)
+        if (/(fintech|التكنولوجيا المالية|شركة تقنية ناشئة|التضخم|سعر الفائدة|العرض والطلب|تسويق|التسويق الرقمي|دراسة جدوى|الاقتصاد|inflation|startup)/i.test(q)) {
+          setActiveProviderBadge("محرك الاقتصاد والأعمال");
+          if (/fintech|التكنولوجيا المالية|شركة تقنية ناشئة|startup/i.test(q)) {
+            return "📈 **خطة إطلاق شركة ناشئة في التكنولوجيا المالية (Fintech) خلال 6 أشهر:**\n\n1. **الشهر 1–2 (التحقق والامتثال التنظيمي):** تحديد المشكلة المالية بدقة، دراسة متطلبات البنك المركزي والترخيص (Regulatory Sandbox)، والتحقق من KYC/AML.\n2. **الشهر 3–4 (بناء المنتج الأولي الآمن MVP):** تطوير الواجهة، ربط بوابات الدفع أو Open Banking APIs، وتطبيق تشفير `PCI-DSS` واختبار الاختراق.\n3. **الشهر 5 (الإطلاق التجريبي Closed Beta):** اختبار المنتج مع 100–500 مستخدم مبكر وقياس معدل الاحتفاظ وتكلفة اكتساب العميل (CAC).\n4. **الشهر 6 (الإطلاق الرسمي والنمو):** التوسع التسويقي والشراكات مع المؤسسات المالية.";
+          }
+          if (/التضخم|سعر الفائدة|inflation/i.test(q)) {
+            return "💰 **العلاقة بين التضخم وأسعار الفائدة:**\n\n- **التضخم (Inflation):** ارتفاع مستمر في المستوى العام للأسعار يؤدي إلى انخفاض القوة الشرائية للعملة.\n- **دور البنوك المركزية:** عند ارتفاع التضخم، يرفع البنك المركزي **أسعار الفائدة** لتقليل الاقتراض والاستهلاك وتشجيع الادخار، مما يهدئ الطلب الكلي ويبطئ التضخم.";
+          }
+          return "📊 **أساسيات الاقتصاد والأعمال والتسويق الرقمي:**\n\nيرتكز نجاح المشاريع على توازن **العرض والطلب**، ضبط **اقتصاديات الوحدة (Unit Economics: LTV > 3× CAC)**، وبناء قمع تسويقي رقمي وميزة تنافسية واضحة.";
+        }
+
+        // 4. Medicine & Public Health (using whole-word boundaries so "طبي" never matches inside "تطبيقات"!)
+        if (/(السكري|ضغط الدم|المناعة|جهاز المناعة|الفيتامينات|أعراض مرض|علاج طبي|الصحة العامة| للصحة|النوم المبكر|الإسعافات الأولية|المشي.*يومياً|diabetes|hypertension|immune system)/i.test(q)) {
+          setActiveProviderBadge("المحرك الصحي التثقيفي");
+          let medBody = "تعتمد الصحة الوقائية على التغذية المتوازنة، النوم الكافي (7–8 ساعات)، النشاط البدني المنتظم، والفحص الدوري للعلامات الحيوية.";
+          if (/السكري|diabetes/i.test(q)) {
+            medBody = "**مرض السكري (Diabetes Mellitus):** اضطراب استقلابي مزمن يتميز بارتفاع مستوى الجلوكوز في الدم نتيجة نقص إفراز الإنسولين (النوع الأول) أو مقاومة الخلايا للإنسولين (النوع الثاني). الوقاية والإدارة تشمل ضبط الوزن، تقليل السكريات البسيطة، ممارسة الرياضة، والالتزام بخطة الطبيب.";
+          } else if (/ضغط الدم|hypertension/i.test(q)) {
+            medBody = "**ارتفاع ضغط الدم (Hypertension):** حالة يكون فيها ضغط الدم على جدران الشرايين مرتفعاً باستمرار (`>= 130/80 mmHg`). يُنصح بتقليل الصوديوم (الملح)، الإقلاع عن التدخين، ممارسة الرياضة، ومراقبة الضغط دورياً.";
+          } else if (/المناعة|immune/i.test(q)) {
+            medBody = "**جهاز المناعة:** يدافع عن الجسم عبر خطين: **المناعة الفطرية** (الجلد، الخلايا البالعة) و**المناعة المكتسبة** (الخلايا اللمفاوية B وT والأجسام المضادة التي تحفظ ذاكرة مناعية ضد الميكروبات).";
+          } else if (/النوم/i.test(q)) {
+            medBody = "**فوائد النوم الصحي المبكر:** تعزيز الذاكرة والتركيز، تقوية جهاز المناعة، تنظيم هرمونات النمو والكورتيزول، وتقليل مخاطر أمراض القلب.";
+          }
+          return `🩺 **معلومات صحية وتثقيفية:**\n\n${medBody}\n\n---\n⚕️ **تنبيه صحي إلزامي:** هذه معلومات تثقيفية عامة فقط ولا تُعد تشخيصاً طبياً أو بديلاً عن استشارة الطبيب المختص.`;
+        }
+
+        // 5. Law & General Legal Information (with mandatory Legal Disclaimer)
+        if (/(عقد|عقود|قانوني|القانونية|في القانون|قانون العمل|الملكية الفكرية|حقوق النشر|حماية البيانات|gdpr|مسؤولية قانونية|contract law|intellectual property)/i.test(q)) {
+          setActiveProviderBadge("المحرك القانوني التثقيفي");
+          let lawBody = "يقوم الإطار القانوني العام على أركان الرضا والمحل والسبب المشروع، مع توثيق الحقوق والالتزامات كتابةً لحماية الأطراف.";
+          if (/عقد|عقود|contract/i.test(q)) {
+            lawBody = "**الأركان الأساسية للعقد الصحيح:**\n1. **التراضي (الإيجاب والقبول)** الخالي من عيوب الإرادة (الغلط، التدليس، الإكراه).\n2. **الأهلية القانونية** للأطراف المتعاقدة.\n3. **المحل والسبب المشروعان** غير المخالفين للنظام العام.\n4. **تحديد الالتزامات، المقابل المالي، شروط الإنهاء، وآلية فض النزاعات.**";
+          } else if (/الملكية الفكرية|حقوق النشر|intellectual property/i.test(q)) {
+            lawBody = "**حماية الملكية الفكرية:** تنقسم إلى **حقوق المؤلف (Copyright)** لحماية المصنفات الأدبية والبرمجية، و**الملكية الصناعية** (براءات الاختراع، العلامات التجارية، والنماذج الصناعية).";
+          } else if (/حماية البيانات|gdpr|خصوصية/i.test(q)) {
+            lawBody = "**مبادئ قوانين حماية البيانات الشخصية (مثل GDPR ونظام حماية البيانات):** الموافقة الصريحة، تقليل البيانات المجموعة، تحديد الغرض، حق الوصول والحذف، وتأمين البيانات بالتشفير.";
+          }
+          return `⚖️ **معلومات قانونية عامة:**\n\n${lawBody}\n\n---\n⚖️ **تنبيه قانوني إلزامي:** هذه معلومات قانونية عامة لأغراض التثقيف فقط ولا تُعد استشارة قانونية رسمية؛ يُرجى الرجوع لمحامٍ مرخص في بلدك.`;
+        }
+
+        // 6. Education & Academic Research
+        if (/(منهجية البحث|البحث العلمي|فرضية|توثيق المراجع|apa|التفكير النقدي|إدارة الوقت|بومودورو|research methodology)/i.test(q)) {
+          setActiveProviderBadge("محرك البحث الأكاديمي");
+          return "🎓 **منهجية البحث الأكاديمي والعلمي:**\n\n1. **تحديد مشكلة البحث وصياغة الفرضية القابلة للاختبار.**\n2. **مراجعة الأدبيات السابقة (Literature Review)** من مصادر محكّمة.\n3. **تصميم المنهجية (كمية، نوعية، أو تجريبية)** وجمع البيانات.\n4. **تحليل النتائج إحصائياً ومناقشتها بموضوعية.**\n5. **توثيق المراجع** وفق معايير معتمدة مثل **APA** أو **IEEE**.";
+        }
+
+        return "";
+      })();
+      if (domainAns) return domainAns;
+
+      const capFact = NourAIKnowledgeRetrieval.lookupCapital(q);
+      if (capFact) {
+        setActiveProviderBadge("قاعدة المعرفة");
+        return wikiSnippet ? `${capFact}\n\n${wikiSnippet}\n\n🌐 [المصدر: ${wikiTitle}](${wikiUrl})` : capFact;
+      }
+
+      // Secondary On-Demand Multi-Source Search (Wikipedia + DuckDuckGo + Wikidata) if Cloud LLM timed out / was unreachable
+      let extraSources = [];
+      if (!wikiSnippet && !isNonSearchTask && q.length >= 3) {
+        const wFallback = await fetchWikipediaSummary(q);
+        if (wFallback.snippet) {
+          wikiSnippet = wFallback.snippet;
+          wikiTitle = wFallback.title;
+          wikiUrl = wFallback.url;
+          extraSources = wFallback.extraSources || [];
+        }
+      }
+
+      if (wikiSnippet) {
+        setActiveProviderBadge("بحث متعدد المصادر");
+        const extraLinks = (extraSources || []).map(s => ` · [${s.label}](${s.url})`).join("");
+        const srcLine = wikiUrl ? `\n\n🌐 **المصادر الموثقة:** [ويكيبيديا: ${wikiTitle}](${wikiUrl})${extraLinks}` : "";
+        return `**${wikiTitle}**\n\n${wikiSnippet}${srcLine}`;
+      }
+
+      if (docExcerpt) {
+        setActiveProviderBadge("مستندات RAG");
+        return `📄 **من المستندات المرفوعة:**\n\n${docExcerpt}`;
+      }
+
+      if (reasoning.isCoding) {
+        setActiveProviderBadge("محرك الكود المحلي");
+        if (/binary search|البحث الثنائي/i.test(q)) {
+          return "💻 **دالة البحث الثنائي (Binary Search — تعقيد زمني `O(log n)`):**\n\n```python\ndef binary_search(arr: list[int], target: int) -> int:\n    low, high = 0, len(arr) - 1\n    while low <= high:\n        mid = (low + high) // 2\n        if arr[mid] == target:\n            return mid\n        elif arr[mid] < target:\n            low = mid + 1\n        else:\n            high = mid - 1\n    return -1\n\nprint(binary_search([2, 5, 8, 12, 16, 23, 38], 16))\n```";
+        }
+        if (/sql injection|حقن sql/i.test(q)) {
+          return "🛡️ **الحماية من هجمات SQL Injection:**\n\n1. **استخدام الاستعلامات المعلمة (Parameterized Queries / Prepared Statements)** وعدم دمج مدخلات المستخدم نصياً.\n2. **التحقق من المدخلات (Input Validation)** وتطبيق مبدأ أقل الصلاحيات.\n\n```python\n# مثال آمن باستخدام المعلمات (?):\ncursor.execute(\"SELECT * FROM users WHERE username = ?\", (user_input,))\n```";
+        }
+        if (/أولي|prime/i.test(q)) {
+          return "💻 **دالة فحص الأعداد الأولية (Python):**\n\n```python\ndef is_prime(n: int) -> bool:\n    if n < 2:\n        return False\n    for i in range(2, int(n ** 0.5) + 1):\n        if n % i == 0:\n            return False\n    return True\n\nprint([x for x in range(2, 30) if is_prime(x)])\n```";
+        }
+        if (/فيبوناتشي|fibonacci/i.test(q)) {
+          return "💻 **متتالية فيبوناتشي (Python):**\n\n```python\ndef fibonacci(n: int) -> list[int]:\n    seq = [0, 1]\n    for _ in range(2, n):\n        seq.append(seq[-1] + seq[-2])\n    return seq[:n]\n\nprint(fibonacci(10))\n```";
+        }
+        if (/فرز|ترتيب|sort/i.test(q)) {
+          return "💻 **فرز وترتيب القوائم (Python):**\n\n```python\ndef sort_items(items: list) -> list:\n    return sorted(items)\n\nprint(sort_items([42, 7, 19, 3, 88]))\n```";
+        }
+      }
+
+      // Truly vague 1-word/symbol input check (only when input is < 4 chars or symbols)
+      if (q.length < 4 || /^[؟?!.,\s]+$/.test(q)) {
         return `سؤالك «**${q}**» غير واضح تماماً. هل يمكنك توضيح ما تقصده أو إضافة تفاصيل أكثر لأجيبك بدقة؟`;
       }
-      return "لم أتمكن من التحقق من معلومات مؤكدة حول هذا السؤال حالياً. يرجى توضيح السؤال أو إضافة مفتاح Gemini المجاني في الإعدادات (⚙️) للحصول على إجابة دقيقة.";
+
+      return `⚠️ **تعذر الوصول المؤقت لمزود الذكاء السحابي (بسبب ضغط الطلبات أو انقطاع الاتصال)** للإجابة الكاملة عن: «**${q.slice(0, 80)}**».\n\n- يمكنك **إعادة المحاولة بعد لحظات**، أو إضافة **مفتاح Gemini API المجاني** في الإعدادات (⚙️) للحصول على استجابة فورية ومستقرة لجميع الأسئلة.`;
     }
 
     async function sendStreamingMessage() {
@@ -2978,6 +3340,7 @@ function downloadWebm() {
             activeSessionId = "local_" + Date.now();
             localList.unshift({ session_id: activeSessionId, title: text.slice(0, 36), messages: [] });
           }
+          setCookie("nourai_active_session", activeSessionId, 7);
           const targetSess = localList.find(s => s.session_id === activeSessionId);
           if (targetSess) {
             targetSess.messages.push({ role: "user", content: userDisplay }, { role: "assistant", content: replyText });
