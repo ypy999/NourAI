@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" id="html-root">
+<html lang="ar" dir="rtl" id="html-root" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -34,41 +34,13 @@
   }
   </script>
   <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#14161A" />
+  <meta name="theme-color" content="#2563EB" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/jabrix-tokens.css" />
   <title>JABRIX AI</title>
   <style>
-    :root {
-      --bg-main: #14161A;
-      --bg-sidebar: #0F1115;
-      --bg-elevated: #1E2128;
-      --bg-pill: #252932;
-      --bg-hover: rgba(255, 255, 255, 0.08);
-      --bg-user-msg: #252932;
-      --text-main: #F5F3EE;
-      --text-muted: #b4b4b4;
-      --border: rgba(255, 255, 255, 0.1);
-      --accent: #6C4BFF;
-      --accent-glow: #6C4BFF;
-      --btn-main: #ffffff;
-      --btn-text: #0d0d0d;
-      --sat: env(safe-area-inset-top, 0px);
-      --sab: env(safe-area-inset-bottom, 0px);
-    }
-
-    [data-theme="light"] {
-      --bg-main: #ffffff;
-      --bg-sidebar: #f9f9f9;
-      --bg-elevated: #ffffff;
-      --bg-pill: #f4f4f4;
-      --bg-hover: rgba(0, 0, 0, 0.05);
-      --bg-user-msg: #f4f4f4;
-      --text-main: #0d0d0d;
-      --text-muted: #676767;
-      --border: rgba(0, 0, 0, 0.1);
-      --btn-main: #0d0d0d;
-      --btn-text: #ffffff;
-    }
-
     * {
       box-sizing: border-box;
       margin: 0;
@@ -81,7 +53,7 @@
     }
 
     body {
-      font-family: "Segoe UI", system-ui, -apple-system, "Noto Sans Arabic", Tahoma, sans-serif;
+      font-family: var(--font-sans);
       background: var(--bg-main);
       color: var(--text-main);
       height: 100vh;
@@ -739,7 +711,7 @@
         width: min(82vw, 300px);
         z-index: 90;
         padding: calc(0.55rem + var(--sat)) 0.6rem calc(0.55rem + var(--sab)) 0.6rem;
-        box-shadow: 0 0 40px rgba(0, 0, 0, 0.65);
+        box-shadow: none;
       }
 
       [dir="rtl"] aside.sidebar {
@@ -752,6 +724,7 @@
 
       body.sidebar-open aside.sidebar {
         transform: none;
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.45);
       }
 
       body.sidebar-open .sidebar-overlay {
@@ -782,6 +755,37 @@
 
       .message-user {
         max-width: 88%;
+      }
+
+      .model-select {
+        max-width: 220px;
+        font-size: 0.88rem;
+        padding: 0.35rem 0.45rem;
+        overflow: hidden;
+      }
+
+      .lang-select {
+        max-width: 78px;
+        font-size: 0.8rem;
+        padding: 0.35rem 0.25rem;
+        overflow: hidden;
+      }
+
+      @media (max-width: 520px) {
+        .model-select {
+          max-width: 155px;
+          font-size: 0.82rem;
+          padding: 0.35rem 0.3rem;
+        }
+      }
+
+      header.chat-header {
+        padding-inline: 0.45rem;
+        gap: 0.2rem;
+      }
+
+      .hdr-start, .hdr-end {
+        gap: 0.1rem;
       }
 
       #chat-messages {
@@ -828,7 +832,8 @@
     .chip-accent { border-color: var(--accent); color: var(--accent); }
     .chip-tool { padding: 0.35rem 0.65rem; font-size: 0.78rem; }
     .chip-pill-sm { padding: 0.35rem 0.7rem; font-size: 0.78rem; border-radius: 999px; }
-    .u-tools-menu { display: none; flex-direction: column; gap: 0.65rem; padding: 0.75rem; margin-bottom: 0.45rem; background: var(--bg-sidebar); border: 1px solid var(--border); border-radius: 1rem; max-height: 40dvh; overflow-y: auto; }
+    .composer-wrap { position: relative; }
+    .u-tools-menu { display: none; flex-direction: column; gap: 0.65rem; padding: 0.85rem; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-lg); max-height: min(52dvh, 420px); overflow-y: auto; position: absolute; bottom: calc(100% + 0.35rem); inset-inline: 0.85rem; z-index: 45; box-shadow: var(--shadow-md); }
     .u-tools-hdr { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 0.4rem; }
     .u-tools-title { font-size: 0.82rem; font-weight: 700; }
     .u-btn-xs { min-width: 24px; height: 24px; font-size: 0.75rem; }
@@ -843,7 +848,7 @@
     .u-settings-title { font-size: 0.88rem; }
     .u-ctrl-row { flex-direction: row; align-items: center; justify-content: space-between; }
     .u-ctrl-row-gap { flex-direction: row; align-items: center; justify-content: space-between; gap: 0.5rem; }
-    .u-chk-18 { width: 18px; height: 18px; }
+    .u-chk-18 { width: 18px; height: 18px; flex-shrink: 0; }
     .u-lbl-sm { font-size: 0.8rem; }
     .u-adv-details { border: 1px solid var(--border); border-radius: 0.6rem; padding: 0.55rem 0.7rem; background: rgba(255, 255, 255, 0.02); }
     .u-adv-summary { cursor: pointer; font-size: 0.82rem; font-weight: 600; color: var(--text-muted); user-select: none; }
@@ -884,6 +889,87 @@
     .u-svg-img { max-width: 100%; border-radius: 0.5rem; background: #fff; }
     .u-py-out { display: none; padding: 0.5rem 0.8rem; border-top: 1px solid var(--border); background: #0d0d0d; color: #86efac; font-family: monospace; font-size: 0.8rem; white-space: pre-wrap; }
     .followup-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.65rem; }
+
+    /* ---------- JABRIX AI Minimal Premium Refinements ---------- */
+    .brand-logo-img { width: 28px; height: 28px; border-radius: 8px; display: block; }
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 0.65rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .sidebar-nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.55rem 0.7rem;
+      border-radius: var(--radius-sm);
+      color: var(--text-main);
+      text-decoration: none;
+      font-size: 0.86rem;
+      font-weight: 500;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .sidebar-nav-link:hover { background: var(--bg-hover); color: var(--accent); }
+    .sidebar-nav-btn { background: none; border: none; cursor: pointer; width: 100%; text-align: start; }
+    .hero-emblem-img { width: 28px; height: 28px; display: block; }
+    .tools-search-input {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-main);
+      color: var(--text-main);
+      font-size: 0.84rem;
+      outline: none;
+    }
+    .tools-search-input:focus { border-color: var(--accent); }
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+      gap: 0.45rem;
+    }
+    .chip-tool {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.12rem;
+      padding: 0.55rem 0.7rem !important;
+      border-radius: var(--radius-sm) !important;
+      background: var(--bg-main);
+      border: 1px solid var(--border);
+      text-align: start;
+    }
+    .chip-tool:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .tool-name { font-size: 0.82rem; font-weight: 600; color: var(--text-main); }
+    .tool-desc { font-size: 0.71rem; color: var(--text-muted); line-height: 1.35; }
+    .settings-section-title {
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      padding-top: 0.35rem;
+      border-top: 1px solid var(--border);
+    }
+    .composer-pill {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+    .composer-pill:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+    aside.sidebar {
+      border-inline-end: 1px solid var(--border);
+    }
+    header.chat-header {
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-main);
+    }
   </style>
 </head>
 <body>
@@ -891,7 +977,7 @@
 
   <aside class="sidebar" id="sidebar-panel" aria-label="Conversation History">
     <div class="sidebar-top">
-      <div class="brand"><span class="brand-logo">✦</span><span>NourAI</span></div>
+      <div class="brand"><img src="/icon.svg" alt="JABRIX AI" class="brand-logo-img" /><span>JABRIX AI</span></div>
       <button class="icon-btn sidebar-close" data-nav="toggle-sidebar" aria-label="إغلاق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     </div>
     <button class="new-chat-btn" id="new-session-btn" data-nav="new-session-mobile">
@@ -904,6 +990,10 @@
       <button class="icon-btn u-fav-btn" data-nav="toggle-favs" id="fav-filter-btn" title="عرض الإجابات المفضلة">⭐ المفضلة</button>
     </div>
     <ul class="session-list" id="session-history-list"></ul>
+    <div class="sidebar-footer">
+      <a href="/control_center.html" class="sidebar-nav-link" title="مركز التحكم والمراقبة">🎛️ <span>مركز التحكم</span></a>
+      <button type="button" class="sidebar-nav-link sidebar-nav-btn" data-nav="toggle-settings">⚙️ <span>الإعدادات والحساب</span></button>
+    </div>
   </aside>
 
   <main class="chat-area">
@@ -911,14 +1001,14 @@
       <div class="hdr-start">
         <button class="icon-btn" data-nav="toggle-sidebar" aria-label="القائمة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg></button>
         <select id="engine-mode-select" class="model-select" aria-label="النموذج">
-          <option value="team_ai">NourAI فريق الـ 5 مساعدين</option>
-          <option value="web_ai">NourAI ويب</option>
-          <option value="neural">NourAI عصبي</option>
-          <option value="fallback">NourAI محلي</option>
+          <option value="team_ai">JABRIX — الفريق</option>
+          <option value="web_ai">JABRIX — الويب</option>
+          <option value="neural">JABRIX — عصبي</option>
+          <option value="fallback">JABRIX — سريع</option>
         </select>
         <span id="model-status-badge">متصل</span>
         <span id="stream-status-indicator" class="u-hidden">جاهز</span>
-        <span id="ui-app-title" class="u-hidden">NourAI</span>
+        <span id="ui-app-title" class="u-hidden">JABRIX AI</span>
       </div>
       <div class="hdr-end">
         <select id="language-selector" class="lang-select" aria-label="اللغة">
@@ -927,7 +1017,7 @@
           <option value="french">Français</option>
         </select>
         <button class="icon-btn" data-nav="new-session" aria-label="محادثة جديدة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>
-        <button class="icon-btn" data-nav="toggle-theme" aria-label="تبديل المظهر" title="الوضع الليلي/النهاري">◐</button>
+        <button class="icon-btn" data-nav="toggle-theme" aria-label="تبديل المظهر" title="الوضع الفاتح / الداكن">◐</button>
         <button class="icon-btn" data-nav="toggle-settings" aria-label="الإعدادات"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg></button>
       </div>
     </header>
@@ -938,13 +1028,13 @@
     </div>
 
     <div id="welcome-hero">
-      <div class="hero-emblem">✦</div>
-      <h1 class="hero-greeting" id="hero-title">كيف يمكنني مساعدتك اليوم؟</h1>
+      <div class="hero-emblem"><img src="/icon.svg" alt="JABRIX AI" class="hero-emblem-img" /></div>
+      <h1 class="hero-greeting" id="hero-title">أهلاً بك في JABRIX AI</h1>
       <p class="u-hero-sub">
-        اكتب سؤالك مباشرةً للدردشة العامة، أو اضغط على <strong>✨ الأدوات</strong> لاختيار أداة متخصصة.
+        مساعدك الذكي للمحادثة والتحليل والبرمجة والأدوات المتخصصة. اكتب سؤالك مباشرة أو اختر أداة من <strong>✨ الأدوات</strong>.
       </p>
       <div class="u-hero-wrap">
-        <div class="u-hero-kicker">🚀 ابدأ من هنا</div>
+        <div class="u-hero-kicker">ابدأ من هنا</div>
         <div class="quick-chips">
           <button class="chip" data-starter="اشرح لي الذكاء الاصطناعي ببساطة في 5 نقاط">💡 اشرح لي ببساطة</button>
           <button class="chip" data-starter="اكتب دالة بايثون لحساب مضروب العدد factorial">💻 اكتب كوداً</button>
@@ -959,53 +1049,54 @@
     <footer class="composer-wrap">
       <div id="smart-tools-menu" class="u-tools-menu">
         <div class="u-tools-hdr">
-          <span class="u-tools-title">🧰 الأدوات المتخصصة (مصنفة)</span>
+          <span class="u-tools-title">🧰 أدوات JABRIX AI المتخصصة</span>
           <button class="icon-btn u-btn-xs" data-nav="toggle-tools" title="إغلاق">✕</button>
         </div>
+        <input type="search" id="tools-search-input" class="tools-search-input" placeholder="🔍 ابحث عن أداة (مثل: برمجة، خريطة، مناظرة، تلخيص)..." />
 
-        <div>
+        <div class="tool-category-group">
           <div class="u-tools-cat">✍️ الكتابة والتحرير</div>
-          <div class="u-flex-wrap-xs">
-            <button class="chip chip-tool" data-tool-prompt="حسن هذا السؤال واجعله احترافياً: " data-tool-label="✨ تحسين السؤال">✨ تحسين السؤال</button>
-            <button class="chip chip-tool" data-tool-prompt="اشرح لي ببساطة وكأنني مبتدئ: " data-tool-label="💡 شرح ببساطة">💡 شرح ببساطة</button>
-            <button class="chip chip-tool" data-tool-prompt="اختصر هذا النص في نقاط: " data-tool-label="📝 اختصار النص">📝 اختصار النص</button>
-            <button class="chip chip-tool" data-tool-prompt="غيّر أسلوب هذا النص إلى أسلوب رسمي احترافي: " data-tool-label="🎭 تغيير الأسلوب">🎭 تغيير الأسلوب</button>
-            <button class="chip chip-tool" data-tool-prompt="صحح الأخطاء الإملائية والنحوية في: " data-tool-label="✍️ مدقق لغوي">✍️ مدقق لغوي</button>
-            <button class="chip chip-tool" data-tool-prompt="بأسلوبي الرقمي: " data-tool-label="🧬 النسخة الرقمية">🧬 النسخة الرقمية</button>
+          <div class="tools-grid">
+            <button class="chip chip-tool" data-tool-prompt="حسن هذا السؤال واجعله احترافياً: " data-tool-label="✨ تحسين السؤال"><span class="tool-name">✨ تحسين السؤال</span><span class="tool-desc">صياغة سؤالك بأسلوب احترافي دقيق</span></button>
+            <button class="chip chip-tool" data-tool-prompt="اشرح لي ببساطة وكأنني مبتدئ: " data-tool-label="💡 شرح ببساطة"><span class="tool-name">💡 شرح ببساطة</span><span class="tool-desc">تبسيط المفاهيم المعقدة بأمثلة</span></button>
+            <button class="chip chip-tool" data-tool-prompt="اختصر هذا النص في نقاط: " data-tool-label="📝 اختصار النص"><span class="tool-name">📝 اختصار النص</span><span class="tool-desc">تلخيص النصوص الطويلة في نقاط</span></button>
+            <button class="chip chip-tool" data-tool-prompt="غيّر أسلوب هذا النص إلى أسلوب رسمي احترافي: " data-tool-label="🎭 تغيير الأسلوب"><span class="tool-name">🎭 تغيير الأسلوب</span><span class="tool-desc">تحويل النص إلى رسمي أو احترافي</span></button>
+            <button class="chip chip-tool" data-tool-prompt="صحح الأخطاء الإملائية والنحوية في: " data-tool-label="✍️ مدقق لغوي"><span class="tool-name">✍️ مدقق لغوي</span><span class="tool-desc">تصحيح الإملاء والنحو بدقة</span></button>
+            <button class="chip chip-tool" data-tool-prompt="بأسلوبي الرقمي: " data-tool-label="🧬 النسخة الرقمية"><span class="tool-name">🧬 النسخة الرقمية</span><span class="tool-desc">كتابة بنبرتك وأسلوبك الشخصي</span></button>
           </div>
         </div>
 
-        <div>
+        <div class="tool-category-group">
           <div class="u-tools-cat">🧠 التحليل والخبراء</div>
-          <div class="u-flex-wrap-xs">
-            <button class="chip chip-tool" data-tool-prompt="مجلس الخبراء: " data-tool-label="🏛️ مجلس الخبراء">🏛️ مجلس الخبراء</button>
-            <button class="chip chip-tool" data-tool-prompt="فريق العمل: " data-tool-label="👥 فريق العمل">👥 فريق العمل</button>
-            <button class="chip chip-tool" data-tool-prompt="مناظرة: " data-tool-label="⚖️ مناظرة الذكاء">⚖️ مناظرة الذكاء</button>
-            <button class="chip chip-tool" data-tool-prompt="تطور الفكرة: " data-tool-label="🌱 تطور الفكرة">🌱 تطور الفكرة (5 نسخ)</button>
-            <button class="chip chip-tool" data-tool-prompt="ماذا لو: " data-tool-label="🔮 ماذا لو؟">🔮 ماذا لو؟</button>
-            <button class="chip chip-tool" data-tool-prompt="التفكير بالعكس: " data-tool-label="🔁 التفكير بالعكس">🔁 التفكير بالعكس</button>
-            <button class="chip chip-tool" data-tool-prompt="اختبر هذه الفكرة وحلل نقاط القوة والمخاطر: " data-tool-label="🧪 مختبر الأفكار">🧪 مختبر الأفكار</button>
-            <button class="chip chip-tool" data-tool-prompt="ساعدني في اتخاذ قرار مقارنة بين: " data-tool-label="⚖️ مساعد القرارات">⚖️ مساعد القرارات</button>
-            <button class="chip chip-tool" data-tool-prompt="سلسلة المهام: " data-tool-label="⛓️ سلسلة المهام">⛓️ سلسلة المهام</button>
+          <div class="tools-grid">
+            <button class="chip chip-tool" data-tool-prompt="مجلس الخبراء: " data-tool-label="🏛️ مجلس الخبراء"><span class="tool-name">🏛️ مجلس الخبراء</span><span class="tool-desc">آراء 3 خبراء وخلاصة موحدة</span></button>
+            <button class="chip chip-tool" data-tool-prompt="فريق العمل: " data-tool-label="👥 فريق العمل"><span class="tool-name">👥 فريق العمل</span><span class="tool-desc">مبرمج ومصمم ومسوق ومدير</span></button>
+            <button class="chip chip-tool" data-tool-prompt="مناظرة: " data-tool-label="⚖️ مناظرة الذكاء"><span class="tool-name">⚖️ مناظرة الذكاء</span><span class="tool-desc">مؤيد ومعارض وحكم نهائي</span></button>
+            <button class="chip chip-tool" data-tool-prompt="تطور الفكرة: " data-tool-label="🌱 تطور الفكرة"><span class="tool-name">🌱 تطور الفكرة (5 نسخ)</span><span class="tool-desc">ترقية الفكرة إلى مشروع متكامل</span></button>
+            <button class="chip chip-tool" data-tool-prompt="ماذا لو: " data-tool-label="🔮 ماذا لو؟"><span class="tool-name">🔮 ماذا لو؟</span><span class="tool-desc">استشراف السيناريوهات والمخاطر</span></button>
+            <button class="chip chip-tool" data-tool-prompt="التفكير بالعكس: " data-tool-label="🔁 التفكير بالعكس"><span class="tool-name">🔁 التفكير بالعكس</span><span class="tool-desc">كشف أسباب الفشل لتجنبها</span></button>
+            <button class="chip chip-tool" data-tool-prompt="اختبر هذه الفكرة وحلل نقاط القوة والمخاطر: " data-tool-label="🧪 مختبر الأفكار"><span class="tool-name">🧪 مختبر الأفكار</span><span class="tool-desc">تقييم واقعي ونقاط قوة ومخاطر</span></button>
+            <button class="chip chip-tool" data-tool-prompt="ساعدني في اتخاذ قرار مقارنة بين: " data-tool-label="⚖️ مساعد القرارات"><span class="tool-name">⚖️ مساعد القرارات</span><span class="tool-desc">مقارنة خيارات وتوصية عملية</span></button>
+            <button class="chip chip-tool" data-tool-prompt="سلسلة المهام: " data-tool-label="⛓️ سلسلة المهام"><span class="tool-name">⛓️ سلسلة المهام</span><span class="tool-desc">تقسيم الهدف إلى مراحل متتابعة</span></button>
           </div>
         </div>
 
-        <div>
+        <div class="tool-category-group">
           <div class="u-tools-cat">📚 الدراسة والملفات</div>
-          <div class="u-flex-wrap-xs">
-            <button class="chip chip-tool" data-nav="upload-doc">📄 اسأل ملفاتك</button>
-            <button class="chip chip-tool" data-tool-prompt="أنشئ اختباراً من هذا الدرس: " data-tool-label="🎯 مولد الاختبارات">🎯 مولد الاختبارات</button>
-            <button class="chip chip-tool" data-tool-prompt="ارسم خريطة ذهنية لـ: " data-tool-label="🗺️ خريطة ذهنية">🗺️ خريطة ذهنية</button>
-            <button class="chip chip-tool" data-tool-prompt="شبكة المعرفة: " data-tool-label="🕸️ شبكة المعرفة">🕸️ شبكة المعرفة</button>
-            <button class="chip chip-tool" data-tool-prompt="ابدأ محاكاة مقابلة عمل لوظيفة: " data-tool-label="🎤 محاكي المقابلات">🎤 محاكي المقابلات</button>
+          <div class="tools-grid">
+            <button class="chip chip-tool" data-nav="upload-doc"><span class="tool-name">📄 اسأل ملفاتك</span><span class="tool-desc">رفع وتحليل PDF وDOCX والصور</span></button>
+            <button class="chip chip-tool" data-tool-prompt="أنشئ اختباراً من هذا الدرس: " data-tool-label="🎯 مولد الاختبارات"><span class="tool-name">🎯 مولد الاختبارات</span><span class="tool-desc">أسئلة تفاعلية من أي درس</span></button>
+            <button class="chip chip-tool" data-tool-prompt="ارسم خريطة ذهنية لـ: " data-tool-label="🗺️ خريطة ذهنية"><span class="tool-name">🗺️ خريطة ذهنية</span><span class="tool-desc">مخطط بصري ديناميكي للموضوع</span></button>
+            <button class="chip chip-tool" data-tool-prompt="شبكة المعرفة: " data-tool-label="🕸️ شبكة المعرفة"><span class="tool-name">🕸️ شبكة المعرفة</span><span class="tool-desc">ربط المفاهيم الفرعية التفاعلية</span></button>
+            <button class="chip chip-tool" data-tool-prompt="ابدأ محاكاة مقابلة عمل لوظيفة: " data-tool-label="🎤 محاكي المقابلات"><span class="tool-name">🎤 محاكي المقابلات</span><span class="tool-desc">تدريب وتقييم إجابات المقابلة</span></button>
           </div>
         </div>
 
-        <div>
+        <div class="tool-category-group">
           <div class="u-tools-cat">🎨 الإبداع والبرمجة</div>
-          <div class="u-flex-wrap-xs">
-            <button class="chip chip-tool" data-tool-prompt="اكتب كوداً برمجياً واشرحه لـ: " data-tool-label="💻 مساعد البرمجة">💻 مساعد البرمجة</button>
-            <button class="chip chip-tool" data-tool-prompt="اقترح لي أفكار مشاريع وأسماء تجارية في مجال: " data-tool-label="🚀 مولد الأفكار">🚀 مولد الأفكار</button>
+          <div class="tools-grid">
+            <button class="chip chip-tool" data-tool-prompt="اكتب كوداً برمجياً واشرحه لـ: " data-tool-label="💻 مساعد البرمجة"><span class="tool-name">💻 مساعد البرمجة</span><span class="tool-desc">كتابة وشرح وتصحيح الأكواد</span></button>
+            <button class="chip chip-tool" data-tool-prompt="اقترح لي أفكار مشاريع وأسماء تجارية في مجال: " data-tool-label="🚀 مولد الأفكار"><span class="tool-name">🚀 مولد الأفكار</span><span class="tool-desc">أفكار مشاريع وأسماء تجارية</span></button>
           </div>
         </div>
       </div>
@@ -1021,28 +1112,29 @@
       <div class="composer-pill">
         <input type="file" id="doc-upload-input" class="u-hidden" accept="image/*,.txt,.md,.json,.csv,.py,.js,.html,.log,.docx,.pdf" />
         <button class="icon-btn" data-nav="upload-doc" aria-label="إرفاق ملف أو صورة" title="إرفاق صورة أو ملف PDF/DOCX"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
-        <button class="icon-btn" id="tools-toggle-btn" data-nav="toggle-tools" aria-label="الأدوات الذكية" title="8 أدوات ذكية سريعة">✨</button>
+        <button class="icon-btn" id="tools-toggle-btn" data-nav="toggle-tools" aria-label="الأدوات الذكية" title="أدوات JABRIX AI المصنفة">✨</button>
         <textarea
           id="prompt-input"
           dir="auto"
           rows="1"
-          placeholder="اسأل NourAI..."
+          placeholder="اسأل JABRIX AI..."
           enterkeyhint="send"
         ></textarea>
         <button class="icon-btn" id="mic-btn" data-nav="voice-input" aria-label="تحدث بالصوت" title="محادثة صوتية"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
         <button class="send-circle-btn" id="send-btn" data-nav="send-msg" aria-label="إرسال"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
         <button class="stop-circle-btn" id="stop-btn" data-nav="stop-gen" aria-label="إيقاف"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg></button>
       </div>
-      <p class="disclaimer">قد يخطئ NourAI. تحقق من المعلومات المهمة.</p>
+      <p class="disclaimer">قد يخطئ JABRIX AI. يُنصح بالتحقق من المعلومات المهمة.</p>
     </footer>
   </main>
 
   <!-- Popover Settings (Hidden by default) -->
   <aside class="settings-panel" id="settings-panel" aria-label="Model Settings">
     <div class="u-row-between">
-      <strong id="ui-settings-title" class="u-settings-title">الإعدادات</strong>
+      <strong id="ui-settings-title" class="u-settings-title">إعدادات JABRIX AI</strong>
       <button class="icon-btn" data-nav="toggle-settings">✕</button>
     </div>
+    <div class="settings-section-title">الذكاء الاصطناعي والشخصية</div>
     <div class="control-group">
       <label for="persona-select">الشخصية / الدور (Persona)</label>
       <select id="persona-select">
@@ -1071,6 +1163,7 @@
         <option value="creative">إبداعي</option>
       </select>
     </div>
+    <div class="settings-section-title">التفاعل والخصوصية</div>
     <div class="control-group u-ctrl-row">
       <label for="auto-voice-toggle">🔊 الرد الصوتي التلقائي</label>
       <input type="checkbox" id="auto-voice-toggle" class="u-chk-18" />
@@ -1079,6 +1172,7 @@
       <label for="cloud-context-consent-toggle" class="u-lbl-sm">☁️ مشاركة الذكريات ومستندات RAG مع خدمات الذكاء السحابية</label>
       <input type="checkbox" id="cloud-context-consent-toggle" class="u-chk-18" />
     </div>
+    <div class="settings-section-title">إعدادات المطورين و API</div>
     <details class="u-adv-details">
       <summary class="u-adv-summary">🛠️ إعدادات متقدمة (للمطورين)</summary>
       <div class="u-adv-inner">
@@ -2173,6 +2267,14 @@ function downloadWebm() {
       }
     };
 
+    function cleanAnswerFormat(text) {
+      if (!text) return "";
+      return String(text)
+        .replace(/\r\n/g, "\n")
+        .replace(/\n{3,}/g, "\n\n")
+        .trim();
+    }
+
     const NourAISelfChecker = {
       verify(answer) {
         if (!answer) return "";
@@ -3210,7 +3312,24 @@ function downloadWebm() {
         document.getElementById("cookie-banner").style.display = "flex";
       }
       const savedTheme = getCookie("nourai_theme");
-      if (savedTheme === "light") document.getElementById("html-root").setAttribute("data-theme", "light");
+      if (savedTheme === "dark" || savedTheme === "light") {
+        document.getElementById("html-root").setAttribute("data-theme", savedTheme);
+      }
+      const toolsSearch = document.getElementById("tools-search-input");
+      if (toolsSearch) {
+        toolsSearch.addEventListener("input", () => {
+          const q = toolsSearch.value.trim().toLowerCase();
+          document.querySelectorAll("#smart-tools-menu .tool-category-group").forEach(grp => {
+            let visibleCount = 0;
+            grp.querySelectorAll(".chip-tool").forEach(btn => {
+              const match = !q || btn.textContent.toLowerCase().includes(q);
+              btn.style.display = match ? "" : "none";
+              if (match) visibleCount++;
+            });
+            grp.style.display = visibleCount > 0 ? "" : "none";
+          });
+        });
+      }
       const savedLang = getCookie("nourai_lang");
       if (savedLang && I18N[savedLang]) {
         document.getElementById("language-selector").value = savedLang;

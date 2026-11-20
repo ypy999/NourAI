@@ -1,199 +1,292 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl" id="cc-root" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>JABRIX AI v3.2 — Autonomous Control Center 2.0</title>
+  <title>JABRIX AI — مركز التحكم والمراقبة</title>
   <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/jabrix-tokens.css" />
   <style>
-    :root {
-      --bg: #0f1115;
-      --panel: #14161A;
-      --panel-alt: #1e2128;
-      --border: #2c313d;
-      --text: #F5F3EE;
-      --muted: #94a3b8;
-      --accent: #6C4BFF;
-      --ok: #10b981;
-      --warn: #f59e0b;
-      --err: #ef4444;
-    }
     * { box-sizing: border-box; }
     body {
-      margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-      background: var(--bg); color: var(--text); line-height: 1.45;
+      margin: 0;
+      font-family: var(--font-sans);
+      background: var(--bg-main);
+      color: var(--text-main);
+      line-height: 1.55;
+      min-height: 100dvh;
     }
     header {
-      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
-      padding: 14px 20px; background: var(--panel); border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 20px;
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 20;
     }
-    header h1 { margin: 0; font-size: 1.15rem; letter-spacing: 0.3px; }
+    .brand-wrap { display: flex; align-items: center; gap: 12px; }
+    .brand-wrap img { width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0; }
+    header h1 { margin: 0; font-size: 1.08rem; font-weight: 700; color: var(--text-main); }
     .badge {
-      display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: 0.78rem;
-      background: var(--panel-alt); border: 1px solid var(--border); color: var(--accent);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--accent);
     }
-    .badge.ok { color: var(--ok); border-color: var(--ok); }
+    .badge.ok { color: var(--ok); background: var(--ok-soft); border-color: transparent; }
     .badge.warn { color: var(--warn); border-color: var(--warn); }
-    .badge.err { color: var(--err); border-color: var(--err); }
+    .badge.err { color: var(--err); background: var(--err-soft); border-color: transparent; }
     .controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
     button, input, select {
-      background: var(--panel-alt); color: var(--text); border: 1px solid var(--border);
-      border-radius: 6px; padding: 6px 10px; font-size: 0.85rem;
+      font-family: inherit;
+      background: var(--bg-elevated);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 7px 12px;
+      font-size: 0.84rem;
+      min-height: 36px;
+      transition: border-color 0.15s, background 0.15s;
     }
-    button { cursor: pointer; }
-    button.primary { background: #0284c7; border-color: #0369a1; }
-    button.ok { background: #047857; border-color: #065f46; }
-    button.danger { background: #b91c1c; border-color: #991b1b; }
+    button { cursor: pointer; font-weight: 500; }
+    button:hover { border-color: var(--accent); }
+    button.primary { background: var(--accent); color: #FFFFFF; border-color: var(--accent); }
+    button.primary:hover { background: var(--accent-hover); }
+    button.ok { background: var(--ok); color: #FFFFFF; border-color: var(--ok); }
+    button.danger { background: var(--err); color: #FFFFFF; border-color: var(--err); }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      color: var(--accent);
+      font-size: 0.84rem;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .back-link:hover { background: var(--accent-soft); }
+    #backendStatusBanner {
+      display: none;
+      width: calc(100% - 40px);
+      max-width: 1560px;
+      margin: 14px auto 0;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      background: var(--err-soft);
+      border: 1px solid var(--err);
+      color: var(--text-main);
+      font-size: 0.88rem;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
     main {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-      gap: 14px; padding: 16px; max-width: 1600px; margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 16px;
+      padding: 18px 20px 32px;
+      max-width: 1600px;
+      margin: 0 auto;
     }
     section.card {
-      background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
-      padding: 14px; display: flex; flex-direction: column; gap: 10px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: var(--shadow-xs);
     }
     section.card h2 {
-      margin: 0; font-size: 0.96rem; color: var(--accent);
-      display: flex; justify-content: space-between; align-items: center;
+      margin: 0;
+      font-size: 0.94rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
     }
     .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-    .kpi { background: var(--panel-alt); padding: 8px 10px; border-radius: 6px; }
-    .kpi .label { font-size: 0.75rem; color: var(--muted); }
-    .kpi .val { font-size: 1.05rem; font-weight: 600; }
+    .kpi {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+    }
+    .kpi .label { font-size: 0.74rem; color: var(--text-muted); }
+    .kpi .val { font-size: 1rem; font-weight: 700; color: var(--text-main); margin-top: 2px; }
     .scroll-box { max-height: 240px; overflow-y: auto; font-size: 0.82rem; }
     table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
-    th, td { text-align: start; padding: 5px 6px; border-bottom: 1px solid var(--border); }
-    th { color: var(--muted); font-weight: 600; }
+    th, td { text-align: start; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+    th { color: var(--text-muted); font-weight: 600; }
     pre {
-      margin: 0; background: #020617; padding: 8px; border-radius: 6px;
-      overflow-x: auto; font-size: 0.76rem; color: #cbd5e1;
+      margin: 0;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      unicode-bidi: plaintext;
+      font-size: 0.78rem;
+      color: var(--text-main);
+      direction: rtl;
+      text-align: start;
     }
     .row { display: flex; gap: 8px; }
-    .row input { flex: 1; }
+    .row input { flex: 1; min-width: 0; }
+    @media (max-width: 640px) {
+      header { padding: 12px 14px; }
+      main { grid-template-columns: 1fr; padding: 14px; }
+      .row { flex-direction: column; }
+    }
   </style>
 </head>
 <body>
   <header>
-    <div style="display:flex;align-items:center;gap:12px;">
-      <svg role="img" aria-label="JABRIX AI mark" viewBox="0 0 120 120" style="width:36px;height:36px;flex-shrink:0;">
-        <rect x="8" y="8" width="104" height="104" rx="28" fill="#14161A"/>
-        <rect x="14" y="14" width="92" height="92" rx="22" fill="none" stroke="#6C4BFF" stroke-width="2" opacity="0.7"/>
-        <path d="M72 48 V70 a16 16 0 0 1 -32 0" fill="none" stroke="#F5F3EE" stroke-width="10" stroke-linecap="round"/>
-        <circle cx="72" cy="33" r="7.5" fill="#6C4BFF"/>
-      </svg>
+    <div class="brand-wrap">
+      <img src="/icon.svg" alt="JABRIX AI" />
       <div>
-        <h1>JABRIX <span style="color:#6C4BFF">AI</span> v3.2 — Autonomous Control Center 2.0</h1>
-        <span class="badge ok" id="healthBadge">Local-First · AR · EN · FR</span>
+        <h1>JABRIX <span style="color:var(--accent)">AI</span> — مركز التحكم والمراقبة</h1>
+        <span class="badge ok" id="healthBadge">جاري التحقق من الخادم...</span>
       </div>
     </div>
     <div class="controls">
-      <select id="dirSelect" title="Direction">
-        <option value="ltr">LTR (EN/FR)</option>
+      <select id="dirSelect" title="اتجاه الواجهة" aria-label="اتجاه الواجهة">
         <option value="rtl">RTL (العربية)</option>
+        <option value="ltr">LTR (EN/FR)</option>
       </select>
-      <button id="guestBtn">Guest Token</button>
-      <button class="primary" id="refreshBtn">Refresh Dashboard</button>
-      <a href="/" style="color:var(--accent);font-size:0.85rem;text-decoration:none;">← v1 Chat UI</a>
+      <button id="themeToggleBtn" title="تبديل المظهر الفاتح/الداكن">◐ المظهر</button>
+      <button id="guestBtn">جلسة ضيف</button>
+      <button class="primary" id="refreshBtn">تحديث اللوحة</button>
+      <a href="/" class="back-link">💬 العودة للمحادثة</a>
     </div>
   </header>
+
+  <div id="backendStatusBanner" role="alert">
+    <span id="backendStatusMsg">⚠️ الخادم الخلفي غير متصل حالياً. لعرض بيانات مركز التحكم الحية (<code>/api/v3/*</code>)، قم بتشغيل خادم Python المحلي (<code>python run_nourai.py</code>). لا يتم عرض أي بيانات وهمية.</span>
+    <button id="retryBannerBtn" class="primary">إعادة المحاولة</button>
+  </div>
 
   <main>
     <!-- 1. Agent Task Monitor -->
     <section class="card">
-      <h2><span>1. Agent Task Monitor</span><span class="badge" id="taskCountBadge">0 tasks</span></h2>
+      <h2><span>1. مراقبة مهام الوكيل</span><span class="badge" id="taskCountBadge">0 مهمة</span></h2>
       <div class="row">
-        <input id="taskObjective" placeholder="Enter autonomous objective (AR/EN/FR)..." />
-        <button class="primary" id="runTaskBtn">Run</button>
+        <input id="taskObjective" placeholder="أدخل هدفاً للوكيل (AR/EN/FR)..." />
+        <button class="primary" id="runTaskBtn">تشغيل</button>
       </div>
       <div class="scroll-box">
         <table>
-          <thead><tr><th>ID</th><th>Objective</th><th>Status</th><th>Action</th></tr></thead>
+          <thead><tr><th>المعرّف</th><th>الهدف</th><th>الحالة</th><th>إجراء</th></tr></thead>
           <tbody id="tasksBody"></tbody>
         </table>
       </div>
     </section>
 
-    <!-- 2. Task Execution Timeline & 3. Planning Visualization -->
+    <!-- 2 & 3. Execution Timeline & Plan DAG -->
     <section class="card">
-      <h2><span>2 &amp; 3. Execution Timeline &amp; Plan DAG</span><span class="badge" id="selectedTaskBadge">None</span></h2>
+      <h2><span>2 &amp; 3. مسار التنفيذ وخطة DAG</span><span class="badge" id="selectedTaskBadge">لا يوجد</span></h2>
       <div class="scroll-box">
-        <pre id="planDagBox">Select a task to inspect its DAG plan and execution timeline.</pre>
+        <pre id="planDagBox">اختر مهمة لمعاينة خطة التنفيذ والتتبع الخاص بها.</pre>
       </div>
     </section>
 
-    <!-- 6. Approval Queue -->
+    <!-- 4. Human Approval Queue -->
     <section class="card">
-      <h2><span>4. Human Approval Queue</span><span class="badge warn" id="approvalCount">0 pending</span></h2>
-      <div class="scroll-box" id="approvalList">No destructive tasks awaiting approval.</div>
+      <h2><span>4. قائمة الموافقات البشرية</span><span class="badge warn" id="approvalCount">0 معلقة</span></h2>
+      <div class="scroll-box" id="approvalList">لا توجد مهام بانتظار الموافقة حالياً.</div>
     </section>
 
-    <!-- 8. CPU & RAM Monitoring -->
+    <!-- 5. CPU & RAM Monitor -->
     <section class="card">
-      <h2><span>5. CPU &amp; RAM Hardware Monitor</span><span class="badge ok" id="hwModeBadge">CPU-Only</span></h2>
+      <h2><span>5. مراقبة الموارد (CPU / RAM)</span><span class="badge ok" id="hwModeBadge">—</span></h2>
       <div class="kpi-grid" id="hwGrid"></div>
     </section>
 
-    <!-- 7. Neural Model Metrics -->
+    <!-- 6. Neural Model Metrics -->
     <section class="card">
-      <h2><span>6. Neural Model Metrics</span><span class="badge" id="modelPresetBadge">Loaded</span></h2>
+      <h2><span>6. مؤشرات النموذج العصبي</span><span class="badge" id="modelPresetBadge">—</span></h2>
       <div class="kpi-grid" id="neuralGrid"></div>
     </section>
 
-    <!-- 4. Tool Activity & Audit Log -->
+    <!-- 7. Tool Activity & Audit Log -->
     <section class="card">
-      <h2><span>7. Tool Activity &amp; Permissions</span><span class="badge" id="toolCountBadge">0 tools</span></h2>
+      <h2><span>7. نشاط الأدوات والصلاحيات</span><span class="badge" id="toolCountBadge">0 أداة</span></h2>
       <div class="scroll-box">
         <table>
-          <thead><tr><th>Tool</th><th>Status</th><th>Latency</th></tr></thead>
+          <thead><tr><th>الأداة</th><th>الحالة</th><th>الزمن</th></tr></thead>
           <tbody id="toolAuditBody"></tbody>
         </table>
       </div>
     </section>
 
-    <!-- 5. Memory Inspector -->
+    <!-- 8. Memory Inspector -->
     <section class="card">
-      <h2><span>8. 4-Tier Memory Inspector</span><span class="badge" id="memConsistencyBadge">Consistent</span></h2>
+      <h2><span>8. فاحص الذاكرة (4 طبقات)</span><span class="badge" id="memConsistencyBadge">—</span></h2>
       <div class="scroll-box">
         <table>
-          <thead><tr><th>Tier</th><th>Content</th><th>Del</th></tr></thead>
+          <thead><tr><th>الطبقة</th><th>المحتوى</th><th>حذف</th></tr></thead>
           <tbody id="memoryBody"></tbody>
         </table>
       </div>
     </section>
 
-    <!-- 9. Evaluation Reports & Self-Evaluation -->
+    <!-- 9. Evaluation & Self-Evaluation -->
     <section class="card">
-      <h2><span>9. Evaluation &amp; Self-Evaluation</span><button class="ok" id="runEvalBtn">Run Eval</button></h2>
+      <h2><span>9. التقييم والتقييم الذاتي</span><button class="ok" id="runEvalBtn">تشغيل التقييم</button></h2>
       <div class="scroll-box">
-        <pre id="evalBox">Click "Run Eval" or refresh to inspect evaluation &amp; self-diagnostics.</pre>
+        <pre id="evalBox">اضغط «تشغيل التقييم» أو «تحديث اللوحة» لعرض تقارير التقييم الحية.</pre>
       </div>
     </section>
 
     <!-- 10. Error & Recovery Logs -->
     <section class="card">
-      <h2><span>10. Error &amp; Recovery Logs</span><span class="badge err" id="errCountBadge">0 failures</span></h2>
+      <h2><span>10. سجل الأخطاء والتعافي</span><span class="badge err" id="errCountBadge">0 أخطاء</span></h2>
       <div class="scroll-box">
-        <pre id="errorLogBox">No failed tasks recorded.</pre>
+        <pre id="errorLogBox">لم تُسجل أخطاء في المهام.</pre>
       </div>
     </section>
 
-    <!-- 11. Research Workspace & Citation Inspector (v3.2) -->
+    <!-- 11. Research Workspace & Citations -->
     <section class="card">
-      <h2><span>11. Research Workspace &amp; Citations</span><span class="badge" id="researchCountBadge">0 reports</span></h2>
+      <h2><span>11. مساحة البحث والمصادر</span><span class="badge" id="researchCountBadge">0 تقارير</span></h2>
       <div class="row">
-        <input id="researchObjective" placeholder="Research topic (AR/EN/FR)..." />
-        <button class="primary" id="runResearchBtn">Research</button>
+        <input id="researchObjective" placeholder="موضوع البحث (AR/EN/FR)..." />
+        <button class="primary" id="runResearchBtn">بحث</button>
       </div>
       <div class="scroll-box">
-        <pre id="researchBox">Run a research query to inspect verified facts, hypotheses, contradictions, and citations.</pre>
+        <pre id="researchBox">شغّل استعلام بحث لاستعراض الحقائق الموثقة والمصادر.</pre>
       </div>
     </section>
 
-    <!-- 12. Long-Term Project Management View (v3.2) -->
+    <!-- 12. Long-Term Projects -->
     <section class="card">
-      <h2><span>12. Long-Term Projects &amp; Timeline</span><span class="badge ok" id="projectCountBadge">0 projects</span></h2>
+      <h2><span>12. المشاريع طويلة المدى</span><span class="badge ok" id="projectCountBadge">0 مشاريع</span></h2>
       <div class="scroll-box">
-        <pre id="projectsBox">Persistent projects, milestones, blocked tasks, and progress percentages appear here.</pre>
+        <pre id="projectsBox">تظهر هنا المشاريع المستمرة والمراحل ونسب التقدم عند اتصال الخادم.</pre>
       </div>
     </section>
   </main>
@@ -201,149 +294,215 @@
   <script>
     let authToken = localStorage.getItem("nourai_token") || "";
 
+    function getCookie(name) {
+      const prefix = name + "=";
+      for (const part of document.cookie.split(";")) {
+        const c = part.trim();
+        if (c.indexOf(prefix) === 0) return decodeURIComponent(c.substring(prefix.length));
+      }
+      return "";
+    }
+
+    function setCookie(name, value, days) {
+      const d = new Date();
+      d.setTime(d.getTime() + days * 86400000);
+      const sec = window.location.protocol === "https:" ? ";Secure" : "";
+      document.cookie = name + "=" + encodeURIComponent(value) + ";expires=" + d.toUTCString() + ";path=/;SameSite=Strict" + sec;
+    }
+
+    function escapeHtml(s) {
+      return String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
     function headers() {
       const h = { "Content-Type": "application/json" };
       if (authToken) h["Authorization"] = "Bearer " + authToken;
       return h;
     }
 
-    async function ensureGuest() {
-      const res = await fetch("/api/v1/auth/guest", { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" });
-      const data = await res.json();
-      if (data.access_token) {
-        authToken = data.access_token;
-        localStorage.setItem("nourai_token", authToken);
+    async function fetchJsonSafe(url, opts) {
+      const res = await fetch(url, opts);
+      const ct = (res.headers.get("content-type") || "").toLowerCase();
+      if (!ct.includes("application/json")) {
+        throw new Error("BACKEND_UNAVAILABLE");
       }
-      await refreshAll();
+      const data = await res.json();
+      return { ok: res.ok, status: res.status, data };
+    }
+
+    function showOfflineState() {
+      const banner = document.getElementById("backendStatusBanner");
+      if (banner) banner.style.display = "flex";
+      const hb = document.getElementById("healthBadge");
+      hb.className = "badge err";
+      hb.textContent = "الخادم الخلفي غير متصل";
+      const hwm = document.getElementById("hwModeBadge");
+      hwm.className = "badge err";
+      hwm.textContent = "غير متصل";
+      document.getElementById("hwGrid").innerHTML = [
+        ["الذاكرة RSS", "—"],
+        ["أنوية CPU", "—"],
+        ["خيوط Torch", "—"],
+        ["الإعداد / السياق", "—"]
+      ].map(([l, v]) => `<div class="kpi"><div class="label">${l}</div><div class="val">${v}</div></div>`).join("");
+      document.getElementById("neuralGrid").innerHTML = [
+        ["المعاملات", "—"],
+        ["حجم الأوزان", "—"],
+        ["حد السياق", "—"],
+        ["الجهاز", "—"]
+      ].map(([l, v]) => `<div class="kpi"><div class="label">${l}</div><div class="val">${v}</div></div>`).join("");
+    }
+
+    async function ensureGuest() {
+      try {
+        const { data } = await fetchJsonSafe("/api/v1/auth/guest", { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" });
+        if (data.access_token) {
+          authToken = data.access_token;
+          localStorage.setItem("nourai_token", authToken);
+        }
+        await refreshAll();
+      } catch (e) {
+        showOfflineState();
+      }
     }
 
     async function inspectTask(taskId) {
-      const res = await fetch("/api/v3/agent/tasks/" + encodeURIComponent(taskId), { headers: headers() });
-      const data = await res.json();
-      if (data.task) {
-        document.getElementById("selectedTaskBadge").textContent = taskId;
-        document.getElementById("planDagBox").textContent = JSON.stringify({
-          status: data.task.status,
-          plan: data.task.plan,
-          trace: data.task.trace,
-          result: data.task.result
-        }, null, 2);
+      try {
+        const { data } = await fetchJsonSafe("/api/v3/agent/tasks/" + encodeURIComponent(taskId), { headers: headers() });
+        if (data.task) {
+          document.getElementById("selectedTaskBadge").textContent = taskId;
+          document.getElementById("planDagBox").textContent = JSON.stringify({
+            status: data.task.status,
+            plan: data.task.plan,
+            trace: data.task.trace,
+            result: data.task.result
+          }, null, 2);
+        }
+      } catch (e) {
+        showOfflineState();
       }
     }
 
     async function approveTask(taskId) {
-      await fetch("/api/v3/agent/tasks/" + encodeURIComponent(taskId) + "/approve", { method: "POST", headers: headers(), body: "{}" });
-      await refreshAll();
+      try {
+        await fetchJsonSafe("/api/v3/agent/tasks/" + encodeURIComponent(taskId) + "/approve", { method: "POST", headers: headers(), body: "{}" });
+        await refreshAll();
+      } catch (e) { showOfflineState(); }
     }
 
     async function cancelTask(taskId) {
-      await fetch("/api/v3/agent/tasks/" + encodeURIComponent(taskId) + "/cancel", { method: "POST", headers: headers(), body: "{}" });
-      await refreshAll();
+      try {
+        await fetchJsonSafe("/api/v3/agent/tasks/" + encodeURIComponent(taskId) + "/cancel", { method: "POST", headers: headers(), body: "{}" });
+        await refreshAll();
+      } catch (e) { showOfflineState(); }
     }
 
     async function deleteMemory(memId) {
-      await fetch("/api/v3/memory/" + encodeURIComponent(memId), { method: "DELETE", headers: headers() });
-      await refreshAll();
+      try {
+        await fetchJsonSafe("/api/v3/memory/" + encodeURIComponent(memId), { method: "DELETE", headers: headers() });
+        await refreshAll();
+      } catch (e) { showOfflineState(); }
     }
 
     async function refreshAll() {
-      const healthRes = await fetch("/api/v3/system/health");
-      const health = await healthRes.json();
-      document.getElementById("healthBadge").textContent = "v" + (health.version || "3.1.0") + " · " + (health.status || "ok");
-      const hw = health.hardware || {};
-      document.getElementById("hwModeBadge").textContent = hw.cuda_available ? "CUDA GPU" : (hw.degraded_mode ? "Degraded CPU" : "CPU-Only");
-      document.getElementById("hwGrid").innerHTML = [
-        ["Process RSS", (hw.process_rss_mb ?? "N/A") + " MiB"],
-        ["CPU Cores", hw.cpu_count ?? "N/A"],
-        ["Torch Threads", hw.torch_num_threads ?? "N/A"],
-        ["Preset / Ctx", (hw.recommended_preset || "nano") + " / " + (hw.recommended_context_length || 128)]
-      ].map(([l, v]) => `<div class="kpi"><div class="label">${l}</div><div class="val">${v}</div></div>`).join("");
+      try {
+        const { data: health } = await fetchJsonSafe("/api/v3/system/health");
+        const banner = document.getElementById("backendStatusBanner");
+        if (banner) banner.style.display = "none";
+        const hb = document.getElementById("healthBadge");
+        hb.className = "badge ok";
+        hb.textContent = "متصل · v" + (health.version || "3.2") + " · " + (health.status || "ok");
 
-      const nn = health.neural_model || {};
-      document.getElementById("neuralGrid").innerHTML = [
-        ["Parameters", (nn.parameter_count ?? 0).toLocaleString()],
-        ["Weights Size", (nn.model_weights_mib ?? 0) + " MiB"],
-        ["Context Limit", nn.context_length_limit ?? 128],
-        ["Device", nn.device || "cpu"]
-      ].map(([l, v]) => `<div class="kpi"><div class="label">${l}</div><div class="val">${v}</div></div>`).join("");
+        const hw = health.hardware || {};
+        const hwm = document.getElementById("hwModeBadge");
+        hwm.className = "badge ok";
+        hwm.textContent = hw.cuda_available ? "CUDA GPU" : (hw.degraded_mode ? "Degraded CPU" : "CPU-Only");
+        document.getElementById("hwGrid").innerHTML = [
+          ["الذاكرة RSS", (hw.process_rss_mb ?? "—") + " MiB"],
+          ["أنوية CPU", hw.cpu_count ?? "—"],
+          ["خيوط Torch", hw.torch_num_threads ?? "—"],
+          ["الإعداد / السياق", (hw.recommended_preset || "nano") + " / " + (hw.recommended_context_length || 128)]
+        ].map(([l, v]) => `<div class="kpi"><div class="label">${l}</div><div class="val">${escapeHtml(v)}</div></div>`).join("");
 
-      if (!authToken) return;
-      const sumRes = await fetch("/api/v3/control-center/summary", { headers: headers() });
-      if (!sumRes.ok) return;
-      const sum = await sumRes.json();
+        const nn = health.neural_model || {};
+        document.getElementById("modelPresetBadge").textContent = nn.device || "cpu";
+        document.getElementById("neuralGrid").innerHTML = [
+          ["المعاملات", (nn.parameter_count ?? 0).toLocaleString()],
+          ["حجم الأوزان", (nn.model_weights_mib ?? 0) + " MiB"],
+          ["حد السياق", nn.context_length_limit ?? 128],
+          ["الجهاز", nn.device || "cpu"]
+        ].map(([l, v]) => `<div class="kpi"><div class="label">${l}</div><div class="val">${escapeHtml(v)}</div></div>`).join("");
 
-      // Tasks & Approval Queue
-      const tasks = sum.tasks || [];
-      document.getElementById("taskCountBadge").textContent = tasks.length + " tasks";
-      document.getElementById("tasksBody").innerHTML = tasks.slice(0, 15).map(t =>
-        `<tr><td>${t.task_id}</td><td>${t.objective.slice(0, 42)}</td><td><span class="badge">${t.status}</span></td><td><button onclick="inspectTask('${t.task_id}')">Inspect</button></td></tr>`
-      ).join("");
+        if (!authToken) return;
+        const sumRes = await fetchJsonSafe("/api/v3/control-center/summary", { headers: headers() });
+        if (!sumRes.ok) return;
+        const sum = sumRes.data;
 
-      const approvals = sum.approval_queue || [];
-      document.getElementById("approvalCount").textContent = approvals.length + " pending";
-      document.getElementById("approvalList").innerHTML = approvals.length ? approvals.map(t =>
-        `<div style="margin-bottom:8px;padding:8px;background:var(--panel-alt);border-radius:6px;">
-          <div><strong>${t.task_id}</strong>: ${t.objective}</div>
-          <div style="margin-top:6px;display:flex;gap:6px;">
-            <button class="ok" onclick="approveTask('${t.task_id}')">Approve</button>
-            <button class="danger" onclick="cancelTask('${t.task_id}')">Cancel</button>
-          </div>
-        </div>`
-      ).join("") : "No destructive tasks awaiting approval.";
+        const tasks = sum.tasks || [];
+        document.getElementById("taskCountBadge").textContent = tasks.length + " مهمة";
+        document.getElementById("tasksBody").innerHTML = tasks.slice(0, 15).map(t =>
+          `<tr><td>${escapeHtml(t.task_id)}</td><td>${escapeHtml(String(t.objective || "").slice(0, 42))}</td><td><span class="badge">${escapeHtml(t.status)}</span></td><td><button onclick="inspectTask('${escapeHtml(t.task_id)}')">معاينة</button></td></tr>`
+        ).join("");
 
-      // Tool audit
-      const audit = sum.tool_audit || [];
-      document.getElementById("toolCountBadge").textContent = (sum.tools_registered || 0) + " tools";
-      document.getElementById("toolAuditBody").innerHTML = audit.slice().reverse().slice(0, 15).map(a =>
-        `<tr><td>${a.tool_name}</td><td>${a.status}</td><td>${a.duration_ms} ms</td></tr>`
-      ).join("");
+        const approvals = sum.approval_queue || [];
+        document.getElementById("approvalCount").textContent = approvals.length + " معلقة";
+        document.getElementById("approvalList").innerHTML = approvals.length ? approvals.map(t =>
+          `<div style="margin-bottom:8px;padding:10px;background:var(--bg-surface);border:1px solid var(--border);border-radius:8px;">
+            <div><strong>${escapeHtml(t.task_id)}</strong>: ${escapeHtml(t.objective)}</div>
+            <div style="margin-top:8px;display:flex;gap:8px;">
+              <button class="ok" onclick="approveTask('${escapeHtml(t.task_id)}')">موافقة</button>
+              <button class="danger" onclick="cancelTask('${escapeHtml(t.task_id)}')">إلغاء</button>
+            </div>
+          </div>`
+        ).join("") : "لا توجد مهام بانتظار الموافقة حالياً.";
 
-      // Memory
-      const mems = sum.memories || [];
-      const cons = sum.memory_consistency || { consistent: true };
-      document.getElementById("memConsistencyBadge").textContent = cons.consistent ? "Consistent" : "Contradiction!";
-      document.getElementById("memoryBody").innerHTML = mems.slice(0, 15).map(m =>
-        `<tr><td>${m.tier}</td><td>${m.content.slice(0, 55)}</td><td><button class="danger" onclick="deleteMemory('${m.memory_id}')">×</button></td></tr>`
-      ).join("");
+        const audit = sum.tool_audit || [];
+        document.getElementById("toolCountBadge").textContent = (sum.tools_registered || 0) + " أداة";
+        document.getElementById("toolAuditBody").innerHTML = audit.slice().reverse().slice(0, 15).map(a =>
+          `<tr><td>${escapeHtml(a.tool_name)}</td><td>${escapeHtml(a.status)}</td><td>${escapeHtml(a.duration_ms)} ms</td></tr>`
+        ).join("");
 
-      // Evaluation & Self-Eval
-      document.getElementById("evalBox").textContent = JSON.stringify({
-        latest_reports: (sum.evaluation_reports || []).slice(0, 2),
-        self_evaluation: sum.self_evaluation
-      }, null, 2);
+        const mems = sum.memories || [];
+        const cons = sum.memory_consistency || { consistent: true };
+        document.getElementById("memConsistencyBadge").textContent = cons.consistent ? "متسقة" : "تعارض!";
+        document.getElementById("memoryBody").innerHTML = mems.slice(0, 15).map(m =>
+          `<tr><td>${escapeHtml(m.tier)}</td><td>${escapeHtml(String(m.content || "").slice(0, 55))}</td><td><button class="danger" onclick="deleteMemory('${escapeHtml(m.memory_id)}')">×</button></td></tr>`
+        ).join("");
 
-      // Error logs
-      const se = sum.self_evaluation || { failed_count: 0, failures: [], recommendations: [] };
-      document.getElementById("errCountBadge").textContent = se.failed_count + " failures";
-      document.getElementById("errorLogBox").textContent = JSON.stringify({
-        failures: se.failures,
-        recommendations: se.recommendations,
-        self_monitoring: sum.self_monitoring
-      }, null, 2);
+        document.getElementById("evalBox").textContent = JSON.stringify({
+          latest_reports: (sum.evaluation_reports || []).slice(0, 2),
+          self_evaluation: sum.self_evaluation
+        }, null, 2);
 
-      // v3.2 Research & Projects
-      const reps = sum.research_reports || [];
-      document.getElementById("researchCountBadge").textContent = reps.length + " reports";
-      if (reps.length) {
-        document.getElementById("researchBox").textContent = JSON.stringify(reps[0], null, 2);
-      }
-      const projs = sum.projects || [];
-      document.getElementById("projectCountBadge").textContent = projs.length + " projects";
-      if (projs.length) {
-        document.getElementById("projectsBox").textContent = JSON.stringify(projs.map(p => ({
-          id: p.project_id, name: p.name, status: p.status, progress: p.progress, blocked: p.blocked_tasks
-        })), null, 2);
+        const se = sum.self_evaluation || { failed_count: 0, failures: [], recommendations: [] };
+        document.getElementById("errCountBadge").textContent = se.failed_count + " أخطاء";
+        document.getElementById("errorLogBox").textContent = JSON.stringify({
+          failures: se.failures,
+          recommendations: se.recommendations,
+          self_monitoring: sum.self_monitoring
+        }, null, 2);
+
+        const reps = sum.research_reports || [];
+        document.getElementById("researchCountBadge").textContent = reps.length + " تقارير";
+        if (reps.length) document.getElementById("researchBox").textContent = JSON.stringify(reps[0], null, 2);
+
+        const projs = sum.projects || [];
+        document.getElementById("projectCountBadge").textContent = projs.length + " مشاريع";
+        if (projs.length) {
+          document.getElementById("projectsBox").textContent = JSON.stringify(projs.map(p => ({
+            id: p.project_id, name: p.name, status: p.status, progress: p.progress, blocked: p.blocked_tasks
+          })), null, 2);
+        }
+      } catch (e) {
+        showOfflineState();
       }
     }
 
-    document.getElementById("runResearchBtn").addEventListener("click", async () => {
-      const obj = document.getElementById("researchObjective").value.trim();
-      if (!obj) return;
-      if (!authToken) await ensureGuest();
-      const res = await fetch("/api/v3/research", { method: "POST", headers: headers(), body: JSON.stringify({ objective: obj }) });
-      const data = await res.json();
-      if (data.report) document.getElementById("researchBox").textContent = JSON.stringify(data.report, null, 2);
-      await refreshAll();
+    document.getElementById("themeToggleBtn").addEventListener("click", () => {
+      const root = document.getElementById("cc-root");
+      const next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      root.setAttribute("data-theme", next);
+      setCookie("nourai_theme", next, 180);
     });
 
     document.getElementById("dirSelect").addEventListener("change", (e) => {
@@ -351,20 +510,42 @@
     });
     document.getElementById("guestBtn").addEventListener("click", ensureGuest);
     document.getElementById("refreshBtn").addEventListener("click", refreshAll);
+    document.getElementById("retryBannerBtn").addEventListener("click", refreshAll);
+
+    document.getElementById("runResearchBtn").addEventListener("click", async () => {
+      const obj = document.getElementById("researchObjective").value.trim();
+      if (!obj) return;
+      try {
+        if (!authToken) await ensureGuest();
+        const { data } = await fetchJsonSafe("/api/v3/research", { method: "POST", headers: headers(), body: JSON.stringify({ objective: obj }) });
+        if (data.report) document.getElementById("researchBox").textContent = JSON.stringify(data.report, null, 2);
+        await refreshAll();
+      } catch (e) { showOfflineState(); }
+    });
+
     document.getElementById("runTaskBtn").addEventListener("click", async () => {
       const obj = document.getElementById("taskObjective").value.trim();
       if (!obj) return;
-      if (!authToken) await ensureGuest();
-      const res = await fetch("/api/v3/agent/tasks", { method: "POST", headers: headers(), body: JSON.stringify({ objective: obj }) });
-      const data = await res.json();
-      if (data.task) await inspectTask(data.task.task_id);
-      await refreshAll();
+      try {
+        if (!authToken) await ensureGuest();
+        const { data } = await fetchJsonSafe("/api/v3/agent/tasks", { method: "POST", headers: headers(), body: JSON.stringify({ objective: obj }) });
+        if (data.task) await inspectTask(data.task.task_id);
+        await refreshAll();
+      } catch (e) { showOfflineState(); }
     });
+
     document.getElementById("runEvalBtn").addEventListener("click", async () => {
-      if (!authToken) await ensureGuest();
-      await fetch("/api/v3/evaluation/run", { method: "POST", headers: headers(), body: "{}" });
-      await refreshAll();
+      try {
+        if (!authToken) await ensureGuest();
+        await fetchJsonSafe("/api/v3/evaluation/run", { method: "POST", headers: headers(), body: "{}" });
+        await refreshAll();
+      } catch (e) { showOfflineState(); }
     });
+
+    const savedTheme = getCookie("nourai_theme");
+    if (savedTheme === "dark" || savedTheme === "light") {
+      document.getElementById("cc-root").setAttribute("data-theme", savedTheme);
+    }
     refreshAll();
   </script>
 </body>
