@@ -1,0 +1,80 @@
+{
+  "version": "3.3.0",
+  "lazy_loading": {
+    "total_registered_algorithms": 17,
+    "loaded_at_startup": 0,
+    "loaded_after_benchmark": 2
+  },
+  "routing_latency_comparison": {
+    "v3_2_multi_algo_ms": 18.815,
+    "v3_3_budget_pruned_ms": 6.573,
+    "pruning_speedup_x": 2.86
+  },
+  "adaptive_cache_benchmark": {
+    "cold_ms": 17.106,
+    "warm_ms": 0.119,
+    "speedup_x": 143.7,
+    "cache_stats": {
+      "size": 1,
+      "capacity": 256,
+      "bytes_used": 2323,
+      "max_memory_bytes": 4194304,
+      "hits": 1,
+      "misses": 1,
+      "evictions": 0,
+      "invalidations": 0,
+      "hit_rate": 0.5
+    }
+  },
+  "retrieval_recall_at_3": {
+    "queries_tested": 5,
+    "v3_2_semantic_only_recall": 0.4,
+    "v3_3_hybrid_search_recall": 1.0,
+    "v3_3_verified_results_rate": 1.0
+  },
+  "performance_monitor": {
+    "total_requests": 4,
+    "total_failures": 0,
+    "total_fallbacks": 0,
+    "avg_latency_ms": 10.646,
+    "p95_latency_ms": 18.796,
+    "throughput_rps": 23.439,
+    "per_algorithm_avg_ms": {
+      "bm25": 6.303,
+      "textrank": 10.287
+    },
+    "cache": {
+      "size": 1,
+      "capacity": 256,
+      "bytes_used": 2323,
+      "max_memory_bytes": 4194304,
+      "hits": 1,
+      "misses": 1,
+      "evictions": 0,
+      "invalidations": 0,
+      "hit_rate": 0.5
+    },
+    "hardware": {
+      "timestamp": 1795165407.7329204,
+      "os_name": "Windows 10",
+      "cpu_count": 4,
+      "process_rss_mb": 205.5,
+      "cuda_available": false,
+      "torch_num_threads": 2,
+      "degraded_mode": false,
+      "recommended_preset": "nano",
+      "recommended_context_length": 128
+    }
+  },
+  "hardware": {
+    "timestamp": 1795165407.733029,
+    "os_name": "Windows 10",
+    "cpu_count": 4,
+    "process_rss_mb": 205.5,
+    "cuda_available": false,
+    "torch_num_threads": 2,
+    "degraded_mode": false,
+    "recommended_preset": "nano",
+    "recommended_context_length": 128
+  }
+}

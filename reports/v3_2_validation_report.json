@@ -1,0 +1,243 @@
+{
+  "version": "3.2.0",
+  "hardware": {
+    "timestamp": 1795162610.6977372,
+    "os_name": "Windows 10",
+    "cpu_count": 4,
+    "process_rss_mb": 316.71,
+    "cuda_available": false,
+    "torch_num_threads": 2,
+    "degraded_mode": false,
+    "recommended_preset": "nano",
+    "recommended_context_length": 128
+  },
+  "ocr_capabilities": {
+    "pil_available": false,
+    "pytesseract_available": false,
+    "ocr_ready": false,
+    "pypdf_available": false,
+    "vision_model_available": false
+  },
+  "v32_datasets": {
+    "output_dir": "D:\\NourAI\\data\\processed\\v3_2_datasets",
+    "total_unique_records": 210,
+    "train_count": 168,
+    "validation_count": 21,
+    "test_count": 21,
+    "domain_counts": {
+      "arabic_instructions": 30,
+      "english_instructions": 30,
+      "french_instructions": 30,
+      "tool_usage": 30,
+      "multi_step_tasks": 30,
+      "reasoning": 30,
+      "document_understanding": 30
+    },
+    "cross_split_leakage": 0
+  },
+  "training_summary": {
+    "base_checkpoint": "D:\\NourAI\\checkpoints\\v3_1\\nourai_v3_1_model.pt",
+    "output_checkpoint": "D:\\NourAI\\checkpoints\\v3_2\\nourai_v3_2_model.pt",
+    "steps": 60,
+    "batch_size": 4,
+    "lr": 0.0002,
+    "lambda_anchor": 0.002,
+    "loss_start": 3.276,
+    "loss_end": 3.1647,
+    "elapsed_seconds": 6.6
+  },
+  "neural_evaluation": {
+    "v3_1_baseline": {
+      "params": 843008,
+      "held_out_corpus_test": {
+        "arabic": {
+          "loss": 1.773,
+          "perplexity": 5.8885,
+          "bits_per_byte": 2.5579,
+          "tokens_evaluated": 3175,
+          "truncated_samples": 25
+        },
+        "english": {
+          "loss": 3.1448,
+          "perplexity": 23.2143,
+          "bits_per_byte": 4.5369,
+          "tokens_evaluated": 1393,
+          "truncated_samples": 4
+        },
+        "french": {
+          "loss": 3.0985,
+          "perplexity": 22.1657,
+          "bits_per_byte": 4.4703,
+          "tokens_evaluated": 1261,
+          "truncated_samples": 1
+        }
+      },
+      "held_out_v32_test": {
+        "arabic": {
+          "loss": 2.4271,
+          "perplexity": 11.3257,
+          "bits_per_byte": 3.5015,
+          "tokens_evaluated": 635,
+          "truncated_samples": 5
+        },
+        "english": {
+          "loss": 3.5069,
+          "perplexity": 33.3436,
+          "bits_per_byte": 5.0593,
+          "tokens_evaluated": 1884,
+          "truncated_samples": 10
+        },
+        "french": {
+          "loss": 2.9844,
+          "perplexity": 19.7749,
+          "bits_per_byte": 4.3056,
+          "tokens_evaluated": 127,
+          "truncated_samples": 1
+        }
+      },
+      "unseen_multilingual_bench": {
+        "arabic": {
+          "loss": 1.6615,
+          "perplexity": 5.2673,
+          "bits_per_byte": 2.3971,
+          "tokens_evaluated": 376,
+          "truncated_samples": 2
+        },
+        "english": {
+          "loss": 3.1188,
+          "perplexity": 22.6189,
+          "bits_per_byte": 4.4995,
+          "tokens_evaluated": 304,
+          "truncated_samples": 0
+        },
+        "french": {
+          "loss": 2.8282,
+          "perplexity": 16.9144,
+          "bits_per_byte": 4.0802,
+          "tokens_evaluated": 309,
+          "truncated_samples": 0
+        }
+      }
+    },
+    "v3_2_multidomain": {
+      "params": 843008,
+      "held_out_corpus_test": {
+        "arabic": {
+          "loss": 1.7844,
+          "perplexity": 5.9558,
+          "bits_per_byte": 2.5743,
+          "tokens_evaluated": 3175,
+          "truncated_samples": 25
+        },
+        "english": {
+          "loss": 3.0781,
+          "perplexity": 21.7173,
+          "bits_per_byte": 4.4408,
+          "tokens_evaluated": 1393,
+          "truncated_samples": 4
+        },
+        "french": {
+          "loss": 3.0189,
+          "perplexity": 20.4681,
+          "bits_per_byte": 4.3553,
+          "tokens_evaluated": 1261,
+          "truncated_samples": 1
+        }
+      },
+      "held_out_v32_test": {
+        "arabic": {
+          "loss": 2.282,
+          "perplexity": 9.7965,
+          "bits_per_byte": 3.2923,
+          "tokens_evaluated": 635,
+          "truncated_samples": 5
+        },
+        "english": {
+          "loss": 3.1345,
+          "perplexity": 22.9773,
+          "bits_per_byte": 4.5221,
+          "tokens_evaluated": 1884,
+          "truncated_samples": 10
+        },
+        "french": {
+          "loss": 2.7491,
+          "perplexity": 15.6279,
+          "bits_per_byte": 3.966,
+          "tokens_evaluated": 127,
+          "truncated_samples": 1
+        }
+      },
+      "unseen_multilingual_bench": {
+        "arabic": {
+          "loss": 1.6703,
+          "perplexity": 5.3137,
+          "bits_per_byte": 2.4097,
+          "tokens_evaluated": 376,
+          "truncated_samples": 2
+        },
+        "english": {
+          "loss": 3.0706,
+          "perplexity": 21.5557,
+          "bits_per_byte": 4.43,
+          "tokens_evaluated": 304,
+          "truncated_samples": 0
+        },
+        "french": {
+          "loss": 2.782,
+          "perplexity": 16.1515,
+          "bits_per_byte": 4.0136,
+          "tokens_evaluated": 309,
+          "truncated_samples": 0
+        }
+      }
+    }
+  },
+  "benchmark_205": {
+    "benchmark_version": "3.2.0",
+    "total_tasks": 205,
+    "total_passed": 205,
+    "total_failed": 0,
+    "success_rate": 1.0,
+    "total_elapsed_ms": 13515.47,
+    "avg_task_latency_ms": 65.92,
+    "by_category": {
+      "research": {
+        "total": 25,
+        "passed": 25
+      },
+      "project_management": {
+        "total": 25,
+        "passed": 25
+      },
+      "long_running_workflows": {
+        "total": 20,
+        "passed": 20
+      },
+      "multilingual_reasoning": {
+        "total": 25,
+        "passed": 25
+      },
+      "multimodal_document_analysis": {
+        "total": 25,
+        "passed": 25
+      },
+      "memory_persistence": {
+        "total": 20,
+        "passed": 20
+      },
+      "interruption_and_error_recovery": {
+        "total": 20,
+        "passed": 20
+      },
+      "tool_orchestration": {
+        "total": 25,
+        "passed": 25
+      },
+      "citation_verification": {
+        "total": 20,
+        "passed": 20
+      }
+    },
+    "failed_tasks": []
+  }
+}

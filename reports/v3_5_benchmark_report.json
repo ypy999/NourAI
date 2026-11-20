@@ -1,0 +1,135 @@
+{
+  "version": "3.5.0",
+  "hardware": {
+    "timestamp": 1795167161.5132692,
+    "os_name": "Windows 10",
+    "cpu_count": 4,
+    "process_rss_mb": 207.54,
+    "cuda_available": false,
+    "torch_num_threads": 2,
+    "degraded_mode": false,
+    "recommended_preset": "nano",
+    "recommended_context_length": 128
+  },
+  "lazy_loading": {
+    "loaded_agents_at_init": 0,
+    "loaded_agents_after_benchmark": 9
+  },
+  "memory_mb": {
+    "rss_start": 206.06,
+    "rss_after_init": 206.88,
+    "rss_end": 207.54,
+    "rss_delta_total": 1.48
+  },
+  "latency_ms": {
+    "avg": 34.8,
+    "min": 26.18,
+    "max": 47.76
+  },
+  "safety_and_conflict": {
+    "conflicts_detected": 2,
+    "conflict_winner": "bench_grounded",
+    "hallucination_blocked": true,
+    "approval_gate_enforced": true
+  },
+  "workloads": [
+    {
+      "workload": "research_and_verify_en",
+      "status": "COMPLETED",
+      "agents": [
+        "research_agent",
+        "reasoning_agent",
+        "verification_agent"
+      ],
+      "latency_ms": 32.42,
+      "consensus_score": 0.8644,
+      "verified_facts_count": 4,
+      "hypotheses_count": 4
+    },
+    {
+      "workload": "coding_math",
+      "status": "COMPLETED",
+      "agents": [
+        "research_agent",
+        "coding_agent",
+        "reasoning_agent",
+        "verification_agent"
+      ],
+      "latency_ms": 27.68,
+      "consensus_score": 0.7625,
+      "verified_facts_count": 1,
+      "hypotheses_count": 3
+    },
+    {
+      "workload": "planning_safe",
+      "status": "COMPLETED",
+      "agents": [
+        "research_agent",
+        "planning_agent",
+        "reasoning_agent",
+        "verification_agent"
+      ],
+      "latency_ms": 35.71,
+      "consensus_score": 0.3,
+      "verified_facts_count": 1,
+      "hypotheses_count": 4
+    },
+    {
+      "workload": "prediction_ts",
+      "status": "COMPLETED",
+      "agents": [
+        "memory_agent",
+        "research_agent",
+        "prediction_agent",
+        "reasoning_agent",
+        "verification_agent"
+      ],
+      "latency_ms": 37.15,
+      "consensus_score": 0.506,
+      "verified_facts_count": 0,
+      "hypotheses_count": 5
+    },
+    {
+      "workload": "arabic_multilingual",
+      "status": "COMPLETED",
+      "agents": [
+        "research_agent",
+        "coding_agent",
+        "reasoning_agent",
+        "verification_agent"
+      ],
+      "latency_ms": 36.72,
+      "consensus_score": 0.8958,
+      "verified_facts_count": 2,
+      "hypotheses_count": 3
+    },
+    {
+      "workload": "french_multilingual",
+      "status": "COMPLETED",
+      "agents": [
+        "research_agent",
+        "planning_agent",
+        "reasoning_agent",
+        "verification_agent"
+      ],
+      "latency_ms": 47.76,
+      "consensus_score": 0.8664,
+      "verified_facts_count": 5,
+      "hypotheses_count": 6
+    },
+    {
+      "workload": "approval_gate",
+      "status": "AWAITING_APPROVAL",
+      "agents": [
+        "research_agent",
+        "planning_agent",
+        "reasoning_agent",
+        "verification_agent"
+      ],
+      "latency_ms": 26.18,
+      "consensus_score": 0.3,
+      "verified_facts_count": 1,
+      "hypotheses_count": 5
+    }
+  ]
+}

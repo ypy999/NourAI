@@ -185,6 +185,10 @@ class InferenceEngine:
             yield StreamChunk(token_id=self.tokenizer.eos_id, text_delta="", step_index=0, is_final=True, finish_reason="max_tokens")
             return
 
+        past_kvs = None
+        pos_offset = 0
+        use_cache = hasattr(self.model, "forward_with_cache")
+
         for step in range(cfg.max_new_tokens):
             if self._stop_event.is_set() or (cancel_event is not None and cancel_event.is_set()):
                 yield StreamChunk(
@@ -196,9 +200,19 @@ class InferenceEngine:
                 )
                 break
 
-            window = (context_ids + generated_ids)[-max_ctx:]
-            input_tensor = torch.tensor([window], dtype=torch.long, device=self.device)
-            logits, _ = self.model(input_tensor)
+            if use_cache and past_kvs is None and len(context_ids) <= max_ctx:
+                input_tensor = torch.tensor([context_ids], dtype=torch.long, device=self.device)
+                logits, past_kvs = self.model.forward_with_cache(input_tensor, past_kvs=None, pos_offset=0)
+                pos_offset = len(context_ids)
+            elif use_cache and past_kvs is not None and pos_offset < max_ctx:
+                input_tensor = torch.tensor([[generated_ids[-1]]], dtype=torch.long, device=self.device)
+                logits, past_kvs = self.model.forward_with_cache(input_tensor, past_kvs=past_kvs, pos_offset=pos_offset)
+                pos_offset += 1
+            else:
+                past_kvs = None
+                window = (context_ids + generated_ids)[-max_ctx:]
+                input_tensor = torch.tensor([window], dtype=torch.long, device=self.device)
+                logits, _ = self.model(input_tensor)
             next_id = sample_next_token(logits[0, -1, :], generated_ids=generated_ids, config=cfg)
             generated_ids.append(next_id)
             self.total_generated_tokens += 1

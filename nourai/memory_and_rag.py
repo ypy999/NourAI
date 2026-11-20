@@ -16,13 +16,24 @@ import zipfile
 import zlib
 
 
+MAX_UPLOAD_BYTES = 5 * 1024 * 1024
+MAX_DOCX_XML_BYTES = 10 * 1024 * 1024
+
+
 def extract_text_from_binary_upload(filename: str, raw_bytes: bytes) -> str:
     """Extract plain text from .docx, .pdf, or UTF-8 text files using only Python's standard library ($0, 0 extra packages)."""
+    if len(raw_bytes) > MAX_UPLOAD_BYTES:
+        raise ValueError(f"uploaded file exceeds maximum allowed size ({MAX_UPLOAD_BYTES} bytes)")
     ext = Path(filename or "").suffix.lower()
     if ext == ".docx":
         try:
             with zipfile.ZipFile(io.BytesIO(raw_bytes)) as zf:
+                info = zf.getinfo("word/document.xml")
+                if info.file_size > MAX_DOCX_XML_BYTES:
+                    raise ValueError("decompressed .docx content exceeds safety limit")
                 xml_bytes = zf.read("word/document.xml")
+                if len(xml_bytes) > MAX_DOCX_XML_BYTES:
+                    raise ValueError("decompressed .docx content exceeds safety limit")
             root = ET.fromstring(xml_bytes)
             texts = [el.text for el in root.iter() if el.tag.endswith("}t") and el.text]
             return " ".join(texts).strip()
@@ -112,14 +123,15 @@ class LongTermMemoryStore:
         if not self.db_path:
             return
         with closing(self._connect()) as conn, conn:
-            conn.execute(
+            conn.executescript(
                 """
                 CREATE TABLE IF NOT EXISTS prod_user_memories (
                     memory_id TEXT PRIMARY KEY,
                     user_id TEXT NOT NULL,
                     fact TEXT NOT NULL,
                     created_at REAL NOT NULL
-                )
+                );
+                CREATE INDEX IF NOT EXISTS idx_prod_user_memories_user_id ON prod_user_memories(user_id, created_at);
                 """
             )
 
@@ -205,6 +217,8 @@ class LocalDocumentRAGStore:
                     chunk_index INTEGER NOT NULL,
                     content TEXT NOT NULL
                 );
+                CREATE INDEX IF NOT EXISTS idx_prod_rag_docs_user_id ON prod_rag_documents(user_id, created_at);
+                CREATE INDEX IF NOT EXISTS idx_prod_rag_chunks_user_id ON prod_rag_chunks(user_id, doc_id);
                 """
             )
 
@@ -237,7 +251,8 @@ class LocalDocumentRAGStore:
         if not clean_text:
             raise ValueError("document content cannot be empty")
         chunks = self._chunk_text(clean_text)
-        doc_id = hashlib.sha256(f"{user_id}:{clean_name}:{len(clean_text)}".encode("utf-8")).hexdigest()[:16]
+        content_digest = hashlib.sha256(clean_text.encode("utf-8")).hexdigest()[:16]
+        doc_id = hashlib.sha256(f"{user_id}:{clean_name}:{content_digest}".encode("utf-8")).hexdigest()[:16]
         now = time.time()
         meta = {
             "doc_id": doc_id,
@@ -298,6 +313,15 @@ class LocalDocumentRAGStore:
             before = len(self._docs.get(user_id, []))
             self._docs[user_id] = [d for d in self._docs.get(user_id, []) if d["doc_id"] != doc_id]
             return len(self._docs.get(user_id, [])) < before
+
+    def clear_user_documents(self, user_id: str) -> int:
+        with self._lock:
+            if self.db_path:
+                with closing(self._connect()) as conn, conn:
+                    conn.execute("DELETE FROM prod_rag_chunks WHERE user_id = ?", (user_id,))
+                    cur = conn.execute("DELETE FROM prod_rag_documents WHERE user_id = ?", (user_id,))
+                    return cur.rowcount
+            return len(self._docs.pop(user_id, []))
 
     def search_chunks(self, user_id: str, query: str, top_k: int = 3) -> list[dict[str, Any]]:
         all_chunks: list[dict[str, Any]] = []

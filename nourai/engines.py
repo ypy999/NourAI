@@ -43,7 +43,11 @@ def _safe_eval_ast(node: ast.AST) -> float:
     if isinstance(node, ast.Constant) and isinstance(node.value, (int, float)):
         return float(node.value)
     if isinstance(node, ast.BinOp) and type(node.op) in _SAFE_BIN_OPS:
-        return _SAFE_BIN_OPS[type(node.op)](_safe_eval_ast(node.left), _safe_eval_ast(node.right))
+        left = _safe_eval_ast(node.left)
+        right = _safe_eval_ast(node.right)
+        if isinstance(node.op, ast.Pow) and (abs(right) > 1000 or abs(left) > 1_000_000):
+            raise ValueError("Exponentiation operand exceeds safety limit")
+        return _SAFE_BIN_OPS[type(node.op)](left, right)
     if isinstance(node, ast.UnaryOp) and type(node.op) in _SAFE_UNARY_OPS:
         return _SAFE_UNARY_OPS[type(node.op)](_safe_eval_ast(node.operand))
     raise ValueError("Unsupported arithmetic expression")

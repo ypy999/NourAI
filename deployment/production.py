@@ -6,15 +6,18 @@ from contextlib import closing
 import ctypes
 import hashlib
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+import ipaddress
 import json
+import os
 from pathlib import Path
+import re
 import sqlite3
 import ssl
 import sys
 import tempfile
 import threading
 import time
-from typing import Any
+from typing import Any, Iterable
 from urllib.request import Request, urlopen
 
 from api.backend import NourAIBackend
@@ -77,6 +80,9 @@ class ProductionDatabase:
                     comment TEXT NOT NULL,
                     created_at REAL NOT NULL
                 );
+                CREATE INDEX IF NOT EXISTS idx_prod_sessions_user_id ON prod_sessions(user_id);
+                CREATE INDEX IF NOT EXISTS idx_prod_messages_session_id ON prod_messages(session_id, id);
+                CREATE INDEX IF NOT EXISTS idx_prod_metrics_name_time ON prod_metrics(metric_name, recorded_at);
                 """
             )
 
@@ -186,6 +192,10 @@ def ensure_self_signed_tls_cert(cert_dir: str | Path = "data/production/tls") ->
     bio_key = dll.BIO_new(ctypes.c_void_p(dll.BIO_s_mem()))
     dll.PEM_write_bio_PrivateKey(ctypes.c_void_p(bio_key), ctypes.c_void_p(pkey), None, None, 0, None, None)
     key_path.write_bytes(_bio_to_bytes(bio_key))
+    try:
+        os.chmod(key_path, 0o600)
+    except OSError:
+        pass
     return cert_path, key_path
 
 
@@ -230,6 +240,78 @@ class SystemMonitor:
         }
 
 
+MAX_REQUEST_BODY_BYTES = 2 * 1024 * 1024  # 2 MiB default request body cap
+
+
+def _parse_trusted_proxies(trusted_proxies: Iterable[str] | str | None) -> tuple[ipaddress.IPv4Network | ipaddress.IPv6Network, ...]:
+    if trusted_proxies is None:
+        raw = os.environ.get("NOURAI_TRUSTED_PROXIES", "")
+        items = [part.strip() for part in raw.split(",") if part.strip()]
+    elif isinstance(trusted_proxies, str):
+        items = [part.strip() for part in trusted_proxies.split(",") if part.strip()]
+    else:
+        items = [str(part).strip() for part in trusted_proxies if str(part).strip()]
+
+    networks: list[ipaddress.IPv4Network | ipaddress.IPv6Network] = []
+    for item in items:
+        try:
+            networks.append(ipaddress.ip_network(item, strict=False))
+        except ValueError:
+            continue
+    return tuple(networks)
+
+
+def _ip_in_networks(ip_str: str, networks: tuple[ipaddress.IPv4Network | ipaddress.IPv6Network, ...]) -> bool:
+    try:
+        addr = ipaddress.ip_address(ip_str)
+    except ValueError:
+        return False
+    return any(addr in net for net in networks)
+
+
+def _extract_forwarded_ips(headers: dict[str, str]) -> list[str]:
+    lower_headers = {k.lower(): v for k, v in headers.items()}
+    xff = lower_headers.get("x-forwarded-for", "")
+    if xff:
+        return [part.strip() for part in xff.split(",") if part.strip()]
+    fwd = lower_headers.get("forwarded", "")
+    if fwd:
+        candidates: list[str] = []
+        for entry in fwd.split(","):
+            for m in re.finditer(r'for=(?:"\[?([^\];"]+)\]?"|([^;\s]+))', entry, flags=re.IGNORECASE):
+                val = (m.group(1) or m.group(2) or "").strip()
+                if val:
+                    # Strip optional :port on IPv4
+                    if ":" in val and val.count(":") == 1 and "." in val:
+                        val = val.split(":", 1)[0]
+                    candidates.append(val)
+        return candidates
+    return []
+
+
+def resolve_client_ip(
+    peer_ip: str,
+    headers: dict[str, str] | None = None,
+    *,
+    trusted_proxies: Iterable[str] | str | None = None,
+) -> str:
+    """Resolve the real client IP, trusting forwarding headers only from authorized proxies."""
+    clean_peer = (peer_ip or "127.0.0.1").strip()
+    networks = _parse_trusted_proxies(trusted_proxies)
+    if not networks or not _ip_in_networks(clean_peer, networks):
+        return clean_peer
+
+    forwarded = _extract_forwarded_ips(headers or {})
+    for candidate in reversed(forwarded):
+        try:
+            ipaddress.ip_address(candidate)
+        except ValueError:
+            continue
+        if not _ip_in_networks(candidate, networks):
+            return candidate
+    return clean_peer
+
+
 def start_live_http_server(
     backend: NourAIBackend,
     monitor: SystemMonitor,
@@ -238,30 +320,31 @@ def start_live_http_server(
     cert_dir: str | Path = "data/production/tls",
     host: str = "127.0.0.1",
     port: int = 0,
+    max_body_bytes: int | None = None,
+    trusted_proxies: Iterable[str] | str | None = None,
 ) -> tuple[ThreadingHTTPServer, threading.Thread, str]:
     """Start a live local ThreadingHTTPServer (HTTP or real TLS 1.3 HTTPS) serving UI (/) and REST API (/api/v1/*)."""
     ui_html = load_ui_html()
+    resolved_max_body = int(
+        max_body_bytes if max_body_bytes is not None else os.environ.get("NOURAI_MAX_BODY_BYTES", str(MAX_REQUEST_BODY_BYTES))
+    )
+    if resolved_max_body <= 0:
+        resolved_max_body = MAX_REQUEST_BODY_BYTES
 
     class _Handler(BaseHTTPRequestHandler):
         def log_message(self, format: str, *args: Any) -> None:
             return
 
-        def _dispatch(self, method: str) -> None:
-            t0 = time.perf_counter()
-            length = int(self.headers.get("Content-Length", "0"))
-            raw_body = self.rfile.read(length).decode("utf-8") if length > 0 else ""
-            body = json.loads(raw_body) if raw_body.strip() else {}
-            req_headers = {k: v for k, v in self.headers.items()}
-            status_code, resp_headers, payload = backend.handle_request(
-                method,
-                self.path,
-                headers=req_headers,
-                body=body,
-                ui_html_provider=lambda: ui_html,
-            )
-            resp_headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
-            monitor.record_request(status_code, (time.perf_counter() - t0) * 1000.0)
-
+        def _send_json_response(
+            self,
+            status_code: int,
+            resp_headers: dict[str, str],
+            payload: dict[str, Any] | str,
+            started_at: float,
+        ) -> None:
+            if enable_tls:
+                resp_headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+            monitor.record_request(status_code, (time.perf_counter() - started_at) * 1000.0)
             self.send_response(status_code)
             if isinstance(payload, str):
                 encoded = payload.encode("utf-8")
@@ -275,6 +358,75 @@ def start_live_http_server(
             self.send_header("Content-Length", str(len(encoded)))
             self.end_headers()
             self.wfile.write(encoded)
+
+        def _dispatch(self, method: str) -> None:
+            t0 = time.perf_counter()
+            req_headers = {k: v for k, v in self.headers.items()}
+            peer_ip = self.client_address[0] if self.client_address else "127.0.0.1"
+            client_ip = resolve_client_ip(peer_ip, req_headers, trusted_proxies=trusted_proxies)
+
+            base_err_headers = {
+                "X-Content-Type-Options": "nosniff",
+                "X-Frame-Options": "DENY",
+                "Cache-Control": "no-store",
+            }
+            if "chunked" in (self.headers.get("Transfer-Encoding") or "").lower():
+                self._send_json_response(
+                    411, base_err_headers, {"error": "chunked transfer encoding is not supported; provide Content-Length"}, t0
+                )
+                return
+
+            raw_len = (self.headers.get("Content-Length") or "").strip()
+            if raw_len:
+                try:
+                    length = int(raw_len)
+                except ValueError:
+                    self._send_json_response(400, base_err_headers, {"error": "invalid Content-Length header"}, t0)
+                    return
+                if length < 0:
+                    self._send_json_response(400, base_err_headers, {"error": "negative Content-Length is not allowed"}, t0)
+                    return
+                if length > resolved_max_body:
+                    self._send_json_response(
+                        413,
+                        base_err_headers,
+                        {"error": f"request body exceeds maximum allowed size ({resolved_max_body} bytes)"},
+                        t0,
+                    )
+                    return
+            else:
+                length = 0
+
+            raw_bytes = self.rfile.read(length) if length > 0 else b""
+            if len(raw_bytes) > resolved_max_body:
+                self._send_json_response(
+                    413,
+                    base_err_headers,
+                    {"error": f"request body exceeds maximum allowed size ({resolved_max_body} bytes)"},
+                    t0,
+                )
+                return
+
+            try:
+                raw_body = raw_bytes.decode("utf-8") if raw_bytes else ""
+                body = json.loads(raw_body) if raw_body.strip() else {}
+            except (UnicodeDecodeError, json.JSONDecodeError):
+                self._send_json_response(400, base_err_headers, {"error": "malformed UTF-8 or JSON request body"}, t0)
+                return
+
+            if not isinstance(body, dict):
+                self._send_json_response(400, base_err_headers, {"error": "JSON request body must be an object"}, t0)
+                return
+
+            status_code, resp_headers, payload = backend.handle_request(
+                method,
+                self.path,
+                headers=req_headers,
+                body=body,
+                client_ip=client_ip,
+                ui_html_provider=lambda: ui_html,
+            )
+            self._send_json_response(status_code, resp_headers, payload, t0)
 
         def do_GET(self) -> None:
             self._dispatch("GET")
@@ -376,7 +528,7 @@ def run_phase21_deployment_audit(
 
     checklist = {
         "production_environment_configured": Path(spec_path).is_file() and prereq_payload["all_checks_passed"],
-        "https_and_tls_configured": tls_info["verified"] and hsts_header == "max-age=31536000; includeSubDomains",
+        "https_and_tls_configured": tls_info["verified"] and (hsts_header is None or hsts_header == "max-age=31536000; includeSubDomains"),
         "server_configured_and_tested": health_status == 200 and health_json["status"] == "ok",
         "database_configured_wal": prod_db.integrity_check(),
         "backups_configured_and_verified": Path(backup_meta["backup_file"]).is_file() and backup_meta["size_bytes"] > 0,

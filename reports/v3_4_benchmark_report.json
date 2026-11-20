@@ -1,0 +1,28 @@
+{
+  "version": "3.4.0",
+  "before_v3_3_vs_after_v3_4": {
+    "v3_3_claim_level_hallucination_detection": "not_implemented",
+    "v3_4_hallucination_and_contradiction_accuracy": 0.8333,
+    "v3_3_causal_graph_extraction": "not_implemented",
+    "v3_4_causal_edges_extracted": 3,
+    "v3_4_causal_chains_extracted": 3,
+    "v3_4_missing_evidence_confidence_band": "LOW",
+    "v3_4_missing_evidence_epistemic_uncertainty": 1.0
+  },
+  "latency_and_cache": {
+    "cold_reasoning_ms": 14.727,
+    "warm_cached_ms": 0.079,
+    "cache_speedup_x": 186.4
+  },
+  "hardware": {
+    "timestamp": 1795165859.0590458,
+    "os_name": "Windows 10",
+    "cpu_count": 4,
+    "process_rss_mb": 206.18,
+    "cuda_available": false,
+    "torch_num_threads": 2,
+    "degraded_mode": false,
+    "recommended_preset": "nano",
+    "recommended_context_length": 128
+  }
+}

@@ -113,12 +113,20 @@ def main() -> None:
         return
 
     db = ProductionDatabase()
-    secret_file = db.db_path.parent / ".jwt_secret"
-    if not secret_file.is_file():
-        import secrets as _sec
-        secret_file.parent.mkdir(parents=True, exist_ok=True)
-        secret_file.write_text(_sec.token_hex(32), encoding="utf-8")
-    persisted_secret = secret_file.read_text(encoding="utf-8").strip()
+    env_secret = os.environ.get("NOURAI_SECRET_KEY", "").strip()
+    if env_secret:
+        persisted_secret = env_secret
+    else:
+        secret_file = db.db_path.parent / ".jwt_secret"
+        if not secret_file.is_file():
+            import secrets as _sec
+            secret_file.parent.mkdir(parents=True, exist_ok=True)
+            secret_file.write_text(_sec.token_hex(32), encoding="utf-8")
+            try:
+                os.chmod(secret_file, 0o600)
+            except OSError:
+                pass
+        persisted_secret = secret_file.read_text(encoding="utf-8").strip()
     backend = NourAIBackend(db_path=db.db_path, secret_key=persisted_secret, use_capabilities=args.fallback_rules)
     monitor = SystemMonitor(db)
     server, thread, url = start_live_http_server(

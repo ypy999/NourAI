@@ -1,8 +1,14 @@
-# NourAI `v1.2.0` — Local-First Multilingual Language Model (Arabic · English · French)
+<p align="center">
+  <img src="ui/logo.svg" alt="JABRIX AI Logo" width="420" />
+</p>
+
+# JABRIX AI `v3.2.0` — Local-First Multilingual Autonomous AI Platform (Arabic · English · French)
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ypy999/NourAI/blob/main/notebooks/NourAI_Cloud_GPU_Training_Colab_Kaggle.ipynb)
 
-NourAI هو مشروع نموذج لغوي محلي متعدد اللغات (**العربية، الإنجليزية، الفرنسية**) مبني بمعمارية **Decoder-only Pre-LN Transformer**، ويعمل محلياً بالكامل (`Local-First`) عبر مكتبة بايثون القياسية (`ThreadingHTTPServer` + `ssl` بدون اعتماد على `FastAPI`/`uvicorn`) مع واجهة برمجية (`REST API`)، وواجهة محادثة متجاوبة (`RTL/LTR Web UI`)، وبحث ويب حي مجاني (`Wikipedia + Google News RSS + DuckDuckGo`)، وذاكرة دائمة للمستخدم (`Long-Term Memory`)، وتحليل المستندات المرفقة (`Local Document RAG`)، ومعاينة حية للأكواد (`Live HTML/JS Canvas`)، ودعم التشفير (`TLS 1.3 HTTPS`).
+**JABRIX AI** *(formerly NourAI — preserving 100% backward compatibility with `nourai` Python modules and `/api/v1/*`)* هو نظام ذكاء اصطناعي محلي مستقل متعدد اللغات (**العربية، الإنجليزية، الفرنسية**) يجمع بين نموذج **Decoder-only Pre-LN Transformer**، ونواة وكيل ذاتي متكاملة (`Research Agent`, `Project Manager`, `DAG Tool Orchestrator`, `4-Tier Memory`, `Knowledge Graph`, `Multimodal Document Intelligence`)، ولوحة تحكم **Control Center 2.0** (`/control-center`)، وواجهة محادثة متجاوبة (`RTL/LTR Web UI`)، ودعم التشفير (`TLS 1.3 HTTPS`).
+
+> **تشغيل سريع:** `python run_jabrix.py` (أو `python run_nourai.py`) ← الواجهة الرئيسية `/` ولوحة التحكم `/control-center`.
 
 ---
 

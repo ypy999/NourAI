@@ -107,6 +107,38 @@ class Block(nn.Module):
         x = x + attended
         return x + self.ff(self.ln2(x))
 
+    def forward_with_cache(
+        self,
+        x: torch.Tensor,
+        past_kv: tuple[torch.Tensor, torch.Tensor] | None = None,
+    ) -> tuple[torch.Tensor, tuple[torch.Tensor, torch.Tensor]]:
+        bsz, t_new, d_model = x.shape
+        n_heads = self.attn.num_heads
+        head_dim = d_model // n_heads
+        normalized = self.ln1(x)
+        qkv = F.linear(normalized, self.attn.in_proj_weight, self.attn.in_proj_bias)
+        q, k, v = qkv.chunk(3, dim=-1)
+        q = q.view(bsz, t_new, n_heads, head_dim).transpose(1, 2)
+        k = k.view(bsz, t_new, n_heads, head_dim).transpose(1, 2)
+        v = v.view(bsz, t_new, n_heads, head_dim).transpose(1, 2)
+        if past_kv is not None:
+            k = torch.cat((past_kv[0], k), dim=2)
+            v = torch.cat((past_kv[1], v), dim=2)
+        new_kv = (k, v)
+        dropout_p = self.attn.dropout if self.training else 0.0
+        attn_out = F.scaled_dot_product_attention(
+            q,
+            k,
+            v,
+            attn_mask=None,
+            dropout_p=dropout_p,
+            is_causal=(past_kv is None and t_new > 1),
+        )
+        attn_out = attn_out.transpose(1, 2).contiguous().view(bsz, t_new, d_model)
+        attended = self.attn.out_proj(attn_out)
+        x = x + attended
+        return x + self.ff(self.ln2(x)), new_kv
+
 
 class GPT(nn.Module):
     def __init__(self, config: Optional[GPTConfig] = None):
@@ -238,6 +270,28 @@ class GPT(nn.Module):
             loss = F.cross_entropy(logits.reshape(-1, logits.size(-1)), targets.long().reshape(-1))
         return logits, loss
 
+    def forward_with_cache(
+        self,
+        idx: torch.Tensor,
+        past_kvs: list[tuple[torch.Tensor, torch.Tensor]] | None = None,
+        pos_offset: int = 0,
+    ) -> tuple[torch.Tensor, list[tuple[torch.Tensor, torch.Tensor]]]:
+        self._validate_ids(idx, "idx")
+        b, t = idx.shape
+        if b <= 0 or t <= 0:
+            raise ValueError("idx batch and sequence dimensions must be non-empty")
+        if pos_offset + t > self.config.context_length:
+            raise ValueError("sequence exceeds context_length")
+        positions = torch.arange(pos_offset, pos_offset + t, device=idx.device)
+        x = self.emb_dropout(self.token(idx.long()) + self.pos(positions))
+        new_kvs: list[tuple[torch.Tensor, torch.Tensor]] = []
+        for layer_idx, block in enumerate(self.blocks):
+            layer_past = past_kvs[layer_idx] if past_kvs is not None else None
+            x, layer_kv = block.forward_with_cache(x, layer_past)
+            new_kvs.append(layer_kv)
+        logits = self.head(self.norm(x))
+        return logits, new_kvs
+
     @torch.no_grad()
     def generate(self, idx, max_new_tokens=100, temperature=1.0, top_k=40, eos_id=None):
         self._validate_ids(idx, "idx")
@@ -297,10 +351,7 @@ class GPT(nn.Module):
 
     @classmethod
     def load_checkpoint(cls, path, map_location="cpu"):
-        try:
-            payload = torch.load(path, map_location=map_location, weights_only=True)
-        except TypeError:  # compatibility with PyTorch versions without weights_only
-            payload = torch.load(path, map_location=map_location)
+        payload = torch.load(path, map_location=map_location, weights_only=True)
         if not isinstance(payload, dict) or payload.get("format_version") != 1:
             raise ValueError("unsupported or invalid checkpoint format")
         model = cls(GPTConfig(**payload["config"]))

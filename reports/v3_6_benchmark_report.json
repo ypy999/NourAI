@@ -1,0 +1,42 @@
+{
+  "version": "3.6.0",
+  "hardware": {
+    "timestamp": 1795169371.0105455,
+    "os_name": "Windows 10",
+    "cpu_count": 4,
+    "process_rss_mb": 303.37,
+    "cuda_available": false,
+    "torch_num_threads": 2,
+    "degraded_mode": false,
+    "recommended_preset": "nano",
+    "recommended_context_length": 128
+  },
+  "lazy_loading": {
+    "loaded_engines_at_init": 0,
+    "loaded_engines_after_analysis": 7
+  },
+  "memory_mb": {
+    "rss_start": 203.16,
+    "rss_after_init": 203.24,
+    "rss_end": 303.37,
+    "rss_delta_total": 100.21
+  },
+  "latency_ms": {
+    "repo_analysis_150_files_ms": 19847.92,
+    "patch_propose_approve_apply_rollback_ms": 300.53
+  },
+  "repo_scan_summary": {
+    "files_scanned": 150,
+    "python_modules": 40,
+    "symbols_indexed": 485,
+    "static_findings": 18,
+    "optimization_suggestions": 324,
+    "circular_dependencies": 0
+  },
+  "safety_validation": {
+    "project_isolation_blocked_traversal": true,
+    "patch_rollback_exact_sha256": true,
+    "isolated_compile_ok": true,
+    "executed_untrusted_code": false
+  }
+}

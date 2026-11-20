@@ -1,7 +1,9 @@
 {
   "schema_version": "1.0",
-  "name": "NourAI",
-  "description": "Multilingual AI assistant web application supporting Arabic, English, and French with general chat, categorized smart tools, multi-agent reasoning, and code/study assistance.",
+  "name": "JABRIX AI",
+  "legacy_name": "NourAI",
+  "version": "3.2.0",
+  "description": "Local-first multilingual autonomous AI platform supporting Arabic, English, and French with a native Transformer model, autonomous research agent, persistent project manager, 4-tier memory, and Control Center 2.0.",
   "url": "https://ypyai-95ca7.web.app",
   "default_language": "ar",
   "supported_languages": ["ar", "en", "fr"],
@@ -9,6 +11,12 @@
   "sitemap": "https://ypyai-95ca7.web.app/sitemap.xml",
   "manifest": "https://ypyai-95ca7.web.app/manifest.json",
   "icon": "https://ypyai-95ca7.web.app/icon.svg",
+  "logo": "https://ypyai-95ca7.web.app/logo.svg",
+  "brand_palette": {
+    "ground": "#F5F3EE",
+    "ink": "#14161A",
+    "accent": "#6C4BFF"
+  },
   "repository": "https://github.com/ypy999/NourAI",
   "capabilities": [
     {
@@ -17,24 +25,24 @@
       "description": "Direct multilingual conversation with structured answers."
     },
     {
-      "id": "writing-tools",
-      "name": "Writing & Editing Tools",
-      "description": "Prompt enhancement, simplification, summarization, tone adjustment, and proofreading."
+      "id": "autonomous-research",
+      "name": "Autonomous Research Agent",
+      "description": "Multi-source retrieval, contradiction detection, source reliability scoring, and citation-traceable reports."
     },
     {
-      "id": "analysis-experts",
-      "name": "Analysis & Expert Modes",
-      "description": "AI Council, Virtual Team, Idea Evolution, What-If scenarios, Reverse Thinking, and Decision Assistant."
+      "id": "project-management",
+      "name": "Long-Term Project Management",
+      "description": "SQLite WAL-persisted projects, milestones, dependencies, approval gates, and restart resumption."
     },
     {
-      "id": "study-files",
-      "name": "Study & Document Tools",
-      "description": "File Q&A, quiz generation, mind maps, knowledge graphs, and interview simulation."
+      "id": "multimodal-documents",
+      "name": "Multimodal Document Intelligence",
+      "description": "TXT, Markdown, JSON, CSV, DOCX, PDF, and image metadata parsing with citation-aware chunk retrieval."
     },
     {
-      "id": "coding-creativity",
-      "name": "Coding & Creativity",
-      "description": "Code generation, explanation, live HTML preview, and business idea generation."
+      "id": "control-center",
+      "name": "JABRIX AI Control Center 2.0",
+      "description": "Real-time task monitor, DAG visualizer, approval center, memory inspector, and hardware metrics."
     }
   ]
 }

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opml version="2.0">
+  <head>
+    <title>NourAI v1.2.0 — الخريطة الذهنية والنظام المعرفي الشامل</title>
+    <dateCreated>Thu, 19 Nov 2026 23:40:00 +0100</dateCreated>
+    <ownerName>NourAI Knowledge Architecture</ownerName>
+  </head>
+  <body>
+    <outline text="🧠 NourAI v1.2.0 — النظام اللغوي والمعرفي المحلي متعدد اللغات (AR · EN · FR)" _note="الفكرة المركزية: نموذج لغوي محلي أولاً (Local-First) بمعمارية Pre-LN Transformer وبنية معرفية من 8 طبقات مع RAG محلي وبحث ويب آمن وأمان إنتاجي متكامل.">
+
+      <outline text="🎯 1. الهوية والرؤية والأهداف الاستراتيجية [P0 🔴]" _note="النوع: هدف | اللون: #6D28D9">
+        <outline text="🎯 الاستقلالية المحلية (Local-First Sovereignty) [P0]" _note="تشغيل كامل دون FastAPI/uvicorn عبر مكتبة بايثون القياسية ThreadingHTTPServer + ssl | رابط: API Backend, Production Deployment"/>
+        <outline text="🎯 التكافؤ اللغوي الثلاثي (AR · EN · FR ~33.3%) [P0]" _note="توازن دقيق بالتوكنات/البايتات وتقييم منفصل لكل لغة | رابط: ByteTokenizer, Balanced Corpus v1.2"/>
+        <outline text="🎯 الشفافية الهندسية الصادقة (Honest Telemetry) [P0]" _note="فصل صريح بين neural_model و rule_based_fallback_assistant دون تلفيق مقاييس | رابط: Inference Engine, Fallback Assistant"/>
+        <outline text="🎯 الجاهزية الإنتاجية والقابلية للاسترجاع [P0]" _note="تتبع SHA-256 من المصدر حتى الإصدار مع Rollback آلي بين v1.0.0 و v1.1.0 و v1.2.0"/>
+      </outline>
+
+      <outline text="🧠 2. المعمارية العصبية للنموذج (Neural Architecture) [P0 🔴]" _note="النوع: مكون أساسي | اللون: #1E40AF | المرجع: model/, tokenizer/">
+        <outline text="📦 المُرمِّز النصي ByteTokenizer [P0]" _note="tokenizer/byte_tokenizer.py | vocab_size=260: بايتات UTF-8 الخام 0..255 + PAD(256), BOS(257), EOS(258), UNK(259) | ثغرة: ضريبة طول السياق للعربية"/>
+        <outline text="📦 العمود الفقري Pre-LN Decoder-Only Transformer [P0]" _note="model/transformer.py | ربط أوزان التضمين برأس الإخراج Weight Tying">
+          <outline text="📖 Nano / Default: 4L · 4H · d128 · ctx128 (843,008 معامل)" _note="النموذج المدرَّب حالياً في v1.2.0"/>
+          <outline text="📖 Small: 6L · 8H · d256 · ctx256 (4,871,168 معامل)" _note="مرشح للتدريب السحابي السريع"/>
+          <outline text="📖 Base: 8L · 8H · d512 · ctx512 (25,615,360 معامل)" _note="الهدف الموصى به للتعميم المفتوح على GPU"/>
+        </outline>
+        <outline text="📖 تدقيق المعمارية ومصنع النماذج [P1]" _note="model/factory.py, model/architecture_audit.py, CHECKPOINT_FORMAT.md"/>
+      </outline>
+
+      <outline text="⚙️ 3. البنية المعرفية ذات الثماني طبقات (8-Layer Cognitive Engine) [P1 🟠]" _note="النوع: مكون أساسي | اللون: #1E40AF | المرجع: nourai/engines.py">
+        <outline text="📦 1. FoundationModelEngine — محرك النموذج الأساسي المحلي"/>
+        <outline text="📦 2. ReasoningEngine — تصنيف النوايا وبناء ReasoningTrace"/>
+        <outline text="📦 3. MemoryEngine — استخراج وتذكّر حقائق المستخدم طويلة المدى"/>
+        <outline text="📦 4. KnowledgeEngine — استرجاع المستندات المحلية SQLite RAG"/>
+        <outline text="📦 5. CodingEngine — تنسيق الكود وتقييم الرياضيات الآمن عبر AST"/>
+        <outline text="📦 6. EvaluationEngine — التحقق الذاتي من جودة الإجابة"/>
+        <outline text="📦 7. AgentEngine — اختيار الأدوات وتنفيذها تلقائياً"/>
+        <outline text="📦 8. NourAIPlatform — المنسّق الأعلى للواجهة والمنصة"/>
+      </outline>
+
+      <outline text="📚 4. هندسة البيانات والمدونات النصية (Data &amp; Corpus) [P0 🔴]" _note="النوع: مشروع | اللون: #0284C7 | المرجع: corpus/, data/, datasets/">
+        <outline text="📦 الاستحواذ والمحوّلات (QNL · WTO · Tatoeba CC0) [P1]" _note="corpus/adapters/qnl_adapter.py, wto_adapter.py, data/license_policy.py"/>
+        <outline text="📦 النزاهة وبصمات SHA-256 ومنع التسرب (0 Leakage) [P0]" _note="corpus/leakage_audit.py, data/deduplication.py, data/near_duplicates.py, data/provenance.py"/>
+        <outline text="📖 المدونة المتوازنة v1_2_corpus [P0]" _note="توزيع ~33.3% لكل لغة (AR/EN/FR) في splits/ مع token_cache"/>
+        <outline text="📖 بيانات التعليمات v1_2_sft [P0]" _note="72 تدريب / 36 تحقق / 36 اختبار بدون تداخل | ثغرة: حجم محدود يحتاج توسعة"/>
+        <outline text="📖 فهرس SQLite للبيانات الوصفية [P2]" _note="data/metadata/corpus.sqlite3 + النسخ الاحتياطية في data/backups/"/>
+      </outline>
+
+      <outline text="🚀 5. محرك التدريب والتحسين والمواءمة (Training &amp; Alignment) [P0 🔴]" _note="النوع: مشروع | اللون: #0284C7 | المرجع: training/, scripts/">
+        <outline text="📦 محرك التدريب الأساسي (Trainer · Optimizer · Scheduler · EarlyStopping) [P0]" _note="training/trainer.py, optimizer.py, scheduler.py, checkpoint_manager.py"/>
+        <outline text="📖 نتائج التدريب العصبي v1.2.0 [P0]" _note="Pretrain: 150 خطوة (5.5773 -> 2.2990) | Response-Masked SFT: 400 خطوة (2.9181 -> 1.3016) | الزمن: 502.76 ثانية على CPU"/>
+        <outline text="📦 التوسع السحابي عبر GPU (Colab / Kaggle) [P0]" _note="notebooks/NourAI_Cloud_GPU_Training_Colab_Kaggle.ipynb, scripts/train_cloud_gpu.py"/>
+        <outline text="📦 التحسين المستمر (Phase 24 Continual Learning) [P2]" _note="reports/phase24/phase24_continuous_improvement_report.md"/>
+      </outline>
+
+      <outline text="⚡ 6. محرك الاستدلال والقدرات الحية (Inference &amp; Capabilities) [P1 🟠]" _note="النوع: مشروع | اللون: #0284C7 | المرجع: inference/, nourai/">
+        <outline text="📦 محرك الاستدلال العصبي المباشر (Neural Default) [P0]" _note="inference/engine.py | use_capabilities=False | Streaming + قياس زمن وتوكنات حقيقي"/>
+        <outline text="📦 المساعد القاعدي الاحتياطي (Fallback Assistant) [P1]" _note="nourai/capabilities.py | use_fallback_assistant=True | إفصاح صريح عن المصدر"/>
+        <outline text="📦 البحث الحي الآمن في الويب (SSRF-Protected) [P1]" _note="nourai/web_search.py | Wikipedia + Google News RSS + DuckDuckGo + validate_public_url"/>
+        <outline text="📦 الذاكرة الدائمة وRAG للمستندات المحلية [P1]" _note="nourai/memory_and_rag.py | .docx/.pdf/.txt بحد أقصى 5MB و 10MB XML لحماية Zip Bombs"/>
+      </outline>
+
+      <outline text="🌐 7. الواجهة البرمجية وتجربة المستخدم (API &amp; UX) [P1 🟠]" _note="النوع: مشروع | اللون: #0284C7 | المرجع: api/, ui/, run_nourai.py">
+        <outline text="📦 خادم REST API القياسي (OpenAPI 3.1.0) [P0]" _note="api/backend.py | /health, /openapi.json, /users/register, /auth/token, /auth/guest, /sessions, /chat, /chat/stream, /admin/users"/>
+        <outline text="📦 واجهة الويب RTL/LTR ومعاينة الكود الحية (Live Canvas) [P1]" _note="ui/index.html, ui/manifest.json, ui/llms.txt, ui/ai-catalog.json"/>
+        <outline text="📦 واجهة الطرفية التفاعلية (CLI) [P2]" _note="run_nourai.py --cli"/>
+      </outline>
+
+      <outline text="🛡️ 8. الأمان والإنتاج وإدارة الإصدارات (Security &amp; DevOps) [P0 🔴]" _note="النوع: مشروع | اللون: #0F766E | المرجع: security/, deployment/, releases/">
+        <outline text="📦 المصادقة والتشفير وحماية المسارات [P0]" _note="PBKDF2-HMAC-SHA256 (100K) · HMAC-SHA256 Token · NOURAI_SECRET_KEY · Rate Limiting · RBAC · SSRF Guard"/>
+        <outline text="📦 التشغيل الإنتاجي (TLS 1.3 · SQLite WAL · Backups) [P0]" _note="deployment/production.py | نسخ احتياطية موثّقة بـ SHA-256"/>
+        <outline text="📦 الحاويات والنشر السحابي (Docker · Render · Firebase · CI) [P1]" _note="Dockerfile (appuser:10001, 7860), render.yaml, firebase.json, .github/workflows/ci.yml"/>
+        <outline text="📦 دورة حياة الإصدارات والتراجع الآلي (Rollback) [P0]" _note="releases/v1.0.0 -> v1.1.0 -> v1.2.0 | scripts/rollback_release.py"/>
+      </outline>
+
+      <outline text="📊 9. التقييم والاختبار وضمان الجودة (Evaluation &amp; QA) [P1 🟠]" _note="النوع: مشروع | اللون: #0284C7 | المرجع: evaluation/, tests/, reports/">
+        <outline text="📦 التقييم متعدد اللغات (Loss · Perplexity · Bits-per-Byte) [P0]" _note="evaluation/multilingual_eval.py, evaluation/text_quality.py"/>
+        <outline text="📦 اختبارات Pytest وتقارير المراحل (Phases 1–24) [P1]" _note="tests/test_phase8*, test_phase9*, test_stage_b_to_l_certification.py"/>
+      </outline>
+
+      <outline text="⚠️ 10. الثغرات والمعلومات الناقصة (Gaps &amp; Risks) [P0 🔴]" _note="النوع: ثغرة | اللون: #DC2626">
+        <outline text="⚠️ عدم تماسك التوليد العصبي المفتوح في Nano 843K [P0]" _note="الدليل: generation_after في evaluation_report.json"/>
+        <outline text="⚠️ تراجع حيرة اللغة العربية بعد SFT (6.14 -> 7.83) [P0]" _note="مؤشر على فرط التخصيص أو النسيان الكارثي"/>
+        <outline text="⚠️ ضريبة طول السياق للعربية في ByteTokenizer [P0]" _note="128 بايت تعادل ~60 حرفاً عربياً فقط"/>
+        <outline text="⚠️ صغر حجم بيانات SFT (72 مثال تدريب فقط) [P1]" _note="غير كافٍ لتعميم اتباع التعليمات باللغات الثلاث"/>
+        <outline text="⚠️ قيود العتاد المحلي (CPU FP32 فقط) وعدم اختبار CUDA AMP/OOM [P1]" _note="HARDWARE_CAPABILITIES.md: i3-10110Y, 7.9GB RAM"/>
+        <outline text="⚠️ قدم مرجع API_REFERENCE.md (ما زال v1.0.0) [P2]" _note="يفتقد /auth/guest وخيارات Fallback وRAG"/>
+        <outline text="⚠️ محدودية استخلاص النصوص العربية من PDF [P2]" _note="memory_and_rag.py يفتقد دعم CMap/ToUnicode"/>
+      </outline>
+
+      <outline text="✅ 11. خارطة المهام التنفيذية (Actionable Tasks) [P0–P3]" _note="النوع: مهام | اللون: #059669">
+        <outline text="✅ [P0] تدريب Small/Base على GPU سحابي والتحقق من CUDA AMP و OOM"/>
+        <outline text="✅ [P0] ضبط معاملات SFT لمعالجة تراجع حيرة اللغة العربية"/>
+        <outline text="✅ [P1] توسيع مجموعة SFT إلى +5,000 مثال متوازن (AR/EN/FR) بصفر تسرب"/>
+        <outline text="✅ [P1] تجربة مُرمِّز Byte-Level BPE (8K–32K) لمضاعفة السياق العربي"/>
+        <outline text="✅ [P2] تحديث docs/API_REFERENCE.md إلى v1.2.0"/>
+        <outline text="✅ [P2] ترقية محلل PDF العربي في memory_and_rag.py"/>
+        <outline text="✅ [P3] أتمتة تنظيف مجلدات pytest-temp داخل reports/"/>
+      </outline>
+
+      <outline text="💡 12. الأفكار المستقبلية والابتكارات (Future Innovations) [P1–P3]" _note="النوع: فكرة | اللون: #D97706">
+        <outline text="💡 [P1] مُرمِّز Byte-Level BPE متعدد اللغات (سياق عربي أوسع 4x-6x)"/>
+        <outline text="💡 [P1] نظام RAG هجين محلي (SQLite FTS5 BM25 + متجهات خفيفة)"/>
+        <outline text="💡 [P2] تكميم INT8/INT4 وتفعيل KV-Cache للاستدلال السريع على CPU"/>
+        <outline text="💡 [P2] ذاكرة طويلة المدى كرسم بياني معرفي (Personal Knowledge Graph)"/>
+        <outline text="💡 [P2] جسر تصدير GGUF / ONNX للتشغيل على الهواتف والمتصفح (WebGPU)"/>
+        <outline text="💡 [P3] واجهة صوتية محلية RTL/LTR (STT/TTS) باللغات الثلاث"/>
+        <outline text="💡 [P3] محولات LoRA شخصية محلية للتخصيص دون تعديل النموذج الأساسي"/>
+      </outline>
+
+      <outline text="🤖 13. تحول NourAI v3.0.0 — النظام الوكيل الذاتي المتكامل [P0 🔴]" _note="تم التنفيذ والاختبار الفعلي بالكامل مع توافقية خلفية تامة مع v1.2.0">
+        <outline text="📦 نواة الوكيل الذاتي (Perception · Reasoning · Planning · TaskManager · Critic · Recovery) [P0]" _note="nourai/agent/ | دورة حياة من 13 مرحلة + نقاط موافقة بشرية + منع الحلقات اللانهائية"/>
+        <outline text="📦 الذاكرة رباعية الطبقات (Working · Episodic · Semantic · Procedural) [P0]" _note="nourai/memory/advanced_memory.py | SQLite WAL + TF-IDF + TTL + حماية الخصوصية + فحص التناقض"/>
+        <outline text="📦 الرسم البياني المعرفي المتكامل وتصدير Obsidian/Logseq/OPML/TheBrain [P0]" _note="nourai/knowledge/knowledge_graph.py | روابط ثنائية الاتجاه + كشف التناقضات"/>
+        <outline text="📦 محرك الأدوات المعياري المعزول (9 أدوات · صلاحيات دنيا · Rollback · Audit) [P0]" _note="nourai/tools/ | AST Python Sandbox + Path Jail + Read-Only SQL + SSRF Guard"/>
+        <outline text="📦 تحسين النموذج العصبي وByte-Level BPE (8K/16K) وL2AnchorRegularizer [P0]" _note="nourai/tokenizer/byte_bpe.py, nourai/neural/audit_and_optimize.py | KV-Cache 2.31x أسرع"/>
+        <outline text="📦 بوابة التقييم والانحدار وواجهات /api/v3/* والهجرات التدريجية [P0]" _note="nourai/evaluation/, nourai/api/v3_routes.py, nourai/core/versioning.py"/>
+      </outline>
+
+      <outline text="⚡ 14. ترقية الذكاء الواقعي والاستقلالية — NourAI v3.1.0 (dev/v3.1) [P0 🔴]" _note="تحسين فعلي مُقاس للنموذج العصبي + 105 مهمة واقعية + تنفيذ DAG موازٍ + تقييم ذاتي + لوحة تحكم Control Center">
+        <outline text="🔬 التدقيق الجنائي العصبي وتدريب نقطة حفظ v3.1 محمية من النسيان الكارثي [P0]" _note="تخفيض الحيرة غير المرئية من EN 1198.60 -> 22.62 و AR 144.97 -> 5.27 و FR 262.71 -> 16.91"/>
+        <outline text="🧪 معيار 105 مهمة واقعية مع تحقق مستقل لكل مخرج [P0]" _note="nourai/evaluation/v31_agent_benchmark.py عبر 11 فئة شاملة"/>
+        <outline text="🧠 ذاكرة طويلة المدى بتوحيد عربي/فرنسي وتحديث التفضيلات عبر إعادة التشغيل [P0]" _note="nourai/memory/advanced_memory.py | AR normalization + FR accent folding + preference superseding"/>
+        <outline text="🔀 منسّق أدوات DAG موازٍ آمن للقراءة وتسلسلي للكتابة والاعتماديات [P0]" _note="nourai/tools/dag_executor.py"/>
+        <outline text="🩺 محرك التقييم الذاتي وتصنيف الأعطال وتوليد اختبارات الانحدار [P1]" _note="nourai/evaluation/self_eval.py | يمنع التحديث التلقائي غير المتحقق منه"/>
+        <outline text="🖥️ لوحة تحكم NourAI Control Center (10 وحدات + /control-center) [P1]" _note="ui/control_center.html + /api/v3/control-center/summary مع توافقية v1 كاملة"/>
+      </outline>
+
+      <outline text="🔬 15. الذكاء المستقل المتقدم — NourAI v3.2.0 (dev/v3.2) [P0 🔴]" _note="وكيل البحث المستقل + إدارة المشاريع المستمرة + الاستدلال المتقدم + ذكاء المستندات متعدد الوسائط + Control Center 2.0 + معيار 205 مهمة">
+        <outline text="🔍 وكيل البحث المستقل (AutonomousResearchAgent) [P0]" _note="تفكيك الأسئلة + مقارنة المصادر + كشف التناقضات + استشهادات قابلة للتتبع + فصل الحقائق عن الفرضيات"/>
+        <outline text="📋 مدير المشاريع طويلة المدى (ProjectManager) [P0]" _note="معالم ومهام واعتماديات + استئناف بعد إعادة التشغيل + ذاكرة المشروع + بوابة الموافقة"/>
+        <outline text="🧠 ترقية محرك الاستدلال (Constraints · Hypotheses · Math · Contradictions) [P0]" _note="nourai/agent/reasoning.py"/>
+        <outline text="📄 ذكاء المستندات متعدد الوسائط (TXT/MD/JSON/CSV/DOCX/PDF/Images + Citations) [P0]" _note="nourai/documents/multimodal.py | استخراج الجداول + كشف صادق لحالة OCR"/>
+        <outline text="📊 مجموعات التدريب السبع (Zero-Leakage) ومعيار 205 مهمة واقعية [P0]" _note="nourai/neural/v32_datasets.py, nourai/evaluation/v32_benchmark.py"/>
+        <outline text="🖥️ لوحة Control Center 2.0 ومراقبة الـ 9 مؤشرات الذاتية [P1]" _note="مساحة البحث + عارض الاستشهادات + إدارة المشاريع + دعم RTL/LTR"/>
+      </outline>
+
+    </outline>
+  </body>
+</opml>

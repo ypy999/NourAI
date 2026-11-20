@@ -1,0 +1,53 @@
+{
+  "version": "3.7.0",
+  "hardware": {
+    "timestamp": 1795170107.1083608,
+    "os_name": "Windows 10",
+    "cpu_count": 4,
+    "process_rss_mb": 338.6,
+    "cuda_available": false,
+    "torch_num_threads": 2,
+    "degraded_mode": false,
+    "recommended_preset": "nano",
+    "recommended_context_length": 128
+  },
+  "lazy_loading": {
+    "loaded_engines_at_init": 0,
+    "loaded_engines_after_benchmark": 6
+  },
+  "memory_mb": {
+    "rss_start": 203.5,
+    "rss_after_init": 203.59,
+    "rss_end": 338.6,
+    "rss_delta_total": 135.1
+  },
+  "incremental_vs_full_indexing": {
+    "real_repo_full_files": 300,
+    "real_repo_full_ms": 4119.26,
+    "real_repo_incremental_warm_ms": 2195.91,
+    "real_repo_warm_speedup_x": 1.88,
+    "sim_60_full_ms": 70.45,
+    "sim_60_1file_changed_ms": 21.63,
+    "sim_60_1file_reparsed": 1,
+    "sim_60_1file_reused": 59,
+    "sim_60_1file_speedup_x": 3.26
+  },
+  "real_repo_intelligence": {
+    "deep_analysis_ms": 63503.91,
+    "components_count": 40,
+    "circular_components": 5,
+    "cross_file_call_edges": 34596,
+    "api_route_files": 16,
+    "sandbox_change_downstream_files": 21,
+    "overall_quality_score": 19.33,
+    "release_readiness": "BLOCKED"
+  },
+  "optimization_before_after_proof": {
+    "before_ms": 0.469,
+    "after_ms": 0.011,
+    "speedup_x": 42.636,
+    "latency_delta_pct": -97.65,
+    "memory_delta": 0.0,
+    "improved": true
+  }
+}

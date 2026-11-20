@@ -6,26 +6,27 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="NourAI" />
+  <meta name="apple-mobile-web-app-title" content="JABRIX AI" />
   <link rel="apple-touch-icon" href="/icon.svg" />
   <link rel="icon" href="/icon.svg" type="image/svg+xml" />
   <meta name="google-site-verification" content="googleba5e2e501ed82fe6" />
   <meta name="google-site-verification" content="d1hgHSrz7rNQO4_8yL8cb1md45P1GtW2ekbQQY0xELc" />
-  <meta name="description" content="NourAI — مساعد ذكاء اصطناعي متعدد اللغات يدعم العربية والإنجليزية والفرنسية" />
+  <meta name="description" content="JABRIX AI — نظام ذكاء اصطناعي محلي مستقل متعدد اللغات يدعم العربية والإنجليزية والفرنسية" />
   <link rel="canonical" href="https://ypyai-95ca7.web.app/" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="NourAI — مساعد الذكاء الاصطناعي الذكي" />
-  <meta property="og:description" content="منصة ذكاء اصطناعي متكاملة تدعم العربية والإنجليزية والفرنسية مع أدوات كتابة وتحليل وبرمجة متخصصة." />
+  <meta property="og:title" content="JABRIX AI — نظام الذكاء الاصطناعي المستقل" />
+  <meta property="og:description" content="منصة ذكاء اصطناعي متكاملة تدعم العربية والإنجليزية والفرنسية مع وكيل بحث مستقل وإدارة مشاريع وأدوات متخصصة." />
   <meta property="og:url" content="https://ypyai-95ca7.web.app/" />
   <meta property="og:image" content="https://ypyai-95ca7.web.app/icon.svg" />
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="NourAI — مساعد الذكاء الاصطناعي الذكي" />
-  <meta name="twitter:description" content="مساعد ذكاء اصطناعي متعدد اللغات وأدوات متخصصة." />
+  <meta name="twitter:title" content="JABRIX AI — نظام الذكاء الاصطناعي المستقل" />
+  <meta name="twitter:description" content="نظام ذكاء اصطناعي محلي متعدد اللغات ووكيل ذاتي متكامل." />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    "name": "NourAI",
+    "name": "JABRIX AI",
+    "alternateName": "NourAI",
     "url": "https://ypyai-95ca7.web.app/",
     "applicationCategory": "AIApplication",
     "operatingSystem": "Web",
@@ -33,21 +34,21 @@
   }
   </script>
   <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#212121" />
-  <title>NourAI</title>
+  <meta name="theme-color" content="#14161A" />
+  <title>JABRIX AI</title>
   <style>
     :root {
-      --bg-main: #212121;
-      --bg-sidebar: #171717;
-      --bg-elevated: #2a2a2a;
-      --bg-pill: #2f2f2f;
+      --bg-main: #14161A;
+      --bg-sidebar: #0F1115;
+      --bg-elevated: #1E2128;
+      --bg-pill: #252932;
       --bg-hover: rgba(255, 255, 255, 0.08);
-      --bg-user-msg: #2f2f2f;
-      --text-main: #ececec;
+      --bg-user-msg: #252932;
+      --text-main: #F5F3EE;
       --text-muted: #b4b4b4;
       --border: rgba(255, 255, 255, 0.1);
-      --accent: #10a37f;
-      --accent-glow: #10a37f;
+      --accent: #6C4BFF;
+      --accent-glow: #6C4BFF;
       --btn-main: #ffffff;
       --btn-text: #0d0d0d;
       --sat: env(safe-area-inset-top, 0px);
@@ -814,24 +815,93 @@
         overflow: visible !important;
       }
     }
+
+    /* Utility & Component Classes (CSP style-src-attr safe) */
+    .u-hidden { display: none; }
+    .u-session-search { width: 100%; padding: 0.45rem 0.65rem; border-radius: 0.6rem; border: 1px solid var(--border); background: var(--bg-pill); color: var(--text-main); font-size: 0.84rem; outline: none; margin-top: 0.25rem; }
+    .u-history-hdr { display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0.45rem 0.2rem 0.45rem; }
+    .u-p0 { padding: 0; }
+    .u-fav-btn { min-width: 0; height: 26px; font-size: 0.75rem; padding: 0 0.45rem; }
+    .u-hero-sub { font-size: 0.88rem; color: var(--text-muted); margin: 0.25rem 0 0.85rem; text-align: center; max-width: 520px; line-height: 1.6; }
+    .u-hero-wrap { width: 100%; max-width: 640px; margin-bottom: 0.4rem; }
+    .u-hero-kicker { font-size: 0.8rem; font-weight: 700; color: var(--accent); margin-bottom: 0.5rem; text-align: center; }
+    .chip-accent { border-color: var(--accent); color: var(--accent); }
+    .chip-tool { padding: 0.35rem 0.65rem; font-size: 0.78rem; }
+    .chip-pill-sm { padding: 0.35rem 0.7rem; font-size: 0.78rem; border-radius: 999px; }
+    .u-tools-menu { display: none; flex-direction: column; gap: 0.65rem; padding: 0.75rem; margin-bottom: 0.45rem; background: var(--bg-sidebar); border: 1px solid var(--border); border-radius: 1rem; max-height: 40dvh; overflow-y: auto; }
+    .u-tools-hdr { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 0.4rem; }
+    .u-tools-title { font-size: 0.82rem; font-weight: 700; }
+    .u-btn-xs { min-width: 24px; height: 24px; font-size: 0.75rem; }
+    .u-tools-cat { font-size: 0.74rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.35rem; }
+    .u-flex-wrap-xs { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+    .u-active-mode { display: none; align-items: center; justify-content: space-between; gap: 0.5rem; padding: 0.3rem 0.7rem; margin-bottom: 0.35rem; background: rgba(16, 185, 129, 0.12); border: 1px solid var(--accent); border-radius: 0.75rem; font-size: 0.78rem; }
+    .u-btn-clear-tool { min-width: auto; height: 22px; padding: 0 0.45rem; font-size: 0.72rem; }
+    .u-attach-bar { display: none; align-items: center; gap: 0.5rem; padding: 0.35rem 0.65rem; margin-bottom: 0.35rem; background: var(--bg-sidebar); border: 1px solid var(--border); border-radius: 0.75rem; font-size: 0.8rem; }
+    .u-attach-thumb { display: none; width: 36px; height: 36px; object-fit: cover; border-radius: 0.4rem; }
+    .u-attach-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .u-row-between { display: flex; justify-content: space-between; align-items: center; }
+    .u-settings-title { font-size: 0.88rem; }
+    .u-ctrl-row { flex-direction: row; align-items: center; justify-content: space-between; }
+    .u-ctrl-row-gap { flex-direction: row; align-items: center; justify-content: space-between; gap: 0.5rem; }
+    .u-chk-18 { width: 18px; height: 18px; }
+    .u-lbl-sm { font-size: 0.8rem; }
+    .u-adv-details { border: 1px solid var(--border); border-radius: 0.6rem; padding: 0.55rem 0.7rem; background: rgba(255, 255, 255, 0.02); }
+    .u-adv-summary { cursor: pointer; font-size: 0.82rem; font-weight: 600; color: var(--text-muted); user-select: none; }
+    .u-adv-inner { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.75rem; }
+    .u-mem-list { font-size: 0.75rem; color: var(--text-main); }
+    .u-print-btn { justify-content: center; margin-top: 0.25rem; }
+    .u-canvas-modal { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75); z-index: 999; justify-content: center; align-items: center; padding: 1.5rem; }
+    .u-canvas-box { background: var(--bg-sidebar); border: 1px solid var(--border); border-radius: 0.75rem; width: min(860px, 95vw); height: min(600px, 85vh); display: flex; flex-direction: column; overflow: hidden; }
+    .u-canvas-hdr { padding: 0.6rem 1rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    .u-canvas-iframe { flex: 1; width: 100%; border: none; background: #fff; }
+    .u-card { background: var(--bg-sidebar); border: 1px solid var(--border); border-radius: 0.85rem; padding: 0.9rem; margin: 0.5rem 0; }
+    .u-quiz-opt { display: block; width: 100%; text-align: start; margin-top: 0.4rem; border-radius: 0.5rem; }
+    .u-mt-sm { margin-top: 0.4rem; }
+    .u-quiz-fb { margin-top: 0.55rem; font-size: 0.84rem; display: none; }
+    .u-kg-node { border-color: rgba(96, 165, 250, 0.45); padding: 0.45rem 0.8rem; font-size: 0.82rem; }
+    .u-kg-hdr { font-weight: 600; margin-bottom: 0.55rem; }
+    .u-kg-sub { font-size: 0.75rem; color: var(--text-muted); }
+    .u-flex-wrap-sm { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+    .u-wf-title { font-weight: 600; }
+    .u-wf-step { padding: 0.45rem 0.65rem; border-radius: 0.5rem; border: 1px solid var(--border); margin-top: 0.35rem; font-size: 0.84rem; }
+    .u-wf-actions { margin-top: 0.6rem; display: flex; gap: 0.5rem; align-items: center; }
+    .u-wf-btn { border-color: #22c55e; padding: 0.4rem 0.85rem; font-size: 0.8rem; }
+    .u-wf-status { font-size: 0.78rem; color: var(--text-muted); }
+    .u-wf-step-res { margin-top: 0.35rem; color: #86efac; font-size: 0.82rem; }
+    .u-tbl-wrap { overflow-x: auto; margin: 0.6rem 0; }
+    .u-tbl { width: 100%; border-collapse: collapse; font-size: 0.88rem; border: 1px solid var(--border); }
+    .u-tbl th, .u-tbl td { border: 1px solid var(--border); padding: 0.45rem 0.65rem; text-align: start; }
+    .u-tbl th { background: var(--bg-hover); font-weight: 700; }
+    .u-md-link { color: #93c5fd; text-decoration: underline; }
+    .u-md-code { background: rgba(255, 255, 255, 0.08); padding: 0.1rem 0.35rem; border-radius: 0.3rem; font-size: 0.86em; }
+    .u-md-h4 { margin: 0.65rem 0 0.25rem 0; font-size: 1rem; font-weight: 700; }
+    .u-md-h3 { margin: 0.75rem 0 0.3rem 0; font-size: 1.08rem; font-weight: 700; }
+    .u-md-li { padding-inline-start: 0.85rem; margin: 0.15rem 0; }
+    .u-md-hr { border: none; border-top: 1px solid var(--border); margin: 0.65rem 0; }
+    .u-md-spacer { height: 0.35rem; }
+    .u-btn-sm { font-size: 0.75rem; }
+    .u-svg-wrap { margin: 0.5rem 0; }
+    .u-svg-img { max-width: 100%; border-radius: 0.5rem; background: #fff; }
+    .u-py-out { display: none; padding: 0.5rem 0.8rem; border-top: 1px solid var(--border); background: #0d0d0d; color: #86efac; font-family: monospace; font-size: 0.8rem; white-space: pre-wrap; }
+    .followup-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.65rem; }
   </style>
 </head>
 <body>
-  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebarMobile()"></div>
+  <div class="sidebar-overlay" id="sidebar-overlay" data-nav="close-sidebar-mobile"></div>
 
   <aside class="sidebar" id="sidebar-panel" aria-label="Conversation History">
     <div class="sidebar-top">
       <div class="brand"><span class="brand-logo">✦</span><span>NourAI</span></div>
-      <button class="icon-btn sidebar-close" onclick="toggleSidebar()" aria-label="إغلاق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      <button class="icon-btn sidebar-close" data-nav="toggle-sidebar" aria-label="إغلاق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     </div>
-    <button class="new-chat-btn" id="new-session-btn" onclick="createNewSession(); closeSidebarMobile();">
+    <button class="new-chat-btn" id="new-session-btn" data-nav="new-session-mobile">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
       <span id="new-session-label">محادثة جديدة</span>
     </button>
-    <input type="search" id="session-search-input" placeholder="🔍 ابحث في المحادثات..." oninput="renderSessionList()" style="width:100%;padding:0.45rem 0.65rem;border-radius:0.6rem;border:1px solid var(--border);background:var(--bg-pill);color:var(--text-main);font-size:0.84rem;outline:none;margin-top:0.25rem;" />
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:0.6rem 0.45rem 0.2rem 0.45rem;">
-      <span class="sidebar-section" id="ui-history-title" style="padding:0;">المحادثات</span>
-      <button class="icon-btn" onclick="toggleFavoritesView()" id="fav-filter-btn" style="min-width:0;height:26px;font-size:0.75rem;padding:0 0.45rem;" title="عرض الإجابات المفضلة">⭐ المفضلة</button>
+    <input type="search" id="session-search-input" class="u-session-search" placeholder="🔍 ابحث في المحادثات..." />
+    <div class="u-history-hdr">
+      <span class="sidebar-section u-p0" id="ui-history-title">المحادثات</span>
+      <button class="icon-btn u-fav-btn" data-nav="toggle-favs" id="fav-filter-btn" title="عرض الإجابات المفضلة">⭐ المفضلة</button>
     </div>
     <ul class="session-list" id="session-history-list"></ul>
   </aside>
@@ -839,47 +909,47 @@
   <main class="chat-area">
     <header class="chat-header">
       <div class="hdr-start">
-        <button class="icon-btn" onclick="toggleSidebar()" aria-label="القائمة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg></button>
-        <select id="engine-mode-select" class="model-select" onchange="saveModeCookie()" aria-label="النموذج">
+        <button class="icon-btn" data-nav="toggle-sidebar" aria-label="القائمة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg></button>
+        <select id="engine-mode-select" class="model-select" aria-label="النموذج">
           <option value="team_ai">NourAI فريق الـ 5 مساعدين</option>
           <option value="web_ai">NourAI ويب</option>
           <option value="neural">NourAI عصبي</option>
           <option value="fallback">NourAI محلي</option>
         </select>
         <span id="model-status-badge">متصل</span>
-        <span id="stream-status-indicator" style="display:none;">جاهز</span>
-        <span id="ui-app-title" style="display:none;">NourAI</span>
+        <span id="stream-status-indicator" class="u-hidden">جاهز</span>
+        <span id="ui-app-title" class="u-hidden">NourAI</span>
       </div>
       <div class="hdr-end">
-        <select id="language-selector" class="lang-select" onchange="switchLanguage(this.value)" aria-label="اللغة">
+        <select id="language-selector" class="lang-select" aria-label="اللغة">
           <option value="arabic">العربية</option>
           <option value="english">English</option>
           <option value="french">Français</option>
         </select>
-        <button class="icon-btn" onclick="createNewSession()" aria-label="محادثة جديدة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>
-        <button class="icon-btn" onclick="toggleTheme()" aria-label="تبديل المظهر" title="الوضع الليلي/النهاري">◐</button>
-        <button class="icon-btn" onclick="toggleSettings()" aria-label="الإعدادات"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg></button>
+        <button class="icon-btn" data-nav="new-session" aria-label="محادثة جديدة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>
+        <button class="icon-btn" data-nav="toggle-theme" aria-label="تبديل المظهر" title="الوضع الليلي/النهاري">◐</button>
+        <button class="icon-btn" data-nav="toggle-settings" aria-label="الإعدادات"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg></button>
       </div>
     </header>
 
     <div id="error-banner" role="alert">
       <span id="error-banner-text"></span>
-      <button class="icon-btn" onclick="hideError()">✕</button>
+      <button class="icon-btn" data-nav="hide-error">✕</button>
     </div>
 
     <div id="welcome-hero">
       <div class="hero-emblem">✦</div>
       <h1 class="hero-greeting" id="hero-title">كيف يمكنني مساعدتك اليوم؟</h1>
-      <p style="font-size:0.88rem;color:var(--text-muted);margin:0.25rem 0 0.85rem;text-align:center;max-width:520px;line-height:1.6;">
+      <p class="u-hero-sub">
         اكتب سؤالك مباشرةً للدردشة العامة، أو اضغط على <strong>✨ الأدوات</strong> لاختيار أداة متخصصة.
       </p>
-      <div style="width:100%;max-width:640px;margin-bottom:0.4rem;">
-        <div style="font-size:0.8rem;font-weight:700;color:var(--accent);margin-bottom:0.5rem;text-align:center;">🚀 ابدأ من هنا</div>
+      <div class="u-hero-wrap">
+        <div class="u-hero-kicker">🚀 ابدأ من هنا</div>
         <div class="quick-chips">
-          <button class="chip" onclick="useStarterPrompt('اشرح لي الذكاء الاصطناعي ببساطة في 5 نقاط')">💡 اشرح لي ببساطة</button>
-          <button class="chip" onclick="useStarterPrompt('اكتب دالة بايثون لحساب مضروب العدد factorial')">💻 اكتب كوداً</button>
-          <button class="chip" onclick="useStarterPrompt('خطط لي مشروعاً صغيراً ناجحاً برأس مال بسيط')">🧭 ساعدني في التخطيط</button>
-          <button class="chip" style="border-color:var(--accent);color:var(--accent);" onclick="toggleSmartTools()">🧰 تصفح الأدوات المصنفة</button>
+          <button class="chip" data-starter="اشرح لي الذكاء الاصطناعي ببساطة في 5 نقاط">💡 اشرح لي ببساطة</button>
+          <button class="chip" data-starter="اكتب دالة بايثون لحساب مضروب العدد factorial">💻 اكتب كوداً</button>
+          <button class="chip" data-starter="خطط لي مشروعاً صغيراً ناجحاً برأس مال بسيط">🧭 ساعدني في التخطيط</button>
+          <button class="chip chip-accent" data-nav="toggle-tools">🧰 تصفح الأدوات المصنفة</button>
         </div>
       </div>
     </div>
@@ -887,83 +957,81 @@
     <section id="chat-messages" aria-live="polite"></section>
 
     <footer class="composer-wrap">
-      <div id="smart-tools-menu" style="display:none;flex-direction:column;gap:0.65rem;padding:0.75rem;margin-bottom:0.45rem;background:var(--bg-sidebar);border:1px solid var(--border);border-radius:1rem;max-height:40dvh;overflow-y:auto;">
-        <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);padding-bottom:0.4rem;">
-          <span style="font-size:0.82rem;font-weight:700;">🧰 الأدوات المتخصصة (مصنفة)</span>
-          <button class="icon-btn" style="min-width:24px;height:24px;font-size:0.75rem;" onclick="toggleSmartTools()" title="إغلاق">✕</button>
+      <div id="smart-tools-menu" class="u-tools-menu">
+        <div class="u-tools-hdr">
+          <span class="u-tools-title">🧰 الأدوات المتخصصة (مصنفة)</span>
+          <button class="icon-btn u-btn-xs" data-nav="toggle-tools" title="إغلاق">✕</button>
         </div>
 
         <div>
-          <div style="font-size:0.74rem;font-weight:700;color:var(--text-muted);margin-bottom:0.35rem;">✍️ الكتابة والتحرير</div>
-          <div style="display:flex;flex-wrap:wrap;gap:0.35rem;">
-            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('حسن هذا السؤال واجعله احترافياً: ', '✨ تحسين السؤال')">✨ تحسين السؤال</button>
-            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('اشرح لي ببساطة وكأنني مبتدئ: ', '💡 شرح ببساطة')">💡 شرح ببساطة</button>
-            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('اختصر هذا النص في نقاط: ', '📝 اختصار النص')">📝 اختصار النص</button>
-            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('غيّر أسلوب هذا النص إلى أسلوب رسمي احترافي: ', '🎭 تغيير الأسلوب')">🎭 تغيير الأسلوب</button>
-            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('صحح الأخطاء الإملائية والنحوية في: ', '✍️ مدقق لغوي')">✍️ مدقق لغوي</button>
-            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('بأسلوبي الرقمي: ', '🧬 النسخة الرقمية')">🧬 النسخة الرقمية</button>
+          <div class="u-tools-cat">✍️ الكتابة والتحرير</div>
+          <div class="u-flex-wrap-xs">
+            <button class="chip chip-tool" data-tool-prompt="حسن هذا السؤال واجعله احترافياً: " data-tool-label="✨ تحسين السؤال">✨ تحسين السؤال</button>
+            <button class="chip chip-tool" data-tool-prompt="اشرح لي ببساطة وكأنني مبتدئ: " data-tool-label="💡 شرح ببساطة">💡 شرح ببساطة</button>
+            <button class="chip chip-tool" data-tool-prompt="اختصر هذا النص في نقاط: " data-tool-label="📝 اختصار النص">📝 اختصار النص</button>
+            <button class="chip chip-tool" data-tool-prompt="غيّر أسلوب هذا النص إلى أسلوب رسمي احترافي: " data-tool-label="🎭 تغيير الأسلوب">🎭 تغيير الأسلوب</button>
+            <button class="chip chip-tool" data-tool-prompt="صحح الأخطاء الإملائية والنحوية في: " data-tool-label="✍️ مدقق لغوي">✍️ مدقق لغوي</button>
+            <button class="chip chip-tool" data-tool-prompt="بأسلوبي الرقمي: " data-tool-label="🧬 النسخة الرقمية">🧬 النسخة الرقمية</button>
           </div>
         </div>
 
         <div>
-          <div style="font-size:0.74rem;font-weight:700;color:var(--text-muted);margin-bottom:0.35rem;">🧠 التحليل والخبراء</div>
-          <div style="display:flex;flex-wrap:wrap;gap:0.35rem;">
-            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('مجلس الخبراء: ', '🏛️ مجلس الخبراء')">🏛️ مجلس الخبراء</button>
-            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('فريق العمل: ', '👥 فريق العمل')">👥 فريق العمل</button>
-            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('مناظرة: ', '⚖️ مناظرة الذكاء')">⚖️ مناظرة الذكاء</button>
-            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('تطور الفكرة: ', '🌱 تطور الفكرة')">🌱 تطور الفكرة (5 نسخ)</button>
-            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('ماذا لو: ', '🔮 ماذا لو؟')">🔮 ماذا لو؟</button>
-            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('التفكير بالعكس: ', '🔁 التفكير بالعكس')">🔁 التفكير بالعكس</button>
-            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('اختبر هذه الفكرة وحلل نقاط القوة والمخاطر: ', '🧪 مختبر الأفكار')">🧪 مختبر الأفكار</button>
-            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('ساعدني في اتخاذ قرار مقارنة بين: ', '⚖️ مساعد القرارات')">⚖️ مساعد القرارات</button>
-            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('سلسلة المهام: ', '⛓️ سلسلة المهام')">⛓️ سلسلة المهام</button>
+          <div class="u-tools-cat">🧠 التحليل والخبراء</div>
+          <div class="u-flex-wrap-xs">
+            <button class="chip chip-tool" data-tool-prompt="مجلس الخبراء: " data-tool-label="🏛️ مجلس الخبراء">🏛️ مجلس الخبراء</button>
+            <button class="chip chip-tool" data-tool-prompt="فريق العمل: " data-tool-label="👥 فريق العمل">👥 فريق العمل</button>
+            <button class="chip chip-tool" data-tool-prompt="مناظرة: " data-tool-label="⚖️ مناظرة الذكاء">⚖️ مناظرة الذكاء</button>
+            <button class="chip chip-tool" data-tool-prompt="تطور الفكرة: " data-tool-label="🌱 تطور الفكرة">🌱 تطور الفكرة (5 نسخ)</button>
+            <button class="chip chip-tool" data-tool-prompt="ماذا لو: " data-tool-label="🔮 ماذا لو؟">🔮 ماذا لو؟</button>
+            <button class="chip chip-tool" data-tool-prompt="التفكير بالعكس: " data-tool-label="🔁 التفكير بالعكس">🔁 التفكير بالعكس</button>
+            <button class="chip chip-tool" data-tool-prompt="اختبر هذه الفكرة وحلل نقاط القوة والمخاطر: " data-tool-label="🧪 مختبر الأفكار">🧪 مختبر الأفكار</button>
+            <button class="chip chip-tool" data-tool-prompt="ساعدني في اتخاذ قرار مقارنة بين: " data-tool-label="⚖️ مساعد القرارات">⚖️ مساعد القرارات</button>
+            <button class="chip chip-tool" data-tool-prompt="سلسلة المهام: " data-tool-label="⛓️ سلسلة المهام">⛓️ سلسلة المهام</button>
           </div>
         </div>
 
         <div>
-          <div style="font-size:0.74rem;font-weight:700;color:var(--text-muted);margin-bottom:0.35rem;">📚 الدراسة والملفات</div>
-          <div style="display:flex;flex-wrap:wrap;gap:0.35rem;">
-            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="document.getElementById('doc-upload-input').click()">📄 اسأل ملفاتك</button>
-            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('أنشئ اختباراً من هذا الدرس: ', '🎯 مولد الاختبارات')">🎯 مولد الاختبارات</button>
-            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('ارسم خريطة ذهنية لـ: ', '🗺️ خريطة ذهنية')">🗺️ خريطة ذهنية</button>
-            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('شبكة المعرفة: ', '🕸️ شبكة المعرفة')">🕸️ شبكة المعرفة</button>
-            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('ابدأ محاكاة مقابلة عمل لوظيفة: ', '🎤 محاكي المقابلات')">🎤 محاكي المقابلات</button>
+          <div class="u-tools-cat">📚 الدراسة والملفات</div>
+          <div class="u-flex-wrap-xs">
+            <button class="chip chip-tool" data-nav="upload-doc">📄 اسأل ملفاتك</button>
+            <button class="chip chip-tool" data-tool-prompt="أنشئ اختباراً من هذا الدرس: " data-tool-label="🎯 مولد الاختبارات">🎯 مولد الاختبارات</button>
+            <button class="chip chip-tool" data-tool-prompt="ارسم خريطة ذهنية لـ: " data-tool-label="🗺️ خريطة ذهنية">🗺️ خريطة ذهنية</button>
+            <button class="chip chip-tool" data-tool-prompt="شبكة المعرفة: " data-tool-label="🕸️ شبكة المعرفة">🕸️ شبكة المعرفة</button>
+            <button class="chip chip-tool" data-tool-prompt="ابدأ محاكاة مقابلة عمل لوظيفة: " data-tool-label="🎤 محاكي المقابلات">🎤 محاكي المقابلات</button>
           </div>
         </div>
 
         <div>
-          <div style="font-size:0.74rem;font-weight:700;color:var(--text-muted);margin-bottom:0.35rem;">🎨 الإبداع والبرمجة</div>
-          <div style="display:flex;flex-wrap:wrap;gap:0.35rem;">
-            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('اكتب كوداً برمجياً واشرحه لـ: ', '💻 مساعد البرمجة')">💻 مساعد البرمجة</button>
-            <button class="chip" style="padding:0.35rem 0.65rem;font-size:0.78rem;" onclick="applySmartTool('اقترح لي أفكار مشاريع وأسماء تجارية في مجال: ', '🚀 مولد الأفكار')">🚀 مولد الأفكار</button>
+          <div class="u-tools-cat">🎨 الإبداع والبرمجة</div>
+          <div class="u-flex-wrap-xs">
+            <button class="chip chip-tool" data-tool-prompt="اكتب كوداً برمجياً واشرحه لـ: " data-tool-label="💻 مساعد البرمجة">💻 مساعد البرمجة</button>
+            <button class="chip chip-tool" data-tool-prompt="اقترح لي أفكار مشاريع وأسماء تجارية في مجال: " data-tool-label="🚀 مولد الأفكار">🚀 مولد الأفكار</button>
           </div>
         </div>
       </div>
-      <div id="active-mode-bar" style="display:none;align-items:center;justify-content:space-between;gap:0.5rem;padding:0.3rem 0.7rem;margin-bottom:0.35rem;background:rgba(16,185,129,0.12);border:1px solid var(--accent);border-radius:0.75rem;font-size:0.78rem;">
+      <div id="active-mode-bar" class="u-active-mode">
         <span id="active-mode-label">🧰 أداة متخصصة</span>
-        <button class="icon-btn" style="min-width:auto;height:22px;padding:0 0.45rem;font-size:0.72rem;" onclick="clearActiveTool()" title="العودة للمحادثة العامة">✕ العودة للمحادثة</button>
+        <button class="icon-btn u-btn-clear-tool" data-nav="clear-tool" title="العودة للمحادثة العامة">✕ العودة للمحادثة</button>
       </div>
-      <div id="attachment-preview-bar" style="display:none;align-items:center;gap:0.5rem;padding:0.35rem 0.65rem;margin-bottom:0.35rem;background:var(--bg-sidebar);border:1px solid var(--border);border-radius:0.75rem;font-size:0.8rem;">
-        <img id="attachment-thumb" style="display:none;width:36px;height:36px;object-fit:cover;border-radius:0.4rem;" alt="preview" />
-        <span id="attachment-name" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
-        <button class="icon-btn" style="min-width:24px;height:24px;font-size:0.75rem;" onclick="clearPendingAttachment()" title="إزالة">✕</button>
+      <div id="attachment-preview-bar" class="u-attach-bar">
+        <img id="attachment-thumb" class="u-attach-thumb" alt="preview" />
+        <span id="attachment-name" class="u-attach-name"></span>
+        <button class="icon-btn u-btn-xs" data-nav="clear-attachment" title="إزالة">✕</button>
       </div>
       <div class="composer-pill">
-        <input type="file" id="doc-upload-input" accept="image/*,.txt,.md,.json,.csv,.py,.js,.html,.log,.docx,.pdf" style="display:none;" onchange="handleFileUpload(this)" />
-        <button class="icon-btn" onclick="document.getElementById('doc-upload-input').click()" aria-label="إرفاق ملف أو صورة" title="إرفاق صورة أو ملف PDF/DOCX"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
-        <button class="icon-btn" id="tools-toggle-btn" onclick="toggleSmartTools()" aria-label="الأدوات الذكية" title="8 أدوات ذكية سريعة">✨</button>
+        <input type="file" id="doc-upload-input" class="u-hidden" accept="image/*,.txt,.md,.json,.csv,.py,.js,.html,.log,.docx,.pdf" />
+        <button class="icon-btn" data-nav="upload-doc" aria-label="إرفاق ملف أو صورة" title="إرفاق صورة أو ملف PDF/DOCX"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+        <button class="icon-btn" id="tools-toggle-btn" data-nav="toggle-tools" aria-label="الأدوات الذكية" title="8 أدوات ذكية سريعة">✨</button>
         <textarea
           id="prompt-input"
           dir="auto"
           rows="1"
           placeholder="اسأل NourAI..."
           enterkeyhint="send"
-          onkeydown="handleComposerKeydown(event)"
-          oninput="autoResizeTextarea(this)"
         ></textarea>
-        <button class="icon-btn" id="mic-btn" onclick="startVoiceInput()" aria-label="تحدث بالصوت" title="محادثة صوتية"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
-        <button class="send-circle-btn" id="send-btn" onclick="sendStreamingMessage()" aria-label="إرسال"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
-        <button class="stop-circle-btn" id="stop-btn" onclick="stopGeneration()" aria-label="إيقاف"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg></button>
+        <button class="icon-btn" id="mic-btn" data-nav="voice-input" aria-label="تحدث بالصوت" title="محادثة صوتية"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
+        <button class="send-circle-btn" id="send-btn" data-nav="send-msg" aria-label="إرسال"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+        <button class="stop-circle-btn" id="stop-btn" data-nav="stop-gen" aria-label="إيقاف"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg></button>
       </div>
       <p class="disclaimer">قد يخطئ NourAI. تحقق من المعلومات المهمة.</p>
     </footer>
@@ -971,13 +1039,13 @@
 
   <!-- Popover Settings (Hidden by default) -->
   <aside class="settings-panel" id="settings-panel" aria-label="Model Settings">
-    <div style="display:flex;justify-content:space-between;align-items:center;">
-      <strong id="ui-settings-title" style="font-size:0.88rem;">الإعدادات</strong>
-      <button class="icon-btn" onclick="toggleSettings()">✕</button>
+    <div class="u-row-between">
+      <strong id="ui-settings-title" class="u-settings-title">الإعدادات</strong>
+      <button class="icon-btn" data-nav="toggle-settings">✕</button>
     </div>
     <div class="control-group">
       <label for="persona-select">الشخصية / الدور (Persona)</label>
-      <select id="persona-select" onchange="setCookie('nourai_persona', this.value, 90)">
+      <select id="persona-select">
         <option value="team">✦ تعاون الفريق الكامل (5 مساعدين)</option>
         <option value="analyst">🧠 خبير للتحليل والتفكير</option>
         <option value="coder">💻 مبرمج محترف</option>
@@ -988,7 +1056,7 @@
     </div>
     <div class="control-group">
       <label for="reply-length-select">طول الإجابة</label>
-      <select id="reply-length-select" onchange="setCookie('nourai_length', this.value, 90)">
+      <select id="reply-length-select">
         <option value="medium">متوسط (افتراضي)</option>
         <option value="short">قصير ومختصر</option>
         <option value="detailed">مفصل وشامل</option>
@@ -996,20 +1064,24 @@
     </div>
     <div class="control-group">
       <label for="reply-tone-select">أسلوب الرد</label>
-      <select id="reply-tone-select" onchange="setCookie('nourai_tone', this.value, 90)">
+      <select id="reply-tone-select">
         <option value="simple">مبسط وواضح</option>
         <option value="professional">احترافي</option>
         <option value="academic">أكاديمي</option>
         <option value="creative">إبداعي</option>
       </select>
     </div>
-    <div class="control-group" style="flex-direction:row;align-items:center;justify-content:space-between;">
+    <div class="control-group u-ctrl-row">
       <label for="auto-voice-toggle">🔊 الرد الصوتي التلقائي</label>
-      <input type="checkbox" id="auto-voice-toggle" style="width:18px;height:18px;" onchange="setCookie('nourai_auto_voice', this.checked ? '1' : '0', 90)" />
+      <input type="checkbox" id="auto-voice-toggle" class="u-chk-18" />
     </div>
-    <details style="border:1px solid var(--border);border-radius:0.6rem;padding:0.55rem 0.7rem;background:rgba(255,255,255,0.02);">
-      <summary style="cursor:pointer;font-size:0.82rem;font-weight:600;color:var(--text-muted);user-select:none;">🛠️ إعدادات متقدمة (للمطورين)</summary>
-      <div style="display:flex;flex-direction:column;gap:0.75rem;margin-top:0.75rem;">
+    <div class="control-group u-ctrl-row-gap">
+      <label for="cloud-context-consent-toggle" class="u-lbl-sm">☁️ مشاركة الذكريات ومستندات RAG مع خدمات الذكاء السحابية</label>
+      <input type="checkbox" id="cloud-context-consent-toggle" class="u-chk-18" />
+    </div>
+    <details class="u-adv-details">
+      <summary class="u-adv-summary">🛠️ إعدادات متقدمة (للمطورين)</summary>
+      <div class="u-adv-inner">
         <div class="control-group">
           <label for="strategy-select">استراتيجية التوليد</label>
           <select id="strategy-select">
@@ -1037,33 +1109,33 @@
         </div>
         <div class="control-group">
           <label for="gemini-key-input">Gemini API Key (اختياري)</label>
-          <input type="password" id="gemini-key-input" placeholder="AIzaSy..." onchange="setCookie('nourai_gemini_key', this.value, 30)" />
+          <input type="password" id="gemini-key-input" placeholder="AIzaSy..." />
         </div>
       </div>
     </details>
     <div class="control-group">
       <span>الذاكرة المحفوظة:</span>
-      <div id="memories-list" style="font-size:0.75rem;color:var(--text-main);">—</div>
-      <div id="rag-docs-list" style="font-size:0.75rem;color:var(--text-main);"></div>
+      <div id="memories-list" class="u-mem-list">—</div>
+      <div id="rag-docs-list" class="u-mem-list"></div>
     </div>
-    <button class="new-chat-btn" onclick="window.print()" style="justify-content:center;margin-top:0.25rem;">📄 حفظ المحادثة PDF</button>
+    <button class="new-chat-btn u-print-btn" data-nav="print-pdf">📄 حفظ المحادثة PDF</button>
   </aside>
 
   <!-- Live HTML Preview Modal -->
-  <div id="live-canvas-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:999;justify-content:center;align-items:center;padding:1.5rem;">
-    <div style="background:var(--bg-sidebar);border:1px solid var(--border);border-radius:0.75rem;width:min(860px,95vw);height:min(600px,85vh);display:flex;flex-direction:column;overflow:hidden;">
-      <div style="padding:0.6rem 1rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+  <div id="live-canvas-modal" class="u-canvas-modal">
+    <div class="u-canvas-box">
+      <div class="u-canvas-hdr">
         <strong>معاينة الكود</strong>
-        <button class="icon-btn" onclick="closeLiveCanvas()">✕</button>
+        <button class="icon-btn" data-nav="close-canvas">✕</button>
       </div>
-      <iframe id="live-canvas-iframe" sandbox="allow-scripts" style="flex:1;width:100%;border:none;background:#fff;"></iframe>
+      <iframe id="live-canvas-iframe" class="u-canvas-iframe" sandbox="allow-scripts"></iframe>
     </div>
   </div>
 
   <!-- Cookie Consent Banner -->
   <div id="cookie-banner" role="region" aria-label="Cookie Consent">
     <span>🍪 نستخدم ملفات تعريف الارتباط (Cookies) لحفظ جلستك ولغتك وإعداداتك تلقائياً.</span>
-    <button class="cookie-accept-btn" onclick="acceptCookies()">موافق</button>
+    <button class="cookie-accept-btn" data-nav="accept-cookies">موافق</button>
   </div>
 
   <script>
@@ -1104,13 +1176,24 @@
     };
 
     const isStaticHosted = window.location.hostname.endsWith("web.app") || window.location.hostname.endsWith("firebaseapp.com");
-    const isSafeApiUrl = (u) => /^https:\/\/[a-z0-9.-]+(:\d+)?$/i.test(u) || /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(u);
+    const _TRUSTED_API_ORIGINS = new Set([
+      window.location.origin,
+      "https://nourai-studio.onrender.com",
+      "https://ypyai-95ca7.web.app",
+      "https://ypyai-95ca7.firebaseapp.com"
+    ]);
+    const isSafeApiUrl = (u) => {
+      if (!u) return false;
+      if (_TRUSTED_API_ORIGINS.has(u)) return true;
+      return /^http:\/\/(localhost|127\.0\.0\.1)(:\d{1,5})?$/i.test(u);
+    };
     const customApiBase = (() => {
       try {
         const p = (new URLSearchParams(window.location.search).get("api") || "").trim().replace(/\/+$/, "");
-        if (p && isSafeApiUrl(p)) { localStorage.setItem("nourai_api_base", p); return p; }
+        if (p && isSafeApiUrl(p)) { return p; }
         const saved = (localStorage.getItem("nourai_api_base") || "").trim();
-        return isSafeApiUrl(saved) ? saved : "";
+        if (saved && !isSafeApiUrl(saved)) { localStorage.removeItem("nourai_api_base"); return ""; }
+        return saved;
       } catch (e) { return ""; }
     })();
     const API_BASE = customApiBase || "";
@@ -1525,19 +1608,112 @@
     }
 
     function escapeHtml(str) {
-      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      return String(str ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
     }
+
+    function sanitizeSvgForImg(svgCode) {
+      return String(svgCode ?? "")
+        .replace(/<script[\s\S]*?<\/script>/gi, "")
+        .replace(/<foreignObject[\s\S]*?<\/foreignObject>/gi, "")
+        .replace(/\son\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, "");
+    }
+
+    const _uiActionPayloads = new Map();
+    let _uiPayloadSeq = 0;
+    function _storeUiPayload(val) {
+      const id = "p" + (++_uiPayloadSeq);
+      _uiActionPayloads.set(id, val);
+      return id;
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.addEventListener("click", (ev) => {
+        const navEl = ev.target.closest("[data-nav]");
+        if (navEl) {
+          const act = navEl.dataset.nav;
+          if (act === "close-sidebar-mobile") closeSidebarMobile();
+          else if (act === "toggle-sidebar") toggleSidebar();
+          else if (act === "new-session-mobile") { createNewSession(); closeSidebarMobile(); }
+          else if (act === "new-session") createNewSession();
+          else if (act === "toggle-favs") toggleFavoritesView();
+          else if (act === "toggle-theme") toggleTheme();
+          else if (act === "toggle-settings") toggleSettings();
+          else if (act === "hide-error") hideError();
+          else if (act === "toggle-tools") toggleSmartTools();
+          else if (act === "upload-doc") document.getElementById("doc-upload-input")?.click();
+          else if (act === "clear-tool") clearActiveTool();
+          else if (act === "clear-attachment") clearPendingAttachment();
+          else if (act === "voice-input") startVoiceInput();
+          else if (act === "send-msg") sendStreamingMessage();
+          else if (act === "stop-gen") stopGeneration();
+          else if (act === "print-pdf") window.print();
+          else if (act === "close-canvas") closeLiveCanvas();
+          else if (act === "accept-cookies") acceptCookies();
+          return;
+        }
+        const starterEl = ev.target.closest("[data-starter]");
+        if (starterEl) { useStarterPrompt(starterEl.dataset.starter || ""); return; }
+        const toolEl = ev.target.closest("[data-tool-prompt]");
+        if (toolEl) { applySmartTool(toolEl.dataset.toolPrompt || "", toolEl.dataset.toolLabel || ""); return; }
+      });
+
+      document.getElementById("session-search-input")?.addEventListener("input", () => renderSessionList());
+      document.getElementById("engine-mode-select")?.addEventListener("change", () => saveModeCookie());
+      document.getElementById("language-selector")?.addEventListener("change", (e) => switchLanguage(e.target.value));
+      document.getElementById("doc-upload-input")?.addEventListener("change", (e) => handleFileUpload(e.target));
+      const promptEl = document.getElementById("prompt-input");
+      if (promptEl) {
+        promptEl.addEventListener("keydown", (e) => handleComposerKeydown(e));
+        promptEl.addEventListener("input", (e) => autoResizeTextarea(e.target));
+      }
+      document.getElementById("persona-select")?.addEventListener("change", (e) => setCookie("nourai_persona", e.target.value, 90));
+      document.getElementById("reply-length-select")?.addEventListener("change", (e) => setCookie("nourai_length", e.target.value, 90));
+      document.getElementById("reply-tone-select")?.addEventListener("change", (e) => setCookie("nourai_tone", e.target.value, 90));
+      document.getElementById("auto-voice-toggle")?.addEventListener("change", (e) => setCookie("nourai_auto_voice", e.target.checked ? "1" : "0", 90));
+      document.getElementById("gemini-key-input")?.addEventListener("change", (e) => {
+        try { sessionStorage.setItem("nourai_gemini_key", e.target.value); } catch (err) {}
+      });
+
+      const chatMessages = document.getElementById("chat-messages");
+      if (chatMessages) {
+        chatMessages.addEventListener("click", (ev) => {
+          const btn = ev.target.closest("[data-ui-action]");
+          if (!btn) return;
+          const action = btn.dataset.uiAction;
+          const payload = _uiActionPayloads.get(btn.dataset.payloadId || "");
+          if (action === "quiz") {
+            checkQuizAnswer(btn, btn.dataset.correct === "1", btn.dataset.feedbackId || "", payload || "");
+          } else if (action === "starter") {
+            useStarterPrompt(payload || "");
+          } else if (action === "workflow") {
+            const wfData = payload || {};
+            runNextWorkflowStep(btn.dataset.wfId || "", wfData.goal || "", JSON.stringify(wfData.steps || []), btn);
+          } else if (action === "preview") {
+            openLiveCanvas(payload || "");
+          } else if (action === "runpy") {
+            runPythonCode(payload || "", btn.dataset.outId || "");
+          } else if (action === "copycode") {
+            copyAnswer(payload || "", btn);
+          }
+        });
+      }
+    });
 
     function renderQuizBlock(jsonStr) {
       try {
         const q = JSON.parse(jsonStr);
         const qId = "quiz-" + Math.floor(Math.random() * 100000);
+        const expId = _storeUiPayload(String(q.explanation || ""));
         const optsHtml = (q.options || []).map((opt, idx) => {
           const isCorrect = idx === q.correct ? "1" : "0";
-          const expEnc = encodeURIComponent(q.explanation || "");
-          return `<button class="chip" style="display:block;width:100%;text-align:start;margin-top:0.4rem;border-radius:0.5rem;" onclick="checkQuizAnswer(this, ${isCorrect}, '${qId}', decodeURIComponent('${expEnc}'))">${escapeHtml(opt)}</button>`;
+          return `<button class="chip u-quiz-opt" data-ui-action="quiz" data-correct="${isCorrect}" data-feedback-id="${qId}" data-payload-id="${expId}">${escapeHtml(opt)}</button>`;
         }).join("");
-        return `<div style="background:var(--bg-sidebar);border:1px solid var(--border);border-radius:0.75rem;padding:0.9rem;margin:0.5rem 0;"><strong>${escapeHtml(q.question || "")}</strong><div style="margin-top:0.4rem;">${optsHtml}</div><div id="${qId}" style="margin-top:0.55rem;font-size:0.84rem;display:none;"></div></div>`;
+        return `<div class="u-card"><strong>${escapeHtml(q.question || "")}</strong><div class="u-mt-sm">${optsHtml}</div><div id="${qId}" class="u-quiz-fb"></div></div>`;
       } catch (e) {
         return escapeHtml(jsonStr);
       }
@@ -1564,10 +1740,10 @@
       try {
         const kg = JSON.parse(jsonStr);
         const nodesHtml = (kg.nodes || []).map((n) => {
-          const promptEnc = encodeURIComponent(`اشرح مفهوم «${n.label}» ضمن موضوع «${kg.topic || ""}» بالتفصيل`);
-          return `<button class="chip" style="border-color:rgba(96,165,250,0.45);padding:0.45rem 0.8rem;font-size:0.82rem;" onclick="useStarterPrompt(decodeURIComponent('${promptEnc}'))">🔗 ${escapeHtml(n.label)}</button>`;
+          const pId = _storeUiPayload(`اشرح مفهوم «${n.label}» ضمن موضوع «${kg.topic || ""}» بالتفصيل`);
+          return `<button class="chip u-kg-node" data-ui-action="starter" data-payload-id="${pId}">🔗 ${escapeHtml(n.label)}</button>`;
         }).join("");
-        return `<div style="background:var(--bg-sidebar);border:1px solid var(--border);border-radius:0.85rem;padding:0.9rem;margin:0.5rem 0;"><div style="font-weight:600;margin-bottom:0.55rem;">🕸️ شبكة المعرفة: ${escapeHtml(kg.topic || "")} <span style="font-size:0.75rem;color:var(--text-muted);">(اضغط على أي عقدة للشرح)</span></div><div style="display:flex;flex-wrap:wrap;gap:0.45rem;">${nodesHtml}</div></div>`;
+        return `<div class="u-card"><div class="u-kg-hdr">🕸️ شبكة المعرفة: ${escapeHtml(kg.topic || "")} <span class="u-kg-sub">(اضغط على أي عقدة للشرح)</span></div><div class="u-flex-wrap-sm">${nodesHtml}</div></div>`;
       } catch (e) {
         return escapeHtml(jsonStr);
       }
@@ -1578,10 +1754,9 @@
         const wf = JSON.parse(jsonStr);
         const wfId = "wf-" + Math.floor(Math.random() * 100000);
         const steps = wf.steps || [];
-        const listHtml = steps.map((st, idx) => `<div id="${wfId}-s-${idx}" style="padding:0.45rem 0.65rem;border-radius:0.5rem;border:1px solid var(--border);margin-top:0.35rem;font-size:0.84rem;"><strong>المرحلة ${idx + 1}:</strong> ${escapeHtml(st)}</div>`).join("");
-        const stepsEnc = encodeURIComponent(JSON.stringify(steps));
-        const goalEnc = encodeURIComponent(wf.goal || "");
-        return `<div style="background:var(--bg-sidebar);border:1px solid var(--border);border-radius:0.85rem;padding:0.9rem;margin:0.5rem 0;"><div style="font-weight:600;">⛓️ سلسلة المهام الذكية: ${escapeHtml(wf.goal || "")}</div>${listHtml}<div style="margin-top:0.6rem;display:flex;gap:0.5rem;align-items:center;"><button class="chip" style="border-color:#22c55e;padding:0.4rem 0.85rem;font-size:0.8rem;" onclick="runNextWorkflowStep('${wfId}', decodeURIComponent('${goalEnc}'), decodeURIComponent('${stepsEnc}'), this)">▶ تنفيذ المرحلة التالية</button><span id="${wfId}-status" style="font-size:0.78rem;color:var(--text-muted);">في انتظار موافقتك</span></div></div>`;
+        const listHtml = steps.map((st, idx) => `<div id="${wfId}-s-${idx}" class="u-wf-step"><strong>المرحلة ${idx + 1}:</strong> ${escapeHtml(st)}</div>`).join("");
+        const wfPayloadId = _storeUiPayload({ goal: String(wf.goal || ""), steps });
+        return `<div class="u-card"><div class="u-wf-title">⛓️ سلسلة المهام الذكية: ${escapeHtml(wf.goal || "")}</div>${listHtml}<div class="u-wf-actions"><button class="chip u-wf-btn" data-ui-action="workflow" data-wf-id="${wfId}" data-payload-id="${wfPayloadId}">▶ تنفيذ المرحلة التالية</button><span id="${wfId}-status" class="u-wf-status">في انتظار موافقتك</span></div></div>`;
       } catch (e) {
         return escapeHtml(jsonStr);
       }
@@ -1603,7 +1778,10 @@
       );
       if (stepEl) {
         stepEl.style.borderColor = "#22c55e";
-        stepEl.innerHTML += `<div style="margin-top:0.35rem;color:#86efac;font-size:0.82rem;">✅ ${escapeHtml(out || ("تم إنجاز «" + steps[doneCount] + "» بنجاح."))}</div>`;
+        const stepResDiv = document.createElement("div");
+        stepResDiv.className = "u-wf-step-res";
+        stepResDiv.textContent = "✅ " + (out || ("تم إنجاز «" + steps[doneCount] + "» بنجاح."));
+        stepEl.appendChild(stepResDiv);
       }
       const next = doneCount + 1;
       btnEl.dataset.step = String(next);
@@ -1662,11 +1840,10 @@
         .map(l => l.trim().replace(/^\|/, "").replace(/\|$/, "").split("|").map(c => c.trim()))
         .filter(cells => cells.length > 0 && !cells.every(c => /^[-:]+$/.test(c)));
       if (!rows.length) return "";
-      let html = '<div style="overflow-x:auto;margin:0.6rem 0;"><table style="width:100%;border-collapse:collapse;font-size:0.88rem;border:1px solid var(--border);">';
+      let html = '<div class="u-tbl-wrap"><table class="u-tbl">';
       rows.forEach((cells, rIdx) => {
         const tag = rIdx === 0 ? "th" : "td";
-        const bg = rIdx === 0 ? "background:var(--bg-hover);font-weight:700;" : "";
-        html += "<tr>" + cells.map(c => `<${tag} style="border:1px solid var(--border);padding:0.45rem 0.65rem;text-align:start;${bg}">${c}</${tag}>`).join("") + "</tr>";
+        html += "<tr>" + cells.map(c => `<${tag}>${c}</${tag}>`).join("") + "</tr>";
       });
       html += "</table></div>";
       return html;
@@ -1696,9 +1873,9 @@
       }
       let s = escapeHtml(text);
       s = s.replace(/!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)/g, '<img src="$2" alt="$1" class="generated-img" loading="lazy" />');
-      s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" style="color:#93c5fd;text-decoration:underline;">$1</a>');
+      s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="u-md-link">$1</a>');
       s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
-      s = s.replace(/`([^`]+)`/g, '<code style="background:rgba(255,255,255,0.08);padding:0.1rem 0.35rem;border-radius:0.3rem;font-size:0.86em;">$1</code>');
+      s = s.replace(/`([^`]+)`/g, '<code class="u-md-code">$1</code>');
 
       const lines = s.split("\n");
       const out = [];
@@ -1715,15 +1892,15 @@
           continue;
         }
         if (/^###\s+(.+)$/.test(ln)) {
-          out.push(`<h4 style="margin:0.65rem 0 0.25rem 0;font-size:1rem;font-weight:700;">${ln.replace(/^###\s+/, "")}</h4>`);
+          out.push(`<h4 class="u-md-h4">${ln.replace(/^###\s+/, "")}</h4>`);
         } else if (/^##\s+(.+)$/.test(ln)) {
-          out.push(`<h3 style="margin:0.75rem 0 0.3rem 0;font-size:1.08rem;font-weight:700;">${ln.replace(/^##\s+/, "")}</h3>`);
+          out.push(`<h3 class="u-md-h3">${ln.replace(/^##\s+/, "")}</h3>`);
         } else if (/^[-•]\s+(.+)$/.test(ln)) {
-          out.push(`<div style="padding-inline-start:0.85rem;margin:0.15rem 0;">• ${ln.replace(/^[-•]\s+/, "")}</div>`);
+          out.push(`<div class="u-md-li">• ${ln.replace(/^[-•]\s+/, "")}</div>`);
         } else if (ln === "---") {
-          out.push('<hr style="border:none;border-top:1px solid var(--border);margin:0.65rem 0;" />');
+          out.push('<hr class="u-md-hr" />');
         } else if (ln === "") {
-          out.push('<div style="height:0.35rem;"></div>');
+          out.push('<div class="u-md-spacer"></div>');
         } else {
           out.push(`<div>${ln}</div>`);
         }
@@ -1747,15 +1924,18 @@
         if (i + 2 < parts.length) {
           const lang = (parts[i + 1] || "code").toLowerCase();
           const code = parts[i + 2] || "";
-          const encodedCode = encodeURIComponent(code);
+          const codePayloadId = _storeUiPayload(code);
           const outId = "py-out-" + i + "-" + Math.floor(Math.random() * 100000);
           const isPreviewable = lang === "html" || lang === "svg" || code.includes("<html") || code.includes("<style");
           const isPython = lang === "python" || lang === "py" || code.includes("def ") || code.includes("print(");
           const previewBtn = isPreviewable
-            ? `<button class="icon-btn" style="font-size:0.75rem;" onclick="openLiveCanvas(decodeURIComponent('${encodedCode}'))">▶️ معاينة</button>`
-            : (isPython ? `<button class="icon-btn" style="font-size:0.75rem;" onclick="runPythonCode(decodeURIComponent('${encodedCode}'), '${outId}')">▶️ تشغيل</button>` : "");
-          const inlineSvg = lang === "svg" && code.trim().startsWith("<svg") ? `<div style="margin:0.5rem 0;">${code}</div>` : "";
-          html += `${inlineSvg}<pre><div class="code-header"><span>${escapeHtml(lang)}</span><div>${previewBtn}<button class="icon-btn" style="font-size:0.75rem;" onclick="copyAnswer(decodeURIComponent('${encodedCode}'), this)">نسخ</button></div></div><code>${escapeHtml(code)}</code><div id="${outId}" style="display:none;padding:0.5rem 0.8rem;border-top:1px solid var(--border);background:#0d0d0d;color:#86efac;font-family:monospace;font-size:0.8rem;white-space:pre-wrap;"></div></pre>`;
+            ? `<button class="icon-btn u-btn-sm" data-ui-action="preview" data-payload-id="${codePayloadId}">▶️ معاينة</button>`
+            : (isPython ? `<button class="icon-btn u-btn-sm" data-ui-action="runpy" data-out-id="${outId}" data-payload-id="${codePayloadId}">▶️ تشغيل</button>` : "");
+          const safeSvgDataUri = lang === "svg" && code.trim().startsWith("<svg")
+            ? `data:image/svg+xml;charset=utf-8,${encodeURIComponent(sanitizeSvgForImg(code.trim()))}`
+            : "";
+          const inlineSvg = safeSvgDataUri ? `<div class="u-svg-wrap"><img src="${safeSvgDataUri}" alt="SVG Diagram" class="u-svg-img" /></div>` : "";
+          html += `${inlineSvg}<pre><div class="code-header"><span>${escapeHtml(lang)}</span><div>${previewBtn}<button class="icon-btn u-btn-sm" data-ui-action="copycode" data-payload-id="${codePayloadId}">نسخ</button></div></div><code>${escapeHtml(code)}</code><div id="${outId}" class="u-py-out"></div></pre>`;
         }
       }
       targetEl.innerHTML = html;
@@ -2398,7 +2578,7 @@ function downloadWebm() {
             }
           } catch (e) {}
         }
-        const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 240" width="100%" height="220" style="background:#141418;border-radius:12px;"><rect x="230" y="95" width="180" height="48" rx="12" fill="#3b82f6"/><text x="320" y="124" fill="#fff" font-size="14" font-weight="bold" text-anchor="middle">${escapeHtml(topic.slice(0, 26))}</text><line x1="230" y1="119" x2="155" y2="55" stroke="#60a5fa" stroke-width="2"/><rect x="15" y="30" width="145" height="42" rx="8" fill="#1e293b" stroke="#60a5fa"/><text x="87" y="56" fill="#e2e8f0" font-size="11" text-anchor="middle">${escapeHtml(branches[0])}</text><line x1="230" y1="119" x2="155" y2="185" stroke="#a78bfa" stroke-width="2"/><rect x="15" y="165" width="145" height="42" rx="8" fill="#1e293b" stroke="#a78bfa"/><text x="87" y="191" fill="#e2e8f0" font-size="11" text-anchor="middle">${escapeHtml(branches[1])}</text><line x1="410" y1="119" x2="485" y2="55" stroke="#34d399" stroke-width="2"/><rect x="480" y="30" width="145" height="42" rx="8" fill="#1e293b" stroke="#34d399"/><text x="552" y="56" fill="#e2e8f0" font-size="11" text-anchor="middle">${escapeHtml(branches[2])}</text><line x1="410" y1="119" x2="485" y2="185" stroke="#f472b6" stroke-width="2"/><rect x="480" y="165" width="145" height="42" rx="8" fill="#1e293b" stroke="#f472b6"/><text x="552" y="191" fill="#e2e8f0" font-size="11" text-anchor="middle">${escapeHtml(branches[3])}</text></svg>`;
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 240" width="100%" height="220"><rect width="640" height="240" rx="12" fill="#141418"/><rect x="230" y="95" width="180" height="48" rx="12" fill="#3b82f6"/><text x="320" y="124" fill="#fff" font-size="14" font-weight="bold" text-anchor="middle">${escapeHtml(topic.slice(0, 26))}</text><line x1="230" y1="119" x2="155" y2="55" stroke="#60a5fa" stroke-width="2"/><rect x="15" y="30" width="145" height="42" rx="8" fill="#1e293b" stroke="#60a5fa"/><text x="87" y="56" fill="#e2e8f0" font-size="11" text-anchor="middle">${escapeHtml(branches[0])}</text><line x1="230" y1="119" x2="155" y2="185" stroke="#a78bfa" stroke-width="2"/><rect x="15" y="165" width="145" height="42" rx="8" fill="#1e293b" stroke="#a78bfa"/><text x="87" y="191" fill="#e2e8f0" font-size="11" text-anchor="middle">${escapeHtml(branches[1])}</text><line x1="410" y1="119" x2="485" y2="55" stroke="#34d399" stroke-width="2"/><rect x="480" y="30" width="145" height="42" rx="8" fill="#1e293b" stroke="#34d399"/><text x="552" y="56" fill="#e2e8f0" font-size="11" text-anchor="middle">${escapeHtml(branches[2])}</text><line x1="410" y1="119" x2="485" y2="185" stroke="#f472b6" stroke-width="2"/><rect x="480" y="165" width="145" height="42" rx="8" fill="#1e293b" stroke="#f472b6"/><text x="552" y="191" fill="#e2e8f0" font-size="11" text-anchor="middle">${escapeHtml(branches[3])}</text></svg>`;
         return `🗺️ **الخريطة الذهنية لـ «${topic}»:**\n\n\`\`\`svg\n${svg}\n\`\`\``;
       }
 
@@ -2633,6 +2813,7 @@ function downloadWebm() {
               message: text,
               enable_web_search: enableWebSearch,
               use_fallback_assistant: useFallback,
+              allow_cloud_context: Boolean(document.getElementById("cloud-context-consent-toggle")?.checked),
               gemini_api_key: geminiKey,
               persona: document.getElementById("persona-select").value,
               strategy: document.getElementById("strategy-select").value,
@@ -2817,11 +2998,9 @@ function downloadWebm() {
       ];
       const wrap = document.createElement("div");
       wrap.className = "followup-chips";
-      wrap.style.cssText = "display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.65rem;";
       for (const s of suggestions) {
         const btn = document.createElement("button");
-        btn.className = "chip";
-        btn.style.cssText = "padding:0.35rem 0.7rem;font-size:0.78rem;border-radius:999px;";
+        btn.className = "chip chip-pill-sm";
         btn.textContent = "↳ " + s;
         btn.onclick = () => useStarterPrompt(s);
         wrap.appendChild(btn);
@@ -3041,7 +3220,8 @@ function downloadWebm() {
       if (savedMode) {
         document.getElementById("engine-mode-select").value = savedMode;
       }
-      const savedKey = getCookie("nourai_gemini_key");
+      try { setCookie("nourai_gemini_key", "", -1); } catch (e) {}
+      const savedKey = (() => { try { return sessionStorage.getItem("nourai_gemini_key") || ""; } catch (e) { return ""; } })();
       if (savedKey) {
         document.getElementById("gemini-key-input").value = savedKey;
       }

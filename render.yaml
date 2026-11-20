@@ -8,3 +8,9 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: "3.11.9"
+      - key: NOURAI_SECRET_KEY
+        generateValue: true
+      - key: NOURAI_TRUSTED_PROXIES
+        value: "127.0.0.1,10.0.0.0/8,172.16.0.0/12"
+      - key: NOURAI_MAX_BODY_BYTES
+        value: "2097152"

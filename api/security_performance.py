@@ -26,11 +26,7 @@ def run_phase20_security_and_performance_audit() -> dict[str, Any]:
         "/api/v1/users/register",
         body={"username": "other_user", "password": "SafePassword#200", "role": "user"},
     )
-    backend.handle_request(
-        "POST",
-        "/api/v1/users/register",
-        body={"username": "sys_admin", "password": "AdminPassword#900", "role": "admin"},
-    )
+    backend.users.register_user("sys_admin", "AdminPassword#900", role="admin")
 
     user_tok = backend.handle_request(
         "POST",

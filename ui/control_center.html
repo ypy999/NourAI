@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JABRIX AI v3.2 — Autonomous Control Center 2.0</title>
+  <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+  <style>
+    :root {
+      --bg: #0f1115;
+      --panel: #14161A;
+      --panel-alt: #1e2128;
+      --border: #2c313d;
+      --text: #F5F3EE;
+      --muted: #94a3b8;
+      --accent: #6C4BFF;
+      --ok: #10b981;
+      --warn: #f59e0b;
+      --err: #ef4444;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.45;
+    }
+    header {
+      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+      padding: 14px 20px; background: var(--panel); border-bottom: 1px solid var(--border);
+    }
+    header h1 { margin: 0; font-size: 1.15rem; letter-spacing: 0.3px; }
+    .badge {
+      display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: 0.78rem;
+      background: var(--panel-alt); border: 1px solid var(--border); color: var(--accent);
+    }
+    .badge.ok { color: var(--ok); border-color: var(--ok); }
+    .badge.warn { color: var(--warn); border-color: var(--warn); }
+    .badge.err { color: var(--err); border-color: var(--err); }
+    .controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    button, input, select {
+      background: var(--panel-alt); color: var(--text); border: 1px solid var(--border);
+      border-radius: 6px; padding: 6px 10px; font-size: 0.85rem;
+    }
+    button { cursor: pointer; }
+    button.primary { background: #0284c7; border-color: #0369a1; }
+    button.ok { background: #047857; border-color: #065f46; }
+    button.danger { background: #b91c1c; border-color: #991b1b; }
+    main {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 14px; padding: 16px; max-width: 1600px; margin: 0 auto;
+    }
+    section.card {
+      background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+      padding: 14px; display: flex; flex-direction: column; gap: 10px;
+    }
+    section.card h2 {
+      margin: 0; font-size: 0.96rem; color: var(--accent);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .kpi { background: var(--panel-alt); padding: 8px 10px; border-radius: 6px; }
+    .kpi .label { font-size: 0.75rem; color: var(--muted); }
+    .kpi .val { font-size: 1.05rem; font-weight: 600; }
+    .scroll-box { max-height: 240px; overflow-y: auto; font-size: 0.82rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+    th, td { text-align: start; padding: 5px 6px; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted); font-weight: 600; }
+    pre {
+      margin: 0; background: #020617; padding: 8px; border-radius: 6px;
+      overflow-x: auto; font-size: 0.76rem; color: #cbd5e1;
+    }
+    .row { display: flex; gap: 8px; }
+    .row input { flex: 1; }
+  </style>
+</head>
+<body>
+  <header>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <svg role="img" aria-label="JABRIX AI mark" viewBox="0 0 120 120" style="width:36px;height:36px;flex-shrink:0;">
+        <rect x="8" y="8" width="104" height="104" rx="28" fill="#14161A"/>
+        <rect x="14" y="14" width="92" height="92" rx="22" fill="none" stroke="#6C4BFF" stroke-width="2" opacity="0.7"/>
+        <path d="M72 48 V70 a16 16 0 0 1 -32 0" fill="none" stroke="#F5F3EE" stroke-width="10" stroke-linecap="round"/>
+        <circle cx="72" cy="33" r="7.5" fill="#6C4BFF"/>
+      </svg>
+      <div>
+        <h1>JABRIX <span style="color:#6C4BFF">AI</span> v3.2 — Autonomous Control Center 2.0</h1>
+        <span class="badge ok" id="healthBadge">Local-First · AR · EN · FR</span>
+      </div>
+    </div>
+    <div class="controls">
+      <select id="dirSelect" title="Direction">
+        <option value="ltr">LTR (EN/FR)</option>
+        <option value="rtl">RTL (العربية)</option>
+      </select>
+      <button id="guestBtn">Guest Token</button>
+      <button class="primary" id="refreshBtn">Refresh Dashboard</button>
+      <a href="/" style="color:var(--accent);font-size:0.85rem;text-decoration:none;">← v1 Chat UI</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- 1. Agent Task Monitor -->
+    <section class="card">
+      <h2><span>1. Agent Task Monitor</span><span class="badge" id="taskCountBadge">0 tasks</span></h2>
+      <div class="row">
+        <input id="taskObjective" placeholder="Enter autonomous objective (AR/EN/FR)..." />
+        <button class="primary" id="runTaskBtn">Run</button>
+      </div>
+      <div class="scroll-box">
+        <table>
+          <thead><tr><th>ID</th><th>Objective</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="tasksBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 2. Task Execution Timeline & 3. Planning Visualization -->
+    <section class="card">
+      <h2><span>2 &amp; 3. Execution Timeline &amp; Plan DAG</span><span class="badge" id="selectedTaskBadge">None</span></h2>
+      <div class="scroll-box">
+        <pre id="planDagBox">Select a task to inspect its DAG plan and execution timeline.</pre>
+      </div>
+    </section>
+
+    <!-- 6. Approval Queue -->
+    <section class="card">
+      <h2><span>4. Human Approval Queue</span><span class="badge warn" id="approvalCount">0 pending</span></h2>
+      <div class="scroll-box" id="approvalList">No destructive tasks awaiting approval.</div>
+    </section>
+
+    <!-- 8. CPU & RAM Monitoring -->
+    <section class="card">
+      <h2><span>5. CPU &amp; RAM Hardware Monitor</span><span class="badge ok" id="hwModeBadge">CPU-Only</span></h2>
+      <div class="kpi-grid" id="hwGrid"></div>
+    </section>
+
+    <!-- 7. Neural Model Metrics -->
+    <section class="card">
+      <h2><span>6. Neural Model Metrics</span><span class="badge" id="modelPresetBadge">Loaded</span></h2>
+      <div class="kpi-grid" id="neuralGrid"></div>
+    </section>
+
+    <!-- 4. Tool Activity & Audit Log -->
+    <section class="card">
+      <h2><span>7. Tool Activity &amp; Permissions</span><span class="badge" id="toolCountBadge">0 tools</span></h2>
+      <div class="scroll-box">
+        <table>
+          <thead><tr><th>Tool</th><th>Status</th><th>Latency</th></tr></thead>
+          <tbody id="toolAuditBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 5. Memory Inspector -->
+    <section class="card">
+      <h2><span>8. 4-Tier Memory Inspector</span><span class="badge" id="memConsistencyBadge">Consistent</span></h2>
+      <div class="scroll-box">
+        <table>
+          <thead><tr><th>Tier</th><th>Content</th><th>Del</th></tr></thead>
+          <tbody id="memoryBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 9. Evaluation Reports & Self-Evaluation -->
+    <section class="card">
+      <h2><span>9. Evaluation &amp; Self-Evaluation</span><button class="ok" id="runEvalBtn">Run Eval</button></h2>
+      <div class="scroll-box">
+        <pre id="evalBox">Click "Run Eval" or refresh to inspect evaluation &amp; self-diagnostics.</pre>
+      </div>
+    </section>
+
+    <!-- 10. Error & Recovery Logs -->
+    <section class="card">
+      <h2><span>10. Error &amp; Recovery Logs</span><span class="badge err" id="errCountBadge">0 failures</span></h2>
+      <div class="scroll-box">
+        <pre id="errorLogBox">No failed tasks recorded.</pre>
+      </div>
+    </section>
+
+    <!-- 11. Research Workspace & Citation Inspector (v3.2) -->
+    <section class="card">
+      <h2><span>11. Research Workspace &amp; Citations</span><span class="badge" id="researchCountBadge">0 reports</span></h2>
+      <div class="row">
+        <input id="researchObjective" placeholder="Research topic (AR/EN/FR)..." />
+        <button class="primary" id="runResearchBtn">Research</button>
+      </div>
+      <div class="scroll-box">
+        <pre id="researchBox">Run a research query to inspect verified facts, hypotheses, contradictions, and citations.</pre>
+      </div>
+    </section>
+
+    <!-- 12. Long-Term Project Management View (v3.2) -->
+    <section class="card">
+      <h2><span>12. Long-Term Projects &amp; Timeline</span><span class="badge ok" id="projectCountBadge">0 projects</span></h2>
+      <div class="scroll-box">
+        <pre id="projectsBox">Persistent projects, milestones, blocked tasks, and progress percentages appear here.</pre>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    let authToken = localStorage.getItem("nourai_token") || "";
+
+    function headers() {
+      const h = { "Content-Type": "application/json" };
+      if (authToken) h["Authorization"] = "Bearer " + authToken;
+      return h;
+    }
+
+    async function ensureGuest() {
+      const res = await fetch("/api/v1/auth/guest", { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" });
+      const data = await res.json();
+      if (data.access_token) {
+        authToken = data.access_token;
+        localStorage.setItem("nourai_token", authToken);
+      }
+      await refreshAll();
+    }
+
+    async function inspectTask(taskId) {
+      const res = await fetch("/api/v3/agent/tasks/" + encodeURIComponent(taskId), { headers: headers() });
+      const data = await res.json();
+      if (data.task) {
+        document.getElementById("selectedTaskBadge").textContent = taskId;
+        document.getElementById("planDagBox").textContent = JSON.stringify({
+          status: data.task.status,
+          plan: data.task.plan,
+          trace: data.task.trace,
+          result: data.task.result
+        }, null, 2);
+      }
+    }
+
+    async function approveTask(taskId) {
+      await fetch("/api/v3/agent/tasks/" + encodeURIComponent(taskId) + "/approve", { method: "POST", headers: headers(), body: "{}" });
+      await refreshAll();
+    }
+
+    async function cancelTask(taskId) {
+      await fetch("/api/v3/agent/tasks/" + encodeURIComponent(taskId) + "/cancel", { method: "POST", headers: headers(), body: "{}" });
+      await refreshAll();
+    }
+
+    async function deleteMemory(memId) {
+      await fetch("/api/v3/memory/" + encodeURIComponent(memId), { method: "DELETE", headers: headers() });
+      await refreshAll();
+    }
+
+    async function refreshAll() {
+      const healthRes = await fetch("/api/v3/system/health");
+      const health = await healthRes.json();
+      document.getElementById("healthBadge").textContent = "v" + (health.version || "3.1.0") + " · " + (health.status || "ok");
+      const hw = health.hardware || {};
+      document.getElementById("hwModeBadge").textContent = hw.cuda_available ? "CUDA GPU" : (hw.degraded_mode ? "Degraded CPU" : "CPU-Only");
+      document.getElementById("hwGrid").innerHTML = [
+        ["Process RSS", (hw.process_rss_mb ?? "N/A") + " MiB"],
+        ["CPU Cores", hw.cpu_count ?? "N/A"],
+        ["Torch Threads", hw.torch_num_threads ?? "N/A"],
+        ["Preset / Ctx", (hw.recommended_preset || "nano") + " / " + (hw.recommended_context_length || 128)]
+      ].map(([l, v]) => `<div class="kpi"><div class="label">${l}</div><div class="val">${v}</div></div>`).join("");
+
+      const nn = health.neural_model || {};
+      document.getElementById("neuralGrid").innerHTML = [
+        ["Parameters", (nn.parameter_count ?? 0).toLocaleString()],
+        ["Weights Size", (nn.model_weights_mib ?? 0) + " MiB"],
+        ["Context Limit", nn.context_length_limit ?? 128],
+        ["Device", nn.device || "cpu"]
+      ].map(([l, v]) => `<div class="kpi"><div class="label">${l}</div><div class="val">${v}</div></div>`).join("");
+
+      if (!authToken) return;
+      const sumRes = await fetch("/api/v3/control-center/summary", { headers: headers() });
+      if (!sumRes.ok) return;
+      const sum = await sumRes.json();
+
+      // Tasks & Approval Queue
+      const tasks = sum.tasks || [];
+      document.getElementById("taskCountBadge").textContent = tasks.length + " tasks";
+      document.getElementById("tasksBody").innerHTML = tasks.slice(0, 15).map(t =>
+        `<tr><td>${t.task_id}</td><td>${t.objective.slice(0, 42)}</td><td><span class="badge">${t.status}</span></td><td><button onclick="inspectTask('${t.task_id}')">Inspect</button></td></tr>`
+      ).join("");
+
+      const approvals = sum.approval_queue || [];
+      document.getElementById("approvalCount").textContent = approvals.length + " pending";
+      document.getElementById("approvalList").innerHTML = approvals.length ? approvals.map(t =>
+        `<div style="margin-bottom:8px;padding:8px;background:var(--panel-alt);border-radius:6px;">
+          <div><strong>${t.task_id}</strong>: ${t.objective}</div>
+          <div style="margin-top:6px;display:flex;gap:6px;">
+            <button class="ok" onclick="approveTask('${t.task_id}')">Approve</button>
+            <button class="danger" onclick="cancelTask('${t.task_id}')">Cancel</button>
+          </div>
+        </div>`
+      ).join("") : "No destructive tasks awaiting approval.";
+
+      // Tool audit
+      const audit = sum.tool_audit || [];
+      document.getElementById("toolCountBadge").textContent = (sum.tools_registered || 0) + " tools";
+      document.getElementById("toolAuditBody").innerHTML = audit.slice().reverse().slice(0, 15).map(a =>
+        `<tr><td>${a.tool_name}</td><td>${a.status}</td><td>${a.duration_ms} ms</td></tr>`
+      ).join("");
+
+      // Memory
+      const mems = sum.memories || [];
+      const cons = sum.memory_consistency || { consistent: true };
+      document.getElementById("memConsistencyBadge").textContent = cons.consistent ? "Consistent" : "Contradiction!";
+      document.getElementById("memoryBody").innerHTML = mems.slice(0, 15).map(m =>
+        `<tr><td>${m.tier}</td><td>${m.content.slice(0, 55)}</td><td><button class="danger" onclick="deleteMemory('${m.memory_id}')">×</button></td></tr>`
+      ).join("");
+
+      // Evaluation & Self-Eval
+      document.getElementById("evalBox").textContent = JSON.stringify({
+        latest_reports: (sum.evaluation_reports || []).slice(0, 2),
+        self_evaluation: sum.self_evaluation
+      }, null, 2);
+
+      // Error logs
+      const se = sum.self_evaluation || { failed_count: 0, failures: [], recommendations: [] };
+      document.getElementById("errCountBadge").textContent = se.failed_count + " failures";
+      document.getElementById("errorLogBox").textContent = JSON.stringify({
+        failures: se.failures,
+        recommendations: se.recommendations,
+        self_monitoring: sum.self_monitoring
+      }, null, 2);
+
+      // v3.2 Research & Projects
+      const reps = sum.research_reports || [];
+      document.getElementById("researchCountBadge").textContent = reps.length + " reports";
+      if (reps.length) {
+        document.getElementById("researchBox").textContent = JSON.stringify(reps[0], null, 2);
+      }
+      const projs = sum.projects || [];
+      document.getElementById("projectCountBadge").textContent = projs.length + " projects";
+      if (projs.length) {
+        document.getElementById("projectsBox").textContent = JSON.stringify(projs.map(p => ({
+          id: p.project_id, name: p.name, status: p.status, progress: p.progress, blocked: p.blocked_tasks
+        })), null, 2);
+      }
+    }
+
+    document.getElementById("runResearchBtn").addEventListener("click", async () => {
+      const obj = document.getElementById("researchObjective").value.trim();
+      if (!obj) return;
+      if (!authToken) await ensureGuest();
+      const res = await fetch("/api/v3/research", { method: "POST", headers: headers(), body: JSON.stringify({ objective: obj }) });
+      const data = await res.json();
+      if (data.report) document.getElementById("researchBox").textContent = JSON.stringify(data.report, null, 2);
+      await refreshAll();
+    });
+
+    document.getElementById("dirSelect").addEventListener("change", (e) => {
+      document.documentElement.dir = e.target.value;
+    });
+    document.getElementById("guestBtn").addEventListener("click", ensureGuest);
+    document.getElementById("refreshBtn").addEventListener("click", refreshAll);
+    document.getElementById("runTaskBtn").addEventListener("click", async () => {
+      const obj = document.getElementById("taskObjective").value.trim();
+      if (!obj) return;
+      if (!authToken) await ensureGuest();
+      const res = await fetch("/api/v3/agent/tasks", { method: "POST", headers: headers(), body: JSON.stringify({ objective: obj }) });
+      const data = await res.json();
+      if (data.task) await inspectTask(data.task.task_id);
+      await refreshAll();
+    });
+    document.getElementById("runEvalBtn").addEventListener("click", async () => {
+      if (!authToken) await ensureGuest();
+      await fetch("/api/v3/evaluation/run", { method: "POST", headers: headers(), body: "{}" });
+      await refreshAll();
+    });
+    refreshAll();
+  </script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+name: NourAI CI & Security Checks
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test-and-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install --extra-index-url https://download.pytorch.org/whl/cpu -r requirements/base.txt -r requirements/dev.txt
+          pip install pip-audit playwright
+          playwright install chromium
+
+      - name: Run dependency vulnerability audit
+        run: pip-audit
+
+      - name: Run NourAI security, API, UI, and model tests
+        run: |
+          pytest tests/test_phase11_architecture.py tests/test_phase12_training_engine.py tests/test_phase17_inference_engine.py tests/test_phase18_api_backend.py tests/test_phase19_user_interface.py tests/test_phase20_security_performance.py tests/test_phase21_to_24_production_and_release.py tests/test_nourai_8_engines.py tests/test_training.py tests/test_evaluation.py tests/test_e2e_ui_and_concurrency.py tests/e2e_playwright_browser.py -v --tb=short

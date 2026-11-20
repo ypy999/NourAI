@@ -1,0 +1,52 @@
+{
+  "version": "3.4.1",
+  "original_v3_4_0_suite_fixed": {
+    "passed": 6,
+    "total": 6
+  },
+  "adversarial_36_suite": {
+    "total_cases": 36,
+    "tp": 21,
+    "fp": 0,
+    "fn": 0,
+    "tn": 15,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "per_language": {
+      "en": {
+        "tp": 7,
+        "fp": 0,
+        "fn": 0,
+        "tn": 5
+      },
+      "ar": {
+        "tp": 7,
+        "fp": 0,
+        "fn": 0,
+        "tn": 5
+      },
+      "fr": {
+        "tp": 7,
+        "fp": 0,
+        "fn": 0,
+        "tn": 5
+      }
+    },
+    "misses": [],
+    "total_elapsed_ms": 10.246,
+    "avg_ms_per_case": 0.285,
+    "honest_note": "Metrics reflect this 36-case adversarial multilingual suite and do not guarantee universal 100% accuracy on open-world prose."
+  },
+  "hardware": {
+    "timestamp": 1795166371.9306538,
+    "os_name": "Windows 10",
+    "cpu_count": 4,
+    "process_rss_mb": 204.21,
+    "cuda_available": false,
+    "torch_num_threads": 2,
+    "degraded_mode": false,
+    "recommended_preset": "nano",
+    "recommended_context_length": 128
+  }
+}

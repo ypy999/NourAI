@@ -1,0 +1,237 @@
+{
+  "version": "3.0.0",
+  "model_source": "releases\\v1.2.0\\nourai_v1_2_model.pt",
+  "hardware_snapshot": {
+    "timestamp": 1795129184.199587,
+    "os_name": "Windows 10",
+    "cpu_count": 4,
+    "process_rss_mb": 296.2,
+    "cuda_available": false,
+    "torch_num_threads": 2,
+    "degraded_mode": false,
+    "recommended_preset": "nano",
+    "recommended_context_length": 128
+  },
+  "neural_audit": {
+    "audit_passed": true,
+    "weight_tied": true,
+    "has_pre_ln": true,
+    "kv_cache_equivalent": true,
+    "kv_cache_max_abs_diff": 6.2e-06,
+    "total_params": 4871168
+  },
+  "cpu_inference_benchmark": {
+    "preset_params": 4871168,
+    "prompt_len": 16,
+    "gen_steps": 24,
+    "fp32_uncached_ms": 235.49,
+    "fp32_kv_cached_ms": 102.11,
+    "kv_cache_speedup": 2.31,
+    "int8_dynamic_available": true,
+    "int8_dynamic_ms": 414.18,
+    "int8_error": null,
+    "process_rss_mb": 291.58
+  },
+  "tokenizer_benchmark": {
+    "baseline_byte_tokenizer": {
+      "arabic": {
+        "vocab_size": 260,
+        "total_chars": 239,
+        "total_bytes": 443,
+        "total_tokens": 443,
+        "tokens_per_char": 1.8536,
+        "bytes_per_token": 1.0,
+        "exact_roundtrip": true,
+        "encode_decode_ms": 0.328
+      },
+      "english": {
+        "vocab_size": 260,
+        "total_chars": 307,
+        "total_bytes": 307,
+        "total_tokens": 307,
+        "tokens_per_char": 1.0,
+        "bytes_per_token": 1.0,
+        "exact_roundtrip": true,
+        "encode_decode_ms": 0.094
+      },
+      "french": {
+        "vocab_size": 260,
+        "total_chars": 303,
+        "total_bytes": 312,
+        "total_tokens": 312,
+        "tokens_per_char": 1.0297,
+        "bytes_per_token": 1.0,
+        "exact_roundtrip": true,
+        "encode_decode_ms": 0.107
+      }
+    },
+    "bpe_comparisons": {
+      "bpe_8k_target": {
+        "arabic": {
+          "target_vocab_size": 8192,
+          "actual_vocab_size": 714,
+          "total_tokens": 38,
+          "tokens_per_char": 0.159,
+          "bytes_per_token": 11.6579,
+          "compression_vs_byte": 11.6579,
+          "effective_128ctx_chars_gain": "11.66x",
+          "exact_roundtrip": true,
+          "encode_decode_ms": 1.099
+        },
+        "english": {
+          "target_vocab_size": 8192,
+          "actual_vocab_size": 714,
+          "total_tokens": 48,
+          "tokens_per_char": 0.1564,
+          "bytes_per_token": 6.3958,
+          "compression_vs_byte": 6.3958,
+          "effective_128ctx_chars_gain": "6.40x",
+          "exact_roundtrip": true,
+          "encode_decode_ms": 0.452
+        },
+        "french": {
+          "target_vocab_size": 8192,
+          "actual_vocab_size": 714,
+          "total_tokens": 55,
+          "tokens_per_char": 0.1815,
+          "bytes_per_token": 5.6727,
+          "compression_vs_byte": 5.6727,
+          "effective_128ctx_chars_gain": "5.67x",
+          "exact_roundtrip": true,
+          "encode_decode_ms": 0.436
+        }
+      },
+      "bpe_16k_target": {
+        "arabic": {
+          "target_vocab_size": 16384,
+          "actual_vocab_size": 714,
+          "total_tokens": 38,
+          "tokens_per_char": 0.159,
+          "bytes_per_token": 11.6579,
+          "compression_vs_byte": 11.6579,
+          "effective_128ctx_chars_gain": "11.66x",
+          "exact_roundtrip": true,
+          "encode_decode_ms": 0.804
+        },
+        "english": {
+          "target_vocab_size": 16384,
+          "actual_vocab_size": 714,
+          "total_tokens": 48,
+          "tokens_per_char": 0.1564,
+          "bytes_per_token": 6.3958,
+          "compression_vs_byte": 6.3958,
+          "effective_128ctx_chars_gain": "6.40x",
+          "exact_roundtrip": true,
+          "encode_decode_ms": 0.432
+        },
+        "french": {
+          "target_vocab_size": 16384,
+          "actual_vocab_size": 714,
+          "total_tokens": 55,
+          "tokens_per_char": 0.1815,
+          "bytes_per_token": 5.6727,
+          "compression_vs_byte": 5.6727,
+          "effective_128ctx_chars_gain": "5.67x",
+          "exact_roundtrip": true,
+          "encode_decode_ms": 0.425
+        }
+      }
+    }
+  },
+  "agent_evaluation": {
+    "run_id": "eval_cac875c965f2",
+    "version": "3.0.0",
+    "metrics": {
+      "version": "3.0.0",
+      "task_success_rate": 1.0,
+      "tool_selection_accuracy": 1.0,
+      "planning_quality": 1.0,
+      "memory_retrieval_accuracy": 1.0,
+      "failure_recovery_rate": 1.0,
+      "avg_latency_ms": 102.65,
+      "hardware": {
+        "timestamp": 1795129184.1935225,
+        "os_name": "Windows 10",
+        "cpu_count": 4,
+        "process_rss_mb": 296.07,
+        "cuda_available": false,
+        "torch_num_threads": 2,
+        "degraded_mode": false,
+        "recommended_preset": "nano",
+        "recommended_context_length": 128
+      },
+      "multilingual_neural_quality": {
+        "arabic": {
+          "loss": 5.0237,
+          "perplexity": 151.9787,
+          "bits_per_byte": 7.2477
+        },
+        "english": {
+          "loss": 7.079,
+          "perplexity": 1186.7793,
+          "bits_per_byte": 10.2128
+        },
+        "french": {
+          "loss": 5.5705,
+          "perplexity": 262.558,
+          "bits_per_byte": 8.0365
+        }
+      },
+      "auto_train_on_unverified_feedback": false,
+      "task_details": [
+        {
+          "id": "bench_calc_en",
+          "status": "COMPLETED",
+          "tools_used": [
+            "python_sandbox"
+          ],
+          "recoveries": 0,
+          "latency_ms": 80.26
+        },
+        {
+          "id": "bench_calc_ar",
+          "status": "COMPLETED",
+          "tools_used": [
+            "python_sandbox"
+          ],
+          "recoveries": 0,
+          "latency_ms": 82.28
+        },
+        {
+          "id": "bench_doc_fr",
+          "status": "COMPLETED",
+          "tools_used": [
+            "document_analysis"
+          ],
+          "recoveries": 0,
+          "latency_ms": 82.66
+        },
+        {
+          "id": "bench_report_en",
+          "status": "COMPLETED",
+          "tools_used": [
+            "knowledge_retrieval",
+            "report_generation"
+          ],
+          "recoveries": 0,
+          "latency_ms": 101.79
+        },
+        {
+          "id": "bench_recovery_missing_file",
+          "status": "COMPLETED",
+          "tools_used": [
+            "knowledge_retrieval",
+            "knowledge_retrieval"
+          ],
+          "recoveries": 2,
+          "latency_ms": 166.26
+        }
+      ]
+    },
+    "regression_gate": {
+      "passed": true,
+      "failures": []
+    },
+    "created_at": 1795129184.193579
+  }
+}

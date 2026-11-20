@@ -2,16 +2,16 @@
 from __future__ import annotations
 
 import base64
+import binascii
 from contextlib import closing
 import hashlib
 import hmac
 import json
 import os
 from pathlib import Path
+import re
 import secrets
 import sqlite3
-import subprocess
-import sys
 import threading
 import time
 from typing import Any
@@ -85,12 +85,14 @@ class UserManager:
             raise ValueError("username must be between 3 and 64 characters")
         if not isinstance(password, str) or len(password) < 8:
             raise ValueError("password must be at least 8 characters")
+        if role not in ("user", "admin"):
+            raise ValueError("role must be 'user' or 'admin'")
         with self._lock:
             if username in self._users:
                 raise ValueError(f"user already exists: {username}")
             salt = secrets.token_hex(16)
             pwd_hash = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt.encode("utf-8"), 100_000).hex()
-            user_id = f"usr_{hashlib.sha256(username.encode('utf-8')).hexdigest()[:12]}"
+            user_id = f"usr_{secrets.token_hex(8)}"
             record = {
                 "user_id": user_id,
                 "username": username,
@@ -199,6 +201,10 @@ class RateLimiter:
         now = time.monotonic()
         cutoff = now - self.window_seconds
         with self._lock:
+            if len(self._events) > 1024:
+                stale_keys = [k for k, ts in self._events.items() if not any(t > cutoff for t in ts)]
+                for k in stale_keys:
+                    del self._events[k]
             history = [t for t in self._events.get(key, []) if t > cutoff]
             if len(history) >= self.max_requests:
                 self._events[key] = history
@@ -247,6 +253,8 @@ class SessionManager:
                     content TEXT NOT NULL,
                     created_at REAL NOT NULL
                 );
+                CREATE INDEX IF NOT EXISTS idx_prod_sessions_user_id ON prod_sessions(user_id);
+                CREATE INDEX IF NOT EXISTS idx_prod_messages_session_id ON prod_messages(session_id, id);
                 """
             )
             cols = [r[1] for r in conn.execute("PRAGMA table_info(prod_sessions)").fetchall()]
@@ -260,11 +268,15 @@ class SessionManager:
             s_rows = conn.execute(
                 "SELECT session_id, user_id, language, created_at, COALESCE(title, 'New NourAI Conversation') FROM prod_sessions"
             ).fetchall()
+            m_rows = conn.execute(
+                "SELECT session_id, role, content, created_at FROM prod_messages ORDER BY id ASC"
+            ).fetchall()
+            msgs_by_sid: dict[str, list[tuple[str, str, float]]] = {}
+            for m_sid, role, content, ts in m_rows:
+                msgs_by_sid.setdefault(m_sid, []).append((role, content, float(ts)))
+            max_msgs = self.max_turns_per_session * 2
             for sid, uid, lang, cat, title in s_rows:
-                m_rows = conn.execute(
-                    "SELECT role, content, created_at FROM prod_messages WHERE session_id = ? ORDER BY id ASC",
-                    (sid,),
-                ).fetchall()
+                sess_msgs = msgs_by_sid.get(sid, [])[-max_msgs:]
                 self._sessions[sid] = {
                     "session_id": sid,
                     "user_id": uid,
@@ -272,8 +284,8 @@ class SessionManager:
                     "title": title,
                     "created_at": float(cat),
                     "messages": [
-                        {"role": r, "content": c, "language": lang, "timestamp": float(ts)}
-                        for r, c, ts in m_rows
+                        {"role": r, "content": c, "language": lang, "timestamp": ts}
+                        for r, c, ts in sess_msgs
                     ],
                 }
 
@@ -473,10 +485,27 @@ class NourAIBackend:
         resolved_secret = secret_key or os.environ.get("NOURAI_SECRET_KEY") or secrets.token_hex(32)
         self.auth = AuthManager(secret_key=resolved_secret)
         self.rate_limiter = RateLimiter(max_requests=rate_limit_per_minute, window_seconds=60.0)
+        self.auth_rate_limiter = RateLimiter(max_requests=rate_limit_per_minute, window_seconds=60.0)
+        self.admin_rate_limiter = RateLimiter(max_requests=max(3, rate_limit_per_minute // 2), window_seconds=60.0)
         self.sessions = SessionManager(db_path=self.db_path)
         self.memories = LongTermMemoryStore(db_path=self.db_path)
         self.rag = LocalDocumentRAGStore(db_path=self.db_path)
+        self._cancel_lock = threading.Lock()
+        self._active_cancellations: dict[str, tuple[str, str, threading.Event]] = {}
+        self._repo_root = repo_root
+        self._v3_router = None
         self.openapi = build_openapi_spec()
+
+    def get_v3_router(self):
+        if self._v3_router is None:
+            from nourai.api.v3_routes import V3APIRouter
+            v3_db = self.db_path or (self._repo_root / "data" / "production" / "nourai_v3.sqlite3")
+            self._v3_router = V3APIRouter(
+                workspace_root=self._repo_root,
+                db_path=v3_db,
+                inference_engine=self.engine,
+            )
+        return self._v3_router
 
     def _authenticate(self, headers: dict[str, str]) -> dict[str, Any] | None:
         auth_header = headers.get("Authorization") or headers.get("authorization")
@@ -514,12 +543,25 @@ class NourAIBackend:
             "https://ypyai-95ca7.firebaseapp.com",
             "https://nourai-studio.onrender.com",
         )
-        allow_origin = origin if (origin in allowed_origins or origin.startswith("http://127.0.0.1") or origin.startswith("http://localhost")) else "http://127.0.0.1"
+        parsed_origin = urlparse(origin) if origin else None
+        is_local_origin = bool(
+            parsed_origin
+            and parsed_origin.scheme == "http"
+            and parsed_origin.hostname in ("127.0.0.1", "localhost")
+            and not parsed_origin.username
+            and not parsed_origin.password
+        )
+        allow_origin = origin if (origin in allowed_origins or is_local_origin) else "http://127.0.0.1"
         sec_headers = {
             "X-Content-Type-Options": "nosniff",
             "X-Frame-Options": "DENY",
-            "Content-Security-Policy": "default-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https:",
+            "Content-Security-Policy": (
+                "default-src 'self'; script-src 'self'; style-src 'self'; "
+                "img-src 'self' data: https:; connect-src 'self' https:; object-src 'none'; "
+                "base-uri 'self'; frame-ancestors 'none'"
+            ),
             "Cache-Control": "no-store",
+            "Vary": "Origin",
             "Access-Control-Allow-Origin": allow_origin,
             "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS",
             "Access-Control-Allow-Headers": "Content-Type, Authorization",
@@ -530,7 +572,34 @@ class NourAIBackend:
 
         # Public routes
         if method == "GET" and route == "/" and ui_html_provider is not None:
-            return 200, {**sec_headers, "Content-Type": "text/html; charset=utf-8"}, ui_html_provider()
+            html_body = ui_html_provider()
+            script_hashes = [
+                f"'sha256-{base64.b64encode(hashlib.sha256(m.encode('utf-8')).digest()).decode('ascii')}'"
+                for m in re.findall(r"<script>([\s\S]*?)</script>", html_body)
+            ]
+            style_hashes = [
+                f"'sha256-{base64.b64encode(hashlib.sha256(m.encode('utf-8')).digest()).decode('ascii')}'"
+                for m in re.findall(r"<style>([\s\S]*?)</style>", html_body)
+            ]
+            script_src = " ".join(["'self'"] + script_hashes)
+            style_src = " ".join(["'self'"] + style_hashes)
+            ui_headers = {
+                **sec_headers,
+                "Content-Type": "text/html; charset=utf-8",
+                "Content-Security-Policy": (
+                    f"default-src 'self'; script-src {script_src}; "
+                    f"style-src {style_src}; "
+                    "img-src 'self' data: https:; connect-src 'self' https:; object-src 'none'; "
+                    "base-uri 'self'; frame-ancestors 'none'"
+                ),
+            }
+            return 200, ui_headers, html_body
+
+        if method == "GET" and route == "/control-center":
+            cc_path = self._repo_root / "ui" / "control_center.html"
+            if cc_path.is_file():
+                cc_html = cc_path.read_text(encoding="utf-8")
+                return 200, {**sec_headers, "Content-Type": "text/html; charset=utf-8"}, cc_html
 
         if method == "GET" and route == "/googleba5e2e501ed82fe6.html":
             return (
@@ -555,19 +624,28 @@ class NourAIBackend:
                 "User-agent: *\nAllow: /\n",
             )
 
+        if method == "GET" and route == "/logo.svg":
+            logo_path = self._repo_root / "ui" / "logo.svg"
+            if logo_path.is_file():
+                return (
+                    200,
+                    {**sec_headers, "Content-Type": "image/svg+xml; charset=utf-8"},
+                    logo_path.read_text(encoding="utf-8"),
+                )
+
         if method == "GET" and route == "/manifest.json":
             return 200, sec_headers, {
-                "name": "NourAI",
-                "short_name": "NourAI",
+                "name": "JABRIX AI",
+                "short_name": "JABRIX AI",
                 "start_url": "/",
                 "display": "standalone",
-                "background_color": "#212121",
-                "theme_color": "#212121",
-                "description": "NourAI — Local-first Multilingual AI Assistant",
+                "background_color": "#14161A",
+                "theme_color": "#14161A",
+                "description": "JABRIX AI — Local-first Multilingual Autonomous AI Platform",
                 "icons": [
                     {
-                        "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Crect width='128' height='128' rx='28' fill='%23171717'/%3E%3Ctext x='64' y='84' font-size='68' text-anchor='middle' fill='%23ffffff'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E",
-                        "sizes": "192x192",
+                        "src": "/icon.svg",
+                        "sizes": "any",
                         "type": "image/svg+xml",
                     }
                 ],
@@ -585,26 +663,66 @@ class NourAIBackend:
         if method == "GET" and route == "/api/v1/openapi.json":
             return 200, sec_headers, self.openapi
 
+        if route.startswith("/api/v3/"):
+            pub_v3 = self.get_v3_router().handle_public(method, route, sec_headers)
+            if pub_v3 is not None:
+                return pub_v3
+
         if method == "POST" and route == "/api/v1/users/register":
+            reg_username = str(body.get("username", "")).strip()
+            reg_ip_ok, reg_rem = self.auth_rate_limiter.allow(f"register_ip:{client_ip}")
+            if not reg_ip_ok:
+                sec_headers["X-RateLimit-Remaining"] = "0"
+                return 429, sec_headers, {"error": "rate limit exceeded for registration; please retry later"}
+            if reg_username:
+                acct_hash = hashlib.sha256(reg_username.lower().encode("utf-8")).hexdigest()[:16]
+                reg_acct_ok, acct_rem = self.auth_rate_limiter.allow(f"register_acct:{acct_hash}")
+                reg_rem = min(reg_rem, acct_rem)
+                if not reg_acct_ok:
+                    sec_headers["X-RateLimit-Remaining"] = "0"
+                    return 429, sec_headers, {"error": "rate limit exceeded for registration; please retry later"}
+            sec_headers["X-RateLimit-Remaining"] = str(reg_rem)
+            if "role" in body and str(body.get("role", "user")).strip().lower() != "user":
+                return 403, sec_headers, {"error": "forbidden; self-registration only allows 'user' role"}
             try:
                 user = self.users.register_user(
-                    str(body.get("username", "")),
+                    reg_username,
                     str(body.get("password", "")),
-                    role=str(body.get("role", "user")),
+                    role="user",
                 )
                 return 201, sec_headers, {"status": "created", "user": user}
             except ValueError as exc:
                 return 400, sec_headers, {"error": str(exc)}
 
         if method == "POST" and route == "/api/v1/auth/token":
+            auth_username = str(body.get("username", "")).strip()
+            tok_ip_ok, tok_rem = self.auth_rate_limiter.allow(f"token_ip:{client_ip}")
+            if not tok_ip_ok:
+                sec_headers["X-RateLimit-Remaining"] = "0"
+                return 429, sec_headers, {"error": "rate limit exceeded for authentication; please retry later"}
+            if auth_username:
+                acct_hash = hashlib.sha256(auth_username.lower().encode("utf-8")).hexdigest()[:16]
+                tok_acct_ok, acct_rem = self.auth_rate_limiter.allow(f"token_acct:{acct_hash}")
+                tok_rem = min(tok_rem, acct_rem)
+                if not tok_acct_ok:
+                    sec_headers["X-RateLimit-Remaining"] = "0"
+                    return 429, sec_headers, {"error": "rate limit exceeded for authentication; please retry later"}
+            sec_headers["X-RateLimit-Remaining"] = str(tok_rem)
             user = self.users.verify_credentials(
-                str(body.get("username", "")),
+                auth_username,
                 str(body.get("password", "")),
             )
             if not user:
                 return 401, sec_headers, {"error": "invalid username or password"}
             token = self.auth.issue_token(user)
-            sec_headers["Set-Cookie"] = f"nourai_token={token}; Path=/; SameSite=Lax; Max-Age=604800"
+            is_https = (
+                (headers.get("X-Forwarded-Proto") or headers.get("x-forwarded-proto") or "").lower() == "https"
+                or origin.startswith("https://")
+            )
+            cookie_flags = f"nourai_token={token}; Path=/; HttpOnly; SameSite=Lax; Max-Age={self.auth.ttl_seconds}"
+            if is_https:
+                cookie_flags += "; Secure"
+            sec_headers["Set-Cookie"] = cookie_flags
             return 200, sec_headers, {"access_token": token, "token_type": "Bearer", "user": user}
 
         if method == "POST" and route == "/api/v1/auth/guest":
@@ -616,7 +734,14 @@ class NourAIBackend:
             guest_pwd = f"GuestPass#{secrets.token_hex(6)}"
             user = self.users.register_user(guest_uname, guest_pwd, role="user")
             token = self.auth.issue_token(user)
-            sec_headers["Set-Cookie"] = f"nourai_token={token}; Path=/; SameSite=Lax; Max-Age=604800"
+            is_https = (
+                (headers.get("X-Forwarded-Proto") or headers.get("x-forwarded-proto") or "").lower() == "https"
+                or origin.startswith("https://")
+            )
+            cookie_flags = f"nourai_token={token}; Path=/; HttpOnly; SameSite=Lax; Max-Age={self.auth.ttl_seconds}"
+            if is_https:
+                cookie_flags += "; Secure"
+            sec_headers["Set-Cookie"] = cookie_flags
             return 200, sec_headers, {"access_token": token, "token_type": "Bearer", "user": user}
 
         # Protected routes require Bearer authentication
@@ -633,6 +758,7 @@ class NourAIBackend:
         if method == "DELETE" and route == "/api/v1/users/me":
             deleted_sessions = self.sessions.delete_all_user_sessions(claims["sub"])
             self.memories.clear_memories(claims["sub"])
+            self.rag.clear_user_documents(claims["sub"])
             deleted_user = self.users.delete_user(claims["sub"])
             return 200, sec_headers, {
                 "status": "deleted",
@@ -662,7 +788,10 @@ class NourAIBackend:
                     raw_content = str(body.get("content", ""))
                     b64_content = str(body.get("content_base64", "")).strip()
                     if b64_content and not raw_content:
-                        raw_bytes = base64.b64decode(b64_content)
+                        try:
+                            raw_bytes = base64.b64decode(b64_content, validate=True)
+                        except (binascii.Error, ValueError) as exc:
+                            return 400, sec_headers, {"error": f"invalid base64 content: {exc}"}
                         raw_content = extract_text_from_binary_upload(fname, raw_bytes)
                     doc_meta = self.rag.ingest_document(
                         claims["sub"],
@@ -684,23 +813,9 @@ class NourAIBackend:
             code_str = str(body.get("code", "")).strip()
             if not code_str:
                 return 400, sec_headers, {"error": "code cannot be empty"}
-            forbidden = ("import subprocess", "import shutil", "import socket", "os.system", "os.remove", "os.unlink", "rmdir", "open(")
-            if any(f in code_str for f in forbidden):
-                return 400, sec_headers, {"error": "code contains restricted system/file operations"}
-            try:
-                proc = subprocess.run(
-                    [sys.executable, "-I", "-c", code_str],
-                    capture_output=True,
-                    text=True,
-                    timeout=4.0,
-                )
-                return 200, sec_headers, {
-                    "stdout": proc.stdout[:4000],
-                    "stderr": proc.stderr[:2000],
-                    "exit_code": proc.returncode,
-                }
-            except subprocess.TimeoutExpired:
-                return 408, sec_headers, {"error": "code execution timed out (4s limit)"}
+            return 403, sec_headers, {
+                "error": "server-side Python code execution is disabled for security; untrusted code cannot be executed on the server"
+            }
 
         if method == "POST" and route == "/api/v1/sessions":
             sess = self.sessions.create_session(
@@ -747,13 +862,35 @@ class NourAIBackend:
                     return 200, sec_headers, {"status": "deleted", "session_id": sid}
 
         if method == "POST" and route == "/api/v1/chat/stop":
-            self.engine.request_stop()
-            return 200, sec_headers, {"status": "stop_requested"}
+            target_sid = str(body.get("session_id") or "").strip()
+            cancelled_count = 0
+            with self._cancel_lock:
+                for uid, sid, ev in self._active_cancellations.values():
+                    if uid == claims["sub"] and (not target_sid or sid == target_sid):
+                        ev.set()
+                        cancelled_count += 1
+            return 200, sec_headers, {"status": "stop_requested", "cancelled_count": cancelled_count}
 
-        if method == "GET" and route == "/api/v1/admin/users":
+        if route == "/api/v1/admin/users":
             if claims.get("role") != "admin":
                 return 403, sec_headers, {"error": "forbidden; admin role required"}
-            return 200, sec_headers, {"users": self.users.list_users()}
+            adm_allowed, adm_rem = self.admin_rate_limiter.allow(f"admin:{claims['sub']}:{client_ip}")
+            sec_headers["X-RateLimit-Remaining"] = str(adm_rem)
+            if not adm_allowed:
+                return 429, sec_headers, {"error": "admin rate limit exceeded; please retry later"}
+            if method == "GET":
+                return 200, sec_headers, {"users": self.users.list_users()}
+            if method == "POST":
+                try:
+                    target_role = str(body.get("role", "user")).strip().lower()
+                    user = self.users.register_user(
+                        str(body.get("username", "")),
+                        str(body.get("password", "")),
+                        role=target_role,
+                    )
+                    return 201, sec_headers, {"status": "created", "user": user}
+                except ValueError as exc:
+                    return 400, sec_headers, {"error": str(exc)}
 
         if method == "POST" and route in ("/api/v1/chat", "/api/v1/chat/stream"):
             message = str(body.get("message", "")).strip()
@@ -790,19 +927,29 @@ class NourAIBackend:
 
             formatted_prompt = f"<|user|>\n{message}\n<|assistant|>\n"
 
-            gen_cfg = GenerationConfig(
-                max_new_tokens=min(int(body.get("max_new_tokens", 160)), 256),
-                strategy=str(body.get("strategy", "greedy")),
-                temperature=float(body.get("temperature", 0.7)),
-                top_k=int(body.get("top_k", 16)),
-                top_p=float(body.get("top_p", 0.90)),
-                repetition_penalty=float(body.get("repetition_penalty", 1.0)),
-                stop_sequences=("<|user|>", "<|endoftext|>"),
-            ).validate()
+            try:
+                raw_max_tokens = body.get("max_new_tokens", 160)
+                raw_temp = body.get("temperature", 0.7)
+                raw_top_k = body.get("top_k", 16)
+                raw_top_p = body.get("top_p", 0.90)
+                raw_rep = body.get("repetition_penalty", 1.0)
+                if any(isinstance(v, bool) for v in (raw_max_tokens, raw_temp, raw_top_k, raw_top_p, raw_rep)):
+                    raise ValueError("numeric generation parameters must not be boolean")
+                gen_cfg = GenerationConfig(
+                    max_new_tokens=min(int(raw_max_tokens), 256),
+                    strategy=str(body.get("strategy", "greedy")),
+                    temperature=float(raw_temp),
+                    top_k=int(raw_top_k),
+                    top_p=float(raw_top_p),
+                    repetition_penalty=float(raw_rep),
+                    stop_sequences=("<|user|>", "<|endoftext|>"),
+                ).validate()
+            except (ValueError, TypeError) as exc:
+                return 400, sec_headers, {"error": f"invalid generation parameter: {exc}"}
 
-            self.engine.reset_stop()
             enable_web_search = bool(body.get("enable_web_search", False))
             use_fallback = bool(body.get("use_fallback_assistant", self.use_capabilities))
+            allow_cloud_context = bool(body.get("allow_cloud_context", False))
 
             if enable_web_search:
                 t_web0 = time.perf_counter()
@@ -815,6 +962,7 @@ class NourAIBackend:
                     user_memories=all_user_memories,
                     rag_chunks=matched_rag_chunks,
                     persona=str(body.get("persona", "general")),
+                    allow_cloud_context=allow_cloud_context,
                 )
                 web_elapsed_ms = round((time.perf_counter() - t_web0) * 1000.0, 3)
                 reply_text = web_out["reply"]
@@ -899,36 +1047,55 @@ class NourAIBackend:
                     },
                 }
 
-            if route == "/api/v1/chat/stream":
-                raw_chunks = list(self.engine.stream_generate(formatted_prompt, gen_cfg))
-                chunks = [c.to_dict() for c in raw_chunks]
-                reply_text = "".join(c["text_delta"] for c in chunks)
+            req_cancel_id = secrets.token_hex(8)
+            cancel_event = threading.Event()
+            with self._cancel_lock:
+                self._active_cancellations[req_cancel_id] = (claims["sub"], str(session_id), cancel_event)
+            try:
+                if route == "/api/v1/chat/stream":
+                    raw_chunks = list(self.engine.stream_generate(formatted_prompt, gen_cfg, cancel_event=cancel_event))
+                    chunks = [c.to_dict() for c in raw_chunks]
+                    reply_text = "".join(c["text_delta"] for c in chunks)
+                    self.sessions.append_turn(str(session_id), "assistant", reply_text, language=language)
+                    return 200, sec_headers, {
+                        "session_id": session_id,
+                        "language": language,
+                        "response_source": "neural_model",
+                        "stream_chunks": chunks,
+                        "reply": reply_text,
+                    }
+
+                result = self.engine.generate(formatted_prompt, gen_cfg, cancel_event=cancel_event)
+                reply_text = result["generated_text"]
                 self.sessions.append_turn(str(session_id), "assistant", reply_text, language=language)
                 return 200, sec_headers, {
                     "session_id": session_id,
                     "language": language,
                     "response_source": "neural_model",
-                    "stream_chunks": chunks,
                     "reply": reply_text,
+                    "task": "neural_generation",
+                    "metrics": {
+                        "generated_tokens": result["generated_token_count"],
+                        "ttft_ms": result["ttft_ms"],
+                        "elapsed_ms": result["elapsed_ms"],
+                        "tokens_per_second": result["tokens_per_second"],
+                        "mode": "neural_model",
+                    },
                 }
+            finally:
+                with self._cancel_lock:
+                    self._active_cancellations.pop(req_cancel_id, None)
 
-            result = self.engine.generate(formatted_prompt, gen_cfg)
-            reply_text = result["generated_text"]
-            self.sessions.append_turn(str(session_id), "assistant", reply_text, language=language)
-            return 200, sec_headers, {
-                "session_id": session_id,
-                "language": language,
-                "response_source": "neural_model",
-                "reply": reply_text,
-                "task": "neural_generation",
-                "metrics": {
-                    "generated_tokens": result["generated_token_count"],
-                    "ttft_ms": result["ttft_ms"],
-                    "elapsed_ms": result["elapsed_ms"],
-                    "tokens_per_second": result["tokens_per_second"],
-                    "mode": "neural_model",
-                },
-            }
+        if route.startswith("/api/v3/"):
+            v3_res = self.get_v3_router().handle_authenticated(
+                method,
+                route,
+                claims=claims,
+                body=body,
+                sec_headers=sec_headers,
+            )
+            if v3_res is not None:
+                return v3_res
 
         return 404, sec_headers, {"error": f"route not found: {method} {route}"}
 

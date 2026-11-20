@@ -1,13 +1,13 @@
 {
-  "name": "NourAI",
-  "short_name": "NourAI",
+  "name": "JABRIX AI",
+  "short_name": "JABRIX AI",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#212121",
-  "theme_color": "#212121",
-  "description": "NourAI — مساعد ذكاء اصطناعي متعدد اللغات",
+  "background_color": "#14161A",
+  "theme_color": "#14161A",
+  "description": "JABRIX AI — نظام ذكاء اصطناعي محلي مستقل متعدد اللغات (العربية · الإنجليزية · الفرنسية)",
   "icons": [
     {
       "src": "/icon.svg",

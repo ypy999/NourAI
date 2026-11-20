@@ -1,0 +1,343 @@
+{
+  "version": "3.1.0",
+  "hardware": {
+    "timestamp": 1795160928.2195697,
+    "os_name": "Windows 10",
+    "cpu_count": 4,
+    "process_rss_mb": 518.05,
+    "cuda_available": false,
+    "torch_num_threads": 2,
+    "degraded_mode": false,
+    "recommended_preset": "nano",
+    "recommended_context_length": 128
+  },
+  "sft_dataset": {
+    "output_dir": "D:\\NourAI\\data\\processed\\v3_1_sft\\splits",
+    "train_count": 359,
+    "validation_count": 71,
+    "test_count": 73,
+    "train_language_distribution": {
+      "ar": 116,
+      "en": 122,
+      "fr": 121
+    },
+    "cross_split_leakage": 0
+  },
+  "training_summary": {
+    "base_checkpoint": "D:\\NourAI\\checkpoints\\phase16\\phase16_sft_aligned_model.pt",
+    "output_checkpoint": "D:\\NourAI\\checkpoints\\v3_1\\nourai_v3_1_model.pt",
+    "steps": 60,
+    "batch_size": 4,
+    "lr": 0.00025,
+    "lambda_anchor": 0.002,
+    "loss_start": 3.0149,
+    "loss_end": 2.6176,
+    "elapsed_seconds": 5.35
+  },
+  "checkpoints_evaluation": {
+    "v1_2_release_broken_small": {
+      "params": 4871168,
+      "context_length": 256,
+      "held_out_corpus_test": {
+        "arabic": {
+          "loss": 5.4029,
+          "perplexity": 222.05,
+          "bits_per_byte": 7.7947,
+          "tokens_evaluated": 6372,
+          "truncated_samples": 24
+        },
+        "english": {
+          "loss": 7.3399,
+          "perplexity": 1540.5271,
+          "bits_per_byte": 10.5892,
+          "tokens_evaluated": 1713,
+          "truncated_samples": 2
+        },
+        "french": {
+          "loss": 6.877,
+          "perplexity": 969.7105,
+          "bits_per_byte": 9.9214,
+          "tokens_evaluated": 1263,
+          "truncated_samples": 0
+        }
+      },
+      "held_out_v31_sft_test": {
+        "arabic": {
+          "loss": 5.9698,
+          "perplexity": 391.4148,
+          "bits_per_byte": 8.6126,
+          "tokens_evaluated": 4243,
+          "truncated_samples": 7
+        },
+        "english": {
+          "loss": 6.781,
+          "perplexity": 880.9131,
+          "bits_per_byte": 9.7829,
+          "tokens_evaluated": 3529,
+          "truncated_samples": 4
+        },
+        "french": {
+          "loss": 6.2839,
+          "perplexity": 535.8854,
+          "bits_per_byte": 9.0658,
+          "tokens_evaluated": 3395,
+          "truncated_samples": 6
+        }
+      },
+      "unseen_multilingual_bench": {
+        "arabic": {
+          "loss": 4.9765,
+          "perplexity": 144.9653,
+          "bits_per_byte": 7.1796,
+          "tokens_evaluated": 440,
+          "truncated_samples": 0
+        },
+        "english": {
+          "loss": 7.0889,
+          "perplexity": 1198.6034,
+          "bits_per_byte": 10.2271,
+          "tokens_evaluated": 304,
+          "truncated_samples": 0
+        },
+        "french": {
+          "loss": 5.571,
+          "perplexity": 262.7084,
+          "bits_per_byte": 8.0373,
+          "tokens_evaluated": 309,
+          "truncated_samples": 0
+        }
+      }
+    },
+    "phase16_healthy_nano_baseline": {
+      "params": 843008,
+      "context_length": 128,
+      "held_out_corpus_test": {
+        "arabic": {
+          "loss": 1.7955,
+          "perplexity": 6.0223,
+          "bits_per_byte": 2.5903,
+          "tokens_evaluated": 3175,
+          "truncated_samples": 25
+        },
+        "english": {
+          "loss": 3.2842,
+          "perplexity": 26.6878,
+          "bits_per_byte": 4.7381,
+          "tokens_evaluated": 1393,
+          "truncated_samples": 4
+        },
+        "french": {
+          "loss": 3.1383,
+          "perplexity": 23.0641,
+          "bits_per_byte": 4.5276,
+          "tokens_evaluated": 1261,
+          "truncated_samples": 1
+        }
+      },
+      "held_out_v31_sft_test": {
+        "arabic": {
+          "loss": 2.4578,
+          "perplexity": 11.6788,
+          "bits_per_byte": 3.5458,
+          "tokens_evaluated": 2807,
+          "truncated_samples": 12
+        },
+        "english": {
+          "loss": 3.5108,
+          "perplexity": 33.4757,
+          "bits_per_byte": 5.065,
+          "tokens_evaluated": 2538,
+          "truncated_samples": 12
+        },
+        "french": {
+          "loss": 3.435,
+          "perplexity": 31.0299,
+          "bits_per_byte": 4.9556,
+          "tokens_evaluated": 2400,
+          "truncated_samples": 12
+        }
+      },
+      "unseen_multilingual_bench": {
+        "arabic": {
+          "loss": 1.6448,
+          "perplexity": 5.1798,
+          "bits_per_byte": 2.3729,
+          "tokens_evaluated": 376,
+          "truncated_samples": 2
+        },
+        "english": {
+          "loss": 3.1674,
+          "perplexity": 23.7461,
+          "bits_per_byte": 4.5696,
+          "tokens_evaluated": 304,
+          "truncated_samples": 0
+        },
+        "french": {
+          "loss": 2.8689,
+          "perplexity": 17.6183,
+          "bits_per_byte": 4.139,
+          "tokens_evaluated": 309,
+          "truncated_samples": 0
+        }
+      }
+    },
+    "v3_1_forgetting_safe_nano": {
+      "params": 843008,
+      "context_length": 128,
+      "held_out_corpus_test": {
+        "arabic": {
+          "loss": 1.773,
+          "perplexity": 5.8885,
+          "bits_per_byte": 2.5579,
+          "tokens_evaluated": 3175,
+          "truncated_samples": 25
+        },
+        "english": {
+          "loss": 3.1448,
+          "perplexity": 23.2143,
+          "bits_per_byte": 4.5369,
+          "tokens_evaluated": 1393,
+          "truncated_samples": 4
+        },
+        "french": {
+          "loss": 3.0985,
+          "perplexity": 22.1657,
+          "bits_per_byte": 4.4703,
+          "tokens_evaluated": 1261,
+          "truncated_samples": 1
+        }
+      },
+      "held_out_v31_sft_test": {
+        "arabic": {
+          "loss": 2.0886,
+          "perplexity": 8.0736,
+          "bits_per_byte": 3.0132,
+          "tokens_evaluated": 2807,
+          "truncated_samples": 12
+        },
+        "english": {
+          "loss": 3.0027,
+          "perplexity": 20.1405,
+          "bits_per_byte": 4.332,
+          "tokens_evaluated": 2538,
+          "truncated_samples": 12
+        },
+        "french": {
+          "loss": 3.0154,
+          "perplexity": 20.3981,
+          "bits_per_byte": 4.3504,
+          "tokens_evaluated": 2400,
+          "truncated_samples": 12
+        }
+      },
+      "unseen_multilingual_bench": {
+        "arabic": {
+          "loss": 1.6615,
+          "perplexity": 5.2673,
+          "bits_per_byte": 2.3971,
+          "tokens_evaluated": 376,
+          "truncated_samples": 2
+        },
+        "english": {
+          "loss": 3.1188,
+          "perplexity": 22.6189,
+          "bits_per_byte": 4.4995,
+          "tokens_evaluated": 304,
+          "truncated_samples": 0
+        },
+        "french": {
+          "loss": 2.8282,
+          "perplexity": 16.9144,
+          "bits_per_byte": 4.0802,
+          "tokens_evaluated": 309,
+          "truncated_samples": 0
+        }
+      }
+    }
+  },
+  "preset_comparison": [
+    {
+      "preset": "nano",
+      "parameters": 843008,
+      "context_length": 128,
+      "fp32_weights_mb": 3.22,
+      "fp32_uncached_ms": 47.55,
+      "fp32_kv_cached_ms": 29.38,
+      "kv_cache_speedup": 1.62
+    },
+    {
+      "preset": "small",
+      "parameters": 4871168,
+      "context_length": 256,
+      "fp32_weights_mb": 18.58,
+      "fp32_uncached_ms": 137.08,
+      "fp32_kv_cached_ms": 101.72,
+      "kv_cache_speedup": 1.35
+    },
+    {
+      "preset": "base",
+      "parameters": 25615360,
+      "context_length": 512,
+      "fp32_weights_mb": 97.71,
+      "fp32_uncached_ms": 317.17,
+      "fp32_kv_cached_ms": 133.97,
+      "kv_cache_speedup": 2.37
+    }
+  ],
+  "agent_benchmark_105": {
+    "benchmark_version": "3.1.0",
+    "total_tasks": 105,
+    "total_passed": 105,
+    "total_failed": 0,
+    "success_rate": 1.0,
+    "total_elapsed_ms": 19592.94,
+    "avg_task_latency_ms": 186.58,
+    "by_category": {
+      "multi_step": {
+        "total": 10,
+        "passed": 10
+      },
+      "arabic_document_analysis": {
+        "total": 10,
+        "passed": 10
+      },
+      "english_research": {
+        "total": 10,
+        "passed": 10
+      },
+      "french_document_processing": {
+        "total": 10,
+        "passed": 10
+      },
+      "file_organization": {
+        "total": 10,
+        "passed": 10
+      },
+      "report_creation": {
+        "total": 10,
+        "passed": 10
+      },
+      "knowledge_retrieval": {
+        "total": 10,
+        "passed": 10
+      },
+      "multi_tool_workflows": {
+        "total": 10,
+        "passed": 10
+      },
+      "error_recovery": {
+        "total": 10,
+        "passed": 10
+      },
+      "interrupted_and_approval_recovery": {
+        "total": 8,
+        "passed": 8
+      },
+      "long_running_and_parallel_dag": {
+        "total": 7,
+        "passed": 7
+      }
+    },
+    "failed_tasks": []
+  }
+}
