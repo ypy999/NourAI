@@ -15,3 +15,7 @@
 | 8. Backend والتطبيقات | `COMPLETED_VERIFIED` (Web/Win/API) / `BLOCKED` (APK) | `tests/test_jebrex_apps.py` + `apps/windows/` + `apps/android/` |
 | 9. الأمان | `COMPLETED_VERIFIED` | `reports/security/security_audit_report.json` (`0 CRITICAL, 0 HIGH`) |
 | 10. المقارنة مع ChatGPT وGemini | `COMPLETED_VERIFIED` | `CHATGPT_GEMINI_COMPARISON.md` + `ROADMAP_TO_CHATGPT_GEMINI_LEVEL.md` |
+| 11. التخزين السحابي وإصدار البيانات (Phase A) | `COMPLETED_VERIFIED` | `docs/CLOUD_STORAGE_STRATEGY.md` + `scripts/artifact_storage.py` (`40/40` SHA-256) + `data/versioning.py` |
+| 12. المُرمّز BPE متعدد اللغات 32K–64K (Phase B) | `COMPLETED_VERIFIED` | `tokenizer/bpe_tokenizer.py` (`64.5%` ضغط عام، `72.25%` عربي، `100%` دقة إعادة بناء) |
+| 13. نموذج الأساس v2 125M–350M والتدريب السحابي (Phase C & D) | `COMPLETED_VERIFIED` (بنية + استئناف) / `BLOCKED` (تدريب مليارات) | `model/jebrex_transformer.py` (`124.28M` / `351.32M`) + `training/cloud_trainer.py` + `notebooks/JebrexAI_Cloud_GPU_Training.ipynb` |
+| 14. خط المحادثة SFT/DPO/RAG وواجهة الويب + النشر الحي (Phase E & Deploy) | `COMPLETED_VERIFIED` | `training/conversational_pipeline.py` + `https://ypyai-95ca7--jebrex-prod-vpozlkst.web.app` (`7/7` HTTPS PASS) + `reports/production_execution/` (12 تقريراً) |

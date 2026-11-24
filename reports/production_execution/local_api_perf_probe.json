@@ -1,0 +1,101 @@
+{
+  "measured_at_utc": "2026-11-24T22:20:10Z",
+  "endpoint_checks": {
+    "/": {
+      "status": 200,
+      "latency_ms": 20.51,
+      "bytes": 143690
+    },
+    "/about.html": {
+      "status": 200,
+      "latency_ms": 6.26,
+      "bytes": 7845
+    },
+    "/privacy.html": {
+      "status": 200,
+      "latency_ms": 7.42,
+      "bytes": 6694
+    },
+    "/report-bug.html": {
+      "status": 200,
+      "latency_ms": 7.33,
+      "bytes": 8274
+    },
+    "/api/v1/health": {
+      "status": 200,
+      "latency_ms": 7.63,
+      "bytes": 306
+    },
+    "/api/v1/model-info": {
+      "status": 200,
+      "latency_ms": 6.13,
+      "bytes": 483
+    },
+    "/api/v1/bug-reports": {
+      "status": 201,
+      "report_id": "bug_90c5be5f6f3b"
+    }
+  },
+  "neural_chat_latency_runs": [
+    {
+      "language": "arabic",
+      "http_status": 200,
+      "roundtrip_ms": 678.33,
+      "response_source": "neural_model",
+      "metrics": {
+        "generated_tokens": 32,
+        "ttft_ms": 19.595,
+        "elapsed_ms": 649.368,
+        "tokens_per_second": 49.28,
+        "context_turns_included": 0,
+        "prompt_tokens": 77,
+        "mode": "neural_model"
+      }
+    },
+    {
+      "language": "english",
+      "http_status": 200,
+      "roundtrip_ms": 678.2,
+      "response_source": "neural_model",
+      "metrics": {
+        "generated_tokens": 32,
+        "ttft_ms": 15.822,
+        "elapsed_ms": 650.975,
+        "tokens_per_second": 49.16,
+        "context_turns_included": 0,
+        "prompt_tokens": 63,
+        "mode": "neural_model"
+      }
+    },
+    {
+      "language": "french",
+      "http_status": 200,
+      "roundtrip_ms": 631.17,
+      "response_source": "neural_model",
+      "metrics": {
+        "generated_tokens": 32,
+        "ttft_ms": 18.381,
+        "elapsed_ms": 605.104,
+        "tokens_per_second": 52.88,
+        "context_turns_included": 0,
+        "prompt_tokens": 70,
+        "mode": "neural_model"
+      }
+    }
+  ],
+  "memory_status": {
+    "device": "cpu",
+    "context_length_limit": 256,
+    "parameter_count": 4871168,
+    "model_weights_mib": 18.582,
+    "process_rss_mib": 263.32,
+    "vram_allocated_mib": 0.0
+  },
+  "monitor_summary": {
+    "uptime_seconds": 2.303,
+    "total_requests": 11,
+    "total_errors": 0,
+    "error_rate": 0.0,
+    "rss_memory_mib": 263.3203125
+  }
+}

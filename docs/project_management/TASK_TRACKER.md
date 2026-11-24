@@ -23,4 +23,12 @@
 | `T-17` | Phase 10 | جمع بيانات أحدث نماذج ChatGPT وGoogle Gemini (`2026-11-24`) والمقارنة الشاملة | `COMPLETED_VERIFIED` | `CHATGPT_GEMINI_COMPARISON.md` + `ROADMAP_TO_CHATGPT_GEMINI_LEVEL.md` |
 | `T-18` | Final | إنشاء ملفات التقرير النهائي الـ 12 في `reports/final_completion/` والتحقق الشامل | `COMPLETED_VERIFIED` | `reports/final_completion/*` (12 ملفاً) + `276` اختباراً ناجحاً |
 | `T-19` | Quality | إثبات قدرة محادثة واستدلال عامة من أوزان النموذج العصبي المستقل | `FAILED` | حققت النماذج الثلاثة `0/21` (`0.0%`) بشرياً على أسئلة غير مرئية |
-| `T-20` | Scale | تدريب نموذج لغوي واسع النطاق (`BPE + GPU + مليارات التوكنات`) | `BLOCKED` | يتطلب عتاد GPU خارجي وبيانات مرخّصة ضخمة |
+| `T-20` | Scale | تدريب نموذج لغوي واسع النطاق (`125M–350M + GPU + مليارات التوكنات`) | `BLOCKED` | البنية جاهزة تماماً؛ التنفيذ يتطلب GPU سحابي وبيانات مرخّصة ضخمة |
+| `T-21` | Cloud Storage | استراتيجية التخزين السحابي، مانيفست SHA-256، التحميل الكسول، وسياسة الاحتفاظ | `COMPLETED_VERIFIED` | `docs/CLOUD_STORAGE_STRATEGY.md` + `scripts/artifact_storage.py` + `tests/test_jebrex_storage_and_versioning.py` (`4/4 PASS`) |
+| `T-22` | Phase A | إصدار مجموعات البيانات بمانيفست SHA-256 وفجوة الجاهزية الإنتاجية | `COMPLETED_VERIFIED` | `data/versioning.py` + `data/manifests/jebrex_v1_clean.v1.0.0.manifest.json` |
+| `T-23` | Phase B | بناء وتدريب وقياس Multilingual BPE Tokenizer (يدعم 32K–64K) | `COMPLETED_VERIFIED` | `tokenizer/bpe_tokenizer.py` + `tokenizer_benchmark.json` (`64.5%` تقليص، `72.25%` عربي، `4/4 PASS`) |
+| `T-24` | Phase C | بناء `JebrexTransformer v2` (RoPE/RMSNorm/SwiGLU/GQA/KV-Cache/GradCkpt، `125M–350M`) | `COMPLETED_VERIFIED` | `model/jebrex_transformer.py` (`124.28M` / `351.32M`) + `datasets/efficient_loader.py` (`5/5 PASS`) |
+| `T-25` | Phase D | بناء المدرب السحابي القابل للاستئناف + حزم SHA-256 المحمولة + دفتر Colab/Kaggle | `COMPLETED_VERIFIED` | `training/cloud_trainer.py` + `v2_sanity_training.json` + `notebooks/JebrexAI_Cloud_GPU_Training.ipynb` |
+| `T-26` | Phase E | خط المحادثة (Masked SFT + DPO + AST Math + Cited RAG + إثبات `is_synthetic`) | `COMPLETED_VERIFIED` | `training/conversational_pipeline.py` + `tests/test_jebrex_conversational_and_web.py` (`5/5 PASS`) |
+| `T-27` | Web & CI/CD | ترقية الواجهة (صفر استبدال خارجي سري) + صفحات About/Privacy/Bug + Docker + GitHub Actions | `COMPLETED_VERIFIED` | `ui/{index,about,privacy,report-bug}.html` + `Dockerfile` + `.github/workflows/{tests,deploy}.yml` |
+| `T-28` | Live Deploy | الرفع المنظم إلى GitHub + النشر الحي على Firebase Hosting + اختبار 7 مسارات HTTPS + 12 تقريراً | `COMPLETED_VERIFIED` | `comprehensive_project_audit` pushed + `https://ypyai-95ca7--jebrex-prod-vpozlkst.web.app` (`7/7 PASS`) + `reports/production_execution/*.md` |

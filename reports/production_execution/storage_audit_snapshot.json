@@ -1,0 +1,67 @@
+{
+  "month": "2026-11",
+  "generated_at_utc": "2026-11-24T22:17:02Z",
+  "workspace_dir_sizes_mib": {
+    ".github": 0.005,
+    "api": 0.17,
+    "apps": 0.042,
+    "backups": 0.323,
+    "checkpoints": 294.826,
+    "configs": 0.052,
+    "corpus": 0.463,
+    "data": 2.786,
+    "datasets": 0.033,
+    "deployment": 0.131,
+    "docs": 0.043,
+    "evaluation": 0.156,
+    "inference": 0.063,
+    "manifests": 0.014,
+    "model": 0.112,
+    "notebooks": 0.008,
+    "nourai": 0.251,
+    "releases": 18.623,
+    "reports": 2.647,
+    "requirements": 0.0,
+    "scripts": 0.06,
+    "security": 0.057,
+    "tests": 1.251,
+    "tokenizer": 0.131,
+    "training": 0.4,
+    "ui": 0.172
+  },
+  "indexed_artifacts_mib": 314.6817,
+  "duplicate_artifacts_mib": 43.5286,
+  "duplicates_detected": [
+    {
+      "path": "checkpoints/jebrex_v2_micro_sanity/run/step_000015.pt",
+      "duplicate_of": "checkpoints/jebrex_v2_micro_sanity/portable_bundle_step15/checkpoint.pt",
+      "size_bytes": 13064806,
+      "sha256": "068d024cc5a2ca997b41e0b20b9d992ac228427a37100738fb8a8b92bf3059b0"
+    },
+    {
+      "path": "checkpoints/jebrex_v2_micro_sanity/run/step_000030.pt",
+      "duplicate_of": "checkpoints/jebrex_v2_micro_sanity/run/latest.pt",
+      "size_bytes": 13065894,
+      "sha256": "5a65479b2b1d1fcf6193f700cb107509a57fa32b3eb05f1ab68ade5a429e2f43"
+    },
+    {
+      "path": "releases/v1.2.0/nourai_v1_2_model.pt",
+      "duplicate_of": "checkpoints/v1_2/nourai_v1_2_model.pt",
+      "size_bytes": 19512395,
+      "sha256": "695da3c353ad606a3f941279505039862c7e1dac3c63ea263ee085271dea6e87"
+    }
+  ],
+  "manifest_verification": {
+    "valid": true,
+    "verified_count": 40,
+    "missing": [],
+    "mismatched": []
+  },
+  "local_disk_free_gib": 6.712,
+  "monthly_cloud_cost_usd_actual": 0.0,
+  "active_free_tiers": {
+    "github": "Free Public Repo + Actions",
+    "firebase_hosting": "Spark Plan (10 GB storage, 360 MB/day transfer, 24/7 CDN)",
+    "render_api": "Not active (HTTP 404 probed 2026-11-24; Free plan sleeps after 15m idle)"
+  }
+}

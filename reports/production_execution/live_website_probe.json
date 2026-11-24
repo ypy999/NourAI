@@ -1,0 +1,143 @@
+{
+  "base_url": "https://ypyai-95ca7--jebrex-prod-vpozlkst.web.app",
+  "tested_at_utc": "2026-11-24T22:19:28Z",
+  "all_routes_passed": true,
+  "routes_passed": 7,
+  "routes_total": 7,
+  "avg_latency_ms": 236.65,
+  "routes": [
+    {
+      "route": "/",
+      "url": "https://ypyai-95ca7--jebrex-prod-vpozlkst.web.app/",
+      "status_code": 200,
+      "latency_ms": 431.26,
+      "bytes": 143690,
+      "content_type": "text/html; charset=utf-8",
+      "content_type_ok": true,
+      "security_headers": {
+        "x-frame-options": "DENY",
+        "x-content-type-options": "nosniff",
+        "referrer-policy": "strict-origin-when-cross-origin",
+        "strict-transport-security": "max-age=31556926; includeSubDomains; preload",
+        "cache-control": "max-age=3600"
+      },
+      "missing_expected_tokens": [],
+      "forbidden_external_llm_leaks": [],
+      "passed": true
+    },
+    {
+      "route": "/about.html",
+      "url": "https://ypyai-95ca7--jebrex-prod-vpozlkst.web.app/about.html",
+      "status_code": 200,
+      "latency_ms": 165.04,
+      "bytes": 7845,
+      "content_type": "text/html; charset=utf-8",
+      "content_type_ok": true,
+      "security_headers": {
+        "x-frame-options": "DENY",
+        "x-content-type-options": "nosniff",
+        "referrer-policy": "strict-origin-when-cross-origin",
+        "strict-transport-security": "max-age=31556926; includeSubDomains; preload",
+        "cache-control": "no-cache, no-store, must-revalidate"
+      },
+      "missing_expected_tokens": [],
+      "forbidden_external_llm_leaks": [],
+      "passed": true
+    },
+    {
+      "route": "/privacy.html",
+      "url": "https://ypyai-95ca7--jebrex-prod-vpozlkst.web.app/privacy.html",
+      "status_code": 200,
+      "latency_ms": 154.04,
+      "bytes": 6694,
+      "content_type": "text/html; charset=utf-8",
+      "content_type_ok": true,
+      "security_headers": {
+        "x-frame-options": "DENY",
+        "x-content-type-options": "nosniff",
+        "referrer-policy": "strict-origin-when-cross-origin",
+        "strict-transport-security": "max-age=31556926; includeSubDomains; preload",
+        "cache-control": "no-cache, no-store, must-revalidate"
+      },
+      "missing_expected_tokens": [],
+      "forbidden_external_llm_leaks": [],
+      "passed": true
+    },
+    {
+      "route": "/report-bug.html",
+      "url": "https://ypyai-95ca7--jebrex-prod-vpozlkst.web.app/report-bug.html",
+      "status_code": 200,
+      "latency_ms": 208.42,
+      "bytes": 8274,
+      "content_type": "text/html; charset=utf-8",
+      "content_type_ok": true,
+      "security_headers": {
+        "x-frame-options": "DENY",
+        "x-content-type-options": "nosniff",
+        "referrer-policy": "strict-origin-when-cross-origin",
+        "strict-transport-security": "max-age=31556926; includeSubDomains; preload",
+        "cache-control": "no-cache, no-store, must-revalidate"
+      },
+      "missing_expected_tokens": [],
+      "forbidden_external_llm_leaks": [],
+      "passed": true
+    },
+    {
+      "route": "/manifest.json",
+      "url": "https://ypyai-95ca7--jebrex-prod-vpozlkst.web.app/manifest.json",
+      "status_code": 200,
+      "latency_ms": 209.15,
+      "bytes": 389,
+      "content_type": "application/json",
+      "content_type_ok": true,
+      "security_headers": {
+        "x-frame-options": "DENY",
+        "x-content-type-options": "nosniff",
+        "referrer-policy": "strict-origin-when-cross-origin",
+        "strict-transport-security": "max-age=31556926; includeSubDomains; preload",
+        "cache-control": "max-age=3600"
+      },
+      "missing_expected_tokens": [],
+      "forbidden_external_llm_leaks": [],
+      "passed": true
+    },
+    {
+      "route": "/robots.txt",
+      "url": "https://ypyai-95ca7--jebrex-prod-vpozlkst.web.app/robots.txt",
+      "status_code": 200,
+      "latency_ms": 278.21,
+      "bytes": 89,
+      "content_type": "text/plain; charset=utf-8",
+      "content_type_ok": true,
+      "security_headers": {
+        "x-frame-options": "DENY",
+        "x-content-type-options": "nosniff",
+        "referrer-policy": "strict-origin-when-cross-origin",
+        "strict-transport-security": "max-age=31556926; includeSubDomains; preload",
+        "cache-control": "max-age=3600"
+      },
+      "missing_expected_tokens": [],
+      "forbidden_external_llm_leaks": [],
+      "passed": true
+    },
+    {
+      "route": "/icon.svg",
+      "url": "https://ypyai-95ca7--jebrex-prod-vpozlkst.web.app/icon.svg",
+      "status_code": 200,
+      "latency_ms": 210.44,
+      "bytes": 301,
+      "content_type": "image/svg+xml",
+      "content_type_ok": true,
+      "security_headers": {
+        "x-frame-options": "DENY",
+        "x-content-type-options": "nosniff",
+        "referrer-policy": "strict-origin-when-cross-origin",
+        "strict-transport-security": "max-age=31556926; includeSubDomains; preload",
+        "cache-control": "public, max-age=86400"
+      },
+      "missing_expected_tokens": [],
+      "forbidden_external_llm_leaks": [],
+      "passed": true
+    }
+  ]
+}

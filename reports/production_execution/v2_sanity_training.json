@@ -1,0 +1,401 @@
+{
+  "disclaimer": "CPU pipeline verification sanity run on jebrex-micro (~1.08M params) over clean split data. Proves architectural correctness, RoPE/RMSNorm/SwiGLU/GQA/KV-Cache, gradient checkpointing, memmap loading, and portable bundle resume — NOT full 125M-350M production training.",
+  "preset_parameter_audit": {
+    "jebrex-micro": {
+      "config": {
+        "vocab_size": 2312,
+        "d_model": 128,
+        "n_layers": 4,
+        "n_heads": 4,
+        "n_kv_heads": 2,
+        "intermediate_size": 384,
+        "max_seq_len": 256,
+        "rope_theta": 10000.0,
+        "rms_norm_eps": 1e-06,
+        "dropout": 0.0,
+        "tie_word_embeddings": true,
+        "gradient_checkpointing": false,
+        "architecture_version": "jebrex-v2-modern"
+      },
+      "total_parameters": 1083520,
+      "parameters_millions": 1.084,
+      "weights_bf16_mib": 2.07,
+      "weights_fp32_mib": 4.13,
+      "adamw_training_states_fp32_mib": 16.53
+    },
+    "jebrex-125m": {
+      "config": {
+        "vocab_size": 32768,
+        "d_model": 768,
+        "n_layers": 12,
+        "n_heads": 12,
+        "n_kv_heads": 6,
+        "intermediate_size": 2816,
+        "max_seq_len": 2048,
+        "rope_theta": 10000.0,
+        "rms_norm_eps": 1e-06,
+        "dropout": 0.0,
+        "tie_word_embeddings": true,
+        "gradient_checkpointing": false,
+        "architecture_version": "jebrex-v2-modern"
+      },
+      "total_parameters": 124275456,
+      "parameters_millions": 124.275,
+      "weights_bf16_mib": 237.04,
+      "weights_fp32_mib": 474.07,
+      "adamw_training_states_fp32_mib": 1896.29
+    },
+    "jebrex-350m": {
+      "config": {
+        "vocab_size": 32768,
+        "d_model": 1024,
+        "n_layers": 24,
+        "n_heads": 16,
+        "n_kv_heads": 4,
+        "intermediate_size": 3456,
+        "max_seq_len": 4096,
+        "rope_theta": 10000.0,
+        "rms_norm_eps": 1e-06,
+        "dropout": 0.0,
+        "tie_word_embeddings": true,
+        "gradient_checkpointing": false,
+        "architecture_version": "jebrex-v2-modern"
+      },
+      "total_parameters": 351323136,
+      "parameters_millions": 351.323,
+      "weights_bf16_mib": 670.1,
+      "weights_fp32_mib": 1340.19,
+      "adamw_training_states_fp32_mib": 5360.77
+    }
+  },
+  "sanity_model_parameters": {
+    "total_parameters": 1083520,
+    "trainable_parameters": 1083520
+  },
+  "packed_splits": {
+    "train": {
+      "source_jsonl": "data/processed/jebrex_v1_clean/splits/train.jsonl",
+      "bin_path": "checkpoints/jebrex_v2_micro_sanity/packed_bin/train.bin",
+      "dtype": "uint16",
+      "vocab_size": 2312,
+      "documents": 1234,
+      "total_tokens": 40857,
+      "size_bytes": 81714,
+      "sha256": "70efd17e00e1761389e1535120ec4f9f881f15eaf72499c7609172a975011140"
+    },
+    "validation": {
+      "source_jsonl": "data/processed/jebrex_v1_clean/splits/validation.jsonl",
+      "bin_path": "checkpoints/jebrex_v2_micro_sanity/packed_bin/val.bin",
+      "dtype": "uint16",
+      "vocab_size": 2312,
+      "documents": 213,
+      "total_tokens": 9650,
+      "size_bytes": 19300,
+      "sha256": "057bed912cc574dd2360077ae0fac28794ac638e745a00b7723da5b1ccacd0e7"
+    },
+    "test": {
+      "source_jsonl": "data/processed/jebrex_v1_clean/splits/test.jsonl",
+      "bin_path": "checkpoints/jebrex_v2_micro_sanity/packed_bin/test.bin",
+      "dtype": "uint16",
+      "vocab_size": 2312,
+      "documents": 252,
+      "total_tokens": 9551,
+      "size_bytes": 19102,
+      "sha256": "0b7d560a197cbcdb49be911d742bcf1e348b58c65df42e510535935080da7fdb"
+    }
+  },
+  "pre_training_held_out_test": {
+    "loss": 7.755918,
+    "perplexity": 2335.3514,
+    "tokens": 9472
+  },
+  "session_1_until_interrupt": {
+    "global_step": 15,
+    "steps_executed_this_session": 15,
+    "tokens_seen": 7680,
+    "best_val_loss": 7.119721,
+    "elapsed_sec": 2.5321,
+    "device": "cpu",
+    "precision": "torch.float32",
+    "gradient_checkpointing": true
+  },
+  "portable_bundle_export": {
+    "schema_version": 1,
+    "bundle_type": "jebrex_portable_checkpoint_v2",
+    "created_at_utc": "2026-11-24T22:09:01Z",
+    "global_step": 15,
+    "tokens_seen": 7680,
+    "best_val_loss": 7.119721,
+    "model_config": {
+      "vocab_size": 2312,
+      "d_model": 128,
+      "n_layers": 4,
+      "n_heads": 4,
+      "n_kv_heads": 2,
+      "intermediate_size": 384,
+      "max_seq_len": 256,
+      "rope_theta": 10000.0,
+      "rms_norm_eps": 1e-06,
+      "dropout": 0.0,
+      "tie_word_embeddings": true,
+      "gradient_checkpointing": true,
+      "architecture_version": "jebrex-v2-modern"
+    },
+    "tokenizer_sha256": "4059ea220a5664dcc613c79d681d00a21a58b89299f66aaba37fa379851685d5",
+    "remote_uri": "gdrive://JebrexAI/checkpoints/ (configure on Colab)",
+    "files": [
+      {
+        "name": "checkpoint.pt",
+        "size_bytes": 13064806,
+        "sha256": "068d024cc5a2ca997b41e0b20b9d992ac228427a37100738fb8a8b92bf3059b0"
+      }
+    ]
+  },
+  "session_2_bundle_resume": {
+    "resumed_from": "checkpoints/jebrex_v2_micro_sanity/portable_bundle_step15/checkpoint.pt",
+    "global_step": 15,
+    "tokens_seen": 7680,
+    "optimizer_state_entries": 38,
+    "scheduler_last_epoch": 15,
+    "bundle_verified_sha256": "068d024cc5a2ca997b41e0b20b9d992ac228427a37100738fb8a8b92bf3059b0"
+  },
+  "session_2_to_completion": {
+    "global_step": 30,
+    "steps_executed_this_session": 15,
+    "tokens_seen": 15360,
+    "best_val_loss": 6.91884,
+    "elapsed_sec": 4.6151,
+    "device": "cpu",
+    "precision": "torch.float32",
+    "gradient_checkpointing": true
+  },
+  "post_training_held_out_test": {
+    "loss": 6.882289,
+    "perplexity": 974.8551,
+    "tokens": 9472
+  },
+  "history": [
+    {
+      "step": 1,
+      "train_loss": 7.769598,
+      "train_ppl": 2367.5182,
+      "lr": 0.0004,
+      "tokens_seen": 512
+    },
+    {
+      "step": 2,
+      "train_loss": 7.7328,
+      "train_ppl": 2281.9817,
+      "lr": 0.0006,
+      "tokens_seen": 1024
+    },
+    {
+      "step": 3,
+      "train_loss": 7.667757,
+      "train_ppl": 2138.28,
+      "lr": 0.0008,
+      "tokens_seen": 1536
+    },
+    {
+      "step": 4,
+      "train_loss": 7.641705,
+      "train_ppl": 2083.2919,
+      "lr": 0.001,
+      "tokens_seen": 2048
+    },
+    {
+      "step": 5,
+      "train_loss": 7.543687,
+      "train_ppl": 1888.7818,
+      "lr": 0.001,
+      "tokens_seen": 2560
+    },
+    {
+      "step": 6,
+      "train_loss": 7.488719,
+      "train_ppl": 1787.7605,
+      "lr": 0.00099645,
+      "tokens_seen": 3072
+    },
+    {
+      "step": 7,
+      "train_loss": 7.42562,
+      "train_ppl": 1678.44,
+      "lr": 0.00098586,
+      "tokens_seen": 3584
+    },
+    {
+      "step": 8,
+      "train_loss": 7.435382,
+      "train_ppl": 1694.9049,
+      "lr": 0.0009684,
+      "tokens_seen": 4096
+    },
+    {
+      "step": 9,
+      "train_loss": 7.346076,
+      "train_ppl": 1550.1013,
+      "lr": 0.00094434,
+      "tokens_seen": 4608
+    },
+    {
+      "step": 10,
+      "train_loss": 7.365228,
+      "train_ppl": 1580.0752,
+      "lr": 0.00091406,
+      "tokens_seen": 5120
+    },
+    {
+      "step": 11,
+      "train_loss": 7.211299,
+      "train_ppl": 1354.6507,
+      "lr": 0.00087804,
+      "tokens_seen": 5632
+    },
+    {
+      "step": 12,
+      "train_loss": 7.243934,
+      "train_ppl": 1399.5894,
+      "lr": 0.00083684,
+      "tokens_seen": 6144
+    },
+    {
+      "step": 13,
+      "train_loss": 7.256076,
+      "train_ppl": 1416.6863,
+      "lr": 0.00079112,
+      "tokens_seen": 6656
+    },
+    {
+      "step": 14,
+      "train_loss": 7.523912,
+      "train_ppl": 1851.7973,
+      "lr": 0.0007416,
+      "tokens_seen": 7168
+    },
+    {
+      "step": 15,
+      "train_loss": 7.055466,
+      "train_ppl": 1159.1772,
+      "lr": 0.00068906,
+      "tokens_seen": 7680,
+      "val_loss": 7.119721,
+      "val_ppl": 1236.105
+    },
+    {
+      "step": 16,
+      "train_loss": 7.053892,
+      "train_ppl": 1157.3546,
+      "lr": 0.00063432,
+      "tokens_seen": 8192
+    },
+    {
+      "step": 17,
+      "train_loss": 6.91896,
+      "train_ppl": 1011.2678,
+      "lr": 0.00057826,
+      "tokens_seen": 8704
+    },
+    {
+      "step": 18,
+      "train_loss": 7.173674,
+      "train_ppl": 1304.6292,
+      "lr": 0.00052174,
+      "tokens_seen": 9216
+    },
+    {
+      "step": 19,
+      "train_loss": 6.88541,
+      "train_ppl": 977.9028,
+      "lr": 0.00046568,
+      "tokens_seen": 9728
+    },
+    {
+      "step": 20,
+      "train_loss": 6.924394,
+      "train_ppl": 1016.778,
+      "lr": 0.00041094,
+      "tokens_seen": 10240
+    },
+    {
+      "step": 21,
+      "train_loss": 6.959572,
+      "train_ppl": 1053.183,
+      "lr": 0.0003584,
+      "tokens_seen": 10752
+    },
+    {
+      "step": 22,
+      "train_loss": 6.803333,
+      "train_ppl": 900.8446,
+      "lr": 0.00030888,
+      "tokens_seen": 11264
+    },
+    {
+      "step": 23,
+      "train_loss": 6.900011,
+      "train_ppl": 992.2857,
+      "lr": 0.00026316,
+      "tokens_seen": 11776
+    },
+    {
+      "step": 24,
+      "train_loss": 6.973164,
+      "train_ppl": 1067.5954,
+      "lr": 0.00022196,
+      "tokens_seen": 12288
+    },
+    {
+      "step": 25,
+      "train_loss": 6.892307,
+      "train_ppl": 984.6707,
+      "lr": 0.00018594,
+      "tokens_seen": 12800
+    },
+    {
+      "step": 26,
+      "train_loss": 6.885512,
+      "train_ppl": 978.0026,
+      "lr": 0.00015566,
+      "tokens_seen": 13312
+    },
+    {
+      "step": 27,
+      "train_loss": 6.984529,
+      "train_ppl": 1079.7982,
+      "lr": 0.0001316,
+      "tokens_seen": 13824
+    },
+    {
+      "step": 28,
+      "train_loss": 6.920342,
+      "train_ppl": 1012.6667,
+      "lr": 0.00011414,
+      "tokens_seen": 14336
+    },
+    {
+      "step": 29,
+      "train_loss": 6.898417,
+      "train_ppl": 990.7052,
+      "lr": 0.00010355,
+      "tokens_seen": 14848
+    },
+    {
+      "step": 30,
+      "train_loss": 6.780085,
+      "train_ppl": 880.1436,
+      "lr": 0.0001,
+      "tokens_seen": 15360,
+      "val_loss": 6.91884,
+      "val_ppl": 1011.1466
+    }
+  ],
+  "kv_cache_benchmark": {
+    "prompt_tokens": 6,
+    "generated_tokens": 32,
+    "no_cache_ms": 262.53,
+    "with_cache_ms": 198.02,
+    "speedup_ratio": 1.326,
+    "greedy_output_exact_parity": true
+  }
+}
