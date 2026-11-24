@@ -1,0 +1,271 @@
+{
+  "verified_at_utc": "2026-11-24T22:39:27Z",
+  "live_website": {
+    "base_url": "https://ypyai-95ca7--jebrex-prod-vpozlkst.web.app",
+    "tested_at_utc": "2026-11-24T22:39:28Z",
+    "all_routes_passed": true,
+    "routes_passed": 7,
+    "routes_total": 7,
+    "avg_latency_ms": 199.43,
+    "routes": [
+      {
+        "route": "/",
+        "status_code": 200,
+        "latency_ms": 242.91,
+        "bytes": 125761,
+        "content_type": "text/html; charset=utf-8",
+        "hsts": "max-age=31556926; includeSubDomains; preload",
+        "x_frame_options": "DENY",
+        "missing_tokens": [],
+        "canned_or_external_leaks": [],
+        "passed": true
+      },
+      {
+        "route": "/about.html",
+        "status_code": 200,
+        "latency_ms": 181.85,
+        "bytes": 7845,
+        "content_type": "text/html; charset=utf-8",
+        "hsts": "max-age=31556926; includeSubDomains; preload",
+        "x_frame_options": "DENY",
+        "missing_tokens": [],
+        "canned_or_external_leaks": [],
+        "passed": true
+      },
+      {
+        "route": "/privacy.html",
+        "status_code": 200,
+        "latency_ms": 183.98,
+        "bytes": 6694,
+        "content_type": "text/html; charset=utf-8",
+        "hsts": "max-age=31556926; includeSubDomains; preload",
+        "x_frame_options": "DENY",
+        "missing_tokens": [],
+        "canned_or_external_leaks": [],
+        "passed": true
+      },
+      {
+        "route": "/report-bug.html",
+        "status_code": 200,
+        "latency_ms": 159.43,
+        "bytes": 8274,
+        "content_type": "text/html; charset=utf-8",
+        "hsts": "max-age=31556926; includeSubDomains; preload",
+        "x_frame_options": "DENY",
+        "missing_tokens": [],
+        "canned_or_external_leaks": [],
+        "passed": true
+      },
+      {
+        "route": "/manifest.json",
+        "status_code": 200,
+        "latency_ms": 155.77,
+        "bytes": 389,
+        "content_type": "application/json",
+        "hsts": "max-age=31556926; includeSubDomains; preload",
+        "x_frame_options": "DENY",
+        "missing_tokens": [],
+        "canned_or_external_leaks": [],
+        "passed": true
+      },
+      {
+        "route": "/robots.txt",
+        "status_code": 200,
+        "latency_ms": 250.63,
+        "bytes": 89,
+        "content_type": "text/plain; charset=utf-8",
+        "hsts": "max-age=31556926; includeSubDomains; preload",
+        "x_frame_options": "DENY",
+        "missing_tokens": [],
+        "canned_or_external_leaks": [],
+        "passed": true
+      },
+      {
+        "route": "/icon.svg",
+        "status_code": 200,
+        "latency_ms": 221.47,
+        "bytes": 301,
+        "content_type": "image/svg+xml",
+        "hsts": "max-age=31556926; includeSubDomains; preload",
+        "x_frame_options": "DENY",
+        "missing_tokens": [],
+        "canned_or_external_leaks": [],
+        "passed": true
+      }
+    ]
+  },
+  "v1_live_sse_conversation": {
+    "model_status": {
+      "project": "Jebrex AI",
+      "independent_local_model": true,
+      "secret_external_llm_substitution": false,
+      "model_family": "nourai-v1-gpt",
+      "architecture": "Decoder-Only Pre-LN GPT Transformer (Byte-Level)",
+      "parameter_count": 4871168,
+      "parameters_human": "4.87M",
+      "tokenizer_type": "ByteTokenizer",
+      "vocab_size": 260,
+      "context_length": 256,
+      "kv_cache_enabled": false,
+      "device": "cpu",
+      "checkpoint_path": "checkpoints/v1_2/nourai_v1_2_model.pt",
+      "checkpoint_sha256": "695da3c353ad606a3f941279505039862c7e1dac3c63ea263ee085271dea6e87",
+      "readiness_level": "RESEARCH_LAB_WEIGHTS_ONLY",
+      "production_ready": false,
+      "honest_disclosure": "Active weights are small laboratory weights; full 125M-350M cloud GPU pretraining on >=3B licensed tokens is still required for general conversational fluency.",
+      "total_requests": 0,
+      "total_generated_tokens": 0,
+      "memory": {
+        "device": "cpu",
+        "context_length_limit": 256,
+        "parameter_count": 4871168,
+        "model_weights_mib": 18.582,
+        "process_rss_mib": 270.91,
+        "vram_allocated_mib": 0.0
+      },
+      "streaming_sse_supported": true,
+      "multi_turn_context_supported": true,
+      "production_training_gate": "DATA_NOT_READY",
+      "languages": [
+        "arabic",
+        "english",
+        "french"
+      ]
+    },
+    "turns": [
+      {
+        "language": "arabic",
+        "prompt": "مرحبا، ما هو الذكاء الاصطناعي؟",
+        "response_source": "neural_model",
+        "context_turns_included": 0,
+        "delta_events": 24,
+        "generated_tokens": 24,
+        "ttft_ms": 31.715,
+        "elapsed_ms": 490.461,
+        "http_roundtrip_ms": 502.19,
+        "tokens_per_second": 48.93,
+        "raw_reply_preview": "ي ة قطر هي مدي"
+      },
+      {
+        "language": "english",
+        "prompt": "What did I just ask you about?",
+        "response_source": "neural_model",
+        "context_turns_included": 2,
+        "delta_events": 22,
+        "generated_tokens": 22,
+        "ttft_ms": 47.306,
+        "elapsed_ms": 864.003,
+        "http_roundtrip_ms": 875.45,
+        "tokens_per_second": 25.46,
+        "raw_reply_preview": "اوسي reathe f 40."
+      },
+      {
+        "language": "french",
+        "prompt": "Expliquez brièvement l'apprentissage automatique.",
+        "response_source": "neural_model",
+        "context_turns_included": 3,
+        "delta_events": 24,
+        "generated_tokens": 24,
+        "ttft_ms": 54.217,
+        "elapsed_ms": 1115.316,
+        "http_roundtrip_ms": 1127.06,
+        "tokens_per_second": 21.52,
+        "raw_reply_preview": "Riestares alyse Datinite"
+      }
+    ],
+    "monitor": {
+      "uptime_seconds": 3.004,
+      "total_requests": 5,
+      "total_errors": 0,
+      "error_rate": 0.0,
+      "rss_memory_mib": 290.734375
+    }
+  },
+  "v2_kv_cache_live_sse_conversation": {
+    "model_status": {
+      "project": "Jebrex AI",
+      "independent_local_model": true,
+      "secret_external_llm_substitution": false,
+      "model_family": "jebrex-v2-modern",
+      "architecture": "JebrexTransformer (RoPE + RMSNorm + SwiGLU + Causal GQA + KV-Cache)",
+      "parameter_count": 1083520,
+      "parameters_human": "1.08M",
+      "tokenizer_type": "MultilingualBPETokenizer",
+      "vocab_size": 2312,
+      "context_length": 256,
+      "kv_cache_enabled": true,
+      "device": "cpu",
+      "checkpoint_path": "checkpoints/jebrex_v2_micro_sanity/run/latest.pt",
+      "checkpoint_sha256": "5a65479b2b1d1fcf6193f700cb107509a57fa32b3eb05f1ab68ade5a429e2f43",
+      "readiness_level": "RESEARCH_LAB_WEIGHTS_ONLY",
+      "production_ready": false,
+      "honest_disclosure": "Active weights are small laboratory weights; full 125M-350M cloud GPU pretraining on >=3B licensed tokens is still required for general conversational fluency.",
+      "total_requests": 0,
+      "total_generated_tokens": 0,
+      "memory": {
+        "device": "cpu",
+        "context_length_limit": 256,
+        "parameter_count": 1083520,
+        "model_weights_mib": 4.1333,
+        "process_rss_mib": 275.45,
+        "vram_allocated_mib": 0.0
+      },
+      "streaming_sse_supported": true,
+      "multi_turn_context_supported": true,
+      "production_training_gate": "DATA_NOT_READY",
+      "languages": [
+        "arabic",
+        "english",
+        "french"
+      ]
+    },
+    "turns": [
+      {
+        "language": "arabic",
+        "prompt": "مرحبا، ما هو الذكاء الاصطناعي؟",
+        "response_source": "neural_model",
+        "context_turns_included": 0,
+        "delta_events": 2,
+        "generated_tokens": 2,
+        "ttft_ms": 19.326,
+        "elapsed_ms": 23.019,
+        "http_roundtrip_ms": 45.13,
+        "tokens_per_second": 86.88,
+        "raw_reply_preview": "."
+      },
+      {
+        "language": "english",
+        "prompt": "What did I just ask you about?",
+        "response_source": "neural_model",
+        "context_turns_included": 2,
+        "delta_events": 2,
+        "generated_tokens": 2,
+        "ttft_ms": 14.284,
+        "elapsed_ms": 17.988,
+        "http_roundtrip_ms": 28.65,
+        "tokens_per_second": 111.19,
+        "raw_reply_preview": "."
+      },
+      {
+        "language": "french",
+        "prompt": "Expliquez brièvement l'apprentissage automatique.",
+        "response_source": "neural_model",
+        "context_turns_included": 4,
+        "delta_events": 2,
+        "generated_tokens": 2,
+        "ttft_ms": 15.324,
+        "elapsed_ms": 19.445,
+        "http_roundtrip_ms": 30.5,
+        "tokens_per_second": 102.85,
+        "raw_reply_preview": "."
+      }
+    ],
+    "monitor": {
+      "uptime_seconds": 0.428,
+      "total_requests": 5,
+      "total_errors": 0,
+      "error_rate": 0.0,
+      "rss_memory_mib": 276.34375
+    }
+  }
+}

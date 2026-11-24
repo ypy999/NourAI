@@ -1,0 +1,196 @@
+{
+  "checked_at_utc": "2026-11-24T22:40:21Z",
+  "config_path": "configs/training_125m.json",
+  "target_stage": "stage_1_foundation_125m",
+  "target_preset": "jebrex-125m",
+  "expected_parameters": 124275456,
+  "verified_meta_parameters": 124275456,
+  "gate_status": "PRODUCTION_TRAINING_BLOCKED",
+  "training_allowed": false,
+  "blockers": [
+    "Dataset production gate is DATA_NOT_READY (need >= 3,000,000,000 licensed tokens; current train split has 40,857 BPE tokens / 122,518 Byte tokens).",
+    "Tokenizer vocabulary (2,312) has not reached production target (32,768) due to small local corpus.",
+    "CUDA GPU unavailable on current host (required >= 15.0 GiB VRAM for jebrex-125m)."
+  ],
+  "hardware": {
+    "cuda_available": false,
+    "gpu_name": null,
+    "gpu_vram_gib": 0.0,
+    "required_vram_gib": 15.0
+  },
+  "dataset_integrity": {
+    "valid": true,
+    "dataset_id": "jebrex_v1_clean",
+    "version": "v1.0.0",
+    "dataset_fingerprint_sha256": "44c653e205a9180d5361e5cc46dbf4c46b592d7446f9a888c9a3f57a3a23e629",
+    "mismatches": []
+  },
+  "dataset_production_gate": "DATA_NOT_READY",
+  "corpus_token_audit": {
+    "audited_at_utc": "2026-11-24T22:40:21Z",
+    "splits_dir": "data/processed/jebrex_v1_clean/splits",
+    "bpe_tokenizer_path": "tokenizer/artifacts/jebrex_bpe_v1.json",
+    "bpe_vocab_size": 2312,
+    "overall": {
+      "documents": 1699,
+      "chars": 147662,
+      "utf8_bytes": 171289,
+      "byte_tokens": 174687,
+      "bpe_tokens": 60058
+    },
+    "by_language_all_splits": {
+      "ar": {
+        "documents": 161,
+        "chars": 26837,
+        "utf8_bytes": 48229,
+        "byte_tokens": 48551,
+        "bpe_tokens": 13601
+      },
+      "en": {
+        "documents": 652,
+        "chars": 60980,
+        "utf8_bytes": 61073,
+        "byte_tokens": 62377,
+        "bpe_tokens": 23264
+      },
+      "fr": {
+        "documents": 886,
+        "chars": 59845,
+        "utf8_bytes": 61987,
+        "byte_tokens": 63759,
+        "bpe_tokens": 23193
+      }
+    },
+    "splits": {
+      "train": {
+        "path": "data/processed/jebrex_v1_clean/splits/train.jsonl",
+        "size_bytes": 858050,
+        "totals": {
+          "documents": 1234,
+          "chars": 104464,
+          "utf8_bytes": 120050,
+          "byte_tokens": 122518,
+          "bpe_tokens": 40857
+        },
+        "by_language": {
+          "ar": {
+            "documents": 106,
+            "chars": 17651,
+            "utf8_bytes": 31595,
+            "byte_tokens": 31807,
+            "bpe_tokens": 8910
+          },
+          "en": {
+            "documents": 440,
+            "chars": 44036,
+            "utf8_bytes": 44097,
+            "byte_tokens": 44977,
+            "bpe_tokens": 15997
+          },
+          "fr": {
+            "documents": 688,
+            "chars": 42777,
+            "utf8_bytes": 44358,
+            "byte_tokens": 45734,
+            "bpe_tokens": 15950
+          }
+        }
+      },
+      "validation": {
+        "path": "data/processed/jebrex_v1_clean/splits/validation.jsonl",
+        "size_bytes": 151738,
+        "totals": {
+          "documents": 213,
+          "chars": 21855,
+          "utf8_bytes": 25758,
+          "byte_tokens": 26184,
+          "bpe_tokens": 9650
+        },
+        "by_language": {
+          "ar": {
+            "documents": 27,
+            "chars": 4519,
+            "utf8_bytes": 8157,
+            "byte_tokens": 8211,
+            "bpe_tokens": 2283
+          },
+          "en": {
+            "documents": 110,
+            "chars": 8897,
+            "utf8_bytes": 8909,
+            "byte_tokens": 9129,
+            "bpe_tokens": 3682
+          },
+          "fr": {
+            "documents": 76,
+            "chars": 8439,
+            "utf8_bytes": 8692,
+            "byte_tokens": 8844,
+            "bpe_tokens": 3685
+          }
+        }
+      },
+      "test": {
+        "path": "data/processed/jebrex_v1_clean/splits/test.jsonl",
+        "size_bytes": 174742,
+        "totals": {
+          "documents": 252,
+          "chars": 21343,
+          "utf8_bytes": 25481,
+          "byte_tokens": 25985,
+          "bpe_tokens": 9551
+        },
+        "by_language": {
+          "ar": {
+            "documents": 28,
+            "chars": 4667,
+            "utf8_bytes": 8477,
+            "byte_tokens": 8533,
+            "bpe_tokens": 2408
+          },
+          "en": {
+            "documents": 102,
+            "chars": 8047,
+            "utf8_bytes": 8067,
+            "byte_tokens": 8271,
+            "bpe_tokens": 3585
+          },
+          "fr": {
+            "documents": 122,
+            "chars": 8629,
+            "utf8_bytes": 8937,
+            "byte_tokens": 9181,
+            "bpe_tokens": 3558
+          }
+        }
+      }
+    }
+  },
+  "notebook_check": {
+    "notebook_path": "notebooks/JebrexAI_Cloud_GPU_Training.ipynb",
+    "total_cells": 5,
+    "code_cells": 4,
+    "syntax_valid": true,
+    "errors": []
+  },
+  "preset_parameter_audit": {
+    "jebrex-micro": {
+      "total_parameters": 1083520,
+      "parameters_millions": 1.084,
+      "weights_bf16_mib": 2.07,
+      "adamw_training_states_fp32_mib": 16.53
+    },
+    "jebrex-125m": {
+      "total_parameters": 124275456,
+      "parameters_millions": 124.275,
+      "weights_bf16_mib": 237.04,
+      "adamw_training_states_fp32_mib": 1896.29
+    },
+    "jebrex-350m": {
+      "total_parameters": 351323136,
+      "parameters_millions": 351.323,
+      "weights_bf16_mib": 670.1,
+      "adamw_training_states_fp32_mib": 5360.77
+    }
+  }
+}

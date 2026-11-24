@@ -867,6 +867,14 @@
       </div>
     </header>
 
+    <div id="live-model-status-bar" role="status" aria-live="polite" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:0.5rem;padding:0.4rem 1rem;background:var(--bg-sidebar);border-bottom:1px solid var(--border);font-size:0.77rem;color:var(--text-muted);">
+      <span id="live-model-status-text">⏳ جاري فحص اتصال خادم Jebrex AI وحالة النموذج...</span>
+      <div style="display:flex;align-items:center;gap:0.6rem;">
+        <a href="/about.html" style="color:var(--accent);text-decoration:none;font-weight:600;">حالة النموذج</a>
+        <button type="button" onclick="toggleSettings()" style="background:transparent;border:1px solid var(--border);color:var(--text-main);border-radius:0.4rem;padding:0.15rem 0.5rem;font-size:0.74rem;cursor:pointer;">🔌 ربط خادم API</button>
+      </div>
+    </div>
+
     <div id="error-banner" role="alert">
       <span id="error-banner-text"></span>
       <button class="icon-btn" onclick="hideError()">✕</button>
@@ -1044,8 +1052,15 @@
           <input type="number" id="max-tokens-input" value="160" min="4" max="256" step="8" />
         </div>
         <div class="control-group">
-          <label for="gemini-key-input">مفتاح خارجي اختياري (للجلسة فقط — لا يُحفظ في Cookie)</label>
-          <input type="password" id="gemini-key-input" placeholder="اختياري — يُستخدم فقط في وضع البحث الخارجي" autocomplete="off" />
+          <label for="api-base-input">عنوان خادم Jebrex API (لربط النموذج العصبي المستقل)</label>
+          <div style="display:flex;gap:0.35rem;">
+            <input type="url" id="api-base-input" placeholder="https://your-api.example.com أو http://127.0.0.1:7860" autocomplete="off" style="flex:1;" />
+            <button type="button" class="icon-btn" style="padding:0 0.6rem;font-size:0.75rem;border:1px solid var(--border);" onclick="connectCustomApiBase()">ربط</button>
+          </div>
+        </div>
+        <div class="control-group">
+          <label for="gemini-key-input">مفتاح خارجي اختياري (معطّل افتراضياً — لا يُحفظ في Cookie)</label>
+          <input type="password" id="gemini-key-input" placeholder="غير مطلوب — النموذج مستقل" autocomplete="off" />
         </div>
       </div>
     </details>
@@ -1129,6 +1144,8 @@
     let activeSessionId = null;
     let authToken = null;
     let stopStreamingFlag = false;
+    let activeStreamController = null;
+    let liveModelStatus = null;
     let pendingImageBase64 = "";
     let pendingImageMime = "";
     let pendingImageName = "";
@@ -1273,12 +1290,63 @@
 
     function activateServerlessFallback() {
       backendOnline = false;
+      liveModelStatus = null;
       try { sessionStorage.setItem("nourai_serverless", "1"); } catch (e) {}
       authToken = "local-browser-session";
       const badge = document.getElementById("model-status-badge");
       if (badge) badge.textContent = "واجهة ثابتة 24/7 (بدون خادم خلفي)";
+      const bar = document.getElementById("live-model-status-text");
+      if (bar) {
+        bar.textContent = "🟠 واجهة ويب ثابتة 24/7 (لا يوجد خادم نموذج عصبي متصل — لا تُعرَض إجابات تجريبية كذكاء حقيقي)";
+      }
       hideError();
       return authToken;
+    }
+
+    async function refreshLiveModelStatus() {
+      const apiInput = document.getElementById("api-base-input");
+      if (apiInput && customApiBase) apiInput.value = customApiBase;
+      const bar = document.getElementById("live-model-status-text");
+      if (isStaticHosted && !customApiBase) {
+        activateServerlessFallback();
+        return null;
+      }
+      try {
+        const res = await fetchWithTimeout(API_BASE + "/api/v1/model/status", { method: "GET" }, 3500);
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const st = await res.json();
+        liveModelStatus = st;
+        backendOnline = true;
+        try { sessionStorage.removeItem("nourai_serverless"); } catch (e) {}
+        const badge = document.getElementById("model-status-badge");
+        if (badge) badge.textContent = `متصل · ${st.parameters_human || "محلي"}`;
+        if (bar) {
+          const kvTag = st.kv_cache_enabled ? "KV-Cache" : "No-KV";
+          const readyTag = st.production_ready ? "جاهز للإنتاج" : "أوزان بحثية مخبرية (ليست بمستوى ChatGPT/Gemini بعد)";
+          bar.textContent = `🟢 متصل بالنموذج العصبي المستقل: ${st.model_family} (${st.parameters_human}, ${st.tokenizer_type}, ${kvTag}, ${String(st.device || "cpu").toUpperCase()}) · ${readyTag}`;
+        }
+        return st;
+      } catch (e) {
+        activateServerlessFallback();
+        return null;
+      }
+    }
+
+    function connectCustomApiBase() {
+      const input = document.getElementById("api-base-input");
+      const raw = (input?.value || "").trim().replace(/\/+$/, "");
+      if (!raw) {
+        localStorage.removeItem("nourai_api_base");
+        window.location.href = window.location.pathname;
+        return;
+      }
+      if (!isSafeApiUrl(raw)) {
+        showError("الرابط غير صالح: يُسمح فقط بـ https://... أو http://127.0.0.1:PORT");
+        return;
+      }
+      localStorage.setItem("nourai_api_base", raw);
+      try { sessionStorage.removeItem("nourai_serverless"); } catch (e) {}
+      window.location.href = window.location.pathname + "?api=" + encodeURIComponent(raw);
     }
 
     async function fetchWithTimeout(url, options, ms = 4000) {
@@ -1511,12 +1579,19 @@
 
     async function stopGeneration() {
       stopStreamingFlag = true;
+      if (activeStreamController) {
+        try { activeStreamController.abort(); } catch (e) {}
+        activeStreamController = null;
+      }
+      if (!backendOnline) return;
       const token = await ensureAuthenticated();
       if (!token) return;
-      await fetch(API_BASE + "/api/v1/chat/stop", {
-        method: "POST",
-        headers: { "Authorization": "Bearer " + token }
-      });
+      try {
+        await fetch(API_BASE + "/api/v1/chat/stop", {
+          method: "POST",
+          headers: { "Authorization": "Bearer " + token }
+        });
+      } catch (e) {}
     }
 
     function switchLanguage(lang) {
@@ -2091,99 +2166,38 @@ function downloadWebm() {
         return `📄 **المحتوى المسترجع من المستند المحلي (RAG) \`${latest.filename}\`:**\n\n${topChunks}`;
       }
 
-      if (/^(مرحبا|اهلا|هلا|السلام عليكم|سلام|كيف حالك|كيفك|شلونك|اخبارك|صباح الخير|مساء الخير|hello|hi|hey|bonjour|salut)\b/i.test(normAr)) {
-        return "أهلاً بك في **Jebrex AI**! تعمل الواجهة حالياً في وضع الاستضافة الثابتة المستقلة (بدون استبدال بنماذج خارجية). يمكنك استخدام الآلة الحاسبة، البحث في ويكيبيديا بالمصادر، وتحليل ملفاتك محلياً، أو ربط خادم Jebrex API محلي للتوليد العصبي.";
-      }
-      if (normAr.includes("ماذا يمكنك") || normAr.includes("قدراتك") || normAr.includes("what can you do")) {
-        return "أنا **Jebrex AI** — مشروع نموذج لغوي مستقل متعدد اللغات (العربية، الإنجليزية، الفرنسية):\n\n1. **النموذج العصبي المحلي:** يعمل عبر خادم Jebrex API (معمارية v1 الحالية ومعمارية v2 الحديثة 125M–350M).\n2. **الاسترجاع المحلي بالمصادر (RAG):** تحليل مستندات PDF/TXT داخل المتصفح أو الخادم مع إظهار الفقرة المصدرية.\n3. **أدوات محلية شفافة:** الحساب الرياضي الدقيق، إدارة الجلسات والذاكرة، والبحث المفتوح في ويكيبيديا مع الروابط.\n\n*للتفاصيل الكاملة راجع صفحة «عن النموذج» (`/about.html`).*";
-      }
-      if (/^(ارسم|صمم صورة|اصنع صورة|draw |generate.*image)/i.test(q)) {
-        return "🎨 توليد الصور بالذكاء الاصطناعي غير مدمج في النموذج اللغوي المستقل لـ Jebrex AI حالياً، ولا نقوم باستدعاء خدمات توليد صور خارجية سراً.";
-      }
-      if (lower.includes("factorial") || lower.includes("مضروب")) {
-        return "إليك دالة بايثون لحساب مضروب العدد:\n\n```python\ndef factorial(n):\n    return 1 if n <= 1 else n * factorial(n - 1)\n\nprint(factorial(5))\n```";
+      // Honest static-only utilities (ZERO canned/demo fake AI replies):
+      // 1. Exact safe arithmetic calculator
+      const mathResult = NourAIToolCalling.tryMath(q);
+      if (mathResult) return mathResult;
+
+      // 2. Local uploaded document verbatim retrieval (RAG without LLM)
+      const docExcerpt = NourAIKnowledgeRetrieval.searchDocs(q);
+      if (docExcerpt) {
+        return `📄 **نتائج استرجاع حرفي من مستنداتك المحلية (بدون نموذج لغوي):**\n\n${docExcerpt}`;
       }
 
-      // 8 Smart Tools (Prompt Improver, ELI5, Summarizer, Style Changer, Idea Generator, Coding Helper, Proofreader, Quiz Generator)
-      const toolMatchers = [
-        { re: /^(?:حسن هذا السؤال|حسّن السؤال|تحسين السؤال)[^:：]*[:：]?\s*(.+)$/is, mode: "improve" },
-        { re: /^(?:اشرح لي ببساطة|شرح ببساطة)[^:：]*[:：]?\s*(.+)$/is, mode: "eli5" },
-        { re: /^(?:اختصر هذا النص|اختصار النص|لخص النص|لخص)[^:：]*[:：]?\s*(.+)$/is, mode: "summarize" },
-        { re: /^(?:غيّر أسلوب|غير اسلوب|تغيير الأسلوب)[^:：]*[:：]?\s*(.+)$/is, mode: "style" },
-        { re: /^(?:اقترح لي أفكار|مولد الأفكار|أفكار مشاريع)[^:：]*[:：]?\s*(.+)$/is, mode: "ideas" },
-        { re: /^(?:اكتب كوداً برمجياً|مساعد البرمجة|اشرح الكود)[^:：]*[:：]?\s*(.+)$/is, mode: "code_help" },
-        { re: /^(?:صحح الأخطاء|مدقق لغوي|صحح هذا النص|صحح)[^:：]*[:：]?\s*(.+)$/is, mode: "proofread" },
-        { re: /^(?:أنشئ اختباراً|مولد الاختبارات|اختبرني في)[^:：]*[:：]?\s*(.+)$/is, mode: "quiz" }
-      ];
-      for (const tm of toolMatchers) {
-        const m = q.match(tm.re);
-        if (m) {
-          const payloadTxt = (m[1] || q).trim();
-          // Strictly local deterministic smart-tool processing (no silent external LLM proxy)
-          if (tm.mode === "improve") {
-            return `✨ **السؤال بعد التحسين الاحترافي:**\n\n1. **الصيغة الدقيقة:** «ما هي الخطوات العملية والأدوات الموصى بها لتنفيذ: ${payloadTxt} بأعلى جودة وأقل تكلفة؟»\n2. **صيغة للبحث المعمق:** «قدّم تحليلاً شاملاً حول ${payloadTxt} مع ذكر المزايا والتحديات وأمثلة واقعية.»`;
-          }
-          if (tm.mode === "eli5") {
-            return `💡 **شرح «${payloadTxt}» ببساطة للمبتدئين:**\n\n- **الفكرة الأساسية:** تخيّل أن ${payloadTxt} يشبه أداة ذكية تساعدك على تنظيم خطواتك المعقدة وتحويلها إلى خطوات سهلة وسريعة.\n- **كيف تبدأ؟** ابدأ بمثال صغير واحد، جرّب النتيجة، ثم طوّرها تدريجياً.`;
-          }
-          if (tm.mode === "summarize") {
-            const words = payloadTxt.split(/\s+/);
-            const shortTxt = words.slice(0, Math.min(28, words.length)).join(" ");
-            return `📝 **اختصار النص:**\n\n- **الخلاصة:** ${shortTxt}${words.length > 28 ? "..." : ""}\n- **عدد الكلمات الأصلي:** ${words.length} كلمة.`;
-          }
-          if (tm.mode === "style") {
-            return `🎭 **تغيير أسلوب النص:**\n\n- **الأسلوب الرسمي:** «نودّ إفادتكم بما يلي: ${payloadTxt}.»\n- **الأسلوب الاحترافي:** «في إطار العمل على هذا الموضوع، نؤكد أن ${payloadTxt}.»\n- **الأسلوب البسيط:** «بكل بساطة: ${payloadTxt}.»`;
-          }
-          if (tm.mode === "ideas") {
-            return `🚀 **أفكار مشاريع وأسماء تجارية لـ «${payloadTxt}»:**\n\n**أفكار مشاريع:**\n1. منصة سحابية ذكية لخدمة ${payloadTxt} بالهاتف.\n2. مساعد شخصي مؤتمت يختصر الوقت في ${payloadTxt}.\n3. سوق مصغر يربط العملاء بخبراء ${payloadTxt}.\n\n**أسماء تجارية مقترحة:** \`نور ${payloadTxt.split(" ")[0]}\` · \`ذكي برو\` · \`مسار\` · \`ومضة\` · \`أفق AI\``;
-          }
-          if (tm.mode === "code_help") {
-            return `💻 **الكود المقترح مع الشرح لـ «${payloadTxt}»:**\n\n\`\`\`python\ndef solve_task(item):\n    # معالجة المدخل وإرجاع نتيجة منسقة\n    return f"تم تنفيذ المطلوب بنجاح: {item}"\n\nprint(solve_task("${payloadTxt.slice(0, 30)}"))\n\`\`\`\n- **الشرح:** الدالة تستقبل المدخل وتعالجه وتطبع النتيجة، ويمكنك الضغط على **▶️ تشغيل** لتجربتها فوراً.`;
-          }
-          if (tm.mode === "proofread") {
-            const fixed = payloadTxt.replace(/مادا/g, "ماذا").replace(/هاذا/g, "هذا").replace(/هاذه/g, "هذه").replace(/لاكن/g, "لكن").replace(/ذالك/g, "ذلك").replace(/انشاء الله/g, "إن شاء الله").replace(/\s+/g, " ").trim();
-            return `✍️ **التدقيق اللغوي:**\n\n- **النص المصحح:** «${fixed}»`;
-          }
-          if (tm.mode === "quiz") {
-            const quizObj = {
-              question: `سؤال اختبار حول «${payloadTxt.slice(0, 60)}»: ما هو الهدف الأساسي من هذا الموضوع؟`,
-              options: ["فهم المفهوم وتطبيقه عملياً بدقة", "تجاهل التفاصيل الأساسية", "الاعتماد على التخمين العشوائي", "تعقيد الخطوات بلا فائدة"],
-              correct: 0,
-              explanation: "أحسنت! الفهم الدقيق والتطبيق العملي هما أساس إتقان أي درس."
-            };
-            return `🎯 **اختبار تفاعلي من الدرس:**\n\n[QUIZ_JSON]${JSON.stringify(quizObj)}[/QUIZ_JSON]`;
-          }
-        }
-      }
-
-      const engineMode = document.getElementById("engine-mode-select")?.value || "";
-      const explicitSearch = /^(ابحث في قوقل|ابحث في الويب|ابحث عن|ابحث|جوجل|قوقل|search\s+for|search\s+|google\s+)/i.test(q);
-      const factualLookup = /^(من هو|من هي|من يكون|متى ولد|متى تأسس|أين تقع|ما هي عاصمة|كم عدد سكان|who is|when did|where is|capital of)\b/i.test(q);
-      const isNonSearchTask = /(اكتب\s+كود|برمجة|بايثون|جافاسكربت|خطط|خطة|فكرة|اقترح|قصة|رسالة|بريد|لخص|ترجم|احسب|ساعدني|كيف\s+أبدأ)/i.test(q);
-      const isShortChat = q.split(/\s+/).length <= 2 && !explicitSearch && !factualLookup;
-      const shouldSearchWeb = explicitSearch || (factualLookup && !isNonSearchTask) || (engineMode === "web_ai" && !isNonSearchTask && !isShortChat);
-
-      let wikiSnippet = "";
-      let wikiTitle = "";
-      let wikiUrl = "";
-      if (shouldSearchWeb) {
+      // 3. Explicit verified Wikipedia lookup with source URL
+      const explicitSearch = /^(ابحث في قوقل|ابحث في الويب|ابحث عن|ابحث|جوجل|قوقل|search\s+for|search\s+|google\s+|من هو|من هي|ما هي عاصمة|who is|capital of|qui est)\b/i.test(q);
+      if (explicitSearch) {
         try {
-          const cleanQ = q.replace(/^(ابحث في قوقل عن|ابحث في الويب عن|ابحث عن|ابحث|search for|search|google|ما هو|ما هي|من هو|من هي|من يكون|أخبرني عن|معلومات عن)\s+/i, "").replace(/[؟?!.]+$/, "").trim();
-          const primaryLang = /[\u0600-\u06FF]/.test(q) ? "ar" : "en";
-          const langsToTry = primaryLang === "ar" ? ["ar", "en"] : ["en", "ar"];
+          const cleanQ = q.replace(/^(ابحث في قوقل عن|ابحث في الويب عن|ابحث عن|ابحث|search for|search|google|ما هو|ما هي|من هو|من هي|who is|qui est)\s+/i, "").replace(/[؟?!.]+$/, "").trim();
+          const primaryLang = /[\u0600-\u06FF]/.test(q) ? "ar" : (/\b(bonjour|merci|qui|quelle|pourquoi|français)\b/i.test(q) ? "fr" : "en");
+          const langsToTry = primaryLang === "ar" ? ["ar", "en", "fr"] : (primaryLang === "fr" ? ["fr", "en"] : ["en", "ar"]);
           for (const wLang of langsToTry) {
-            if (wikiSnippet) break;
             const wRes = await fetchWithTimeout(`https://${wLang}.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(cleanQ)}&utf8=1&format=json&origin=*&srlimit=1`, {}, 2500);
             if (wRes.ok) {
               const wData = await wRes.json();
               const hit = wData.query && wData.query.search && wData.query.search[0];
               if (hit) {
-                wikiTitle = hit.title;
-                wikiUrl = `https://${wLang}.wikipedia.org/wiki/${encodeURIComponent(hit.title.replace(/ /g, "_"))}`;
+                const wikiTitle = hit.title;
+                const wikiUrl = `https://${wLang}.wikipedia.org/wiki/${encodeURIComponent(hit.title.replace(/ /g, "_"))}`;
                 const sumRes = await fetchWithTimeout(`https://${wLang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(hit.title.replace(/ /g, "_"))}`, {}, 2500);
                 if (sumRes.ok) {
                   const sumData = await sumRes.json();
-                  wikiSnippet = sumData.extract || "";
+                  if (sumData.extract) {
+                    return `**${wikiTitle}** *(مقتطف مباشر من ويكيبيديا — ليس توليداً عصبياً)*\n\n${sumData.extract}\n\n🌐 [المصدر: ويكيبيديا](${wikiUrl})`;
+                  }
                 }
               }
             }
@@ -2191,262 +2205,43 @@ function downloadWebm() {
         } catch (e) {}
       }
 
-      const isTeamMode = (document.getElementById("engine-mode-select").value === "team_ai" || persona === "team");
-      const rLen = document.getElementById("reply-length-select")?.value || "medium";
-      const rTone = document.getElementById("reply-tone-select")?.value || "simple";
-      const lenHint = rLen === "short" ? "Keep the answer concise (2-4 lines)." : (rLen === "detailed" ? "Provide a comprehensive, detailed explanation." : "Provide a balanced medium-length answer.");
-      const toneHint = `Tone: ${rTone}.`;
-
-      // Specialized Modes: Idea Lab, Interview Simulator, Decision Helper, Mindmap (AI-driven with safe offline fallback)
-      if (/^(اختبر هذه الفكرة|مختبر الأفكار|idea lab)/i.test(q)) {
-        const idea = q.replace(/^(اختبر هذه الفكرة وحلل نقاط القوة والمخاطر|مختبر الأفكار|idea lab)[:：]?\s*/i, "").trim() || q;
-        const aiLab = await callCloudLLM(
-          "You are a startup & product evaluator. Analyze the user's idea realistically in Arabic with: 1) نقاط القوة, 2) المخاطر المحتملة, 3) خطوة اختبار عملية خلال 14 يوماً.",
-          idea,
-          geminiKey,
-          true
-        );
-        if (aiLab) return `🧪 **مختبر الأفكار — تقييم «${idea}»:**\n\n${aiLab}`;
-        return `🧪 **مختبر الأفكار — تقييم «${idea}»:**\n\n` +
-          `- **نقاط القوة:** فكرة قابلة للتطبيق وتلبي حاجة حقيقية مع إمكانية التوسع الرقمي.\n` +
-          `- **المخاطر المحتملة:** المنافسة وتكاليف التسويق الأولية؛ يُنصح ببدء نسخة تجريبية صغيرة (MVP).\n` +
-          `- **الخطوة التالية:** حدد 3 عملاء أوائل واختبر النموذج خلال أسبوعين.`;
+      // 4. Honest static-mode disclosure: NEVER return canned/demo templates disguised as real AI
+      if (currentLanguage === "english") {
+        return "🔌 **Static Frontend Mode (No Neural Backend Connected):** Jebrex AI does not display canned demo replies as real AI and does not secretly call ChatGPT or Gemini.\n\nTo run independent neural generation, start the local Jebrex API server (`python run_nourai.py`) or connect an HTTPS API endpoint in Settings (⚙️ → API URL). In offline static mode, only exact math (`calculate 25 * 4`), local document search, and source-cited Wikipedia lookups (`search for ...`) are active.";
       }
-      if (/^(ابدأ محاكاة مقابلة|محاكي المقابلات|interview)/i.test(q)) {
-        const role = q.replace(/^(ابدأ محاكاة مقابلة عمل لوظيفة|محاكي المقابلات|interview)[:：]?\s*/i, "").trim() || "مطور برمجيات";
-        const aiInt = await callCloudLLM(
-          "You are a senior technical & HR interviewer. If this is the start of the interview, ask 1 focused, realistic interview question tailored to the target role in Arabic and invite the user to answer. If the user already answered a previous question in the conversation history, evaluate their answer out of 10 with constructive feedback and ask the next question.",
-          role,
-          geminiKey,
-          true
-        );
-        if (aiInt) return `🎤 **محاكي المقابلات — وظيفة «${role}»:**\n\n${aiInt}`;
-        return `🎤 **محاكي المقابلات — وظيفة «${role}»:**\n\n` +
-          `**السؤال الأول:** حدثني عن أصعب مشكلة تقنية أو مهنية واجهتها في «${role}»، وكيف قمت بتحليلها وحلها؟\n\n` +
-          `*(اكتب إجابتك الآن وسأقوم بتقييمها وإعطائك الدرجة ونصائح التحسين!)*`;
+      if (currentLanguage === "french") {
+        return "🔌 **Mode Statique (Aucun Backend Neural Connecté) :** Jebrex AI n'affiche jamais de réponses préfabriquées comme de la vraie intelligence et n'appelle aucun modèle externe en secret.\n\nPour activer le modèle neuronal indépendant, lancez le serveur local (`python run_nourai.py`) ou connectez une URL API HTTPS dans les Paramètres (⚙️).";
       }
-      if (/^(ساعدني في اتخاذ قرار|مساعد القرارات|decision)/i.test(q)) {
-        const topic = q.replace(/^(ساعدني في اتخاذ قرار مقارنة بين|مساعد القرارات|decision)[:：]?\s*/i, "").trim() || q;
-        const aiDec = await callCloudLLM(
-          "You are a strategic Decision Assistant. Compare the options mentioned by the user in Arabic using a clear table or bullet comparison (Pros, Cons, Cost/Risk) and conclude with a practical recommendation.",
-          topic,
-          geminiKey,
-          true
-        );
-        if (aiDec) return `⚖️ **مساعد القرارات — تحليل «${topic}»:**\n\n${aiDec}`;
-        return `⚖️ **مساعد القرارات — تحليل «${topic}»:**\n\n` +
-          `- **الخيار الأول:** مناسب إذا كانت أولويتك السرعة وتقليل التكلفة الأولية.\n` +
-          `- **الخيار الثاني:** مناسب إذا كنت تستهدف التوسع طويل المدى والمرونة.\n` +
-          `- **التوصية الذكية:** ابدأ بالخيار الأقل مخاطرة وقِس النتائج خلال 14 يوماً قبل الالتزام الكامل.`;
+      return "🔌 **وضع الواجهة الثابتة فقط (لا يوجد خادم نموذج عصبي متصل حالياً):** لا يعرض Jebrex AI إجابات تجريبية مُعلّبة على أنها ذكاء اصطناعي حقيقي، ولا يستبدل نموذجه سراً بـ ChatGPT أو Gemini.\n\nلتشغيل التوليد العصبي المستقل، شغّل الخادم المحلي (`python run_nourai.py`) أو اربط عنوان خادم Jebrex API عبر زر **🔌 ربط خادم API** أعلى الشاشة. المتاح محلياً بدون خادم حالياً هو: الحاسبة الدقيقة (`احسب 25 * 4`)، البحث الموثق في ويكيبيديا (`ابحث عن ...`)، والبحث الحرفي في مستنداتك المرفقة.";
+    }
+
+    function setBubbleProvenance(bubbleEl, source, modelStatus) {
+      if (!bubbleEl) return;
+      let pill = bubbleEl.querySelector(".msg-provenance-pill");
+      if (!pill) {
+        pill = document.createElement("div");
+        pill.className = "msg-provenance-pill";
+        pill.style.cssText = "font-size:0.72rem;color:var(--text-muted);margin-bottom:0.4rem;padding:0.18rem 0.55rem;border-radius:999px;display:inline-flex;align-items:center;gap:0.35rem;border:1px solid var(--border);background:rgba(255,255,255,0.03);";
+        bubbleEl.insertBefore(pill, bubbleEl.firstChild);
       }
-      if (/^(ارسم خريطة ذهنية|خريطة ذهنية|mindmap)/i.test(q)) {
-        const topic = q.replace(/^(ارسم خريطة ذهنية لـ|خريطة ذهنية|mindmap)[:：]?\s*/i, "").trim() || "التعلم الذكي";
-        let branches = ["1. الأساسيات", "2. الأدوات", "3. التطبيق", "4. التقييم"];
-        const aiMap = await callCloudLLM(
-          "Return ONLY a JSON array of 4 short Arabic branch titles (max 22 chars each) for a mind map about the given topic. Example: [\"المفهوم الأساسي\",\"الأدوات\",\"التطبيق العملي\",\"التحديات\"]",
-          topic,
-          geminiKey
-        );
-        if (aiMap) {
-          try {
-            const cleanedJson = aiMap.replace(/```json|```/gi, "").trim();
-            const parsed = JSON.parse(cleanedJson);
-            if (Array.isArray(parsed) && parsed.length >= 4) {
-              branches = parsed.slice(0, 4).map((b, idx) => `${idx + 1}. ${String(b).slice(0, 22)}`);
-            }
-          } catch (e) {}
-        }
-        const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 240" width="100%" height="220" style="background:#141418;border-radius:12px;"><rect x="230" y="95" width="180" height="48" rx="12" fill="#3b82f6"/><text x="320" y="124" fill="#fff" font-size="14" font-weight="bold" text-anchor="middle">${escapeHtml(topic.slice(0, 26))}</text><line x1="230" y1="119" x2="155" y2="55" stroke="#60a5fa" stroke-width="2"/><rect x="15" y="30" width="145" height="42" rx="8" fill="#1e293b" stroke="#60a5fa"/><text x="87" y="56" fill="#e2e8f0" font-size="11" text-anchor="middle">${escapeHtml(branches[0])}</text><line x1="230" y1="119" x2="155" y2="185" stroke="#a78bfa" stroke-width="2"/><rect x="15" y="165" width="145" height="42" rx="8" fill="#1e293b" stroke="#a78bfa"/><text x="87" y="191" fill="#e2e8f0" font-size="11" text-anchor="middle">${escapeHtml(branches[1])}</text><line x1="410" y1="119" x2="485" y2="55" stroke="#34d399" stroke-width="2"/><rect x="480" y="30" width="145" height="42" rx="8" fill="#1e293b" stroke="#34d399"/><text x="552" y="56" fill="#e2e8f0" font-size="11" text-anchor="middle">${escapeHtml(branches[2])}</text><line x1="410" y1="119" x2="485" y2="185" stroke="#f472b6" stroke-width="2"/><rect x="480" y="165" width="145" height="42" rx="8" fill="#1e293b" stroke="#f472b6"/><text x="552" y="191" fill="#e2e8f0" font-size="11" text-anchor="middle">${escapeHtml(branches[3])}</text></svg>`;
-        return `🗺️ **الخريطة الذهنية لـ «${topic}»:**\n\n\`\`\`svg\n${svg}\n\`\`\``;
+      if (source === "neural_model") {
+        const fam = modelStatus?.model_family || "Jebrex Neural";
+        const params = modelStatus?.parameters_human || "";
+        const ready = modelStatus?.production_ready ? "إنتاجي" : "أوزان بحثية";
+        pill.textContent = `🧠 النموذج العصبي المستقل (${fam}${params ? " · " + params : ""} · ${ready})`;
+        pill.style.borderColor = "rgba(16,163,127,0.45)";
+        pill.style.color = "#6ee7b7";
+      } else if (source === "rule_based_fallback_assistant") {
+        pill.textContent = "⚙️ مساعد قواعد محلي احتياطي (ليس نموذجاً عصبياً)";
+        pill.style.borderColor = "rgba(245,158,11,0.45)";
+        pill.style.color = "#fde68a";
+      } else if (source === "safety_guard") {
+        pill.textContent = "🛡️ حاجز الأمان الداخلي (Jebrex Safety Guard)";
+      } else {
+        pill.textContent = "🔌 وضع ثابت بدون خادم (أداة متصفح — ليس نموذجاً عصبياً)";
+        pill.style.borderColor = "rgba(245,158,11,0.45)";
+        pill.style.color = "#fde68a";
       }
-
-      // 1. AI Council (4 sequential expert calls: Technical, Business/Strategy, Creative/UX -> 4th Synthesizer)
-      if (/^(مجلس الخبراء|ai council)/i.test(q)) {
-        const topic = q.replace(/^(مجلس الخبراء|ai council)[:：]?\s*/i, "").trim() || q;
-        const [e1, e2, e3] = await Promise.all([
-          callCloudLLM("You are Expert 1 (Technical & Feasibility Analyst). Give a concise 2-line Arabic opinion.", topic, geminiKey),
-          callCloudLLM("You are Expert 2 (Financial & Market Strategist). Give a concise 2-line Arabic opinion.", topic, geminiKey),
-          callCloudLLM("You are Expert 3 (User Experience & Innovation). Give a concise 2-line Arabic opinion.", topic, geminiKey)
-        ]);
-        const v1 = e1 || `تقنياً: موضوع «${topic}» قابل للتنفيذ بأدوات خفيفة وسريعة دون تعقيد مكلف.`;
-        const v2 = e2 || `استراتيجياً: النجاح يعتمد على استهداف شريحة واضحة وقياس العائد مبكراً.`;
-        const v3 = e3 || `إبداعياً: تجربة المستخدم البسيطة هي ما يميز الحل ويجذب الجمهور.`;
-        const synth = await callCloudLLM("You are Expert 4 (Council Chair). Synthesize these 3 expert views into a concise final recommendation in Arabic.", `${v1}\n${v2}\n${v3}`, geminiKey);
-        return `🏛️ **جلسة مجلس الخبراء (AI Council — 4 استدعاءات):**\n\n` +
-          `- **1️⃣ الخبير التقني:** ${v1}\n` +
-          `- **2️⃣ الخبير الاستراتيجي:** ${v2}\n` +
-          `- **3️⃣ خبير الإبداع والتجربة:** ${v3}\n\n` +
-          `---\n**4️⃣ خلاصة رئيس المجلس:**\n${synth || "ابدأ بنموذج أولي مبسط يوازن بين الجدوى التقنية وتجربة المستخدم ثم وسّع النطاق تدريجياً."}`;
-      }
-
-      // 2. Idea Evolution (5 progressive versions)
-      if (/^(تطور الفكرة|idea evolution)/i.test(q)) {
-        const idea = q.replace(/^(تطور الفكرة|idea evolution)[:：]?\s*/i, "").trim() || q;
-        const cloudEv = await callCloudLLM("Transform this simple idea into 5 progressively advanced versions (v1 simple -> v5 full enterprise product) in Arabic.", idea, geminiKey);
-        if (cloudEv) return `🌱 **تطور الفكرة إلى 5 نسخ احترافية:**\n\n${cloudEv}`;
-        return `🌱 **تطور فكرة «${idea}» عبر 5 مراحل:**\n\n` +
-          `1. **النسخة 1 (فكرة أولية):** أداة بسيطة تحل مشكلة «${idea}» بشكل مباشر.\n` +
-          `2. **النسخة 2 (تجربة تفاعلية):** إضافة واجهة ويب وهاتف سريعة للمستخدمين.\n` +
-          `3. **النسخة 3 (ذكاء مخصص):** دمج حفظ التفضيلات والتوصيات الذكية.\n` +
-          `4. **النسخة 4 (منصة متكاملة):** حسابات مستخدمين، تحليلات أداء، وإشعارات.\n` +
-          `5. **النسخة 5 (مشروع احترافي):** نموذج اشتراكات، تكامل API، وتوسع إقليمي.`;
-      }
-
-      // 3. What If Scenarios
-      if (/^(ماذا لو|what if)/i.test(q)) {
-        const scenario = q.replace(/^(ماذا لو|what if)[:：]?\s*/i, "").trim() || q;
-        const cloudWhat = await callCloudLLM("Analyze this 'What If' scenario: list 3 possible outcomes, key risks, and hidden assumptions in Arabic.", scenario, geminiKey);
-        if (cloudWhat) return `🔮 **تحليل سيناريو «ماذا لو ${scenario}»:**\n\n${cloudWhat}`;
-        return `🔮 **تحليل سيناريو «ماذا لو ${scenario}»:**\n\n` +
-          `- **السيناريو المتفائل:** نجاح سريع إذا تم التركيز على ميزة واحدة مطلوبة وبأقل تكلفة.\n` +
-          `- **السيناريو الواقعي:** نمو تدريجي يتطلب تجريب السوق وتعديل الخطة خلال أول 30 يوماً.\n` +
-          `- **المخاطر والافتراضات:** نفاد الميزانية قبل الوصول للعميل الأول، لذا اعتمد الأدوات المجانية في البداية.`;
-      }
-
-      // 4. Interactive Knowledge Graph (AI-generated nodes with fallback)
-      if (/^(شبكة المعرفة|knowledge graph)/i.test(q)) {
-        const topic = q.replace(/^(شبكة المعرفة|knowledge graph)[:：]?\s*/i, "").trim() || "الذكاء الاصطناعي";
-        let nodes = [
-          { label: `أساسيات ${topic}` },
-          { label: `تطبيقات ${topic}` },
-          { label: `أدوات وتقنيات ${topic}` },
-          { label: `تحديات ومخاطر ${topic}` },
-          { label: `مستقبل ${topic}` }
-        ];
-        const aiKg = await callCloudLLM(
-          "Return ONLY a JSON array of 5 concise Arabic sub-concepts (each 2-5 words) related to the user's topic.",
-          topic,
-          geminiKey
-        );
-        if (aiKg) {
-          try {
-            const parsed = JSON.parse(aiKg.replace(/```json|```/gi, "").trim());
-            if (Array.isArray(parsed) && parsed.length >= 3) {
-              nodes = parsed.slice(0, 6).map(x => ({ label: String(x).trim() }));
-            }
-          } catch (e) {}
-        }
-        return `[KGRAPH_JSON]${JSON.stringify({ topic, nodes })}[/KGRAPH_JSON]`;
-      }
-
-      // 5. Reverse AI (How could I fail?)
-      if (/^(التفكير بالعكس|كيف أفشل|reverse ai)/i.test(q)) {
-        const goal = q.replace(/^(التفكير بالعكس|كيف أفشل|reverse ai)[:：]?\s*/i, "").trim() || q;
-        const cloudRev = await callCloudLLM("Apply Reverse Thinking (Pre-mortem): Explain 5 ways this project/goal could fail and how to prevent each mistake in Arabic.", goal, geminiKey);
-        if (cloudRev) return `🔁 **التفكير بالعكس — كيف تتجنب الفشل في «${goal}»:**\n\n${cloudRev}`;
-        return `🔁 **التفكير بالعكس لـ «${goal}» (أخطاء يجب تجنبها):**\n\n` +
-          `1. **البدء دون التحقق من الحاجة الفعلية:** اختبر الفكرة مع 5 مستخدمين أولاً.\n` +
-          `2. **التعقيد المبكر:** لا تبنِ كل الميزات دفعة واحدة، ابدأ بالأساس.\n` +
-          `3. **إهمال التسويق والوضوح:** اجعل قيمة المشروع واضحة من أول جملة.`;
-      }
-
-      // 6. Virtual Work Team (Programmer + Designer + Marketer + PM)
-      if (/^(فريق العمل|virtual team)/i.test(q)) {
-        const task = q.replace(/^(فريق العمل|virtual team)[:：]?\s*/i, "").trim() || q;
-        const cloudTeam = await callCloudLLM("Act as a 4-role Virtual Team (Programmer, Designer, Marketer, Project Manager). Each executes their part of the task concisely in Arabic.", task, geminiKey);
-        if (cloudTeam) return `👥 **مخرجات فريق العمل الافتراضي حول «${task}»:**\n\n${cloudTeam}`;
-        return `👥 **تنفيذ فريق العمل الافتراضي لمهمة «${task}»:**\n\n` +
-          `- **💻 المبرمج:** إعداد البنية الأساسية النظيفة وواجهة البيانات.\n` +
-          `- **🎨 المصمم:** تجهيز واجهة متجاوبة مريحة للعين على الهاتف والحاسوب.\n` +
-          `- **📣 المسوق:** صياغة عرض القيمة الجذاب وخطة الإطلاق للجمهور المستهدف.\n` +
-          `- **📋 مدير المشاريع:** تقسيم التنفيذ إلى 3 سباقات (Sprints) أسبوعية بمؤشرات قياس واضحة.`;
-      }
-
-      // 7. AI Debate (Pro + Con + Final Judge)
-      if (/^(مناظرة|debate)/i.test(q)) {
-        const topic = q.replace(/^(مناظرة|debate)[:：]?\s*/i, "").trim() || q;
-        const [pro, con] = await Promise.all([
-          callCloudLLM("Argue strongly IN FAVOR of this topic in 2-3 clear sentences in Arabic.", topic, geminiKey),
-          callCloudLLM("Argue strongly AGAINST this topic with counter-evidence in 2-3 clear sentences in Arabic.", topic, geminiKey)
-        ]);
-        const pTxt = pro || `المؤيد: «${topic}» يفتح آفاقاً جديدة للإنتاجية والسرعة والابتكار.`;
-        const cTxt = con || `المعارض: الإفراط في الاعتماد على «${topic}» قد يخلق تحديات في الجودة والخصوصية.`;
-        const judge = await callCloudLLM("You are the Debate Judge. Weigh both arguments and give a balanced verdict in Arabic.", `${pTxt}\n${cTxt}`, geminiKey);
-        return `⚖️ **مناظرة الذكاء الاصطناعي حول «${topic}»:**\n\n` +
-          `- **🟢 الطرف المؤيد:** ${pTxt}\n` +
-          `- **🔴 الطرف المعارض:** ${cTxt}\n\n` +
-          `---\n**🏛️ حكم القاضي النهائي:** ${judge || "المتوازن هو الاستفادة من المزايا مع وضع ضوابط جودة ومراجعة مستمرة."}`;
-      }
-
-      // 8. Smart Workflow Chain (AI-generated steps with fallback)
-      if (/^(سلسلة المهام|workflow)/i.test(q)) {
-        const goal = q.replace(/^(سلسلة المهام|workflow)[:：]?\s*/i, "").trim() || q;
-        let steps = [
-          `تحليل الهدف والجمهور المستهدف لـ «${goal}»`,
-          `وضع الخطة التنفيذية والأدوات المطلوبة`,
-          `صياغة المخرجات النهائية والمراجعة`
-        ];
-        const aiWf = await callCloudLLM(
-          "Return ONLY a JSON array of 3 to 5 clear sequential Arabic action steps to achieve the user's goal.",
-          goal,
-          geminiKey
-        );
-        if (aiWf) {
-          try {
-            const parsed = JSON.parse(aiWf.replace(/```json|```/gi, "").trim());
-            if (Array.isArray(parsed) && parsed.length >= 2) {
-              steps = parsed.slice(0, 5).map(s => String(s).trim());
-            }
-          } catch (e) {}
-        }
-        return `[WORKFLOW_JSON]${JSON.stringify({ goal, steps })}[/WORKFLOW_JSON]`;
-      }
-
-      // 9. Digital Twin (Mimics user's saved writing style)
-      if (/^(بأسلوبي الرقمي|النسخة الرقمية|digital twin)/i.test(q)) {
-        const topic = q.replace(/^(بأسلوبي الرقمي|النسخة الرقمية|digital twin)[:：]?\s*/i, "").trim() || q;
-        const twin = JSON.parse(localStorage.getItem("nourai_digital_twin") || '{"samples":[]}');
-        const styleSamples = (twin.samples || []).join(" | ");
-        const twinOut = await callCloudLLM(`You are the user's Digital Twin. Mimic their exact writing tone/style based on their past messages (${styleSamples || "direct, concise, Arabic"}).`, topic, geminiKey, true);
-        if (twinOut) return `🧬 **رد نسختك الرقمية (بأسلوبك الشخصي):**\n\n${twinOut}`;
-        return `🧬 **رد نسختك الرقمية حول «${topic}»:**\n\nبأسلوبك المباشر والعملي: ركز على تنفيذ «${topic}» بخطوات واضحة ومختصرة دون حشو. *(تعلّمت النسخة من ${twin.samples?.length || 0} رسالة من رسائلك السابقة).*`;
-      }
-
-      const teamInstruction = isTeamMode
-        ? "Synthesize insights naturally and directly in a single cohesive answer without unnecessary headings or debate/judge formatting."
-        : `Act as specialist: ${persona}.`;
-
-      // Run 7 Cognitive Subsystems: Memory extraction, Reasoning, Planning, Tool Calling, Knowledge Retrieval, Context
-      NourAILongTermMemory.extractAndStore(q);
-      const mathResult = NourAIToolCalling.tryMath(q);
-      if (mathResult) return mathResult;
-
-      const reasoning = NourAIReasoningEngine.analyze(q);
-      const planDirective = NourAIPlanningEngine.getDirective(reasoning);
-      const recalledMems = NourAILongTermMemory.recall();
-      const docExcerpt = NourAIKnowledgeRetrieval.searchDocs(q);
-      const ctxSummary = NourAIContextManager.summarizeOlderContext(NourAIContextManager.getTurns(12));
-
-      const sysPrompt = [
-        teamInstruction,
-        lenHint,
-        toneHint,
-        `Reasoning Focus: ${reasoning.intent}.`,
-        planDirective,
-        ctxSummary,
-        recalledMems.length ? `Long-Term User Memory: ${recalledMems.join("; ")}.` : ""
-      ].filter(Boolean).join(" ");
-
-      const contextParts = [];
-      if (wikiSnippet) contextParts.push(`Verified Reference Context (${wikiTitle}): ${wikiSnippet}`);
-      if (docExcerpt) contextParts.push(`Uploaded Document Knowledge:\n${docExcerpt}`);
-      const userWithCtx = contextParts.length ? `Question: ${q}\n\n${contextParts.join("\n\n")}` : q;
-
-      const cloudAnswer = await callCloudLLM(sysPrompt, userWithCtx, geminiKey, true);
-      if (cloudAnswer) {
-        const checked = NourAISelfChecker.verify(cloudAnswer);
-        return wikiUrl ? `${checked}\n\n🌐 [المصدر: ${wikiTitle}](${wikiUrl})` : checked;
-      }
-
-      if (wikiSnippet) {
-        return `**${wikiTitle}**\n\n${wikiSnippet}\n\n🌐 [المصدر: ويكيبيديا](${wikiUrl})`;
-      }
-
-      if (docExcerpt) {
-        return `📄 **نتائج البحث المحلي في مستنداتك (RAG):**\n\n${docExcerpt}`;
-      }
-
-      return "ℹ️ الواجهة تعمل حالياً في وضع الاستضافة الثابتة المستقلة (بدون خادم Jebrex API نشط) ولا نستخدم نماذج خارجية سراً. لتشغيل التوليد العصبي المستقل، شغّل خادم Jebrex محلياً أو اربط عنوان API عبر `?api=https://...`، أو استخدم البحث الموثق (مثال: `ابحث عن الذكاء الاصطناعي`) أو الحساب (`احسب 25 * 4`).";
     }
 
     async function sendStreamingMessage() {
@@ -2483,7 +2278,8 @@ function downloadWebm() {
       try {
         let replyText = "";
         let payload = null;
-        if (backendOnline) {
+        let streamedViaSSE = false;
+        if (backendOnline && !sentImgB64) {
           try {
             let reqBody = {
               session_id: activeSessionId,
@@ -2499,13 +2295,18 @@ function downloadWebm() {
               top_p: parseFloat(document.getElementById("top-p-input").value),
               max_new_tokens: parseInt(document.getElementById("max-tokens-input").value, 10)
             };
+            const wantSSE = !enableWebSearch;
+            activeStreamController = new AbortController();
+            const reqHeaders = {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + token,
+              ...(wantSSE ? { "Accept": "text/event-stream, application/json" } : {})
+            };
             let response = await fetch(API_BASE + "/api/v1/chat/stream", {
               method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + token
-              },
-              body: JSON.stringify(reqBody)
+              headers: reqHeaders,
+              body: JSON.stringify(reqBody),
+              signal: activeStreamController.signal
             });
             if (response.status === 404 && activeSessionId) {
               activeSessionId = null;
@@ -2513,27 +2314,74 @@ function downloadWebm() {
               reqBody.session_id = null;
               response = await fetch(API_BASE + "/api/v1/chat/stream", {
                 method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  "Authorization": "Bearer " + token
-                },
-                body: JSON.stringify(reqBody)
+                headers: reqHeaders,
+                body: JSON.stringify(reqBody),
+                signal: activeStreamController.signal
               });
             }
             if (!response.ok) throw new Error("HTTP " + response.status);
-            payload = await response.json();
+            const ct = (response.headers.get("content-type") || "").toLowerCase();
+            if (ct.includes("text/event-stream") && response.body) {
+              streamedViaSSE = true;
+              const reader = response.body.getReader();
+              const decoder = new TextDecoder("utf-8");
+              let buf = "";
+              let fullStreamed = "";
+              while (true) {
+                const { done, value } = await reader.read();
+                if (done || stopStreamingFlag) break;
+                buf += decoder.decode(value, { stream: true });
+                const frames = buf.split("\n\n");
+                buf = frames.pop() || "";
+                for (const frame of frames) {
+                  let evName = "message";
+                  let dataStr = "";
+                  for (const line of frame.split("\n")) {
+                    if (line.startsWith("event:")) evName = line.slice(6).trim();
+                    else if (line.startsWith("data:")) dataStr += line.slice(5).trim();
+                  }
+                  if (!dataStr) continue;
+                  try {
+                    const obj = JSON.parse(dataStr);
+                    if (evName === "meta") {
+                      activeSessionId = obj.session_id || activeSessionId;
+                      setCookie("nourai_active_session", activeSessionId, 7);
+                      setBubbleProvenance(assistantObj.bubble, obj.response_source || "neural_model", obj.model_status || liveModelStatus);
+                    } else if (evName === "delta") {
+                      fullStreamed += obj.text_delta || "";
+                      renderFormattedContent(assistantObj.textNode, fullStreamed);
+                      const container = document.getElementById("chat-messages");
+                      container.scrollTop = container.scrollHeight;
+                    } else if (evName === "done" && !fullStreamed && obj.reply) {
+                      fullStreamed = obj.reply;
+                      renderFormattedContent(assistantObj.textNode, fullStreamed);
+                    }
+                  } catch (e) {}
+                }
+              }
+              if (document.getElementById("auto-voice-toggle").checked) speakText(fullStreamed);
+            } else {
+              payload = await response.json();
+            }
           } catch (netErr) {
-            if (API_BASE !== "") {
+            if (netErr && netErr.name === "AbortError") {
+              streamedViaSSE = true;
+            } else if (API_BASE !== "") {
               activateServerlessFallback();
             } else {
               throw netErr;
             }
+          } finally {
+            activeStreamController = null;
           }
         }
 
-        if (payload && payload.stream_chunks && !sentImgB64) {
+        if (streamedViaSSE) {
+          // Streamed token-by-token via SSE
+        } else if (payload && payload.stream_chunks && !sentImgB64) {
           activeSessionId = payload.session_id || activeSessionId;
           setCookie("nourai_active_session", activeSessionId, 7);
+          setBubbleProvenance(assistantObj.bubble, payload.response_source || "neural_model", payload.model_status || liveModelStatus);
           let fullStreamed = "";
           for (const chunk of payload.stream_chunks) {
             if (stopStreamingFlag) break;
@@ -2553,6 +2401,7 @@ function downloadWebm() {
           }
           if (document.getElementById("auto-voice-toggle").checked) speakText(fullStreamed);
         } else {
+          setBubbleProvenance(assistantObj.bubble, "static_browser_only", null);
           replyText = await generateBrowserReply(text, geminiKey, sentImgB64, sentImgMime);
           renderFormattedContent(assistantObj.textNode, replyText);
           if (document.getElementById("auto-voice-toggle").checked) speakText(replyText);
@@ -2925,6 +2774,7 @@ function downloadWebm() {
       if (savedTone && document.getElementById("reply-tone-select")) {
         document.getElementById("reply-tone-select").value = savedTone;
       }
+      await refreshLiveModelStatus();
       await refreshSessionList();
       const savedSess = getCookie("nourai_active_session");
       if (savedSess) {

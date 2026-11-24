@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "stage": "stage_2_foundation_350m",
+  "prerequisite_stage": "stage_1_foundation_125m",
+  "preset": "jebrex-350m",
+  "expected_parameters": 351323136,
+  "requires_production_data_gate": true,
+  "requires_cuda_gpu": true,
+  "min_gpu_vram_gib": 24.0,
+  "min_production_tokens_total": 10000000000,
+  "min_production_tokens_per_language": {
+    "ar": 3000000000,
+    "en": 3500000000,
+    "fr": 3500000000
+  },
+  "target_tokenizer_vocab_size": 32768,
+  "model": {
+    "vocab_size": 32768,
+    "d_model": 1024,
+    "n_layers": 24,
+    "n_heads": 16,
+    "n_kv_heads": 4,
+    "intermediate_size": 3456,
+    "max_seq_len": 4096,
+    "rope_theta": 10000.0,
+    "rms_norm_eps": 1e-06,
+    "tie_word_embeddings": true,
+    "gradient_checkpointing": true
+  },
+  "training": {
+    "batch_size": 2,
+    "grad_accum_steps": 64,
+    "block_size": 4096,
+    "effective_tokens_per_step": 524288,
+    "max_steps": 19100,
+    "warmup_steps": 1000,
+    "learning_rate": 0.0003,
+    "min_lr_ratio": 0.1,
+    "weight_decay": 0.1,
+    "grad_clip": 1.0,
+    "eval_interval": 500,
+    "save_interval": 250,
+    "keep_last_checkpoints": 3,
+    "mixed_precision": "bf16"
+  },
+  "external_storage": {
+    "provider": "r2_or_gcs",
+    "remote_uri_template": "r2://jebrex-ai-artifacts/checkpoints/jebrex-350m/",
+    "require_sha256_bundle": true,
+    "never_commit_to_git": true
+  }
+}

@@ -457,6 +457,9 @@ def build_openapi_spec() -> dict[str, Any]:
             "/api/v1/model-info": {
                 "get": {"summary": "Honest model architecture, tokenizer, and readiness disclosure", "responses": {"200": {"description": "Model info"}}},
             },
+            "/api/v1/model/status": {
+                "get": {"summary": "Live loaded neural model status, parameters, KV-Cache, checkpoint SHA-256, and honest readiness state", "responses": {"200": {"description": "Live model status"}}},
+            },
             "/api/v1/bug-reports": {
                 "post": {"summary": "Submit a validated public bug report (rate limited)", "responses": {"201": {"description": "Recorded"}, "400": {"description": "Invalid payload"}, "429": {"description": "Rate limited"}}},
             },
@@ -599,7 +602,8 @@ class NourAIBackend:
         use_capabilities: bool = False,
     ):
         repo_root = Path(__file__).resolve().parents[1]
-        default_ckpt = Path("checkpoints/v1_2/nourai_v1_2_model.pt")
+        env_ckpt = os.environ.get("JEBREX_CHECKPOINT_PATH", "").strip()
+        default_ckpt = Path(env_ckpt) if env_ckpt else Path("checkpoints/v1_2/nourai_v1_2_model.pt")
         if not default_ckpt.is_file():
             default_ckpt = repo_root / "checkpoints" / "v1_2" / "nourai_v1_2_model.pt"
         if not default_ckpt.is_file():
@@ -744,24 +748,38 @@ class NourAIBackend:
             }
 
         if method == "GET" and route == "/api/v1/health":
+            ms = self.engine.model_status()
             return 200, sec_headers, {
                 "status": "ok",
                 "service": "Jebrex AI (NourAI Core) Multilingual API",
                 "version": "1.3.0",
                 "languages": ["arabic", "english", "french"],
-                "memory": self.engine.memory_status(),
+                "model_family": ms["model_family"],
+                "parameters_human": ms["parameters_human"],
+                "readiness_level": ms["readiness_level"],
+                "memory": ms["memory"],
             }
 
+        if method == "GET" and route == "/api/v1/model/status":
+            ms = self.engine.model_status()
+            ms["streaming_sse_supported"] = True
+            ms["multi_turn_context_supported"] = True
+            ms["production_training_gate"] = "DATA_NOT_READY"
+            ms["languages"] = ["arabic", "english", "french"]
+            return 200, sec_headers, ms
+
         if method == "GET" and route == "/api/v1/model-info":
+            ms = self.engine.model_status()
             return 200, sec_headers, {
                 "project": "Jebrex AI",
                 "version": "1.3.0",
                 "independent_local_model": True,
                 "secret_external_llm_substitution": False,
-                "active_inference_architecture": "GPT-v1-ByteTokenizer (local)",
+                "active_inference_architecture": ms["architecture"],
+                "active_model_status": ms,
                 "foundation_v2_architecture": "JebrexTransformer (RoPE + RMSNorm + SwiGLU + GQA + KV-Cache)",
                 "foundation_v2_presets": ["jebrex-micro (1.08M)", "jebrex-125m (124.28M)", "jebrex-350m (351.32M)"],
-                "production_readiness_status": "RESEARCH_AND_LAB_STAGE",
+                "production_readiness_status": ms["readiness_level"],
                 "languages": ["arabic", "english", "french"],
             }
 
@@ -1045,7 +1063,7 @@ class NourAIBackend:
             ctx_info = self.context_manager.build_prompt(
                 message,
                 history=prior_messages,
-                context_length=self.engine.model.config.context_length,
+                context_length=self.engine.context_length,
             )
             formatted_prompt = ctx_info["prompt"]
 
@@ -1166,11 +1184,20 @@ class NourAIBackend:
                 chunks = [c.to_dict() for c in raw_chunks]
                 reply_text = "".join(c["text_delta"] for c in chunks)
                 self.sessions.append_turn(str(session_id), "assistant", reply_text, language=language)
+                ms = self.engine.model_status()
                 return 200, sec_headers, {
                     "session_id": session_id,
                     "language": language,
                     "response_source": "neural_model",
                     "context_turns_included": ctx_info["turns_included"],
+                    "model_status": {
+                        "model_family": ms["model_family"],
+                        "parameters_human": ms["parameters_human"],
+                        "tokenizer_type": ms["tokenizer_type"],
+                        "kv_cache_enabled": ms["kv_cache_enabled"],
+                        "readiness_level": ms["readiness_level"],
+                        "production_ready": ms["production_ready"],
+                    },
                     "stream_chunks": chunks,
                     "reply": reply_text,
                 }
@@ -1178,12 +1205,21 @@ class NourAIBackend:
             result = self.engine.generate(formatted_prompt, gen_cfg)
             reply_text = result["generated_text"]
             self.sessions.append_turn(str(session_id), "assistant", reply_text, language=language)
+            ms = self.engine.model_status()
             return 200, sec_headers, {
                 "session_id": session_id,
                 "language": language,
                 "response_source": "neural_model",
                 "reply": reply_text,
                 "task": "neural_generation",
+                "model_status": {
+                    "model_family": ms["model_family"],
+                    "parameters_human": ms["parameters_human"],
+                    "tokenizer_type": ms["tokenizer_type"],
+                    "kv_cache_enabled": ms["kv_cache_enabled"],
+                    "readiness_level": ms["readiness_level"],
+                    "production_ready": ms["production_ready"],
+                },
                 "metrics": {
                     "generated_tokens": result["generated_token_count"],
                     "ttft_ms": result["ttft_ms"],
@@ -1196,6 +1232,164 @@ class NourAIBackend:
             }
 
         return 404, sec_headers, {"error": f"route not found: {method} {route}"}
+
+    def prepare_sse_chat_stream(
+        self,
+        *,
+        headers: dict[str, str] | None = None,
+        body: dict[str, Any] | None = None,
+        client_ip: str = "127.0.0.1",
+    ) -> tuple[int, dict[str, str], dict[str, Any]]:
+        """Authenticate, validate, and build a real incremental SSE neural token iterator."""
+        headers = headers or {}
+        body = body or {}
+        origin = (headers.get("Origin") or headers.get("origin") or "").strip()
+        allowed_origins = (
+            "https://ypyai-95ca7.web.app",
+            "https://ypyai-95ca7.firebaseapp.com",
+            "https://nourai-studio.onrender.com",
+        )
+        is_firebase_preview = origin.startswith("https://ypyai-95ca7--") and origin.endswith(".web.app")
+        allow_origin = (
+            origin
+            if (
+                origin in allowed_origins
+                or is_firebase_preview
+                or origin.startswith("http://127.0.0.1")
+                or origin.startswith("http://localhost")
+            )
+            else "http://127.0.0.1"
+        )
+        sec_headers = {
+            "X-Content-Type-Options": "nosniff",
+            "X-Frame-Options": "DENY",
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+            "Access-Control-Allow-Origin": allow_origin,
+            "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        }
+        claims = self._authenticate(headers)
+        if not claims:
+            return 401, sec_headers, {"error": "missing or invalid authentication token"}
+        allowed, remaining = self.rate_limiter.allow(f"{claims['sub']}:{client_ip}")
+        sec_headers["X-RateLimit-Remaining"] = str(remaining)
+        if not allowed:
+            return 429, sec_headers, {"error": "rate limit exceeded; please retry later"}
+
+        message = str(body.get("message", "")).strip()
+        if not message:
+            return 400, sec_headers, {"error": "message is required"}
+        if len(message) > 8192:
+            return 413, sec_headers, {"error": "message exceeds maximum allowed length (8192 chars)"}
+        lower_msg = message.lower()
+        if any(pat in lower_msg for pat in SAFETY_BLOCKLIST_PATTERNS):
+            return 400, sec_headers, {"error": "unsafe input pattern rejected by security filter"}
+
+        language = str(body.get("language", "arabic")).strip().lower()
+        if language not in ("arabic", "english", "french"):
+            return 400, sec_headers, {"error": "language must be arabic, english, or french"}
+
+        session_id = body.get("session_id")
+        if session_id:
+            sess = self.sessions.get_session(str(session_id), user_id=claims["sub"])
+            if not sess:
+                return 404, sec_headers, {"error": "session not found"}
+        else:
+            sess = self.sessions.create_session(claims["sub"], language=language, title=message[:36])
+            session_id = sess["session_id"]
+
+        # Prompt injection & safety guard enforced identically in SSE mode
+        safety_check = evaluate_prompt_safety(message, language=language)
+        is_prompt_injection = any(pat in lower_msg for pat in PROMPT_INJECTION_PATTERNS)
+        if not safety_check.get("is_safe", True) or is_prompt_injection:
+            self._record_audit(f"SECURITY_REFUSAL prompt_injection_or_unsafe_sse user={claims['sub']}")
+            refusal_text = (
+                "عذراً، تم حظر هذا الطلب بواسطة حاجز الأمان الداخلي لـ Jebrex AI."
+                if language == "arabic"
+                else (
+                    "Désolé, cette requête a été bloquée par le filtre de sécurité interne de Jebrex AI."
+                    if language == "french"
+                    else "Sorry, this request was blocked by Jebrex AI's internal safety guard."
+                )
+            )
+            self.sessions.append_turn(str(session_id), "user", message, language=language)
+            self.sessions.append_turn(str(session_id), "assistant", refusal_text, language=language)
+            return 200, sec_headers, {
+                "meta": {
+                    "session_id": session_id,
+                    "language": language,
+                    "response_source": "safety_guard",
+                    "context_turns_included": 0,
+                    "model_status": self.engine.model_status(),
+                },
+                "iterator": iter([StreamChunk(token_id=-1, text_delta=refusal_text, step_index=1, is_final=True, finish_reason="safety_refusal")]),
+                "on_complete": lambda _full: None,
+            }
+
+        prior_messages = list(sess.get("messages", []))
+        self.sessions.append_turn(str(session_id), "user", message, language=language)
+        ctx_info = self.context_manager.build_prompt(
+            message,
+            history=prior_messages,
+            context_length=self.engine.context_length,
+        )
+        try:
+            gen_cfg = GenerationConfig(
+                max_new_tokens=min(int(body.get("max_new_tokens", 128)), 256),
+                strategy=str(body.get("strategy", "greedy")),
+                temperature=float(body.get("temperature", 0.7)),
+                top_k=int(body.get("top_k", 16)),
+                top_p=float(body.get("top_p", 0.90)),
+                repetition_penalty=float(body.get("repetition_penalty", 1.0)),
+                stop_sequences=("<|user|>", "<|endoftext|>"),
+            ).validate()
+        except (TypeError, ValueError) as exc:
+            return 400, sec_headers, {"error": f"invalid generation parameters: {exc}"}
+
+        self.engine.reset_stop()
+        ms = self.engine.model_status()
+        use_fallback = bool(body.get("use_fallback_assistant", self.use_capabilities))
+        if use_fallback:
+            cap_out = self.capabilities.answer(message, language=language, history=prior_messages)
+            reply_text = cap_out["reply"]
+            words = reply_text.split(" ")
+            chunks_iter = iter(
+                [
+                    StreamChunk(
+                        token_id=-1,
+                        text_delta=w if i == len(words) - 1 else (w + " "),
+                        step_index=i + 1,
+                        is_final=(i == len(words) - 1),
+                        finish_reason="rule_complete" if i == len(words) - 1 else None,
+                    )
+                    for i, w in enumerate(words)
+                ]
+            )
+            return 200, sec_headers, {
+                "meta": {
+                    "session_id": session_id,
+                    "language": language,
+                    "response_source": "rule_based_fallback_assistant",
+                    "context_turns_included": ctx_info["turns_included"],
+                    "model_status": ms,
+                },
+                "iterator": chunks_iter,
+                "on_complete": lambda full_txt: self.sessions.append_turn(str(session_id), "assistant", full_txt, language=language),
+            }
+
+        return 200, sec_headers, {
+            "meta": {
+                "session_id": session_id,
+                "language": language,
+                "response_source": "neural_model",
+                "context_turns_included": ctx_info["turns_included"],
+                "prompt_tokens": ctx_info["prompt_token_count"],
+                "model_status": ms,
+            },
+            "iterator": self.engine.stream_generate(ctx_info["prompt"], gen_cfg),
+            "on_complete": lambda full_txt: self.sessions.append_turn(str(session_id), "assistant", full_txt, language=language),
+        }
 
 
 def run_phase18_api_audit() -> dict[str, Any]:

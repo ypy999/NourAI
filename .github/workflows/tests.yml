@@ -54,6 +54,7 @@ jobs:
             tests/test_jebrex_foundation_v2.py \
             tests/test_jebrex_inference_and_chat.py \
             tests/test_jebrex_conversational_and_web.py \
+            tests/test_jebrex_phase_f.py \
             tests/test_jebrex_apps.py \
             tests/test_jebrex_security.py \
             tests/test_jebrex_benchmark.py \

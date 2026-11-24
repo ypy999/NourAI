@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
+import hashlib
 import json
 from pathlib import Path
 import threading
@@ -11,7 +12,9 @@ from typing import Any, Iterator
 import torch
 import torch.nn.functional as F
 
+from model.jebrex_transformer import JebrexConfig, JebrexTransformer
 from model.transformer import GPT, GPTConfig
+from tokenizer.bpe_tokenizer import MultilingualBPETokenizer
 from tokenizer.byte_tokenizer import ByteTokenizer
 from training.metrics import memory_usage_mb
 
@@ -188,24 +191,42 @@ def sample_next_token(
 
 
 class InferenceEngine:
-    """Local-first multilingual inference engine for NourAI."""
+    """Local-first multilingual inference engine for Jebrex AI (supports both v1 GPT and v2 JebrexTransformer + KV-Cache)."""
 
     def __init__(
         self,
-        model: GPT,
-        tokenizer: ByteTokenizer | None = None,
+        model: GPT | JebrexTransformer,
+        tokenizer: ByteTokenizer | MultilingualBPETokenizer | None = None,
         *,
         device: str = "cpu",
         checkpoint_path: str | Path | None = None,
+        checkpoint_sha256: str | None = None,
     ):
         self.device = device
+        self.is_v2 = isinstance(model, JebrexTransformer)
+        self.kv_cache_enabled = self.is_v2
         self.tokenizer = tokenizer or ByteTokenizer()
         self.model = model.to(self.device)
         self.model.eval()
         self.checkpoint_path = str(checkpoint_path) if checkpoint_path else None
+        self.checkpoint_sha256 = checkpoint_sha256
+        if self.checkpoint_sha256 is None and checkpoint_path and Path(checkpoint_path).is_file():
+            self.checkpoint_sha256 = hashlib.sha256(Path(checkpoint_path).read_bytes()).hexdigest()
         self.total_requests = 0
         self.total_generated_tokens = 0
         self._stop_event = threading.Event()
+
+    @property
+    def context_length(self) -> int:
+        if self.is_v2:
+            return int(self.model.config.max_seq_len)
+        return int(self.model.config.context_length)
+
+    def _parameter_count(self) -> int:
+        raw = self.model.count_parameters()
+        if isinstance(raw, dict):
+            return int(raw.get("total_parameters", 0))
+        return int(raw)
 
     def request_stop(self) -> None:
         """Signal active streaming generation to abort cleanly."""
@@ -220,35 +241,114 @@ class InferenceEngine:
         cls,
         checkpoint_path: str | Path = "checkpoints/phase16/phase16_sft_aligned_model.pt",
         *,
-        tokenizer: ByteTokenizer | None = None,
+        tokenizer: ByteTokenizer | MultilingualBPETokenizer | None = None,
+        tokenizer_path: str | Path | None = None,
         device: str = "cpu",
     ) -> "InferenceEngine":
         path = Path(checkpoint_path)
         if not path.is_file():
             raise FileNotFoundError(f"model checkpoint not found: {path}")
+        ckpt_sha = hashlib.sha256(path.read_bytes()).hexdigest()
+        payload = torch.load(path, map_location=device, weights_only=False)
+        is_v2_ckpt = (
+            isinstance(payload, dict)
+            and (
+                payload.get("schema_version") == 2
+                or str(payload.get("architecture", "")).startswith("jebrex-v2")
+                or (
+                    isinstance(payload.get("model_config"), dict)
+                    and "d_model" in payload["model_config"]
+                    and "n_kv_heads" in payload["model_config"]
+                )
+            )
+        )
+        if is_v2_ckpt:
+            cfg = JebrexConfig.from_dict(payload["model_config"])
+            model: GPT | JebrexTransformer = JebrexTransformer(cfg)
+            model.load_state_dict(payload["model_state_dict"])
+            resolved_tok = tokenizer
+            if resolved_tok is None:
+                cand = Path(tokenizer_path) if tokenizer_path else Path("tokenizer/artifacts/jebrex_bpe_v1.json")
+                if not cand.is_file():
+                    cand = Path(__file__).resolve().parents[1] / "tokenizer" / "artifacts" / "jebrex_bpe_v1.json"
+                if cand.is_file():
+                    loaded_bpe = MultilingualBPETokenizer.load(cand)
+                    if loaded_bpe.vocab_size == cfg.vocab_size:
+                        resolved_tok = loaded_bpe
+            return cls(
+                model,
+                tokenizer=resolved_tok or ByteTokenizer(),
+                device=device,
+                checkpoint_path=path,
+                checkpoint_sha256=ckpt_sha,
+            )
+
         model = GPT.load_checkpoint(path, map_location=device)
-        return cls(model, tokenizer=tokenizer, device=device, checkpoint_path=path)
+        return cls(model, tokenizer=tokenizer, device=device, checkpoint_path=path, checkpoint_sha256=ckpt_sha)
 
     def memory_status(self) -> dict[str, Any]:
-        param_bytes = sum(p.numel() * p.element_size() for p in self.model.parameters())
+        seen: set[int] = set()
+        param_bytes = 0
+        for p in self.model.parameters():
+            if id(p) not in seen:
+                seen.add(id(p))
+                param_bytes += p.numel() * p.element_size()
         rss_mb = memory_usage_mb()
         vram_mb = 0.0
         if str(self.device).startswith("cuda") and torch.cuda.is_available():
             vram_mb = round(torch.cuda.memory_allocated() / (1024 * 1024), 4)
         return {
             "device": self.device,
-            "context_length_limit": self.model.config.context_length,
-            "parameter_count": self.model.count_parameters(),
+            "context_length_limit": self.context_length,
+            "parameter_count": self._parameter_count(),
             "model_weights_mib": round(param_bytes / (1024 * 1024), 4),
             "process_rss_mib": round(rss_mb, 2) if rss_mb is not None else None,
             "vram_allocated_mib": vram_mb,
+        }
+
+    def model_status(self) -> dict[str, Any]:
+        """Return transparent, auditable status of the loaded local neural model."""
+        params = self._parameter_count()
+        mem = self.memory_status()
+        is_large_prod = params >= 100_000_000
+        return {
+            "project": "Jebrex AI",
+            "independent_local_model": True,
+            "secret_external_llm_substitution": False,
+            "model_family": "jebrex-v2-modern" if self.is_v2 else "nourai-v1-gpt",
+            "architecture": (
+                "JebrexTransformer (RoPE + RMSNorm + SwiGLU + Causal GQA + KV-Cache)"
+                if self.is_v2
+                else "Decoder-Only Pre-LN GPT Transformer (Byte-Level)"
+            ),
+            "parameter_count": params,
+            "parameters_human": f"{params / 1_000_000:.2f}M" if params >= 1_000_000 else f"{params / 1_000:.1f}K",
+            "tokenizer_type": (
+                "MultilingualBPETokenizer" if isinstance(self.tokenizer, MultilingualBPETokenizer) else "ByteTokenizer"
+            ),
+            "vocab_size": int(self.tokenizer.vocab_size),
+            "context_length": self.context_length,
+            "kv_cache_enabled": self.kv_cache_enabled,
+            "device": self.device,
+            "checkpoint_path": str(self.checkpoint_path).replace("\\", "/") if self.checkpoint_path else None,
+            "checkpoint_sha256": self.checkpoint_sha256,
+            "readiness_level": "PRODUCTION_CANDIDATE" if is_large_prod else "RESEARCH_LAB_WEIGHTS_ONLY",
+            "production_ready": False,
+            "honest_disclosure": (
+                "Active weights are small laboratory weights; full 125M-350M cloud GPU pretraining on >=3B licensed tokens is still required for general conversational fluency."
+                if not is_large_prod
+                else "Large weights loaded; verify independent held-out benchmark before production claim."
+            ),
+            "total_requests": self.total_requests,
+            "total_generated_tokens": self.total_generated_tokens,
+            "memory": mem,
         }
 
     def _prepare_context_ids(self, prompt: str) -> list[int]:
         ids = self.tokenizer.encode(prompt, add_eos=False)
         if not ids:
             ids = [self.tokenizer.bos_id]
-        max_ctx = self.model.config.context_length
+        max_ctx = self.context_length
         return ids[-max_ctx:]
 
     @torch.inference_mode()
@@ -259,7 +359,7 @@ class InferenceEngine:
         *,
         cancel_event: threading.Event | None = None,
     ) -> Iterator[StreamChunk]:
-        """Yield incremental UTF-8 safe StreamChunk objects with stop_sequences and cancellation support."""
+        """Yield incremental UTF-8 safe StreamChunk objects with KV-Cache (v2), stop_sequences, and cancellation."""
         cfg = (config or GenerationConfig()).validate()
         context_ids = self._prepare_context_ids(prompt)
         generated_ids: list[int] = []
@@ -267,7 +367,8 @@ class InferenceEngine:
         pending_text = ""
         stop_seqs = tuple(s for s in (cfg.stop_sequences or ()) if s)
         holdback = max((len(s) - 1 for s in stop_seqs), default=0)
-        max_ctx = self.model.config.context_length
+        max_ctx = self.context_length
+        past_kv = None
 
         if cfg.max_new_tokens == 0:
             yield StreamChunk(token_id=self.tokenizer.eos_id, text_delta="", step_index=0, is_final=True, finish_reason="max_tokens")
@@ -286,11 +387,28 @@ class InferenceEngine:
                 )
                 break
 
-            window = (context_ids + generated_ids)[-max_ctx:]
-            input_tensor = torch.tensor([window], dtype=torch.long, device=self.device)
-            logits, _ = self.model(input_tensor)
+            if self.is_v2:
+                # Use incremental KV-Cache while total length fits within max_ctx
+                if past_kv is not None and (len(context_ids) + len(generated_ids)) < max_ctx:
+                    step_tensor = torch.tensor([[generated_ids[-1]]], dtype=torch.long, device=self.device)
+                    out_v2 = self.model(step_tensor, past_key_values=past_kv, use_cache=True)
+                    past_kv = out_v2.past_key_values
+                    last_logits = out_v2.logits[0, -1, :]
+                else:
+                    window = (context_ids + generated_ids)[-max_ctx:]
+                    input_tensor = torch.tensor([window], dtype=torch.long, device=self.device)
+                    can_cache = len(window) < max_ctx
+                    out_v2 = self.model(input_tensor, past_key_values=None, use_cache=can_cache)
+                    past_kv = out_v2.past_key_values if can_cache else None
+                    last_logits = out_v2.logits[0, -1, :]
+            else:
+                window = (context_ids + generated_ids)[-max_ctx:]
+                input_tensor = torch.tensor([window], dtype=torch.long, device=self.device)
+                logits, _ = self.model(input_tensor)
+                last_logits = logits[0, -1, :]
+
             next_id = sample_next_token(
-                logits[0, -1, :],
+                last_logits,
                 generated_ids=generated_ids,
                 config=cfg,
                 prompt_ids=context_ids,

@@ -279,6 +279,79 @@ def start_live_http_server(
                 return
             req_headers = {k: v for k, v in self.headers.items()}
             remote_ip = self.client_address[0] if self.client_address else "127.0.0.1"
+            accept_hdr = (req_headers.get("Accept") or req_headers.get("accept") or "").lower()
+            wants_sse = (
+                method == "POST"
+                and self.path.split("?", 1)[0].rstrip("/") == "/api/v1/chat/stream"
+                and ("text/event-stream" in accept_hdr or "sse=1" in self.path)
+            )
+            if wants_sse and hasattr(backend, "prepare_sse_chat_stream"):
+                s_code, s_headers, s_plan = backend.prepare_sse_chat_stream(
+                    headers=req_headers,
+                    body=body,
+                    client_ip=remote_ip,
+                )
+                s_headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+                if s_code != 200:
+                    monitor.record_request(s_code, (time.perf_counter() - t0) * 1000.0)
+                    encoded = json.dumps(s_plan, ensure_ascii=False).encode("utf-8")
+                    self.send_response(s_code)
+                    self.send_header("Content-Type", "application/json; charset=utf-8")
+                    for k, v in s_headers.items():
+                        if k.lower() != "content-type":
+                            self.send_header(k, v)
+                    self.send_header("Content-Length", str(len(encoded)))
+                    self.end_headers()
+                    self.wfile.write(encoded)
+                    return
+
+                self.send_response(200)
+                self.send_header("Content-Type", "text/event-stream; charset=utf-8")
+                self.send_header("Connection", "close")
+                for k, v in s_headers.items():
+                    if k.lower() not in ("content-type", "connection"):
+                        self.send_header(k, v)
+                self.end_headers()
+
+                def _emit_sse(event_name: str, data_obj: dict[str, Any]) -> None:
+                    frame = f"event: {event_name}\ndata: {json.dumps(data_obj, ensure_ascii=False)}\n\n".encode("utf-8")
+                    self.wfile.write(frame)
+                    self.wfile.flush()
+
+                full_pieces: list[str] = []
+                tok_count = 0
+                ttft_ms: float | None = None
+                finish_reason = "max_tokens"
+                try:
+                    _emit_sse("meta", s_plan["meta"])
+                    for chunk in s_plan["iterator"]:
+                        if ttft_ms is None:
+                            ttft_ms = round((time.perf_counter() - t0) * 1000.0, 3)
+                        tok_count += 1
+                        full_pieces.append(chunk.text_delta)
+                        if chunk.finish_reason:
+                            finish_reason = chunk.finish_reason
+                        _emit_sse("delta", chunk.to_dict())
+                    elapsed_ms = round((time.perf_counter() - t0) * 1000.0, 3)
+                    full_reply = "".join(full_pieces)
+                    s_plan["on_complete"](full_reply)
+                    _emit_sse(
+                        "done",
+                        {
+                            "reply": full_reply,
+                            "finish_reason": finish_reason,
+                            "generated_tokens": tok_count,
+                            "ttft_ms": ttft_ms or elapsed_ms,
+                            "elapsed_ms": elapsed_ms,
+                            "tokens_per_second": round(tok_count / max(elapsed_ms / 1000.0, 1e-6), 2),
+                        },
+                    )
+                except (BrokenPipeError, ConnectionResetError):
+                    backend.engine.request_stop()
+                finally:
+                    monitor.record_request(200, (time.perf_counter() - t0) * 1000.0)
+                return
+
             status_code, resp_headers, payload = backend.handle_request(
                 method,
                 self.path,
