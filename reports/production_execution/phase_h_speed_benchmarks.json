@@ -1,0 +1,169 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-11-24T23:18:42Z",
+  "hardware_device": "cpu",
+  "torch_version": "2.15.0+cpu",
+  "model_source": "checkpoints/jebrex_v2_micro_sanity/run/latest.pt",
+  "model_parameters": 1083520,
+  "benchmarks": {
+    "flash_attention": {
+      "optimization": "FlashAttention (via PyTorch SDPA dispatch)",
+      "status": "HARDWARE_UNSUPPORTED_CPU_ONLY",
+      "cuda_available": false,
+      "compute_capability": null,
+      "flash_sdp_enabled": true,
+      "mem_efficient_sdp_enabled": true,
+      "measured_speedup_local": null,
+      "integration_note": "GroupedQueryAttention in model/jebrex_transformer.py uses F.scaled_dot_product_attention, which automatically dispatches FlashAttention-2 on CUDA SM>=8.0 (Lightning L4 / A100) and Memory-Efficient Attention on Turing SM 7.5 (Kaggle/Colab T4). Local host is CPU-only."
+    },
+    "sdpa_vs_naive": {
+      "optimization": "Scaled Dot-Product Attention (SDPA) vs Naive Attention",
+      "seq_len": 128,
+      "repeats": 25,
+      "before_naive_ms": 0.703,
+      "after_sdpa_ms": 0.375,
+      "speedup_x": 1.874,
+      "max_abs_diff": 6e-07,
+      "numerical_parity_passed": true
+    },
+    "gqa_vs_mha": {
+      "optimization": "Grouped-Query Attention (GQA n_kv=2) vs MHA (n_kv=4)",
+      "prompt_len": 64,
+      "generated_tokens": 32,
+      "before_mha_kv_bytes": 393216,
+      "after_gqa_kv_bytes": 196608,
+      "kv_memory_reduction_pct": 50.0,
+      "before_mha_ms": 105.83,
+      "after_gqa_ms": 129.3,
+      "latency_speedup_x": 0.818
+    },
+    "kv_cache": {
+      "optimization": "KV-Cache Incremental Decoding",
+      "prompt_len": 48,
+      "generated_tokens": 32,
+      "before_no_cache_ms": 201.35,
+      "after_kv_cache_ms": 123.84,
+      "before_tokens_per_sec": 158.92,
+      "after_tokens_per_sec": 258.39,
+      "speedup_x": 1.626,
+      "exact_greedy_parity": true
+    },
+    "paged_kv_cache": {
+      "optimization": "Paged KV-Cache (page_size=16 block tables)",
+      "concurrent_requests": 8,
+      "request_lengths": [
+        18,
+        22,
+        26,
+        30,
+        32,
+        36,
+        40,
+        44
+      ],
+      "before_static_max_len_kv_bytes": 4194304,
+      "after_paged_allocated_kv_bytes": 622592,
+      "kv_memory_saved_vs_static_pct": 85.16,
+      "max_logit_abs_diff": 0.0,
+      "exact_parity_passed": true,
+      "pages_free_while_active": 109,
+      "all_pages_reclaimed_cleanly": true
+    },
+    "quantization_int8_int4": {
+      "optimization": "Quantization (INT8 Dynamic + Real Packed INT4 Weight-Only)",
+      "fp32_baseline": {
+        "linear_weight_bytes": 3145728,
+        "decode_ms": 94.99
+      },
+      "int8_dynamic": {
+        "status": "BENCHMARKED",
+        "linear_weight_bytes": 786432,
+        "weight_memory_reduction_pct": 75.0,
+        "decode_ms": 260.33,
+        "speedup_vs_fp32_x": 0.365,
+        "last_token_logit_cosine_sim": 1.0
+      },
+      "int4_packed_weight_only": {
+        "status": "BENCHMARKED",
+        "linear_weight_bytes": 413696,
+        "weight_memory_reduction_pct": 86.85,
+        "decode_ms": 288.66,
+        "speedup_vs_fp32_x": 0.329,
+        "last_token_logit_cosine_sim": 0.999973,
+        "honest_cpu_note": "Pure-PyTorch INT4 unpack achieves real ~85% linear weight compression; CPU decode incurs eager unpack overhead on micro dims (speedups manifest on bandwidth-bound 125M+ models / fused CUDA/AVX kernels)."
+      }
+    },
+    "speculative_decoding": {
+      "optimization": "Lossless Speculative Decoding (Greedy Verification + KV Rollback)",
+      "aligned_int8_draft_on_checkpoint": {
+        "before_target_only_ms": 121.6,
+        "after_speculative_ms": 335.98,
+        "before_target_forward_calls": 32,
+        "after_target_forward_calls": 8,
+        "target_calls_reduction_pct": 75.0,
+        "acceptance_rate": 1.0,
+        "speedup_x": 0.362,
+        "exact_greedy_parity": true
+      },
+      "shallow_2layer_draft_vs_8layer_target": {
+        "before_target_only_ms": 225.13,
+        "after_speculative_ms": 141.13,
+        "speedup_x": 1.595,
+        "before_target_forward_calls": 32,
+        "after_target_forward_calls": 8,
+        "acceptance_rate": 1.0,
+        "exact_greedy_parity": true
+      },
+      "mismatch_rejection_rollback_test": {
+        "acceptance_rate": 0.75,
+        "target_forward_calls": 9,
+        "exact_greedy_parity_under_rejections": true,
+        "honest_note": "Low-acceptance mismatched draft exercises KV rollback on rejections while preserving 100% bit-exact output."
+      }
+    },
+    "prefix_caching": {
+      "optimization": "Prefix Caching (Shared Multilingual System-Prompt KV Store)",
+      "system_prefix_tokens": 81,
+      "requests_evaluated": 3,
+      "prefix_populate_once_ms": 6.72,
+      "before_avg_cold_ttft_ms": 7.89,
+      "after_avg_warm_ttft_ms": 5.22,
+      "ttft_speedup_x": 1.512,
+      "cache_hits": 3,
+      "cache_misses": 1,
+      "max_first_token_logit_diff": 1.4e-06,
+      "numerical_parity_passed": true
+    },
+    "dynamic_and_continuous_batching": {
+      "optimization": "Dynamic Batching & Iteration-Level Continuous Batching",
+      "requests": 6,
+      "generation_lengths": [
+        6,
+        8,
+        28,
+        6,
+        10,
+        30
+      ],
+      "total_useful_tokens": 88,
+      "before_sequential": {
+        "elapsed_ms": 337.97,
+        "tokens_per_sec": 260.38
+      },
+      "static_padded_dynamic_batching": {
+        "elapsed_ms": 262.5,
+        "tokens_per_sec": 335.24,
+        "wasted_pad_token_steps": 86,
+        "speedup_vs_sequential_x": 1.288
+      },
+      "after_continuous_batching": {
+        "elapsed_ms": 238.72,
+        "tokens_per_sec": 368.64,
+        "wasted_pad_token_steps": 0,
+        "speedup_vs_sequential_x": 1.416,
+        "speedup_vs_static_padded_x": 1.1,
+        "exact_output_parity_vs_sequential": true
+      }
+    }
+  }
+}

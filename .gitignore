@@ -60,6 +60,7 @@ data/*.sqlite3-wal
 checkpoints/**/history/
 checkpoints/jebrex_v1_sanity/
 checkpoints/jebrex_v2_micro_sanity/
+checkpoints/jebrex_h_micro_verify/
 checkpoints/**/portable_bundle*/
 *.safetensors
 *.gguf

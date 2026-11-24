@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-11-24T23:21:18Z",
+  "project": "Jebrex AI",
+  "version_tag": "jebrex-v2.0-micro-1.08m-sanity",
+  "model_version_id": "jebrex-v2-latest-1.08m-5a65479b",
+  "architecture": "JebrexTransformer (RoPE + RMSNorm + SwiGLU + Causal GQA + KV-Cache)",
+  "parameter_count": 1083520,
+  "readiness_level": "RESEARCH_LAB_WEIGHTS_ONLY",
+  "production_ready": false,
+  "weights_stored_outside_git": true,
+  "artifacts": {
+    "checkpoint": {
+      "local_gitignored_path": "checkpoints/jebrex_v2_micro_sanity/run/latest.pt",
+      "external_storage_uri": "r2://jebrex-ai-artifacts/checkpoints/ (configure owner R2 bucket)",
+      "size_bytes": 13065894,
+      "sha256": "5a65479b2b1d1fcf6193f700cb107509a57fa32b3eb05f1ab68ade5a429e2f43"
+    },
+    "tokenizer": {
+      "path": "tokenizer/artifacts/jebrex_bpe_v1.json",
+      "size_bytes": 78835,
+      "sha256": "4059ea220a5664dcc613c79d681d00a21a58b89299f66aaba37fa379851685d5"
+    }
+  },
+  "evaluation_summary": {
+    "held_out_perplexity": 1134.5847,
+    "generalization_pass_rate": 0.0,
+    "multiturn_pass_rate": 0.0,
+    "non_degenerate_rate": 0.0,
+    "safety_guard_pass_rate": 1.0
+  }
+}

@@ -1,0 +1,233 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-11-24T23:14:36Z",
+  "tokenizer_used": "tokenizer/artifacts/jebrex_bpe_v1.json",
+  "tokenizer_vocab_size": 2312,
+  "datasets_audited": {
+    "jebrex_v1_clean": {
+      "dataset_name": "jebrex_v1_clean",
+      "splits_dir": "data/processed/jebrex_v1_clean/splits",
+      "combined_splits_sha256": "44c653e205a9180d5361e5cc46dbf4c46b592d7446f9a888c9a3f57a3a23e629",
+      "total_records": 1699,
+      "unique_normalized_records": 1699,
+      "total_bpe_tokens": 60058,
+      "within_split_exact_duplicates": 0,
+      "within_split_normalized_duplicates": 0,
+      "cross_split_leakage": {
+        "train_val_norm_overlap": 0,
+        "train_test_norm_overlap": 0,
+        "val_test_norm_overlap": 0,
+        "train_val_doc_id_overlap": 0,
+        "train_test_doc_id_overlap": 0,
+        "val_test_doc_id_overlap": 0
+      },
+      "zero_leakage_verified": true,
+      "licenses_observed": {
+        "CC0-1.0": 1347,
+        "PUBLIC_DOMAIN_TEXTS; CC0-1.0_METADATA": 161,
+        "WTO_PUBLIC_CORPUS_TERMS": 191
+      },
+      "unverified_license_records": 191,
+      "all_licenses_verified": false,
+      "html_and_noise_hits": {},
+      "pii_and_secret_hits": {
+        "emails": 6,
+        "phones": 0,
+        "ipv4": 0,
+        "credit_cards": 0,
+        "api_secrets": 0
+      },
+      "zero_pii_verified": false,
+      "language_distribution": {
+        "documents": {
+          "en": 652,
+          "fr": 886,
+          "ar": 161
+        },
+        "characters": {
+          "en": 60980,
+          "fr": 59845,
+          "ar": 26837
+        },
+        "bpe_tokens": {
+          "en": 23264,
+          "fr": 23193,
+          "ar": 13601
+        },
+        "token_share_pct": {
+          "ar": 22.65,
+          "en": 38.74,
+          "fr": 38.62
+        }
+      },
+      "splits": {
+        "train": {
+          "exists": true,
+          "path": "data/processed/jebrex_v1_clean/splits/train.jsonl",
+          "size_bytes": 858050,
+          "sha256": "166dc272397b8292919386d1780972656f260b651c51b30359b1104b8b1067b4",
+          "records": 1234,
+          "bpe_tokens": 40857,
+          "docs_with_html_or_noise": 0,
+          "docs_with_pii_or_secrets": 1
+        },
+        "validation": {
+          "exists": true,
+          "path": "data/processed/jebrex_v1_clean/splits/validation.jsonl",
+          "size_bytes": 151738,
+          "sha256": "b8faa698c8542507bb58f83e67fc1a23df42cfc99d3a490a2b91d9825483e20c",
+          "records": 213,
+          "bpe_tokens": 9650,
+          "docs_with_html_or_noise": 0,
+          "docs_with_pii_or_secrets": 1
+        },
+        "test": {
+          "exists": true,
+          "path": "data/processed/jebrex_v1_clean/splits/test.jsonl",
+          "size_bytes": 174742,
+          "sha256": "2c7cc8a76d511755f0f21ddfe25a082714b78b3cf6cb9abfd1d0e3ecd324bbf8",
+          "records": 252,
+          "bpe_tokens": 9551,
+          "docs_with_html_or_noise": 0,
+          "docs_with_pii_or_secrets": 1
+        }
+      }
+    },
+    "phase_g_tatoeba_cc0_pilot": {
+      "dataset_name": "phase_g_tatoeba_cc0_pilot",
+      "splits_dir": "data/phase_g_pilot/splits",
+      "combined_splits_sha256": "00f7f6e6a7aa65b667b7a84db5de6788bf262020066a8fdc0af9026cbd98f43e",
+      "total_records": 39185,
+      "unique_normalized_records": 39185,
+      "total_bpe_tokens": 1122564,
+      "within_split_exact_duplicates": 0,
+      "within_split_normalized_duplicates": 0,
+      "cross_split_leakage": {
+        "train_val_norm_overlap": 0,
+        "train_test_norm_overlap": 0,
+        "val_test_norm_overlap": 0,
+        "train_val_doc_id_overlap": 0,
+        "train_test_doc_id_overlap": 0,
+        "val_test_doc_id_overlap": 0
+      },
+      "zero_leakage_verified": true,
+      "licenses_observed": {
+        "CC0-1.0": 39185
+      },
+      "unverified_license_records": 0,
+      "all_licenses_verified": true,
+      "html_and_noise_hits": {},
+      "pii_and_secret_hits": {},
+      "zero_pii_verified": true,
+      "language_distribution": {
+        "documents": {
+          "en": 24987,
+          "fr": 14196,
+          "ar": 2
+        },
+        "characters": {
+          "en": 1808700,
+          "fr": 938398,
+          "ar": 56
+        },
+        "bpe_tokens": {
+          "en": 754885,
+          "fr": 367642,
+          "ar": 37
+        },
+        "token_share_pct": {
+          "ar": 0.0,
+          "en": 67.25,
+          "fr": 32.75
+        }
+      },
+      "splits": {
+        "train": {
+          "exists": true,
+          "path": "data/phase_g_pilot/splits/train.jsonl",
+          "size_bytes": 7873993,
+          "sha256": "490e42d840b7c3f58c169c6238fe6c6a84fb8eb847e0c12949c1be1e01b4a560",
+          "records": 35173,
+          "bpe_tokens": 1006398,
+          "docs_with_html_or_noise": 0,
+          "docs_with_pii_or_secrets": 0
+        },
+        "validation": {
+          "exists": true,
+          "path": "data/phase_g_pilot/splits/validation.jsonl",
+          "size_bytes": 451954,
+          "sha256": "8daaab54f36fbdb00ef61aa290cda32a7e1f867fe2fcc4312799087e978925ae",
+          "records": 2007,
+          "bpe_tokens": 58661,
+          "docs_with_html_or_noise": 0,
+          "docs_with_pii_or_secrets": 0
+        },
+        "test": {
+          "exists": true,
+          "path": "data/phase_g_pilot/splits/test.jsonl",
+          "size_bytes": 449559,
+          "sha256": "b747270d1d508f2b76d63b91c08f7e70f03fdaa7ad34ad2917bd27848b2aa8ea",
+          "records": 2005,
+          "bpe_tokens": 57505,
+          "docs_with_html_or_noise": 0,
+          "docs_with_pii_or_secrets": 0
+        }
+      }
+    }
+  },
+  "cross_corpus_normalized_overlap_docs": 1142,
+  "aggregate_summary": {
+    "corpora_count": 2,
+    "combined_bpe_tokens_gross": 1182622,
+    "arabic_bpe_tokens": 13638,
+    "english_bpe_tokens": 778149,
+    "french_bpe_tokens": 390835,
+    "production_target_tokens": 3000000000,
+    "production_coverage_pct": 0.039421,
+    "tokens_remaining_for_production_gate": 2998817378,
+    "arabic_critical_imbalance_detected": true
+  },
+  "overall_production_readiness_gate": "DATA_NOT_READY",
+  "blockers_to_data_ready": [
+    "Current combined verified BPE tokens (1,182,622) are far below the 3,000,000,000 production gate.",
+    "Severe Arabic deficit in acquired pilot (13,638 AR tokens across corpora vs 778,149 EN and 390,835 FR); must stream Wikimedia Arabic + FineWeb-2 Arabic directly into cloud GPU/R2.",
+    "Local workstation disk (C: ~6.2 GB free) cannot store multi-GB pretraining shards; stream directly on Kaggle/Lightning GPU + Cloudflare R2."
+  ],
+  "recommended_licensed_cloud_streams": [
+    {
+      "id": "wikimedia_ar_en_fr",
+      "license": "CC-BY-SA-4.0 / GFDL",
+      "target_langs": [
+        "ar",
+        "en",
+        "fr"
+      ],
+      "est_tokens": "5.5B+"
+    },
+    {
+      "id": "fineweb_edu_en",
+      "license": "ODC-By-1.0",
+      "target_langs": [
+        "en"
+      ],
+      "est_tokens": "10B+ (stream subset)"
+    },
+    {
+      "id": "fineweb_2_ar_fr",
+      "license": "ODC-By-1.0",
+      "target_langs": [
+        "ar",
+        "fr"
+      ],
+      "est_tokens": "10B+ (stream subset)"
+    },
+    {
+      "id": "the_stack_v2_permissive",
+      "license": "MIT / Apache-2.0 / BSD only",
+      "target_langs": [
+        "code"
+      ],
+      "est_tokens": "2B+ (permissive filter)"
+    }
+  ]
+}

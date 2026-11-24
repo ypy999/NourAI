@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-11-24T23:21:20Z",
+  "user_chat_consent_guard_verified": true,
+  "weakness_detection_and_recipe": {
+    "analyzed_version": "jebrex-v2.0-micro-1.08m-sanity",
+    "weaknesses_count": 6,
+    "weaknesses": [
+      {
+        "area": "language_modeling_perplexity",
+        "severity": "CRITICAL",
+        "observed": 1134.5847,
+        "target": "<= 35.0 on held-out multilingual test split"
+      },
+      {
+        "area": "output_coherence_non_degeneracy",
+        "severity": "CRITICAL",
+        "observed": 0.0,
+        "target": ">= 0.85"
+      },
+      {
+        "area": "arabic_generalization",
+        "severity": "HIGH",
+        "observed": 0.0,
+        "target": ">= 0.50"
+      },
+      {
+        "area": "english_generalization",
+        "severity": "HIGH",
+        "observed": 0.0,
+        "target": ">= 0.50"
+      },
+      {
+        "area": "french_generalization",
+        "severity": "HIGH",
+        "observed": 0.0,
+        "target": ">= 0.50"
+      },
+      {
+        "area": "multiturn_context_retention",
+        "severity": "HIGH",
+        "observed": 0.0,
+        "target": ">= 0.50"
+      }
+    ],
+    "recommended_licensed_recipes": [
+      {
+        "target_weakness": "language_modeling_perplexity",
+        "dataset": "Wikimedia (AR/EN/FR) + FineWeb-Edu (EN) + FineWeb-2 (AR/FR)",
+        "license": "CC-BY-SA-4.0 / ODC-By-1.0",
+        "min_tokens_recommended": 3000000000,
+        "uses_user_chats": false
+      },
+      {
+        "target_weakness": "arabic_generalization",
+        "dataset": "Wikimedia Arabic + FineWeb-2 Arabic + OpenAssistant-2 Arabic SFT",
+        "license": "CC-BY-SA-4.0 / ODC-By-1.0 / Apache-2.0",
+        "uses_user_chats": false
+      },
+      {
+        "target_weakness": "english_generalization",
+        "dataset": "FineWeb-Edu + Wikimedia English + Dolly-15k / OASST2 SFT",
+        "license": "ODC-By-1.0 / CC-BY-SA-3.0 / Apache-2.0",
+        "uses_user_chats": false
+      },
+      {
+        "target_weakness": "french_generalization",
+        "dataset": "Wikimedia French + FineWeb-2 French + OASST2 French SFT",
+        "license": "CC-BY-SA-4.0 / ODC-By-1.0 / Apache-2.0",
+        "uses_user_chats": false
+      },
+      {
+        "target_weakness": "multiturn_context_retention",
+        "dataset": "OpenAssistant Conversations (OASST2) multilingual multi-turn trees (AR/EN/FR)",
+        "license": "Apache-2.0",
+        "uses_user_chats": false
+      }
+    ],
+    "user_chat_ingestion_blocked": true
+  },
+  "model_manifest_path": "manifests/model_manifest.json",
+  "model_manifest_version_id": "jebrex-v2-latest-1.08m-5a65479b",
+  "continuous_release_rollback_verification": {
+    "timestamp_utc": "2026-11-24T23:21:18Z",
+    "candidate_version": "jebrex-v2.0-micro-1.08m-sanity",
+    "decision": "REJECTED_AUTO_ROLLBACK_EXECUTED",
+    "promoted": false,
+    "rollback_triggered": true,
+    "active_version_after": "nourai-v1.2.0-small-4.87m",
+    "regression_and_gate_reasons": [
+      "Non-degeneracy below threshold: 0.00 < 0.70",
+      "Non-degeneracy regressed vs active baseline: 0.00 < 0.83",
+      "Generalization pass rate below threshold: 0.00 < 0.50",
+      "Multi-turn pass rate below threshold: 0.00 < 0.50"
+    ]
+  },
+  "live_model_api_and_preview_verification": {
+    "manifest_integrity": {
+      "verified": true,
+      "manifest_path": "manifests/model_manifest.json",
+      "version_tag": "jebrex-v2.0-micro-1.08m-sanity",
+      "checkpoint_sha256_verified": "5a65479b2b1d1fcf6193f700cb107509a57fa32b3eb05f1ab68ade5a429e2f43",
+      "tokenizer_sha256_verified": "4059ea220a5664dcc613c79d681d00a21a58b89299f66aaba37fa379851685d5"
+    },
+    "local_api_status_http": 200,
+    "local_api_model_version_id": "jebrex-v2-latest-1.08m-5a65479b",
+    "local_api_independent_model": true,
+    "local_api_secret_substitution": false,
+    "sse_multiturn_ar_en_fr": [
+      {
+        "lang": "arabic",
+        "http_status": 200,
+        "content_type": "text/event-stream; charset=utf-8",
+        "response_source": "neural_model",
+        "context_turns_included": 0,
+        "event_count": 4,
+        "has_done_event": true
+      },
+      {
+        "lang": "english",
+        "http_status": 200,
+        "content_type": "text/event-stream; charset=utf-8",
+        "response_source": "neural_model",
+        "context_turns_included": 2,
+        "event_count": 4,
+        "has_done_event": true
+      },
+      {
+        "lang": "french",
+        "http_status": 200,
+        "content_type": "text/event-stream; charset=utf-8",
+        "response_source": "neural_model",
+        "context_turns_included": 4,
+        "event_count": 4,
+        "has_done_event": true
+      }
+    ],
+    "all_sse_passed": true,
+    "firebase_preview_probe": {
+      "url": "https://ypyai-95ca7--jebrex-prod-vpozlkst.web.app",
+      "http_status": 200,
+      "has_model_version_badge": true,
+      "has_zero_canned_demo_replies": true,
+      "primary_site_untouched": true
+    }
+  }
+}
