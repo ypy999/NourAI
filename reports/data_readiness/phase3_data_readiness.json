@@ -1,0 +1,916 @@
+{
+  "phase": "Phase 3 — Data Engineering & Per-Language Readiness Gates",
+  "timestamp_utc": "2026-11-24T21:25:11Z",
+  "v1_2_corpus_audit": {
+    "dataset_name": "v1_2_corpus",
+    "splits_dir": "data\\processed\\v1_2_corpus\\splits",
+    "timestamp_utc": "2026-11-24T21:25:05Z",
+    "overall_pipeline_validation_gate": "DATA_NOT_READY",
+    "overall_general_llm_production_gate": "DATA_NOT_READY",
+    "contamination": {
+      "cross_split_exact_duplicates": {
+        "train_val": 0,
+        "train_test": 0,
+        "val_test": 0
+      },
+      "cross_split_normalized_duplicates": {
+        "train_val": 0,
+        "train_test": 0,
+        "val_test": 0
+      },
+      "cross_split_document_overlap": {
+        "train_val": 0,
+        "train_test": 0,
+        "val_test": 0
+      },
+      "cross_split_near_duplicates": {
+        "train_val": 0,
+        "train_test": 0,
+        "val_test": 1
+      },
+      "total_cross_split_contamination": 1,
+      "intra_split_exact_duplicates": {
+        "train": 0,
+        "validation": 0,
+        "test": 0
+      },
+      "intra_split_normalized_duplicates": {
+        "train": 1,
+        "validation": 0,
+        "test": 1
+      }
+    },
+    "languages": {
+      "ar": {
+        "pipeline_validation_gate": "DATA_NOT_READY",
+        "general_llm_production_gate": "DATA_NOT_READY",
+        "pipeline_blocking_issues": [
+          "cross_split_contamination=1",
+          "noise_rate=0.278 > 0.05",
+          "avg_target_script=0.882 < 0.92"
+        ],
+        "pipeline_review_issues": [
+          "missing_per_record_license_metadata=223",
+          "intra_split_duplicates(exact=0,norm=2)"
+        ],
+        "production_blockers": [
+          "cross_split_contamination=1",
+          "noise_rate=0.278 > 0.05",
+          "avg_target_script=0.882 < 0.92",
+          "missing_per_record_license_metadata=223",
+          "intra_split_duplicates(exact=0,norm=2)",
+          "insufficient_scale_for_general_llm(train_tokens=45289 < 100000000)"
+        ],
+        "splits": {
+          "train": {
+            "records": 163,
+            "chars": 27147,
+            "byte_tokens": 45289,
+            "clean_records": 106,
+            "noisy_records": 57
+          },
+          "validation": {
+            "records": 30,
+            "chars": 5023,
+            "byte_tokens": 9019,
+            "clean_records": 27,
+            "noisy_records": 3
+          },
+          "test": {
+            "records": 30,
+            "chars": 5004,
+            "byte_tokens": 9057,
+            "clean_records": 28,
+            "noisy_records": 2
+          }
+        },
+        "total_records": 223,
+        "train_token_share_pct": 33.45,
+        "noise_rate": 0.278,
+        "avg_target_script_ratio": 0.8816,
+        "lexical_diversity_ttr": 0.571,
+        "unique_words": 3901,
+        "total_words": 6832,
+        "non_nfc_records": 0,
+        "replacement_char_records": 0,
+        "control_char_records": 0,
+        "missing_record_license_count": 223,
+        "unverified_source_records": 0,
+        "sources": {
+          "qnl_arabic_ocr_v2": 223
+        },
+        "licenses_in_records": {},
+        "rejection_reasons": {
+          "ocr_punctuation_artifacts": 20,
+          "latin_ocr_contamination": 55,
+          "low_arabic_script_ratio": 42,
+          "excessive_punctuation_ocr_noise": 28,
+          "fragmented_ocr_tokens": 12
+        }
+      },
+      "en": {
+        "pipeline_validation_gate": "DATA_NOT_READY",
+        "general_llm_production_gate": "DATA_NOT_READY",
+        "pipeline_blocking_issues": [
+          "cross_split_contamination=1"
+        ],
+        "pipeline_review_issues": [
+          "missing_per_record_license_metadata=676",
+          "intra_split_duplicates(exact=0,norm=2)"
+        ],
+        "production_blockers": [
+          "cross_split_contamination=1",
+          "missing_per_record_license_metadata=676",
+          "intra_split_duplicates(exact=0,norm=2)",
+          "insufficient_scale_for_general_llm(train_tokens=45023 < 100000000)"
+        ],
+        "splits": {
+          "train": {
+            "records": 444,
+            "chars": 44510,
+            "byte_tokens": 45023,
+            "clean_records": 441,
+            "noisy_records": 3
+          },
+          "validation": {
+            "records": 110,
+            "chars": 8897,
+            "byte_tokens": 9019,
+            "clean_records": 110,
+            "noisy_records": 0
+          },
+          "test": {
+            "records": 122,
+            "chars": 8889,
+            "byte_tokens": 9031,
+            "clean_records": 102,
+            "noisy_records": 20
+          }
+        },
+        "total_records": 676,
+        "train_token_share_pct": 33.26,
+        "noise_rate": 0.034,
+        "avg_target_script_ratio": 1.0,
+        "lexical_diversity_ttr": 0.3197,
+        "unique_words": 3365,
+        "total_words": 10527,
+        "non_nfc_records": 0,
+        "replacement_char_records": 0,
+        "control_char_records": 0,
+        "missing_record_license_count": 676,
+        "unverified_source_records": 0,
+        "sources": {
+          "tatoeba_cc0": 512,
+          "wto_public_corpus_en_fr": 164
+        },
+        "licenses_in_records": {},
+        "rejection_reasons": {
+          "excessive_punctuation": 23
+        }
+      },
+      "fr": {
+        "pipeline_validation_gate": "DATA_NOT_READY",
+        "general_llm_production_gate": "DATA_NOT_READY",
+        "pipeline_blocking_issues": [
+          "cross_split_contamination=1"
+        ],
+        "pipeline_review_issues": [
+          "missing_per_record_license_metadata=889",
+          "intra_split_duplicates(exact=0,norm=2)"
+        ],
+        "production_blockers": [
+          "cross_split_contamination=1",
+          "missing_per_record_license_metadata=889",
+          "intra_split_duplicates(exact=0,norm=2)",
+          "insufficient_scale_for_general_llm(train_tokens=45063 < 100000000)"
+        ],
+        "splits": {
+          "train": {
+            "records": 689,
+            "chars": 42793,
+            "byte_tokens": 45063,
+            "clean_records": 689,
+            "noisy_records": 0
+          },
+          "validation": {
+            "records": 78,
+            "chars": 8697,
+            "byte_tokens": 9040,
+            "clean_records": 77,
+            "noisy_records": 1
+          },
+          "test": {
+            "records": 122,
+            "chars": 8629,
+            "byte_tokens": 9059,
+            "clean_records": 122,
+            "noisy_records": 0
+          }
+        },
+        "total_records": 889,
+        "train_token_share_pct": 33.29,
+        "noise_rate": 0.0011,
+        "avg_target_script_ratio": 1.0,
+        "lexical_diversity_ttr": 0.3259,
+        "unique_words": 3223,
+        "total_words": 9890,
+        "non_nfc_records": 0,
+        "replacement_char_records": 0,
+        "control_char_records": 0,
+        "missing_record_license_count": 889,
+        "unverified_source_records": 0,
+        "sources": {
+          "tatoeba_cc0": 836,
+          "wto_public_corpus_en_fr": 53
+        },
+        "licenses_in_records": {},
+        "rejection_reasons": {
+          "excessive_punctuation": 1
+        }
+      }
+    }
+  },
+  "v1_2_sft_audit": {
+    "dataset_name": "v1_2_sft",
+    "splits_dir": "data\\processed\\v1_2_sft\\splits",
+    "timestamp_utc": "2026-11-24T21:25:06Z",
+    "overall_pipeline_validation_gate": "DATA_NOT_READY",
+    "overall_general_llm_production_gate": "DATA_NOT_READY",
+    "contamination": {
+      "cross_split_exact_duplicates": {
+        "train_val": 0,
+        "train_test": 0,
+        "val_test": 0
+      },
+      "cross_split_normalized_duplicates": {
+        "train_val": 0,
+        "train_test": 0,
+        "val_test": 0
+      },
+      "cross_split_document_overlap": {
+        "train_val": 0,
+        "train_test": 0,
+        "val_test": 0
+      },
+      "cross_split_near_duplicates": {
+        "train_val": 0,
+        "train_test": 0,
+        "val_test": 0
+      },
+      "total_cross_split_contamination": 0,
+      "intra_split_exact_duplicates": {
+        "train": 0,
+        "validation": 0,
+        "test": 0
+      },
+      "intra_split_normalized_duplicates": {
+        "train": 0,
+        "validation": 0,
+        "test": 0
+      }
+    },
+    "languages": {
+      "ar": {
+        "pipeline_validation_gate": "DATA_NOT_READY",
+        "general_llm_production_gate": "DATA_NOT_READY",
+        "pipeline_blocking_issues": [
+          "noise_rate=1.000 > 0.05",
+          "avg_target_script=0.698 < 0.92",
+          "train_tokens=7440 < 10000"
+        ],
+        "pipeline_review_issues": [
+          "missing_per_record_license_metadata=48"
+        ],
+        "production_blockers": [
+          "noise_rate=1.000 > 0.05",
+          "avg_target_script=0.698 < 0.92",
+          "train_tokens=7440 < 10000",
+          "missing_per_record_license_metadata=48",
+          "insufficient_scale_for_general_llm(train_tokens=7440 < 100000000)"
+        ],
+        "splits": {
+          "train": {
+            "records": 24,
+            "chars": 4858,
+            "byte_tokens": 7440,
+            "clean_records": 0,
+            "noisy_records": 24
+          },
+          "validation": {
+            "records": 12,
+            "chars": 2407,
+            "byte_tokens": 3664,
+            "clean_records": 0,
+            "noisy_records": 12
+          },
+          "test": {
+            "records": 12,
+            "chars": 2606,
+            "byte_tokens": 4017,
+            "clean_records": 0,
+            "noisy_records": 12
+          }
+        },
+        "total_records": 48,
+        "train_token_share_pct": 41.62,
+        "noise_rate": 1.0,
+        "avg_target_script_ratio": 0.6983,
+        "lexical_diversity_ttr": 0.1857,
+        "unique_words": 270,
+        "total_words": 1454,
+        "non_nfc_records": 0,
+        "replacement_char_records": 0,
+        "control_char_records": 0,
+        "missing_record_license_count": 48,
+        "unverified_source_records": 0,
+        "sources": {
+          "nourai_v1_2_multitask_sft": 48
+        },
+        "licenses_in_records": {},
+        "rejection_reasons": {
+          "low_arabic_script_ratio": 46,
+          "latin_ocr_contamination": 48,
+          "excessive_punctuation_ocr_noise": 24,
+          "fragmented_ocr_tokens": 8
+        }
+      },
+      "en": {
+        "pipeline_validation_gate": "DATA_NOT_READY",
+        "general_llm_production_gate": "DATA_NOT_READY",
+        "pipeline_blocking_issues": [
+          "noise_rate=0.167 > 0.05",
+          "train_tokens=5056 < 10000"
+        ],
+        "pipeline_review_issues": [
+          "missing_per_record_license_metadata=48"
+        ],
+        "production_blockers": [
+          "noise_rate=0.167 > 0.05",
+          "train_tokens=5056 < 10000",
+          "missing_per_record_license_metadata=48",
+          "insufficient_scale_for_general_llm(train_tokens=5056 < 100000000)"
+        ],
+        "splits": {
+          "train": {
+            "records": 24,
+            "chars": 5026,
+            "byte_tokens": 5056,
+            "clean_records": 20,
+            "noisy_records": 4
+          },
+          "validation": {
+            "records": 12,
+            "chars": 2530,
+            "byte_tokens": 2547,
+            "clean_records": 10,
+            "noisy_records": 2
+          },
+          "test": {
+            "records": 12,
+            "chars": 2630,
+            "byte_tokens": 2647,
+            "clean_records": 10,
+            "noisy_records": 2
+          }
+        },
+        "total_records": 48,
+        "train_token_share_pct": 28.28,
+        "noise_rate": 0.1667,
+        "avg_target_script_ratio": 1.0,
+        "lexical_diversity_ttr": 0.1607,
+        "unique_words": 219,
+        "total_words": 1363,
+        "non_nfc_records": 0,
+        "replacement_char_records": 0,
+        "control_char_records": 0,
+        "missing_record_license_count": 48,
+        "unverified_source_records": 0,
+        "sources": {
+          "nourai_v1_2_multitask_sft": 48
+        },
+        "licenses_in_records": {},
+        "rejection_reasons": {
+          "excessive_punctuation": 8
+        }
+      },
+      "fr": {
+        "pipeline_validation_gate": "DATA_NOT_READY",
+        "general_llm_production_gate": "DATA_NOT_READY",
+        "pipeline_blocking_issues": [
+          "noise_rate=0.333 > 0.05",
+          "train_tokens=5382 < 10000"
+        ],
+        "pipeline_review_issues": [
+          "missing_per_record_license_metadata=48"
+        ],
+        "production_blockers": [
+          "noise_rate=0.333 > 0.05",
+          "train_tokens=5382 < 10000",
+          "missing_per_record_license_metadata=48",
+          "insufficient_scale_for_general_llm(train_tokens=5382 < 100000000)"
+        ],
+        "splits": {
+          "train": {
+            "records": 24,
+            "chars": 5018,
+            "byte_tokens": 5382,
+            "clean_records": 16,
+            "noisy_records": 8
+          },
+          "validation": {
+            "records": 12,
+            "chars": 2462,
+            "byte_tokens": 2646,
+            "clean_records": 8,
+            "noisy_records": 4
+          },
+          "test": {
+            "records": 12,
+            "chars": 2623,
+            "byte_tokens": 2840,
+            "clean_records": 8,
+            "noisy_records": 4
+          }
+        },
+        "total_records": 48,
+        "train_token_share_pct": 30.1,
+        "noise_rate": 0.3333,
+        "avg_target_script_ratio": 0.9384,
+        "lexical_diversity_ttr": 0.1499,
+        "unique_words": 220,
+        "total_words": 1468,
+        "non_nfc_records": 0,
+        "replacement_char_records": 0,
+        "control_char_records": 0,
+        "missing_record_license_count": 48,
+        "unverified_source_records": 0,
+        "sources": {
+          "nourai_v1_2_multitask_sft": 48
+        },
+        "licenses_in_records": {},
+        "rejection_reasons": {
+          "low_latin_script_ratio": 8,
+          "arabic_script_bleed": 8,
+          "excessive_punctuation": 8
+        }
+      }
+    }
+  },
+  "clean_corpus_build_stats": {
+    "source_splits_dir": "data\\processed\\v1_2_corpus\\splits",
+    "output_dir": "data\\processed\\jebrex_v1_clean\\splits",
+    "splits": {
+      "test": {
+        "input_records": 274,
+        "kept_records": 252,
+        "dropped_records": 22
+      },
+      "validation": {
+        "input_records": 218,
+        "kept_records": 213,
+        "dropped_records": 5
+      },
+      "train": {
+        "input_records": 1296,
+        "kept_records": 1234,
+        "dropped_records": 62
+      }
+    },
+    "dropped_reasons": {
+      "ar:low_arabic_script_ratio": 42,
+      "ar:latin_ocr_contamination": 55,
+      "ar:excessive_punctuation_ocr_noise": 28,
+      "ar:ocr_punctuation_artifacts": 20,
+      "en:excessive_punctuation": 23,
+      "ar:fragmented_ocr_tokens": 12,
+      "fr:excessive_punctuation": 1,
+      "near_duplicate": 3
+    }
+  },
+  "clean_sft_build_stats": {
+    "splits": {
+      "test": 34,
+      "validation": 34,
+      "train": 68
+    },
+    "fixes_applied": 35
+  },
+  "jebrex_v1_clean_audit": {
+    "dataset_name": "jebrex_v1_clean",
+    "splits_dir": "data\\processed\\jebrex_v1_clean\\splits",
+    "timestamp_utc": "2026-11-24T21:25:11Z",
+    "overall_pipeline_validation_gate": "DATA_READY",
+    "overall_general_llm_production_gate": "DATA_NOT_READY",
+    "contamination": {
+      "cross_split_exact_duplicates": {
+        "train_val": 0,
+        "train_test": 0,
+        "val_test": 0
+      },
+      "cross_split_normalized_duplicates": {
+        "train_val": 0,
+        "train_test": 0,
+        "val_test": 0
+      },
+      "cross_split_document_overlap": {
+        "train_val": 0,
+        "train_test": 0,
+        "val_test": 0
+      },
+      "cross_split_near_duplicates": {
+        "train_val": 0,
+        "train_test": 0,
+        "val_test": 0
+      },
+      "total_cross_split_contamination": 0,
+      "intra_split_exact_duplicates": {
+        "train": 0,
+        "validation": 0,
+        "test": 0
+      },
+      "intra_split_normalized_duplicates": {
+        "train": 0,
+        "validation": 0,
+        "test": 0
+      }
+    },
+    "languages": {
+      "ar": {
+        "pipeline_validation_gate": "DATA_READY",
+        "general_llm_production_gate": "DATA_NOT_READY",
+        "pipeline_blocking_issues": [],
+        "pipeline_review_issues": [],
+        "production_blockers": [
+          "insufficient_scale_for_general_llm(train_tokens=31701 < 100000000)"
+        ],
+        "splits": {
+          "train": {
+            "records": 106,
+            "chars": 17651,
+            "byte_tokens": 31701,
+            "clean_records": 106,
+            "noisy_records": 0
+          },
+          "validation": {
+            "records": 27,
+            "chars": 4519,
+            "byte_tokens": 8184,
+            "clean_records": 27,
+            "noisy_records": 0
+          },
+          "test": {
+            "records": 28,
+            "chars": 4667,
+            "byte_tokens": 8505,
+            "clean_records": 28,
+            "noisy_records": 0
+          }
+        },
+        "total_records": 161,
+        "train_token_share_pct": 26.14,
+        "noise_rate": 0.0,
+        "avg_target_script_ratio": 0.9993,
+        "lexical_diversity_ttr": 0.5894,
+        "unique_words": 2889,
+        "total_words": 4902,
+        "non_nfc_records": 0,
+        "replacement_char_records": 0,
+        "control_char_records": 0,
+        "missing_record_license_count": 0,
+        "unverified_source_records": 0,
+        "sources": {
+          "qnl_arabic_ocr_v2": 161
+        },
+        "licenses_in_records": {
+          "PUBLIC_DOMAIN_TEXTS; CC0-1.0_METADATA": 161
+        },
+        "rejection_reasons": {}
+      },
+      "en": {
+        "pipeline_validation_gate": "DATA_READY",
+        "general_llm_production_gate": "DATA_NOT_READY",
+        "pipeline_blocking_issues": [],
+        "pipeline_review_issues": [],
+        "production_blockers": [
+          "insufficient_scale_for_general_llm(train_tokens=44537 < 100000000)"
+        ],
+        "splits": {
+          "train": {
+            "records": 440,
+            "chars": 44036,
+            "byte_tokens": 44537,
+            "clean_records": 440,
+            "noisy_records": 0
+          },
+          "validation": {
+            "records": 110,
+            "chars": 8897,
+            "byte_tokens": 9019,
+            "clean_records": 110,
+            "noisy_records": 0
+          },
+          "test": {
+            "records": 102,
+            "chars": 8047,
+            "byte_tokens": 8169,
+            "clean_records": 102,
+            "noisy_records": 0
+          }
+        },
+        "total_records": 652,
+        "train_token_share_pct": 36.72,
+        "noise_rate": 0.0,
+        "avg_target_script_ratio": 1.0,
+        "lexical_diversity_ttr": 0.324,
+        "unique_words": 3343,
+        "total_words": 10319,
+        "non_nfc_records": 0,
+        "replacement_char_records": 0,
+        "control_char_records": 0,
+        "missing_record_license_count": 0,
+        "unverified_source_records": 0,
+        "sources": {
+          "tatoeba_cc0": 512,
+          "wto_public_corpus_en_fr": 140
+        },
+        "licenses_in_records": {
+          "CC0-1.0": 512,
+          "WTO_PUBLIC_CORPUS_TERMS": 140
+        },
+        "rejection_reasons": {}
+      },
+      "fr": {
+        "pipeline_validation_gate": "DATA_READY",
+        "general_llm_production_gate": "DATA_NOT_READY",
+        "pipeline_blocking_issues": [],
+        "pipeline_review_issues": [],
+        "production_blockers": [
+          "insufficient_scale_for_general_llm(train_tokens=45046 < 100000000)"
+        ],
+        "splits": {
+          "train": {
+            "records": 688,
+            "chars": 42777,
+            "byte_tokens": 45046,
+            "clean_records": 688,
+            "noisy_records": 0
+          },
+          "validation": {
+            "records": 76,
+            "chars": 8439,
+            "byte_tokens": 8768,
+            "clean_records": 76,
+            "noisy_records": 0
+          },
+          "test": {
+            "records": 122,
+            "chars": 8629,
+            "byte_tokens": 9059,
+            "clean_records": 122,
+            "noisy_records": 0
+          }
+        },
+        "total_records": 886,
+        "train_token_share_pct": 37.14,
+        "noise_rate": 0.0,
+        "avg_target_script_ratio": 1.0,
+        "lexical_diversity_ttr": 0.3267,
+        "unique_words": 3216,
+        "total_words": 9845,
+        "non_nfc_records": 0,
+        "replacement_char_records": 0,
+        "control_char_records": 0,
+        "missing_record_license_count": 0,
+        "unverified_source_records": 0,
+        "sources": {
+          "tatoeba_cc0": 835,
+          "wto_public_corpus_en_fr": 51
+        },
+        "licenses_in_records": {
+          "CC0-1.0": 835,
+          "WTO_PUBLIC_CORPUS_TERMS": 51
+        },
+        "rejection_reasons": {}
+      }
+    }
+  },
+  "jebrex_v1_clean_sft_audit": {
+    "dataset_name": "jebrex_v1_clean_sft",
+    "splits_dir": "data\\processed\\jebrex_v1_clean_sft\\splits",
+    "timestamp_utc": "2026-11-24T21:25:11Z",
+    "overall_pipeline_validation_gate": "DATA_NOT_READY",
+    "overall_general_llm_production_gate": "DATA_NOT_READY",
+    "contamination": {
+      "cross_split_exact_duplicates": {
+        "train_val": 0,
+        "train_test": 0,
+        "val_test": 0
+      },
+      "cross_split_normalized_duplicates": {
+        "train_val": 0,
+        "train_test": 0,
+        "val_test": 0
+      },
+      "cross_split_document_overlap": {
+        "train_val": 0,
+        "train_test": 0,
+        "val_test": 0
+      },
+      "cross_split_near_duplicates": {
+        "train_val": 0,
+        "train_test": 0,
+        "val_test": 0
+      },
+      "total_cross_split_contamination": 0,
+      "intra_split_exact_duplicates": {
+        "train": 0,
+        "validation": 0,
+        "test": 0
+      },
+      "intra_split_normalized_duplicates": {
+        "train": 0,
+        "validation": 0,
+        "test": 0
+      }
+    },
+    "languages": {
+      "ar": {
+        "pipeline_validation_gate": "DATA_NOT_READY",
+        "general_llm_production_gate": "DATA_NOT_READY",
+        "pipeline_blocking_issues": [
+          "noise_rate=1.000 > 0.05",
+          "avg_target_script=0.698 < 0.92",
+          "train_tokens=7424 < 10000"
+        ],
+        "pipeline_review_issues": [],
+        "production_blockers": [
+          "noise_rate=1.000 > 0.05",
+          "avg_target_script=0.698 < 0.92",
+          "train_tokens=7424 < 10000",
+          "insufficient_scale_for_general_llm(train_tokens=7424 < 100000000)"
+        ],
+        "splits": {
+          "train": {
+            "records": 24,
+            "chars": 4842,
+            "byte_tokens": 7424,
+            "clean_records": 0,
+            "noisy_records": 24
+          },
+          "validation": {
+            "records": 12,
+            "chars": 2400,
+            "byte_tokens": 3658,
+            "clean_records": 0,
+            "noisy_records": 12
+          },
+          "test": {
+            "records": 12,
+            "chars": 2599,
+            "byte_tokens": 4011,
+            "clean_records": 0,
+            "noisy_records": 12
+          }
+        },
+        "total_records": 48,
+        "train_token_share_pct": 43.4,
+        "noise_rate": 1.0,
+        "avg_target_script_ratio": 0.6983,
+        "lexical_diversity_ttr": 0.1884,
+        "unique_words": 274,
+        "total_words": 1454,
+        "non_nfc_records": 0,
+        "replacement_char_records": 0,
+        "control_char_records": 0,
+        "missing_record_license_count": 0,
+        "unverified_source_records": 0,
+        "sources": {
+          "jebrex_v1_clean_sft": 48
+        },
+        "licenses_in_records": {
+          "MIT": 48
+        },
+        "rejection_reasons": {
+          "low_arabic_script_ratio": 46,
+          "latin_ocr_contamination": 48,
+          "excessive_punctuation_ocr_noise": 24,
+          "fragmented_ocr_tokens": 8
+        }
+      },
+      "en": {
+        "pipeline_validation_gate": "DATA_NOT_READY",
+        "general_llm_production_gate": "DATA_NOT_READY",
+        "pipeline_blocking_issues": [
+          "train_tokens=4322 < 10000"
+        ],
+        "pipeline_review_issues": [],
+        "production_blockers": [
+          "train_tokens=4322 < 10000",
+          "insufficient_scale_for_general_llm(train_tokens=4322 < 100000000)"
+        ],
+        "splits": {
+          "train": {
+            "records": 20,
+            "chars": 4296,
+            "byte_tokens": 4322,
+            "clean_records": 20,
+            "noisy_records": 0
+          },
+          "validation": {
+            "records": 10,
+            "chars": 2154,
+            "byte_tokens": 2169,
+            "clean_records": 10,
+            "noisy_records": 0
+          },
+          "test": {
+            "records": 10,
+            "chars": 2256,
+            "byte_tokens": 2271,
+            "clean_records": 10,
+            "noisy_records": 0
+          }
+        },
+        "total_records": 40,
+        "train_token_share_pct": 25.27,
+        "noise_rate": 0.0,
+        "avg_target_script_ratio": 1.0,
+        "lexical_diversity_ttr": 0.1744,
+        "unique_words": 200,
+        "total_words": 1147,
+        "non_nfc_records": 0,
+        "replacement_char_records": 0,
+        "control_char_records": 0,
+        "missing_record_license_count": 0,
+        "unverified_source_records": 0,
+        "sources": {
+          "jebrex_v1_clean_sft": 40
+        },
+        "licenses_in_records": {
+          "MIT": 40
+        },
+        "rejection_reasons": {}
+      },
+      "fr": {
+        "pipeline_validation_gate": "DATA_NOT_READY",
+        "general_llm_production_gate": "DATA_NOT_READY",
+        "pipeline_blocking_issues": [
+          "noise_rate=0.333 > 0.05",
+          "train_tokens=5360 < 10000"
+        ],
+        "pipeline_review_issues": [],
+        "production_blockers": [
+          "noise_rate=0.333 > 0.05",
+          "train_tokens=5360 < 10000",
+          "insufficient_scale_for_general_llm(train_tokens=5360 < 100000000)"
+        ],
+        "splits": {
+          "train": {
+            "records": 24,
+            "chars": 4996,
+            "byte_tokens": 5360,
+            "clean_records": 16,
+            "noisy_records": 8
+          },
+          "validation": {
+            "records": 12,
+            "chars": 2448,
+            "byte_tokens": 2632,
+            "clean_records": 8,
+            "noisy_records": 4
+          },
+          "test": {
+            "records": 12,
+            "chars": 2618,
+            "byte_tokens": 2835,
+            "clean_records": 8,
+            "noisy_records": 4
+          }
+        },
+        "total_records": 48,
+        "train_token_share_pct": 31.33,
+        "noise_rate": 0.3333,
+        "avg_target_script_ratio": 0.9384,
+        "lexical_diversity_ttr": 0.1523,
+        "unique_words": 223,
+        "total_words": 1464,
+        "non_nfc_records": 0,
+        "replacement_char_records": 0,
+        "control_char_records": 0,
+        "missing_record_license_count": 0,
+        "unverified_source_records": 0,
+        "sources": {
+          "jebrex_v1_clean_sft": 48
+        },
+        "licenses_in_records": {
+          "MIT": 48
+        },
+        "rejection_reasons": {
+          "low_latin_script_ratio": 8,
+          "arabic_script_bleed": 8,
+          "excessive_punctuation": 8
+        }
+      }
+    }
+  }
+}

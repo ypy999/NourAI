@@ -1,0 +1,135 @@
+{
+  "run_name": "jebrex_v1_sanity",
+  "timestamp_utc": "2026-11-24T21:29:49Z",
+  "data_readiness_gate_passed": "DATA_READY",
+  "general_llm_production_data_gate": "DATA_NOT_READY",
+  "preflight": {
+    "device": "cpu",
+    "cuda_available": false,
+    "free_disk_mib": 7012.32,
+    "process_rss_mib": 221.44140625,
+    "passed": true
+  },
+  "model_config": {
+    "vocab_size": 260,
+    "context_length": 128,
+    "d_model": 128,
+    "n_heads": 4,
+    "n_layers": 4,
+    "dropout": 0.05,
+    "parameter_count": 843008
+  },
+  "dataset_sequences": {
+    "train_sequences": 947,
+    "validation_sequences": 202,
+    "test_sequences": 201,
+    "test_used_in_training": false
+  },
+  "training_resume_verification": {
+    "interrupt_at_step": 30,
+    "target_total_steps": 60,
+    "state_before_interrupt": {
+      "global_step": 30,
+      "epoch": 0,
+      "batch_in_epoch": 60,
+      "optimizer_param_entries": 52,
+      "optimizer_max_step": 30,
+      "optimizer_exp_avg_l2": 0.31751666,
+      "optimizer_exp_avg_sq_l2": 0.00068089,
+      "scheduler_last_epoch": 30,
+      "learning_rate": 0.0008802361332501979
+    },
+    "state_after_resume": {
+      "global_step": 30,
+      "epoch": 0,
+      "batch_in_epoch": 60,
+      "optimizer_param_entries": 52,
+      "optimizer_max_step": 30,
+      "optimizer_exp_avg_l2": 0.31751666,
+      "optimizer_exp_avg_sq_l2": 0.00068089,
+      "scheduler_last_epoch": 30,
+      "learning_rate": 0.0008802361332501979
+    },
+    "state_final": {
+      "global_step": 60,
+      "epoch": 1,
+      "batch_in_epoch": 0,
+      "optimizer_param_entries": 52,
+      "optimizer_max_step": 60,
+      "optimizer_exp_avg_l2": 0.13828119,
+      "optimizer_exp_avg_sq_l2": 0.00073772,
+      "scheduler_last_epoch": 60,
+      "learning_rate": 0.0
+    },
+    "optimizer_restored_exact": true,
+    "scheduler_restored_exact": true,
+    "recovered_from": "checkpoints\\jebrex_v1_sanity\\last.pt",
+    "used_fallback": false
+  },
+  "metrics_separated": {
+    "initial_untrained_validation": {
+      "loss": 5.5798,
+      "perplexity": 265.0175,
+      "bits_per_byte": 8.0499
+    },
+    "initial_untrained_test": {
+      "loss": 5.574,
+      "perplexity": 263.4929,
+      "bits_per_byte": 8.0416
+    },
+    "final_train": {
+      "loss": 3.1333,
+      "perplexity": 22.9507,
+      "bits_per_byte": 4.5205
+    },
+    "final_validation": {
+      "loss": 3.2014,
+      "perplexity": 24.5671,
+      "bits_per_byte": 4.6187
+    },
+    "final_held_out_test": {
+      "loss": 3.2242,
+      "perplexity": 25.1339,
+      "bits_per_byte": 4.6516
+    }
+  },
+  "checkpoints": {
+    "inference_model": "checkpoints\\jebrex_v1_sanity\\jebrex_v1_sanity_model.pt",
+    "inference_model_sha256": "421059bf0341cdfae2c3dbbe7766044e5380bf55d4f1d6f75f8aee7a0f0c887d",
+    "last_checkpoint": "checkpoints\\jebrex_v1_sanity\\last.pt",
+    "best_checkpoint": "checkpoints\\jebrex_v1_sanity\\best.pt"
+  },
+  "elapsed_seconds": 65.73,
+  "part1_val_history": [
+    {
+      "epoch": 0,
+      "step": 15,
+      "validation_loss": 3.5610531651147523,
+      "perplexity": 35.200249305259526,
+      "tokens": 25856
+    },
+    {
+      "epoch": 0,
+      "step": 30,
+      "validation_loss": 3.2468711574478903,
+      "perplexity": 25.709772111943053,
+      "tokens": 25856
+    }
+  ],
+  "part2_val_history": [
+    {
+      "epoch": 0,
+      "step": 45,
+      "validation_loss": 3.2086965164335646,
+      "perplexity": 24.74680813445291,
+      "tokens": 25856
+    },
+    {
+      "epoch": 0,
+      "step": 60,
+      "validation_loss": 3.2014099394921027,
+      "perplexity": 24.56714397620837,
+      "tokens": 25856
+    }
+  ]
+}

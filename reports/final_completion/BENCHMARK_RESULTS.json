@@ -1,0 +1,2033 @@
+{
+  "benchmark_name": "Jebrex AI Unified 12-Domain Multilingual Capability Benchmark",
+  "test_date_utc": "2026-11-24T21:39:12Z",
+  "test_date_local": "2026-11-24",
+  "hardware": {
+    "cpu": "Intel(R) Core(TM) i3-10110Y CPU @ 1.00GHz (2C/4T)",
+    "ram_gib": 7.89,
+    "gpu_cuda": false
+  },
+  "test_separation_policy": {
+    "train_val_test_separated": true,
+    "benchmark_prompts_in_training": false,
+    "external_api_used_for_jebrex": false,
+    "rule_based_fallback_used_for_jebrex": false,
+    "evaluation_categories": {
+      "automated_only": [
+        "math_01",
+        "math_02",
+        "coding_01",
+        "coding_02",
+        "instr_01",
+        "long_ctx_01"
+      ],
+      "automated_and_human_review": [
+        "ar_qa_01",
+        "ar_qa_02",
+        "en_qa_01",
+        "en_qa_02",
+        "fr_qa_01",
+        "fr_qa_02",
+        "reasoning_01",
+        "reasoning_02",
+        "multi_turn_01"
+      ],
+      "human_review_required": [
+        "summ_01",
+        "summ_02",
+        "trans_01",
+        "trans_02",
+        "halluc_01",
+        "halluc_02"
+      ]
+    }
+  },
+  "jebrex_ai_direct_neural_results": [
+    {
+      "model_label": "Jebrex AI v1.2 Small (4.87M)",
+      "checkpoint_path": "checkpoints\\v1_2\\nourai_v1_2_model.pt",
+      "checkpoint_size_mib": 18.6085,
+      "architecture": "Decoder-only Pre-LN Transformer (GPT)",
+      "config": {
+        "vocab_size": 260,
+        "context_length": 256,
+        "d_model": 256,
+        "n_heads": 8,
+        "n_layers": 6,
+        "dropout": 0.1
+      },
+      "parameter_count": 4871168,
+      "memory_status": {
+        "device": "cpu",
+        "context_length_limit": 256,
+        "parameter_count": 4871168,
+        "model_weights_mib": 18.582,
+        "process_rss_mib": 281.37,
+        "vram_allocated_mib": 0.0
+      },
+      "language_modeling_metrics_clean_splits": {
+        "train": {
+          "sequences": 473,
+          "valid_tokens": 121088,
+          "average_loss": 6.6355,
+          "perplexity": 761.6893,
+          "bits_per_byte": 9.5731
+        },
+        "validation": {
+          "sequences": 101,
+          "valid_tokens": 25856,
+          "average_loss": 6.6254,
+          "perplexity": 753.9689,
+          "bits_per_byte": 9.5584
+        },
+        "test": {
+          "sequences": 100,
+          "valid_tokens": 25600,
+          "average_loss": 6.6958,
+          "perplexity": 809.0406,
+          "bits_per_byte": 9.6601
+        }
+      },
+      "memorization_diagnostic_seen_anchor_en": "Machine learning is a branch of artificial intelligence ",
+      "benchmark_summary": {
+        "total_unseen_items": 21,
+        "automated_passed": 0,
+        "automated_pass_rate_pct": 0.0,
+        "surface_coherent_count": 17,
+        "surface_coherent_rate_pct": 80.95,
+        "mean_latency_ms": 2469.5,
+        "mean_tokens_per_second": 21.08,
+        "elapsed_seconds": 122.87
+      },
+      "by_domain": {
+        "arabic": {
+          "total": 2,
+          "automated_passed": 0,
+          "surface_coherent": 1
+        },
+        "english": {
+          "total": 2,
+          "automated_passed": 0,
+          "surface_coherent": 2
+        },
+        "french": {
+          "total": 2,
+          "automated_passed": 0,
+          "surface_coherent": 2
+        },
+        "math": {
+          "total": 2,
+          "automated_passed": 0,
+          "surface_coherent": 2
+        },
+        "coding": {
+          "total": 2,
+          "automated_passed": 0,
+          "surface_coherent": 2
+        },
+        "reasoning": {
+          "total": 2,
+          "automated_passed": 0,
+          "surface_coherent": 1
+        },
+        "summarization": {
+          "total": 2,
+          "automated_passed": 0,
+          "surface_coherent": 2
+        },
+        "translation": {
+          "total": 2,
+          "automated_passed": 0,
+          "surface_coherent": 1
+        },
+        "multi_turn": {
+          "total": 1,
+          "automated_passed": 0,
+          "surface_coherent": 1
+        },
+        "instruction_following": {
+          "total": 1,
+          "automated_passed": 0,
+          "surface_coherent": 1
+        },
+        "long_context": {
+          "total": 1,
+          "automated_passed": 0,
+          "surface_coherent": 1
+        },
+        "hallucination_resistance": {
+          "total": 2,
+          "automated_passed": 0,
+          "surface_coherent": 1
+        }
+      },
+      "items": [
+        {
+          "id": "ar_qa_01",
+          "domain": "arabic",
+          "language": "ar",
+          "eval_type": "automated_and_human",
+          "prompt": "اقرأ النص ثم أجب: تقع مدينة الإسكندرية على ساحل البحر الأبيض المتوسط في مصر وتشتهر بمكتبتها التاريخية. على أي بحر تقع الإسكندرية؟",
+          "prompt_token_count": 232,
+          "context_truncated": true,
+          "generated_text": "لأن الأنظي dequ",
+          "generated_token_count": 25,
+          "finish_reason": "eos",
+          "elapsed_ms": 1440.107,
+          "tokens_per_second": 17.36,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": true,
+            "script_match": true,
+            "low_repetition": true,
+            "surface_coherent": true
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "ar_qa_02",
+          "domain": "arabic",
+          "language": "ar",
+          "eval_type": "automated_and_human",
+          "prompt": "ما هو الكوكب الأقرب إلى الشمس في المجموعة الشمسية؟",
+          "prompt_token_count": 116,
+          "context_truncated": false,
+          "generated_text": "اعديوهي الرارهز الإدري والاقا�",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 1765.158,
+          "tokens_per_second": 31.73,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": false,
+            "script_match": true,
+            "low_repetition": true,
+            "surface_coherent": false
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "en_qa_01",
+          "domain": "english",
+          "language": "en",
+          "eval_type": "automated_and_human",
+          "prompt": "Read and answer: Photosynthesis is the process by which green plants use sunlight to convert water and carbon dioxide into glucose and oxygen. What gas do plants release during photosynthesis?",
+          "prompt_token_count": 216,
+          "context_truncated": false,
+          "generated_text": "Suthe ly tis reathiathondeaiaticalliliab",
+          "generated_token_count": 41,
+          "finish_reason": "eos",
+          "elapsed_ms": 2634.672,
+          "tokens_per_second": 15.56,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": true,
+            "script_match": true,
+            "low_repetition": true,
+            "surface_coherent": true
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "en_qa_02",
+          "domain": "english",
+          "language": "en",
+          "eval_type": "automated_and_human",
+          "prompt": "What is the chemical symbol for gold?",
+          "prompt_token_count": 61,
+          "context_truncated": false,
+          "generated_text": "Sof Dohicaphe f of imaptoustis inte he p ce dening arng ",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 1859.953,
+          "tokens_per_second": 30.11,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": true,
+            "script_match": true,
+            "low_repetition": true,
+            "surface_coherent": true
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "fr_qa_01",
+          "domain": "french",
+          "language": "fr",
+          "eval_type": "automated_and_human",
+          "prompt": "Lisez et répondez : La Loire est le plus long fleuve de France et se jette dans l'océan Atlantique. Dans quel océan se jette la Loire ?",
+          "prompt_token_count": 162,
+          "context_truncated": false,
+          "generated_text": "Ré de : e a larant lysures logas aintiont de ses enée ",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 4088.056,
+          "tokens_per_second": 13.7,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": true,
+            "script_match": true,
+            "low_repetition": true,
+            "surface_coherent": true
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "fr_qa_02",
+          "domain": "french",
+          "language": "fr",
+          "eval_type": "automated_and_human",
+          "prompt": "Quelle planète est appelée la planète rouge ?",
+          "prompt_token_count": 72,
+          "context_truncated": false,
+          "generated_text": "Papre qure que + Étuis, lite quere que de dest éat l'a",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 2012.995,
+          "tokens_per_second": 27.82,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": true,
+            "script_match": true,
+            "low_repetition": true,
+            "surface_coherent": true
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "math_01",
+          "domain": "math",
+          "language": "en",
+          "eval_type": "automated",
+          "prompt": "Compute 27 + 38. Reply with the exact number.",
+          "prompt_token_count": 69,
+          "context_truncated": false,
+          "generated_text": "Sulical of = 40.",
+          "generated_token_count": 17,
+          "finish_reason": "eos",
+          "elapsed_ms": 443.325,
+          "tokens_per_second": 38.35,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": true,
+            "script_match": true,
+            "low_repetition": true,
+            "surface_coherent": true
+          },
+          "requires_human_review": false
+        },
+        {
+          "id": "math_02",
+          "domain": "math",
+          "language": "ar",
+          "eval_type": "automated",
+          "prompt": "إذا اشترى سامي 4 دفاتر بسعر 7 ريالات لكل دفتر، فكم يدفع إجمالاً؟",
+          "prompt_token_count": 138,
+          "context_truncated": false,
+          "generated_text": "نالالجماري كالاقاففرنسلة اقاف",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 3677.141,
+          "tokens_per_second": 15.23,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": true,
+            "script_match": true,
+            "low_repetition": true,
+            "surface_coherent": true
+          },
+          "requires_human_review": false
+        },
+        {
+          "id": "coding_01",
+          "domain": "coding",
+          "language": "en",
+          "eval_type": "automated",
+          "prompt": "Write a Python function `is_even(n)` that returns True if n is even and False otherwise.",
+          "prompt_token_count": 112,
+          "context_truncated": false,
+          "generated_text": "d, hise  rng, dy: Lareadestwatong  re surindy l s y  * 2",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 3261.191,
+          "tokens_per_second": 17.17,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": true,
+            "script_match": true,
+            "low_repetition": true,
+            "surface_coherent": true
+          },
+          "requires_human_review": false
+        },
+        {
+          "id": "coding_02",
+          "domain": "coding",
+          "language": "en",
+          "eval_type": "automated",
+          "prompt": "Fix the bug in this Python code: `def add(a, b) return a + b`",
+          "prompt_token_count": 85,
+          "context_truncated": false,
+          "generated_text": "Trpitse : ypre inde nin ntong ceateteca ingra dunde pre ",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 2352.355,
+          "tokens_per_second": 23.81,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": true,
+            "script_match": true,
+            "low_repetition": true,
+            "surface_coherent": true
+          },
+          "requires_human_review": false
+        },
+        {
+          "id": "reasoning_01",
+          "domain": "reasoning",
+          "language": "en",
+          "eval_type": "automated_and_human",
+          "prompt": "All roses are flowers. Some flowers fade quickly. Does it necessarily follow that all roses fade quickly? Answer Yes or No and explain briefly.",
+          "prompt_token_count": 167,
+          "context_truncated": false,
+          "generated_text": "THen abangab.",
+          "generated_token_count": 14,
+          "finish_reason": "eos",
+          "elapsed_ms": 889.972,
+          "tokens_per_second": 15.73,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": true,
+            "script_match": true,
+            "low_repetition": true,
+            "surface_coherent": true
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "reasoning_02",
+          "domain": "reasoning",
+          "language": "ar",
+          "eval_type": "automated_and_human",
+          "prompt": "عمر خالد أكبر من عمر ليلى، وعمر ليلى أكبر من عمر كريم. من هو الأصغر سناً؟",
+          "prompt_token_count": 154,
+          "context_truncated": false,
+          "generated_text": "جي Nanاوأمأالخطوة prezin restererestearntin",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 3845.452,
+          "tokens_per_second": 14.56,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": true,
+            "script_match": false,
+            "low_repetition": true,
+            "surface_coherent": false
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "summ_01",
+          "domain": "summarization",
+          "language": "en",
+          "eval_type": "human_required",
+          "prompt": "Summarize in one short sentence: Renewable solar energy reduces carbon emissions and lowers long-term electricity bills for households.",
+          "prompt_token_count": 159,
+          "context_truncated": false,
+          "generated_text": "Sg enin Croceausecong cenardmang centery ongana confid t",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 3839.44,
+          "tokens_per_second": 14.59,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": true,
+            "script_match": true,
+            "low_repetition": true,
+            "surface_coherent": true
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "summ_02",
+          "domain": "summarization",
+          "language": "ar",
+          "eval_type": "human_required",
+          "prompt": "لخّص في جملة قصيرة: يساعد القراءة اليومية المنتظمة على توسيع المفردات وتقوية التركيز وتحسين مهارات الكتابة.",
+          "prompt_token_count": 221,
+          "context_truncated": false,
+          "generated_text": "الأيعيطث لالئياً.",
+          "generated_token_count": 33,
+          "finish_reason": "eos",
+          "elapsed_ms": 3167.69,
+          "tokens_per_second": 10.42,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": true,
+            "script_match": true,
+            "low_repetition": true,
+            "surface_coherent": true
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "trans_01",
+          "domain": "translation",
+          "language": "en",
+          "eval_type": "human_required",
+          "prompt": "Translate into French: The book is on the table.",
+          "prompt_token_count": 72,
+          "context_truncated": false,
+          "generated_text": "Turara  SAg eficises : adingens 2 hat ceatration ofarati",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 1929.05,
+          "tokens_per_second": 29.03,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": true,
+            "script_match": true,
+            "low_repetition": true,
+            "surface_coherent": true
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "trans_02",
+          "domain": "translation",
+          "language": "ar",
+          "eval_type": "human_required",
+          "prompt": "ترجم إلى الإنجليزية: الشمس مشرقة اليوم.",
+          "prompt_token_count": 95,
+          "context_truncated": false,
+          "generated_text": "امد يز ز لمدلعدياهياامة ة اوال�",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 2380.857,
+          "tokens_per_second": 23.52,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": false,
+            "script_match": true,
+            "low_repetition": true,
+            "surface_coherent": false
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "multi_turn_01",
+          "domain": "multi_turn",
+          "language": "en",
+          "eval_type": "automated_and_human",
+          "prompt": "What city did I say I live in?",
+          "prompt_token_count": 199,
+          "context_truncated": false,
+          "generated_text": "Sof cof confideliaig indeandendegritend ablid aitère de",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 4810.357,
+          "tokens_per_second": 11.64,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": true,
+            "script_match": true,
+            "low_repetition": true,
+            "surface_coherent": true
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "instr_01",
+          "domain": "instruction_following",
+          "language": "en",
+          "eval_type": "automated",
+          "prompt": "Output ONLY the single word BLUE in uppercase and nothing else.",
+          "prompt_token_count": 87,
+          "context_truncated": false,
+          "generated_text": "اthing yprof ofrypypypyp, oun * +te 40 ypre -> Sommmatu",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 2315.282,
+          "tokens_per_second": 24.19,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": true,
+            "script_match": true,
+            "low_repetition": true,
+            "surface_coherent": true
+          },
+          "requires_human_review": false
+        },
+        {
+          "id": "long_ctx_01",
+          "domain": "long_context",
+          "language": "en",
+          "eval_type": "automated",
+          "prompt": "PASSCODE=DELTA-749. Background note on archival cataloging procedures for municipal libraries. Background note on archival cataloging procedures for municipal libraries. Background note on archival cataloging procedures for municipal libraries. Background note on archival cataloging procedures for municipal libraries. Background note on archival cataloging procedures for municipal libraries. Background note on archival cataloging procedures for municipal libraries. What is the PASSCODE mentioned at the beginning?",
+          "prompt_token_count": 232,
+          "context_truncated": true,
+          "generated_text": "Sitlyz aundalaicar minde",
+          "generated_token_count": 25,
+          "finish_reason": "eos",
+          "elapsed_ms": 2376.5,
+          "tokens_per_second": 10.52,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": true,
+            "script_match": true,
+            "low_repetition": true,
+            "surface_coherent": true
+          },
+          "requires_human_review": false
+        },
+        {
+          "id": "halluc_01",
+          "domain": "hallucination_resistance",
+          "language": "en",
+          "eval_type": "human_required",
+          "prompt": "Who won the 2099 Martian Chess World Championship?",
+          "prompt_token_count": 74,
+          "context_truncated": false,
+          "generated_text": "Haleangrapr o.",
+          "generated_token_count": 15,
+          "finish_reason": "eos",
+          "elapsed_ms": 446.42,
+          "tokens_per_second": 33.6,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": true,
+            "script_match": true,
+            "low_repetition": true,
+            "surface_coherent": true
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "halluc_02",
+          "domain": "hallucination_resistance",
+          "language": "ar",
+          "eval_type": "human_required",
+          "prompt": "من فاز بجائزة نوبل للفيزياء في عام 2098؟",
+          "prompt_token_count": 93,
+          "context_truncated": false,
+          "generated_text": "ة Non 2 12دي الدي وديوهي الرركز ال�",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 2323.522,
+          "tokens_per_second": 24.1,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": false,
+            "script_match": true,
+            "low_repetition": true,
+            "surface_coherent": false
+          },
+          "requires_human_review": true
+        }
+      ]
+    },
+    {
+      "model_label": "Jebrex AI v1.2 Pretrain Nano (843K)",
+      "checkpoint_path": "checkpoints\\v1_2\\pretrain\\v1_2_pretrained_model.pt",
+      "checkpoint_size_mib": 3.2344,
+      "architecture": "Decoder-only Pre-LN Transformer (GPT)",
+      "config": {
+        "vocab_size": 260,
+        "context_length": 128,
+        "d_model": 128,
+        "n_heads": 4,
+        "n_layers": 4,
+        "dropout": 0.05
+      },
+      "parameter_count": 843008,
+      "memory_status": {
+        "device": "cpu",
+        "context_length_limit": 128,
+        "parameter_count": 843008,
+        "model_weights_mib": 3.2158,
+        "process_rss_mib": 250.29,
+        "vram_allocated_mib": 0.0
+      },
+      "language_modeling_metrics_clean_splits": {
+        "train": {
+          "sequences": 947,
+          "valid_tokens": 121216,
+          "average_loss": 2.509,
+          "perplexity": 12.292,
+          "bits_per_byte": 3.6197
+        },
+        "validation": {
+          "sequences": 202,
+          "valid_tokens": 25856,
+          "average_loss": 2.5232,
+          "perplexity": 12.4686,
+          "bits_per_byte": 3.6402
+        },
+        "test": {
+          "sequences": 201,
+          "valid_tokens": 25728,
+          "average_loss": 2.5319,
+          "perplexity": 12.5775,
+          "bits_per_byte": 3.6528
+        }
+      },
+      "memorization_diagnostic_seen_anchor_en": "",
+      "benchmark_summary": {
+        "total_unseen_items": 21,
+        "automated_passed": 1,
+        "automated_pass_rate_pct": 4.76,
+        "surface_coherent_count": 7,
+        "surface_coherent_rate_pct": 33.33,
+        "mean_latency_ms": 467.82,
+        "mean_tokens_per_second": 92.13,
+        "elapsed_seconds": 27.15
+      },
+      "by_domain": {
+        "arabic": {
+          "total": 2,
+          "automated_passed": 0,
+          "surface_coherent": 2
+        },
+        "english": {
+          "total": 2,
+          "automated_passed": 0,
+          "surface_coherent": 0
+        },
+        "french": {
+          "total": 2,
+          "automated_passed": 0,
+          "surface_coherent": 0
+        },
+        "math": {
+          "total": 2,
+          "automated_passed": 0,
+          "surface_coherent": 1
+        },
+        "coding": {
+          "total": 2,
+          "automated_passed": 0,
+          "surface_coherent": 0
+        },
+        "reasoning": {
+          "total": 2,
+          "automated_passed": 0,
+          "surface_coherent": 1
+        },
+        "summarization": {
+          "total": 2,
+          "automated_passed": 0,
+          "surface_coherent": 1
+        },
+        "translation": {
+          "total": 2,
+          "automated_passed": 0,
+          "surface_coherent": 1
+        },
+        "multi_turn": {
+          "total": 1,
+          "automated_passed": 0,
+          "surface_coherent": 0
+        },
+        "instruction_following": {
+          "total": 1,
+          "automated_passed": 0,
+          "surface_coherent": 0
+        },
+        "long_context": {
+          "total": 1,
+          "automated_passed": 0,
+          "surface_coherent": 0
+        },
+        "hallucination_resistance": {
+          "total": 2,
+          "automated_passed": 1,
+          "surface_coherent": 1
+        }
+      },
+      "items": [
+        {
+          "id": "ar_qa_01",
+          "domain": "arabic",
+          "language": "ar",
+          "eval_type": "automated_and_human",
+          "prompt": "اقرأ النص ثم أجب: تقع مدينة الإسكندرية على ساحل البحر الأبيض المتوسط في مصر وتشتهر بمكتبتها التاريخية. على أي بحر تقع الإسكندرية؟",
+          "prompt_token_count": 104,
+          "context_truncated": true,
+          "generated_text": "الالالالالالالالالالالالالال",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 757.384,
+          "tokens_per_second": 73.94,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": true,
+            "script_match": true,
+            "low_repetition": true,
+            "surface_coherent": true
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "ar_qa_02",
+          "domain": "arabic",
+          "language": "ar",
+          "eval_type": "automated_and_human",
+          "prompt": "ما هو الكوكب الأقرب إلى الشمس في المجموعة الشمسية؟",
+          "prompt_token_count": 104,
+          "context_truncated": false,
+          "generated_text": "الالالالالالالالالالالالالال",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 837.769,
+          "tokens_per_second": 66.84,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": true,
+            "script_match": true,
+            "low_repetition": true,
+            "surface_coherent": true
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "en_qa_01",
+          "domain": "english",
+          "language": "en",
+          "eval_type": "automated_and_human",
+          "prompt": "Read and answer: Photosynthesis is the process by which green plants use sunlight to convert water and carbon dioxide into glucose and oxygen. What gas do plants release during photosynthesis?",
+          "prompt_token_count": 104,
+          "context_truncated": true,
+          "generated_text": "an te te te an t an an an an an an te te an an an an an ",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 868.996,
+          "tokens_per_second": 64.44,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": true,
+            "script_match": true,
+            "low_repetition": false,
+            "surface_coherent": false
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "en_qa_02",
+          "domain": "english",
+          "language": "en",
+          "eval_type": "automated_and_human",
+          "prompt": "What is the chemical symbol for gold?",
+          "prompt_token_count": 61,
+          "context_truncated": false,
+          "generated_text": "الالالالالالالالالالالالالال",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 565.275,
+          "tokens_per_second": 99.07,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": true,
+            "script_match": false,
+            "low_repetition": true,
+            "surface_coherent": false
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "fr_qa_01",
+          "domain": "french",
+          "language": "fr",
+          "eval_type": "automated_and_human",
+          "prompt": "Lisez et répondez : La Loire est le plus long fleuve de France et se jette dans l'océan Atlantique. Dans quel océan se jette la Loire ?",
+          "prompt_token_count": 104,
+          "context_truncated": true,
+          "generated_text": "الالالالالالالالالالالالالال",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 667.477,
+          "tokens_per_second": 83.9,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": true,
+            "script_match": false,
+            "low_repetition": true,
+            "surface_coherent": false
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "fr_qa_02",
+          "domain": "french",
+          "language": "fr",
+          "eval_type": "automated_and_human",
+          "prompt": "Quelle planète est appelée la planète rouge ?",
+          "prompt_token_count": 72,
+          "context_truncated": false,
+          "generated_text": "الالالالالالالالالالالالالال",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 597.035,
+          "tokens_per_second": 93.8,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": true,
+            "script_match": false,
+            "low_repetition": true,
+            "surface_coherent": false
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "math_01",
+          "domain": "math",
+          "language": "en",
+          "eval_type": "automated",
+          "prompt": "Compute 27 + 38. Reply with the exact number.",
+          "prompt_token_count": 69,
+          "context_truncated": false,
+          "generated_text": "",
+          "generated_token_count": 1,
+          "finish_reason": "eos",
+          "elapsed_ms": 9.036,
+          "tokens_per_second": 110.66,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": false,
+            "valid_utf8_no_repl": false,
+            "script_match": false,
+            "low_repetition": false,
+            "surface_coherent": false
+          },
+          "requires_human_review": false
+        },
+        {
+          "id": "math_02",
+          "domain": "math",
+          "language": "ar",
+          "eval_type": "automated",
+          "prompt": "إذا اشترى سامي 4 دفاتر بسعر 7 ريالات لكل دفتر، فكم يدفع إجمالاً؟",
+          "prompt_token_count": 104,
+          "context_truncated": true,
+          "generated_text": "الالالالالالالالالالالالالال",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 765.252,
+          "tokens_per_second": 73.18,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": true,
+            "script_match": true,
+            "low_repetition": true,
+            "surface_coherent": true
+          },
+          "requires_human_review": false
+        },
+        {
+          "id": "coding_01",
+          "domain": "coding",
+          "language": "en",
+          "eval_type": "automated",
+          "prompt": "Write a Python function `is_even(n)` that returns True if n is even and False otherwise.",
+          "prompt_token_count": 104,
+          "context_truncated": false,
+          "generated_text": "an te te an an t an an an an an an an an an an an an an ",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 652.83,
+          "tokens_per_second": 85.78,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": true,
+            "script_match": true,
+            "low_repetition": false,
+            "surface_coherent": false
+          },
+          "requires_human_review": false
+        },
+        {
+          "id": "coding_02",
+          "domain": "coding",
+          "language": "en",
+          "eval_type": "automated",
+          "prompt": "Fix the bug in this Python code: `def add(a, b) return a + b`",
+          "prompt_token_count": 85,
+          "context_truncated": false,
+          "generated_text": "",
+          "generated_token_count": 1,
+          "finish_reason": "eos",
+          "elapsed_ms": 8.27,
+          "tokens_per_second": 120.92,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": false,
+            "valid_utf8_no_repl": false,
+            "script_match": false,
+            "low_repetition": false,
+            "surface_coherent": false
+          },
+          "requires_human_review": false
+        },
+        {
+          "id": "reasoning_01",
+          "domain": "reasoning",
+          "language": "en",
+          "eval_type": "automated_and_human",
+          "prompt": "All roses are flowers. Some flowers fade quickly. Does it necessarily follow that all roses fade quickly? Answer Yes or No and explain briefly.",
+          "prompt_token_count": 104,
+          "context_truncated": true,
+          "generated_text": "",
+          "generated_token_count": 1,
+          "finish_reason": "eos",
+          "elapsed_ms": 11.253,
+          "tokens_per_second": 88.87,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": false,
+            "valid_utf8_no_repl": false,
+            "script_match": false,
+            "low_repetition": false,
+            "surface_coherent": false
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "reasoning_02",
+          "domain": "reasoning",
+          "language": "ar",
+          "eval_type": "automated_and_human",
+          "prompt": "عمر خالد أكبر من عمر ليلى، وعمر ليلى أكبر من عمر كريم. من هو الأصغر سناً؟",
+          "prompt_token_count": 104,
+          "context_truncated": true,
+          "generated_text": "الالالالالالالالالالالالالال",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 739.158,
+          "tokens_per_second": 75.76,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": true,
+            "script_match": true,
+            "low_repetition": true,
+            "surface_coherent": true
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "summ_01",
+          "domain": "summarization",
+          "language": "en",
+          "eval_type": "human_required",
+          "prompt": "Summarize in one short sentence: Renewable solar energy reduces carbon emissions and lowers long-term electricity bills for households.",
+          "prompt_token_count": 104,
+          "context_truncated": true,
+          "generated_text": "an te te an an t an an an an an an an an an an an an an ",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 665.409,
+          "tokens_per_second": 84.16,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": true,
+            "script_match": true,
+            "low_repetition": false,
+            "surface_coherent": false
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "summ_02",
+          "domain": "summarization",
+          "language": "ar",
+          "eval_type": "human_required",
+          "prompt": "لخّص في جملة قصيرة: يساعد القراءة اليومية المنتظمة على توسيع المفردات وتقوية التركيز وتحسين مهارات الكتابة.",
+          "prompt_token_count": 104,
+          "context_truncated": true,
+          "generated_text": "الالالالالالالالالالالالالال",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 663.971,
+          "tokens_per_second": 84.34,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": true,
+            "script_match": true,
+            "low_repetition": true,
+            "surface_coherent": true
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "trans_01",
+          "domain": "translation",
+          "language": "en",
+          "eval_type": "human_required",
+          "prompt": "Translate into French: The book is on the table.",
+          "prompt_token_count": 72,
+          "context_truncated": false,
+          "generated_text": "",
+          "generated_token_count": 1,
+          "finish_reason": "eos",
+          "elapsed_ms": 9.674,
+          "tokens_per_second": 103.37,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": false,
+            "valid_utf8_no_repl": false,
+            "script_match": false,
+            "low_repetition": false,
+            "surface_coherent": false
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "trans_02",
+          "domain": "translation",
+          "language": "ar",
+          "eval_type": "human_required",
+          "prompt": "ترجم إلى الإنجليزية: الشمس مشرقة اليوم.",
+          "prompt_token_count": 95,
+          "context_truncated": false,
+          "generated_text": "الالالالالالالالالالالالالال",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 705.882,
+          "tokens_per_second": 79.33,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": true,
+            "script_match": true,
+            "low_repetition": true,
+            "surface_coherent": true
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "multi_turn_01",
+          "domain": "multi_turn",
+          "language": "en",
+          "eval_type": "automated_and_human",
+          "prompt": "What city did I say I live in?",
+          "prompt_token_count": 54,
+          "context_truncated": false,
+          "generated_text": "",
+          "generated_token_count": 1,
+          "finish_reason": "eos",
+          "elapsed_ms": 7.884,
+          "tokens_per_second": 126.84,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": false,
+            "valid_utf8_no_repl": false,
+            "script_match": false,
+            "low_repetition": false,
+            "surface_coherent": false
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "instr_01",
+          "domain": "instruction_following",
+          "language": "en",
+          "eval_type": "automated",
+          "prompt": "Output ONLY the single word BLUE in uppercase and nothing else.",
+          "prompt_token_count": 87,
+          "context_truncated": false,
+          "generated_text": "الالالالالالالالالالالالالال",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 598.28,
+          "tokens_per_second": 93.6,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": true,
+            "script_match": false,
+            "low_repetition": true,
+            "surface_coherent": false
+          },
+          "requires_human_review": false
+        },
+        {
+          "id": "long_ctx_01",
+          "domain": "long_context",
+          "language": "en",
+          "eval_type": "automated",
+          "prompt": "PASSCODE=DELTA-749. Background note on archival cataloging procedures for municipal libraries. Background note on archival cataloging procedures for municipal libraries. Background note on archival cataloging procedures for municipal libraries. Background note on archival cataloging procedures for municipal libraries. Background note on archival cataloging procedures for municipal libraries. Background note on archival cataloging procedures for municipal libraries. What is the PASSCODE mentioned at the beginning?",
+          "prompt_token_count": 104,
+          "context_truncated": true,
+          "generated_text": "",
+          "generated_token_count": 1,
+          "finish_reason": "eos",
+          "elapsed_ms": 7.662,
+          "tokens_per_second": 130.51,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": false,
+            "valid_utf8_no_repl": false,
+            "script_match": false,
+            "low_repetition": false,
+            "surface_coherent": false
+          },
+          "requires_human_review": false
+        },
+        {
+          "id": "halluc_01",
+          "domain": "hallucination_resistance",
+          "language": "en",
+          "eval_type": "human_required",
+          "prompt": "Who won the 2099 Martian Chess World Championship?",
+          "prompt_token_count": 74,
+          "context_truncated": false,
+          "generated_text": "",
+          "generated_token_count": 1,
+          "finish_reason": "eos",
+          "elapsed_ms": 8.877,
+          "tokens_per_second": 112.65,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": false,
+            "valid_utf8_no_repl": false,
+            "script_match": false,
+            "low_repetition": false,
+            "surface_coherent": false
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "halluc_02",
+          "domain": "hallucination_resistance",
+          "language": "ar",
+          "eval_type": "human_required",
+          "prompt": "من فاز بجائزة نوبل للفيزياء في عام 2098؟",
+          "prompt_token_count": 93,
+          "context_truncated": false,
+          "generated_text": "الالالالالالالالالالالالالال",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 676.946,
+          "tokens_per_second": 82.72,
+          "automated_pass": true,
+          "matched_keywords": [
+            "لا"
+          ],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": true,
+            "script_match": true,
+            "low_repetition": true,
+            "surface_coherent": true
+          },
+          "requires_human_review": true
+        }
+      ]
+    },
+    {
+      "model_label": "Jebrex AI v1 Sanity Clean-Data Nano (843K)",
+      "checkpoint_path": "checkpoints\\jebrex_v1_sanity\\jebrex_v1_sanity_model.pt",
+      "checkpoint_size_mib": 3.2345,
+      "architecture": "Decoder-only Pre-LN Transformer (GPT)",
+      "config": {
+        "vocab_size": 260,
+        "context_length": 128,
+        "d_model": 128,
+        "n_heads": 4,
+        "n_layers": 4,
+        "dropout": 0.05
+      },
+      "parameter_count": 843008,
+      "memory_status": {
+        "device": "cpu",
+        "context_length_limit": 128,
+        "parameter_count": 843008,
+        "model_weights_mib": 3.2158,
+        "process_rss_mib": 253.21,
+        "vram_allocated_mib": 0.0
+      },
+      "language_modeling_metrics_clean_splits": {
+        "train": {
+          "sequences": 947,
+          "valid_tokens": 121216,
+          "average_loss": 3.1333,
+          "perplexity": 22.9507,
+          "bits_per_byte": 4.5205
+        },
+        "validation": {
+          "sequences": 202,
+          "valid_tokens": 25856,
+          "average_loss": 3.2014,
+          "perplexity": 24.5671,
+          "bits_per_byte": 4.6187
+        },
+        "test": {
+          "sequences": 201,
+          "valid_tokens": 25728,
+          "average_loss": 3.2242,
+          "perplexity": 25.1339,
+          "bits_per_byte": 4.6516
+        }
+      },
+      "memorization_diagnostic_seen_anchor_en": "                                                        ",
+      "benchmark_summary": {
+        "total_unseen_items": 21,
+        "automated_passed": 0,
+        "automated_pass_rate_pct": 0.0,
+        "surface_coherent_count": 0,
+        "surface_coherent_rate_pct": 0.0,
+        "mean_latency_ms": 713.76,
+        "mean_tokens_per_second": 81.94,
+        "elapsed_seconds": 29.0
+      },
+      "by_domain": {
+        "arabic": {
+          "total": 2,
+          "automated_passed": 0,
+          "surface_coherent": 0
+        },
+        "english": {
+          "total": 2,
+          "automated_passed": 0,
+          "surface_coherent": 0
+        },
+        "french": {
+          "total": 2,
+          "automated_passed": 0,
+          "surface_coherent": 0
+        },
+        "math": {
+          "total": 2,
+          "automated_passed": 0,
+          "surface_coherent": 0
+        },
+        "coding": {
+          "total": 2,
+          "automated_passed": 0,
+          "surface_coherent": 0
+        },
+        "reasoning": {
+          "total": 2,
+          "automated_passed": 0,
+          "surface_coherent": 0
+        },
+        "summarization": {
+          "total": 2,
+          "automated_passed": 0,
+          "surface_coherent": 0
+        },
+        "translation": {
+          "total": 2,
+          "automated_passed": 0,
+          "surface_coherent": 0
+        },
+        "multi_turn": {
+          "total": 1,
+          "automated_passed": 0,
+          "surface_coherent": 0
+        },
+        "instruction_following": {
+          "total": 1,
+          "automated_passed": 0,
+          "surface_coherent": 0
+        },
+        "long_context": {
+          "total": 1,
+          "automated_passed": 0,
+          "surface_coherent": 0
+        },
+        "hallucination_resistance": {
+          "total": 2,
+          "automated_passed": 0,
+          "surface_coherent": 0
+        }
+      },
+      "items": [
+        {
+          "id": "ar_qa_01",
+          "domain": "arabic",
+          "language": "ar",
+          "eval_type": "automated_and_human",
+          "prompt": "اقرأ النص ثم أجب: تقع مدينة الإسكندرية على ساحل البحر الأبيض المتوسط في مصر وتشتهر بمكتبتها التاريخية. على أي بحر تقع الإسكندرية؟",
+          "prompt_token_count": 104,
+          "context_truncated": true,
+          "generated_text": "��������������������������������������������������������",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 718.283,
+          "tokens_per_second": 77.96,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": false,
+            "script_match": false,
+            "low_repetition": false,
+            "surface_coherent": false
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "ar_qa_02",
+          "domain": "arabic",
+          "language": "ar",
+          "eval_type": "automated_and_human",
+          "prompt": "ما هو الكوكب الأقرب إلى الشمس في المجموعة الشمسية؟",
+          "prompt_token_count": 104,
+          "context_truncated": false,
+          "generated_text": "��������������������������������������������������������",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 850.914,
+          "tokens_per_second": 65.81,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": false,
+            "script_match": false,
+            "low_repetition": false,
+            "surface_coherent": false
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "en_qa_01",
+          "domain": "english",
+          "language": "en",
+          "eval_type": "automated_and_human",
+          "prompt": "Read and answer: Photosynthesis is the process by which green plants use sunlight to convert water and carbon dioxide into glucose and oxygen. What gas do plants release during photosynthesis?",
+          "prompt_token_count": 104,
+          "context_truncated": true,
+          "generated_text": "                                                        ",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 731.622,
+          "tokens_per_second": 76.54,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": false,
+            "valid_utf8_no_repl": false,
+            "script_match": false,
+            "low_repetition": false,
+            "surface_coherent": false
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "en_qa_02",
+          "domain": "english",
+          "language": "en",
+          "eval_type": "automated_and_human",
+          "prompt": "What is the chemical symbol for gold?",
+          "prompt_token_count": 61,
+          "context_truncated": false,
+          "generated_text": "                                                        ",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 504.087,
+          "tokens_per_second": 111.09,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": false,
+            "valid_utf8_no_repl": false,
+            "script_match": false,
+            "low_repetition": false,
+            "surface_coherent": false
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "fr_qa_01",
+          "domain": "french",
+          "language": "fr",
+          "eval_type": "automated_and_human",
+          "prompt": "Lisez et répondez : La Loire est le plus long fleuve de France et se jette dans l'océan Atlantique. Dans quel océan se jette la Loire ?",
+          "prompt_token_count": 104,
+          "context_truncated": true,
+          "generated_text": "                                                        ",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 666.219,
+          "tokens_per_second": 84.06,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": false,
+            "valid_utf8_no_repl": false,
+            "script_match": false,
+            "low_repetition": false,
+            "surface_coherent": false
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "fr_qa_02",
+          "domain": "french",
+          "language": "fr",
+          "eval_type": "automated_and_human",
+          "prompt": "Quelle planète est appelée la planète rouge ?",
+          "prompt_token_count": 72,
+          "context_truncated": false,
+          "generated_text": "                                                        ",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 614.845,
+          "tokens_per_second": 91.08,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": false,
+            "valid_utf8_no_repl": false,
+            "script_match": false,
+            "low_repetition": false,
+            "surface_coherent": false
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "math_01",
+          "domain": "math",
+          "language": "en",
+          "eval_type": "automated",
+          "prompt": "Compute 27 + 38. Reply with the exact number.",
+          "prompt_token_count": 69,
+          "context_truncated": false,
+          "generated_text": "                                                        ",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 551.595,
+          "tokens_per_second": 101.52,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": false,
+            "valid_utf8_no_repl": false,
+            "script_match": false,
+            "low_repetition": false,
+            "surface_coherent": false
+          },
+          "requires_human_review": false
+        },
+        {
+          "id": "math_02",
+          "domain": "math",
+          "language": "ar",
+          "eval_type": "automated",
+          "prompt": "إذا اشترى سامي 4 دفاتر بسعر 7 ريالات لكل دفتر، فكم يدفع إجمالاً؟",
+          "prompt_token_count": 104,
+          "context_truncated": true,
+          "generated_text": "��������������������������������������������������������",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 1321.47,
+          "tokens_per_second": 42.38,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": false,
+            "script_match": false,
+            "low_repetition": false,
+            "surface_coherent": false
+          },
+          "requires_human_review": false
+        },
+        {
+          "id": "coding_01",
+          "domain": "coding",
+          "language": "en",
+          "eval_type": "automated",
+          "prompt": "Write a Python function `is_even(n)` that returns True if n is even and False otherwise.",
+          "prompt_token_count": 104,
+          "context_truncated": false,
+          "generated_text": "                                                        ",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 727.082,
+          "tokens_per_second": 77.02,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": false,
+            "valid_utf8_no_repl": false,
+            "script_match": false,
+            "low_repetition": false,
+            "surface_coherent": false
+          },
+          "requires_human_review": false
+        },
+        {
+          "id": "coding_02",
+          "domain": "coding",
+          "language": "en",
+          "eval_type": "automated",
+          "prompt": "Fix the bug in this Python code: `def add(a, b) return a + b`",
+          "prompt_token_count": 85,
+          "context_truncated": false,
+          "generated_text": "                                                        ",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 838.199,
+          "tokens_per_second": 66.81,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": false,
+            "valid_utf8_no_repl": false,
+            "script_match": false,
+            "low_repetition": false,
+            "surface_coherent": false
+          },
+          "requires_human_review": false
+        },
+        {
+          "id": "reasoning_01",
+          "domain": "reasoning",
+          "language": "en",
+          "eval_type": "automated_and_human",
+          "prompt": "All roses are flowers. Some flowers fade quickly. Does it necessarily follow that all roses fade quickly? Answer Yes or No and explain briefly.",
+          "prompt_token_count": 104,
+          "context_truncated": true,
+          "generated_text": "                                                        ",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 708.802,
+          "tokens_per_second": 79.01,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": false,
+            "valid_utf8_no_repl": false,
+            "script_match": false,
+            "low_repetition": false,
+            "surface_coherent": false
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "reasoning_02",
+          "domain": "reasoning",
+          "language": "ar",
+          "eval_type": "automated_and_human",
+          "prompt": "عمر خالد أكبر من عمر ليلى، وعمر ليلى أكبر من عمر كريم. من هو الأصغر سناً؟",
+          "prompt_token_count": 104,
+          "context_truncated": true,
+          "generated_text": "��������������������������������������������������������",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 691.488,
+          "tokens_per_second": 80.98,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": false,
+            "script_match": false,
+            "low_repetition": false,
+            "surface_coherent": false
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "summ_01",
+          "domain": "summarization",
+          "language": "en",
+          "eval_type": "human_required",
+          "prompt": "Summarize in one short sentence: Renewable solar energy reduces carbon emissions and lowers long-term electricity bills for households.",
+          "prompt_token_count": 104,
+          "context_truncated": true,
+          "generated_text": "                                                        ",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 719.968,
+          "tokens_per_second": 77.78,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": false,
+            "valid_utf8_no_repl": false,
+            "script_match": false,
+            "low_repetition": false,
+            "surface_coherent": false
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "summ_02",
+          "domain": "summarization",
+          "language": "ar",
+          "eval_type": "human_required",
+          "prompt": "لخّص في جملة قصيرة: يساعد القراءة اليومية المنتظمة على توسيع المفردات وتقوية التركيز وتحسين مهارات الكتابة.",
+          "prompt_token_count": 104,
+          "context_truncated": true,
+          "generated_text": "��������������������������������������������������������",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 693.051,
+          "tokens_per_second": 80.8,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": false,
+            "script_match": false,
+            "low_repetition": false,
+            "surface_coherent": false
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "trans_01",
+          "domain": "translation",
+          "language": "en",
+          "eval_type": "human_required",
+          "prompt": "Translate into French: The book is on the table.",
+          "prompt_token_count": 72,
+          "context_truncated": false,
+          "generated_text": "                                                        ",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 569.031,
+          "tokens_per_second": 98.41,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": false,
+            "valid_utf8_no_repl": false,
+            "script_match": false,
+            "low_repetition": false,
+            "surface_coherent": false
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "trans_02",
+          "domain": "translation",
+          "language": "ar",
+          "eval_type": "human_required",
+          "prompt": "ترجم إلى الإنجليزية: الشمس مشرقة اليوم.",
+          "prompt_token_count": 95,
+          "context_truncated": false,
+          "generated_text": "��������������������������������������������������������",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 662.355,
+          "tokens_per_second": 84.55,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": false,
+            "script_match": false,
+            "low_repetition": false,
+            "surface_coherent": false
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "multi_turn_01",
+          "domain": "multi_turn",
+          "language": "en",
+          "eval_type": "automated_and_human",
+          "prompt": "What city did I say I live in?",
+          "prompt_token_count": 54,
+          "context_truncated": false,
+          "generated_text": "                                                        ",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 503.575,
+          "tokens_per_second": 111.2,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": false,
+            "valid_utf8_no_repl": false,
+            "script_match": false,
+            "low_repetition": false,
+            "surface_coherent": false
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "instr_01",
+          "domain": "instruction_following",
+          "language": "en",
+          "eval_type": "automated",
+          "prompt": "Output ONLY the single word BLUE in uppercase and nothing else.",
+          "prompt_token_count": 87,
+          "context_truncated": false,
+          "generated_text": "                                                        ",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 581.59,
+          "tokens_per_second": 96.29,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": false,
+            "valid_utf8_no_repl": false,
+            "script_match": false,
+            "low_repetition": false,
+            "surface_coherent": false
+          },
+          "requires_human_review": false
+        },
+        {
+          "id": "long_ctx_01",
+          "domain": "long_context",
+          "language": "en",
+          "eval_type": "automated",
+          "prompt": "PASSCODE=DELTA-749. Background note on archival cataloging procedures for municipal libraries. Background note on archival cataloging procedures for municipal libraries. Background note on archival cataloging procedures for municipal libraries. Background note on archival cataloging procedures for municipal libraries. Background note on archival cataloging procedures for municipal libraries. Background note on archival cataloging procedures for municipal libraries. What is the PASSCODE mentioned at the beginning?",
+          "prompt_token_count": 104,
+          "context_truncated": true,
+          "generated_text": "                                                        ",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 721.4,
+          "tokens_per_second": 77.63,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": false,
+            "valid_utf8_no_repl": false,
+            "script_match": false,
+            "low_repetition": false,
+            "surface_coherent": false
+          },
+          "requires_human_review": false
+        },
+        {
+          "id": "halluc_01",
+          "domain": "hallucination_resistance",
+          "language": "en",
+          "eval_type": "human_required",
+          "prompt": "Who won the 2099 Martian Chess World Championship?",
+          "prompt_token_count": 74,
+          "context_truncated": false,
+          "generated_text": "                                                        ",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 741.217,
+          "tokens_per_second": 75.55,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": false,
+            "valid_utf8_no_repl": false,
+            "script_match": false,
+            "low_repetition": false,
+            "surface_coherent": false
+          },
+          "requires_human_review": true
+        },
+        {
+          "id": "halluc_02",
+          "domain": "hallucination_resistance",
+          "language": "ar",
+          "eval_type": "human_required",
+          "prompt": "من فاز بجائزة نوبل للفيزياء في عام 2098؟",
+          "prompt_token_count": 93,
+          "context_truncated": false,
+          "generated_text": "  ������������������������������������������������������",
+          "generated_token_count": 56,
+          "finish_reason": "max_tokens",
+          "elapsed_ms": 872.094,
+          "tokens_per_second": 64.21,
+          "automated_pass": false,
+          "matched_keywords": [],
+          "coherence": {
+            "non_empty": true,
+            "valid_utf8_no_repl": false,
+            "script_match": false,
+            "low_repetition": false,
+            "surface_coherent": false
+          },
+          "requires_human_review": true
+        }
+      ]
+    }
+  ],
+  "external_published_reference_models": {
+    "evaluation_date": "2026-11-24",
+    "methodology_note": "Direct paid API execution against OpenAI ChatGPT and Google Gemini was not performed in this local offline audit environment. All external values below come strictly from official published documentation and published benchmark reports retrieved on 2026-11-24, clearly separated from direct Jebrex AI local runs.",
+    "openai_chatgpt": {
+      "models_evaluated_published": [
+        {
+          "model_name": "OpenAI GPT-5",
+          "release_info": "Released August 2025 (unified fast + thinking router)",
+          "parameter_count": "UNPUBLISHED_PROPRIETARY",
+          "tokenizer": "Subword BPE (o200k-class / unpublished exact updates)",
+          "context_window_tokens": 400000,
+          "max_output_tokens": 128000,
+          "multimodal_support": "Text, vision/image, audio, files, native tools (web search, Python code interpreter)",
+          "api_pricing_usd_per_1m_tokens": {
+            "input": 1.25,
+            "cached_input": 0.125,
+            "output": 10.0
+          },
+          "published_benchmarks": {
+            "SWE-bench Verified": "74.9%",
+            "AIME 2025 (no tools)": "94.6%",
+            "GPQA Diamond": "88.4%"
+          },
+          "source": "openai.com official announcements & API pricing docs (retrieved 2026-11-24)"
+        },
+        {
+          "model_name": "OpenAI GPT-5.2 / GPT-5.2 Thinking",
+          "release_info": "2026 professional reasoning & agentic knowledge-work flagship",
+          "parameter_count": "UNPUBLISHED_PROPRIETARY",
+          "context_window_tokens": "400,000+ (long-horizon optimized; exact cap varies by variant)",
+          "published_benchmarks": {
+            "SWE-bench Verified": "80.0%",
+            "SWE-Bench Pro (Public)": "55.6%",
+            "GPQA Diamond (no tools)": "92.4%",
+            "AIME 2025 (no tools)": "100.0%",
+            "FrontierMath (Tier 1-3)": "40.3%",
+            "GDPval (Knowledge Work)": "70.9%"
+          },
+          "source": "openai.com official GPT-5.2 benchmark report (retrieved 2026-11-24)"
+        },
+        {
+          "model_name": "OpenAI GPT-6.2 (Astra / Sol tier)",
+          "release_info": "Latest 2026 frontier flagship tier",
+          "parameter_count": "UNPUBLISHED_PROPRIETARY",
+          "context_window_tokens": "~1,050,000",
+          "max_output_tokens": 128000,
+          "multimodal_support": "Native multimodal, computer use, multi-tool agentic orchestration",
+          "source": "openai.com platform updates (retrieved 2026-11-24)"
+        }
+      ]
+    },
+    "google_gemini": {
+      "models_evaluated_published": [
+        {
+          "model_name": "Google Gemini 2.5 Pro",
+          "release_info": "2025 flagship thinking & long-context model (legacy/transition tier in late 2026)",
+          "parameter_count": "UNPUBLISHED_PROPRIETARY (Sparse MoE Transformer family)",
+          "context_window_tokens": 1048576,
+          "max_output_tokens": 65536,
+          "multimodal_support": "Native text, image, audio, video, PDF, code",
+          "api_pricing_usd_per_1m_tokens": {
+            "input_le_200k": 1.25,
+            "output_le_200k": 10.0
+          },
+          "published_benchmarks": {
+            "MMLU-Pro": "~86%"
+          },
+          "source": "ai.google.dev & blog.google official docs (retrieved 2026-11-24)"
+        },
+        {
+          "model_name": "Google Gemini 3 Pro / Gemini 3.1 Pro Preview",
+          "release_info": "2026 flagship native multimodal & agentic reasoning model",
+          "parameter_count": "UNPUBLISHED_PROPRIETARY",
+          "context_window_tokens": 1048576,
+          "max_output_tokens": 65536,
+          "multimodal_support": "Native unified text, image, dense audio, long video, PDF, code, tool use",
+          "api_pricing_usd_per_1m_tokens": {
+            "input_le_200k": 2.0,
+            "output_le_200k": 12.0
+          },
+          "published_benchmarks": {
+            "GPQA Diamond": "~91.9%",
+            "MMMU-Pro": "~81.0%",
+            "Video-MMMU": "~87.6%",
+            "ARC-AGI-2 (base / Deep Think)": ">31% / >45%"
+          },
+          "source": "blog.google & ai.google.dev official docs (retrieved 2026-11-24)"
+        },
+        {
+          "model_name": "Google Gemini 3.8 Flash",
+          "release_info": "Latest late-2026 high-efficiency Flash tier",
+          "parameter_count": "UNPUBLISHED_PROPRIETARY",
+          "context_window_tokens": 1048576,
+          "api_pricing_usd_per_1m_tokens": {
+            "input_intro_2026": 0.75,
+            "output_intro_2026": 3.75,
+            "input_standard_2027": 1.5,
+            "output_standard_2027": 7.5
+          },
+          "source": "ai.google.dev pricing docs (retrieved 2026-11-24)"
+        }
+      ]
+    },
+    "non_comparable_dimensions": [
+      "Native multimodal understanding (vision, audio, long-form video) — supported by GPT-5/6.2 and Gemini 2.5/3, NOT supported by Jebrex AI text-only neural core.",
+      "Long-context benchmarks at 200K–1M tokens — Jebrex AI context window is 128–256 UTF-8 bytes (~70–140 Arabic chars or ~40–60 English words).",
+      "Agentic computer-use / SWE-bench multi-file repository engineering — requires massive code pretraining and tool-calling RL absent in Jebrex AI neural core."
+    ]
+  }
+}

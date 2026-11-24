@@ -214,7 +214,7 @@ class GPT(nn.Module):
         if ids.dtype not in (torch.uint8, torch.int8, torch.int16, torch.int32, torch.int64):
             raise TypeError(f"{name} must have an integer dtype")
 
-    def forward(self, idx, targets=None):
+    def forward(self, idx, targets=None, ignore_index=None):
         self._validate_ids(idx, "idx")
         if idx.ndim != 2:
             raise ValueError("idx must have shape [batch, time]")
@@ -233,9 +233,23 @@ class GPT(nn.Module):
             self._validate_ids(targets, "targets")
             if targets.shape != idx.shape:
                 raise ValueError("targets must have the same [batch, time] shape as idx")
-            if torch.any(targets < 0) or torch.any(targets >= self.config.vocab_size):
-                raise ValueError("targets contains token IDs outside the configured vocabulary")
-            loss = F.cross_entropy(logits.reshape(-1, logits.size(-1)), targets.long().reshape(-1))
+            if ignore_index is None:
+                if torch.any(targets < 0) or torch.any(targets >= self.config.vocab_size):
+                    raise ValueError("targets contains token IDs outside the configured vocabulary")
+                loss = F.cross_entropy(logits.reshape(-1, logits.size(-1)), targets.long().reshape(-1))
+            else:
+                if isinstance(ignore_index, bool) or not isinstance(ignore_index, int):
+                    raise TypeError("ignore_index must be an integer or None")
+                valid_mask = targets != ignore_index
+                if bool(valid_mask.any()):
+                    valid_targets = targets[valid_mask]
+                    if torch.any(valid_targets < 0) or torch.any(valid_targets >= self.config.vocab_size):
+                        raise ValueError("targets contains token IDs outside the configured vocabulary")
+                loss = F.cross_entropy(
+                    logits.reshape(-1, logits.size(-1)),
+                    targets.long().reshape(-1),
+                    ignore_index=ignore_index,
+                )
         return logits, loss
 
     @torch.no_grad()

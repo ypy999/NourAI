@@ -242,23 +242,53 @@ def start_live_http_server(
     """Start a live local ThreadingHTTPServer (HTTP or real TLS 1.3 HTTPS) serving UI (/) and REST API (/api/v1/*)."""
     ui_html = load_ui_html()
 
+    MAX_BODY_BYTES = 1_048_576  # 1 MiB request payload ceiling to prevent memory DoS
+
     class _Handler(BaseHTTPRequestHandler):
         def log_message(self, format: str, *args: Any) -> None:
             return
 
+        def _send_json_error(self, status_code: int, message: str) -> None:
+            encoded = json.dumps({"error": message}, ensure_ascii=False).encode("utf-8")
+            self.send_response(status_code)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("X-Content-Type-Options", "nosniff")
+            self.send_header("X-Frame-Options", "DENY")
+            self.send_header("Content-Length", str(len(encoded)))
+            self.end_headers()
+            self.wfile.write(encoded)
+
         def _dispatch(self, method: str) -> None:
             t0 = time.perf_counter()
-            length = int(self.headers.get("Content-Length", "0"))
-            raw_body = self.rfile.read(length).decode("utf-8") if length > 0 else ""
-            body = json.loads(raw_body) if raw_body.strip() else {}
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+            except ValueError:
+                self._send_json_error(400, "invalid Content-Length header")
+                return
+            if length < 0 or length > MAX_BODY_BYTES:
+                self._send_json_error(413, f"request payload exceeds maximum allowed size ({MAX_BODY_BYTES} bytes)")
+                return
+            raw_body = self.rfile.read(length).decode("utf-8", errors="replace") if length > 0 else ""
+            try:
+                body = json.loads(raw_body) if raw_body.strip() else {}
+            except json.JSONDecodeError:
+                self._send_json_error(400, "invalid JSON request body")
+                return
+            if not isinstance(body, dict):
+                self._send_json_error(400, "JSON request body must be an object")
+                return
             req_headers = {k: v for k, v in self.headers.items()}
+            remote_ip = self.client_address[0] if self.client_address else "127.0.0.1"
             status_code, resp_headers, payload = backend.handle_request(
                 method,
                 self.path,
                 headers=req_headers,
                 body=body,
+                client_ip=remote_ip,
                 ui_html_provider=lambda: ui_html,
             )
+            if enable_tls and "Set-Cookie" in resp_headers and "Secure" not in resp_headers["Set-Cookie"]:
+                resp_headers["Set-Cookie"] = resp_headers["Set-Cookie"] + "; Secure"
             resp_headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
             monitor.record_request(status_code, (time.perf_counter() - t0) * 1000.0)
 

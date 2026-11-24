@@ -19,7 +19,7 @@ from training.metrics import memory_usage_mb
 @dataclass
 class GenerationConfig:
     max_new_tokens: int = 32
-    strategy: str = "top_p"  # "greedy", "top_k", "top_p", "temperature"
+    strategy: str = "top_p"  # "greedy", "top_k", "top_p", "top_k_top_p", "temperature"
     temperature: float = 0.8
     top_k: int = 20
     top_p: float = 0.90
@@ -30,7 +30,7 @@ class GenerationConfig:
     def validate(self) -> "GenerationConfig":
         if isinstance(self.max_new_tokens, bool) or not isinstance(self.max_new_tokens, int) or self.max_new_tokens < 0:
             raise ValueError("max_new_tokens must be a non-negative integer")
-        if self.strategy not in ("greedy", "top_k", "top_p", "temperature"):
+        if self.strategy not in ("greedy", "top_k", "top_p", "top_k_top_p", "temperature"):
             raise ValueError(f"unsupported sampling strategy: {self.strategy}")
         if not isinstance(self.temperature, (int, float)) or self.temperature <= 0:
             raise ValueError("temperature must be positive")
@@ -59,20 +59,104 @@ class StreamChunk:
         return asdict(self)
 
 
+class ConversationContextManager:
+    """Build multi-turn chat prompts bounded safely to the model's context_length in UTF-8 byte tokens."""
+
+    def __init__(self, tokenizer: ByteTokenizer | None = None, *, min_generation_reserve: int = 32):
+        self.tokenizer = tokenizer or ByteTokenizer()
+        self.min_generation_reserve = max(0, int(min_generation_reserve))
+
+    def build_prompt(
+        self,
+        current_message: str,
+        *,
+        history: list[dict[str, Any]] | None = None,
+        context_length: int = 256,
+        system_prompt: str | None = None,
+    ) -> dict[str, Any]:
+        max_prompt_tokens = max(24, int(context_length) - min(self.min_generation_reserve, int(context_length) // 3))
+        suffix = "\n<|assistant|>\n"
+        suffix_ids = self.tokenizer.encode(suffix, add_eos=False)
+
+        prefix_tag = "<|user|>\n"
+        prefix_ids = self.tokenizer.encode(prefix_tag, add_eos=False)
+        msg_ids = self.tokenizer.encode(str(current_message or "").strip(), add_eos=False)
+
+        # Ensure current user message + tags ALWAYS fit within max_prompt_tokens
+        avail_for_msg = max(4, max_prompt_tokens - len(prefix_ids) - len(suffix_ids))
+        if len(msg_ids) > avail_for_msg:
+            msg_ids = msg_ids[-avail_for_msg:]
+        current_block_ids = prefix_ids + msg_ids + suffix_ids
+        remaining_budget = max(0, max_prompt_tokens - len(current_block_ids))
+
+        included_blocks: list[list[int]] = []
+        turns_included = 0
+        turns_dropped = 0
+
+        # Prepend prior turns from newest to oldest while within token budget
+        prior = list(history or [])
+        for turn in reversed(prior):
+            role = str(turn.get("role", "user")).strip().lower()
+            content = str(turn.get("content", "")).strip()
+            if not content:
+                continue
+            tag = "<|assistant|>" if role == "assistant" else "<|user|>"
+            block_str = f"{tag}\n{content}\n"
+            block_ids = self.tokenizer.encode(block_str, add_eos=False)
+            if len(block_ids) <= remaining_budget:
+                included_blocks.append(block_ids)
+                remaining_budget -= len(block_ids)
+                turns_included += 1
+            else:
+                turns_dropped += 1
+
+        included_blocks.reverse()
+
+        sys_included = False
+        if system_prompt and remaining_budget > 8:
+            sys_ids = self.tokenizer.encode(f"<|system|>\n{system_prompt.strip()}\n", add_eos=False)
+            if len(sys_ids) <= remaining_budget:
+                included_blocks.insert(0, sys_ids)
+                remaining_budget -= len(sys_ids)
+                sys_included = True
+
+        full_ids: list[int] = []
+        for blk in included_blocks:
+            full_ids.extend(blk)
+        full_ids.extend(current_block_ids)
+
+        prompt_text = self.tokenizer.decode(full_ids, errors="replace")
+        return {
+            "prompt": prompt_text,
+            "prompt_token_count": len(full_ids),
+            "context_budget": max_prompt_tokens,
+            "turns_included": turns_included,
+            "turns_dropped": turns_dropped,
+            "system_included": sys_included,
+        }
+
+
 def sample_next_token(
     logits: torch.Tensor,
     *,
     generated_ids: list[int],
     config: GenerationConfig,
+    prompt_ids: list[int] | None = None,
 ) -> int:
     """Select next token ID from 1D vocabulary logits using configured sampling strategy."""
     scaled = logits.detach().clone().to(torch.float32)
+    if not bool(torch.isfinite(scaled).all()):
+        scaled = torch.nan_to_num(scaled, nan=-1e9, posinf=1e4, neginf=-1e9)
+    raw_fallback = scaled.clone()
 
     if config.strategy == "greedy":
         return int(torch.argmax(scaled).item())
 
-    if config.repetition_penalty > 1.0 and generated_ids:
-        unique_seen = set(generated_ids[-64:])
+    if config.repetition_penalty > 1.0:
+        history_window = list(generated_ids[-64:])
+        if prompt_ids and len(history_window) < 16:
+            history_window = list(prompt_ids[-16:]) + history_window
+        unique_seen = set(history_window)
         for token_id in unique_seen:
             if 0 <= token_id < scaled.numel():
                 if scaled[token_id] > 0:
@@ -82,12 +166,12 @@ def sample_next_token(
 
     scaled = scaled / float(config.temperature)
 
-    if config.strategy == "top_k" and config.top_k > 0:
+    if config.strategy in ("top_k", "top_k_top_p") and config.top_k > 0:
         k = min(config.top_k, scaled.numel())
         top_vals, _ = torch.topk(scaled, k)
         scaled = scaled.masked_fill(scaled < top_vals[-1], -float("inf"))
 
-    elif config.strategy == "top_p" and config.top_p < 1.0:
+    if config.strategy in ("top_p", "top_k_top_p") and config.top_p < 1.0:
         sorted_logits, sorted_indices = torch.sort(scaled, descending=True)
         cumulative_probs = torch.cumsum(F.softmax(sorted_logits, dim=-1), dim=-1)
         sorted_indices_to_remove = cumulative_probs > float(config.top_p)
@@ -97,6 +181,8 @@ def sample_next_token(
         scaled[indices_to_remove] = -float("inf")
 
     probs = F.softmax(scaled, dim=-1)
+    if not bool(torch.isfinite(probs).all()) or float(probs.sum().item()) <= 0.0:
+        return int(torch.argmax(raw_fallback).item())
     next_id = int(torch.multinomial(probs, num_samples=1).item())
     return next_id
 
@@ -178,7 +264,9 @@ class InferenceEngine:
         context_ids = self._prepare_context_ids(prompt)
         generated_ids: list[int] = []
         pending_tokens: list[int] = []
-        accumulated_text = ""
+        pending_text = ""
+        stop_seqs = tuple(s for s in (cfg.stop_sequences or ()) if s)
+        holdback = max((len(s) - 1 for s in stop_seqs), default=0)
         max_ctx = self.model.config.context_length
 
         if cfg.max_new_tokens == 0:
@@ -187,9 +275,11 @@ class InferenceEngine:
 
         for step in range(cfg.max_new_tokens):
             if self._stop_event.is_set() or (cancel_event is not None and cancel_event.is_set()):
+                flushed = pending_text
+                pending_text = ""
                 yield StreamChunk(
                     token_id=self.tokenizer.eos_id,
-                    text_delta="",
+                    text_delta=flushed,
                     step_index=step + 1,
                     is_final=True,
                     finish_reason="cancelled",
@@ -199,7 +289,12 @@ class InferenceEngine:
             window = (context_ids + generated_ids)[-max_ctx:]
             input_tensor = torch.tensor([window], dtype=torch.long, device=self.device)
             logits, _ = self.model(input_tensor)
-            next_id = sample_next_token(logits[0, -1, :], generated_ids=generated_ids, config=cfg)
+            next_id = sample_next_token(
+                logits[0, -1, :],
+                generated_ids=generated_ids,
+                config=cfg,
+                prompt_ids=context_ids,
+            )
             generated_ids.append(next_id)
             self.total_generated_tokens += 1
 
@@ -207,28 +302,44 @@ class InferenceEngine:
             if not is_eos:
                 pending_tokens.append(next_id)
 
-            text_delta = ""
+            decoded_piece = ""
             if pending_tokens:
                 try:
-                    text_delta = self.tokenizer.decode(pending_tokens, errors="strict")
+                    decoded_piece = self.tokenizer.decode(pending_tokens, errors="strict")
                     pending_tokens.clear()
                 except UnicodeDecodeError:
                     if (step + 1 == cfg.max_new_tokens) or is_eos or len(pending_tokens) >= 4:
-                        text_delta = self.tokenizer.decode(pending_tokens, errors="replace")
+                        decoded_piece = self.tokenizer.decode(pending_tokens, errors="replace")
                         pending_tokens.clear()
 
-            accumulated_text += text_delta
+            pending_text += decoded_piece
             matched_stop = False
-            if cfg.stop_sequences:
-                for stop_seq in cfg.stop_sequences:
-                    if stop_seq and stop_seq in accumulated_text:
+            earliest_cut: int | None = None
+            if stop_seqs and pending_text:
+                for stop_seq in stop_seqs:
+                    idx_cut = pending_text.find(stop_seq)
+                    if idx_cut >= 0:
                         matched_stop = True
-                        idx_cut = text_delta.find(stop_seq)
-                        if idx_cut >= 0:
-                            text_delta = text_delta[:idx_cut]
-                        break
+                        if earliest_cut is None or idx_cut < earliest_cut:
+                            earliest_cut = idx_cut
 
             is_last = (step + 1 == cfg.max_new_tokens) or is_eos or matched_stop
+            if matched_stop and earliest_cut is not None:
+                text_delta = pending_text[:earliest_cut]
+                pending_text = ""
+            elif is_last:
+                text_delta = pending_text
+                pending_text = ""
+            elif holdback > 0 and len(pending_text) > holdback:
+                emit_upto = len(pending_text) - holdback
+                text_delta = pending_text[:emit_upto]
+                pending_text = pending_text[emit_upto:]
+            elif holdback == 0:
+                text_delta = pending_text
+                pending_text = ""
+            else:
+                text_delta = ""
+
             finish_reason = (
                 "stop_sequence"
                 if matched_stop

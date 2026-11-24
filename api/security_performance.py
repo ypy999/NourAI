@@ -15,7 +15,8 @@ def run_phase20_security_and_performance_audit() -> dict[str, Any]:
     """Execute all 7 Phase 20 Security & Performance tests and generate report."""
     backend = NourAIBackend(rate_limit_per_minute=200)
 
-    # Register standard user and admin user
+    # Register standard users via public API; verify public admin self-escalation is blocked (403);
+    # provision admin via internal privileged store method.
     backend.handle_request(
         "POST",
         "/api/v1/users/register",
@@ -26,11 +27,13 @@ def run_phase20_security_and_performance_audit() -> dict[str, Any]:
         "/api/v1/users/register",
         body={"username": "other_user", "password": "SafePassword#200", "role": "user"},
     )
-    backend.handle_request(
+    escalation_code, _, _ = backend.handle_request(
         "POST",
         "/api/v1/users/register",
-        body={"username": "sys_admin", "password": "AdminPassword#900", "role": "admin"},
+        body={"username": "fake_admin", "password": "AdminPassword#900", "role": "admin"},
     )
+    assert escalation_code == 403
+    backend.users.register_user("sys_admin", "AdminPassword#900", role="admin")
 
     user_tok = backend.handle_request(
         "POST",

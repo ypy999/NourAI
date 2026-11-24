@@ -751,6 +751,7 @@ class NourAIWebAndSmartEngine:
         user_memories: list[str] | None = None,
         rag_chunks: list[dict[str, Any]] | None = None,
         persona: str = "general",
+        allow_external_llm: bool = False,
     ) -> dict[str, Any]:
         prompt = _expand_slash_command(prompt)
         detected = detect_text_language(prompt)
@@ -943,15 +944,20 @@ class NourAIWebAndSmartEngine:
                 seen_titles.add(key)
                 unique_web.append(item)
 
-        # 4. Synthesize natural answer with LLM + Web Context + Memories + RAG
-        synthesized = query_free_llm_with_context(
-            prompt,
-            lang_code=lang_code,
-            web_results=unique_web,
-            history=history,
-            api_key=gemini_api_key,
-            user_memories=user_memories,
-            rag_chunks=rag_chunks,
+        # 4. External LLM synthesis is DISABLED by default to enforce Jebrex AI model independence.
+        # Only runs if caller explicitly passes allow_external_llm=True, and labels source transparently.
+        synthesized = (
+            query_free_llm_with_context(
+                prompt,
+                lang_code=lang_code,
+                web_results=unique_web,
+                history=history,
+                api_key=gemini_api_key,
+                user_memories=user_memories,
+                rag_chunks=rag_chunks,
+            )
+            if allow_external_llm
+            else None
         )
 
         if synthesized:
@@ -972,8 +978,8 @@ class NourAIWebAndSmartEngine:
             return {
                 "reply": final_reply,
                 "language": lang_code,
-                "task": "live_web_and_ai_qa",
-                "response_source": "live_web_ai",
+                "task": "external_llm_web_synthesis",
+                "response_source": "external_cloud_llm_synthesizer",
                 "citations": unique_web[:4],
             }
 
