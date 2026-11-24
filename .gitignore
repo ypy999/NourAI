@@ -48,6 +48,7 @@ data/processed/*
 !data/processed/jebrex_v1_clean/
 !data/processed/jebrex_v1_clean_sft/
 data/cache/
+data/phase_g_pilot/
 data/metadata/
 data/rejected/
 data/tmp/

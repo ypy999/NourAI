@@ -311,8 +311,15 @@ class InferenceEngine:
         params = self._parameter_count()
         mem = self.memory_status()
         is_large_prod = params >= 100_000_000
+        ckpt_stem = Path(self.checkpoint_path).stem if self.checkpoint_path else "in-memory"
+        short_sha = (self.checkpoint_sha256 or "unhashed")[:8]
+        model_version_id = (
+            f"{'jebrex-v2' if self.is_v2 else 'nourai-v1'}-{ckpt_stem}-"
+            f"{(f'{params / 1_000_000:.2f}m' if params >= 1_000_000 else f'{params / 1_000:.0f}k')}-{short_sha}"
+        )
         return {
             "project": "Jebrex AI",
+            "model_version_id": model_version_id,
             "independent_local_model": True,
             "secret_external_llm_substitution": False,
             "model_family": "jebrex-v2-modern" if self.is_v2 else "nourai-v1-gpt",

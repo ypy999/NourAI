@@ -250,13 +250,16 @@ def start_live_http_server(
 
         def _send_json_error(self, status_code: int, message: str) -> None:
             encoded = json.dumps({"error": message}, ensure_ascii=False).encode("utf-8")
+            self.close_connection = True
             self.send_response(status_code)
             self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Connection", "close")
             self.send_header("X-Content-Type-Options", "nosniff")
             self.send_header("X-Frame-Options", "DENY")
             self.send_header("Content-Length", str(len(encoded)))
             self.end_headers()
             self.wfile.write(encoded)
+            self.wfile.flush()
 
         def _dispatch(self, method: str) -> None:
             t0 = time.perf_counter()

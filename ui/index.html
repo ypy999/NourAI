@@ -1322,8 +1322,9 @@
         if (badge) badge.textContent = `متصل · ${st.parameters_human || "محلي"}`;
         if (bar) {
           const kvTag = st.kv_cache_enabled ? "KV-Cache" : "No-KV";
+          const verTag = st.model_version_id || st.model_family;
           const readyTag = st.production_ready ? "جاهز للإنتاج" : "أوزان بحثية مخبرية (ليست بمستوى ChatGPT/Gemini بعد)";
-          bar.textContent = `🟢 متصل بالنموذج العصبي المستقل: ${st.model_family} (${st.parameters_human}, ${st.tokenizer_type}, ${kvTag}, ${String(st.device || "cpu").toUpperCase()}) · ${readyTag}`;
+          bar.textContent = `🟢 متصل بالنموذج العصبي المستقل: ${verTag} (${st.parameters_human}, ${st.tokenizer_type}, ${kvTag}, ${String(st.device || "cpu").toUpperCase()}) · ${readyTag}`;
         }
         return st;
       } catch (e) {

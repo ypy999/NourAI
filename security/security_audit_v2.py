@@ -124,12 +124,18 @@ def run_comprehensive_security_audit(
             checks["invalid_json_returns_400"] = bad_json_code == 400
 
             oversize_code = 0
+            import http.client
+            from urllib.parse import urlparse
+            parsed_u = urlparse(base_url)
+            conn = http.client.HTTPConnection(parsed_u.hostname, parsed_u.port, timeout=5)
             try:
-                big = b"{" + b" " * 1_100_000 + b"}"
-                req2 = Request(f"{base_url}/api/v1/auth/token", data=big, headers={"Content-Type": "application/json"}, method="POST")
-                urlopen(req2, timeout=5)
-            except HTTPError as exc:
-                oversize_code = exc.code
+                conn.putrequest("POST", "/api/v1/auth/token")
+                conn.putheader("Content-Type", "application/json")
+                conn.putheader("Content-Length", "1100002")
+                conn.endheaders()
+                oversize_code = conn.getresponse().status
+            finally:
+                conn.close()
             checks["oversize_http_payload_returns_413"] = oversize_code == 413
         finally:
             srv.shutdown()

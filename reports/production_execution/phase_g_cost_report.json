@@ -1,0 +1,167 @@
+{
+  "generated_at_utc": "2026-11-24T22:54:39Z",
+  "actual_spend_to_date_usd": 0.0,
+  "paid_services_activated": false,
+  "data_volumes_gb": {
+    "phase_g_cc0_pilot_gb": 0.02,
+    "stage_1_125m_corpus_and_ckpts_gb": 25.0,
+    "stage_2_350m_corpus_and_ckpts_gb": 75.0
+  },
+  "storage_comparison_stage1_25gb": {
+    "cloudflare_r2": {
+      "storage_usd_mo": 0.22,
+      "egress_usd_10x_pull": 0.0,
+      "total_usd_mo": 0.22
+    },
+    "google_cloud_storage": {
+      "storage_usd_mo": 0.4,
+      "egress_usd_10x_pull": 30.0,
+      "total_usd_mo": 30.4
+    },
+    "google_drive": {
+      "storage_usd_mo": 1.99,
+      "egress_usd_10x_pull": 0.0,
+      "total_usd_mo": 1.99,
+      "caveat": "Shared with Gmail/Photos; strict API 429 rate limits for automated shard streaming."
+    },
+    "recommended": "Cloudflare R2 ($0.23/mo storage, $0.00 egress vs $30.00+ GCS egress)"
+  },
+  "storage_comparison_stage2_75gb": {
+    "cloudflare_r2": {
+      "storage_usd_mo": 0.97,
+      "egress_usd_10x_pull": 0.0,
+      "total_usd_mo": 0.97
+    },
+    "google_cloud_storage": {
+      "storage_usd_mo": 1.4,
+      "egress_usd_10x_pull": 90.0,
+      "total_usd_mo": 91.4
+    },
+    "google_drive": {
+      "storage_usd_mo": 1.99,
+      "egress_usd_10x_pull": 0.0,
+      "total_usd_mo": 1.99,
+      "caveat": "Shared with Gmail/Photos; strict API 429 rate limits for automated shard streaming."
+    },
+    "recommended": "Cloudflare R2 ($0.98/mo storage, $0.00 egress)"
+  },
+  "gpu_comparison_stage1_125m_3b_tokens": {
+    "total_flops": 2.236958208e+18,
+    "options": [
+      {
+        "provider": "Kaggle Notebooks (Free)",
+        "gpu": "Dual NVIDIA T4 x2",
+        "vram_gb": 32,
+        "quota": "~30 hrs/week (12h max/session)",
+        "est_hours": 32.0,
+        "hourly_usd": 0.0,
+        "est_total_usd": 0.0,
+        "paid_approval_needed": false
+      },
+      {
+        "provider": "Google Colab Pro",
+        "gpu": "L4 (24GB) / A100 (40-80GB)",
+        "vram_gb": 40,
+        "quota": "100 CUs/mo (+15-30h/wk Kaggle bonus)",
+        "est_hours": 9.0,
+        "hourly_usd": null,
+        "est_total_usd": 9.99,
+        "paid_approval_needed": true
+      },
+      {
+        "provider": "Vast.ai (RTX 4090 Interruptible/On-Demand)",
+        "gpu": "NVIDIA RTX 4090",
+        "vram_gb": 24,
+        "quota": "Pay-per-second (interruptible; uses SHA-256 resume)",
+        "est_hours": 9.9,
+        "hourly_usd": 0.38,
+        "est_total_usd": 3.76,
+        "paid_approval_needed": true
+      },
+      {
+        "provider": "RunPod Community (A100 80GB)",
+        "gpu": "NVIDIA A100 80GB",
+        "vram_gb": 80,
+        "quota": "Pay-per-second",
+        "est_hours": 7.5,
+        "hourly_usd": 1.39,
+        "est_total_usd": 10.42,
+        "paid_approval_needed": true
+      },
+      {
+        "provider": "Lambda Labs (A100 80GB SXM4)",
+        "gpu": "NVIDIA A100 80GB SXM4",
+        "vram_gb": 80,
+        "quota": "Dedicated cluster, $0 egress",
+        "est_hours": 6.7,
+        "hourly_usd": 3.19,
+        "est_total_usd": 21.37,
+        "paid_approval_needed": true
+      }
+    ]
+  },
+  "gpu_comparison_stage2_350m_10b_tokens": {
+    "total_flops": 2.107938816e+19,
+    "options": [
+      {
+        "provider": "Vast.ai (A100 80GB)",
+        "gpu": "NVIDIA A100 80GB",
+        "vram_gb": 80,
+        "est_hours": 70.3,
+        "hourly_usd": 0.85,
+        "est_total_usd": 59.75,
+        "paid_approval_needed": true
+      },
+      {
+        "provider": "RunPod Community (A100 80GB)",
+        "gpu": "NVIDIA A100 80GB",
+        "vram_gb": 80,
+        "est_hours": 70.3,
+        "hourly_usd": 1.39,
+        "est_total_usd": 97.72,
+        "paid_approval_needed": true
+      },
+      {
+        "provider": "RunPod Community (H100 80GB)",
+        "gpu": "NVIDIA H100 80GB",
+        "vram_gb": 80,
+        "est_hours": 29.3,
+        "hourly_usd": 2.69,
+        "est_total_usd": 78.82,
+        "paid_approval_needed": true
+      },
+      {
+        "provider": "Lambda Labs (H100 80GB)",
+        "gpu": "NVIDIA H100 80GB",
+        "vram_gb": 80,
+        "est_hours": 27.4,
+        "hourly_usd": 3.79,
+        "est_total_usd": 103.85,
+        "paid_approval_needed": true
+      }
+    ]
+  },
+  "hosting_monthly_usd": {
+    "frontend_firebase_spark": 0.0,
+    "backend_oracle_always_free_or_self_hosted": 0.0,
+    "backend_render_free_sleeps_not_24_7": 0.0,
+    "backend_fly_or_cloud_run_24_7_paid": "5.00 - 25.00"
+  },
+  "decision_options_for_user_approval": [
+    {
+      "option": "Option A — $0 Free-Tier Track (Kaggle T4x2 + Cloudflare R2 Free 10GB + Firebase)",
+      "estimated_total_usd": 0.0,
+      "capability": "Train initial 125M checkpoint across ~1-2 weekly Kaggle 30h quotas on up to ~1B-3B streamed tokens (slower, requires session resume)."
+    },
+    {
+      "option": "Option B — Low-Cost Stage 1 Track ($10-$20: Vast.ai RTX 4090/A100 or Colab Pro + Cloudflare R2)",
+      "estimated_total_usd": "10.00 - 25.00",
+      "capability": "Fast continuous Stage 1 jebrex-125m pretraining (3B licensed AR/EN/FR tokens) + zero-egress R2 shard storage."
+    },
+    {
+      "option": "Option C — Full Stage 1 + Stage 2 Track ($75-$150: Vast.ai/RunPod A100/H100 + R2 + Optional 24/7 API)",
+      "estimated_total_usd": "75.00 - 150.00",
+      "capability": "Complete 125M validation followed by 350M (10B tokens) pretraining + independent acceptance benchmark."
+    }
+  ]
+}

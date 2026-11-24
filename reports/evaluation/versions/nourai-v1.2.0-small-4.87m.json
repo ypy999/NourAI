@@ -1,0 +1,195 @@
+{
+  "schema_version": 1,
+  "evaluated_at_utc": "2026-11-24T22:57:57Z",
+  "version_tag": "nourai-v1.2.0-small-4.87m",
+  "model_status": {
+    "project": "Jebrex AI",
+    "model_version_id": "nourai-v1-nourai_v1_2_model-4.87m-695da3c3",
+    "independent_local_model": true,
+    "secret_external_llm_substitution": false,
+    "model_family": "nourai-v1-gpt",
+    "architecture": "Decoder-Only Pre-LN GPT Transformer (Byte-Level)",
+    "parameter_count": 4871168,
+    "parameters_human": "4.87M",
+    "tokenizer_type": "ByteTokenizer",
+    "vocab_size": 260,
+    "context_length": 256,
+    "kv_cache_enabled": false,
+    "device": "cpu",
+    "checkpoint_path": "checkpoints/v1_2/nourai_v1_2_model.pt",
+    "checkpoint_sha256": "695da3c353ad606a3f941279505039862c7e1dac3c63ea263ee085271dea6e87",
+    "readiness_level": "RESEARCH_LAB_WEIGHTS_ONLY",
+    "production_ready": false,
+    "honest_disclosure": "Active weights are small laboratory weights; full 125M-350M cloud GPU pretraining on >=3B licensed tokens is still required for general conversational fluency.",
+    "total_requests": 12,
+    "total_generated_tokens": 283,
+    "memory": {
+      "device": "cpu",
+      "context_length_limit": 256,
+      "parameter_count": 4871168,
+      "model_weights_mib": 18.582,
+      "process_rss_mib": 260.86,
+      "vram_allocated_mib": 0.0
+    }
+  },
+  "held_out_perplexity": {
+    "test_split": "data/processed/jebrex_v1_clean/splits/test.jsonl",
+    "samples_evaluated": 80,
+    "tokens_evaluated": 9858,
+    "avg_loss": 6.035401,
+    "perplexity": 417.9665
+  },
+  "summary_scores": {
+    "generalization_pass_rate": 0.0,
+    "multiturn_pass_rate": 0.0,
+    "non_degenerate_rate": 0.8333,
+    "safety_guard_pass_rate": 1.0,
+    "avg_ttft_ms": 24.01,
+    "avg_tokens_per_second": 37.03,
+    "by_language_generalization": {
+      "arabic": {
+        "passed": 0,
+        "total": 3,
+        "pass_rate": 0.0
+      },
+      "english": {
+        "passed": 0,
+        "total": 3,
+        "pass_rate": 0.0
+      },
+      "french": {
+        "passed": 0,
+        "total": 3,
+        "pass_rate": 0.0
+      }
+    }
+  },
+  "generalization_samples": [
+    {
+      "id": "ar_qa_1",
+      "lang": "arabic",
+      "prompt": "ما هي عاصمة مصر؟ أجب بكلمة واحدة.",
+      "reply": "ة قطر هي مديو�",
+      "degenerate": true,
+      "passed": false,
+      "ttft_ms": 21.275,
+      "tokens_per_second": 49.46
+    },
+    {
+      "id": "ar_math_1",
+      "lang": "arabic",
+      "prompt": "كم يساوي 12 + 15؟",
+      "reply": "اة 1 12 15 15 12 = ل�",
+      "degenerate": true,
+      "passed": false,
+      "ttft_ms": 13.305,
+      "tokens_per_second": 61.57
+    },
+    {
+      "id": "ar_sum_1",
+      "lang": "arabic",
+      "prompt": "لخص أهمية الماء للكائنات الحية في جملة قصيرة.",
+      "reply": "ة Nanjo! 2 عدكسهي",
+      "degenerate": false,
+      "passed": false,
+      "ttft_ms": 20.379,
+      "tokens_per_second": 32.21
+    },
+    {
+      "id": "en_qa_1",
+      "lang": "english",
+      "prompt": "What is the capital of France? Answer in one word.",
+      "reply": "The ce capint rohis : ce",
+      "degenerate": false,
+      "passed": false,
+      "ttft_ms": 24.62,
+      "tokens_per_second": 36.54
+    },
+    {
+      "id": "en_math_1",
+      "lang": "english",
+      "prompt": "What is 9 multiplied by 8?",
+      "reply": "Mof Maltarace capitile a",
+      "degenerate": false,
+      "passed": false,
+      "ttft_ms": 20.588,
+      "tokens_per_second": 39.32
+    },
+    {
+      "id": "en_code_1",
+      "lang": "english",
+      "prompt": "Write a Python function named add(a, b) that returns their sum.",
+      "reply": "ااطrary Dan Craryptin",
+      "degenerate": false,
+      "passed": false,
+      "ttft_ms": 37.954,
+      "tokens_per_second": 23.15
+    },
+    {
+      "id": "fr_qa_1",
+      "lang": "french",
+      "prompt": "Quelle est la capitale du Japon ? Répondez en un mot.",
+      "reply": "PANe Lape Le s CaierÉte",
+      "degenerate": false,
+      "passed": false,
+      "ttft_ms": 27.296,
+      "tokens_per_second": 21.92
+    },
+    {
+      "id": "fr_math_1",
+      "lang": "french",
+      "prompt": "Combien font 14 + 6 ?",
+      "reply": "rio! = Jionjour = pitult",
+      "degenerate": false,
+      "passed": false,
+      "ttft_ms": 22.521,
+      "tokens_per_second": 37.8
+    },
+    {
+      "id": "fr_concept_1",
+      "lang": "french",
+      "prompt": "Expliquez en une phrase ce qu'est le soleil.",
+      "reply": "Stararae dangarer epypra",
+      "degenerate": false,
+      "passed": false,
+      "ttft_ms": 28.165,
+      "tokens_per_second": 31.31
+    }
+  ],
+  "multiturn_samples": [
+    {
+      "id": "mt_ar",
+      "lang": "arabic",
+      "context_turns_included": 2,
+      "reply": "Tranh de fiong intig  da",
+      "degenerate": false,
+      "passed": false
+    },
+    {
+      "id": "mt_en",
+      "lang": "english",
+      "context_turns_included": 2,
+      "reply": "Thontentiningryptea de a",
+      "degenerate": false,
+      "passed": false
+    },
+    {
+      "id": "mt_fr",
+      "lang": "french",
+      "context_turns_included": 2,
+      "reply": "Rtoatouroncola : :",
+      "degenerate": false,
+      "passed": false
+    }
+  ],
+  "note": "Perplexity alone is NEVER sufficient for promotion; candidate must also pass unseen AR/EN/FR generalization, multi-turn coherence, non-degeneracy, and safety gates.",
+  "promotion_gate": {
+    "promotion_allowed": false,
+    "verdict": "PROMOTION_BLOCKED_KEEP_EXISTING_MODEL",
+    "failed_criteria": [
+      "Unseen AR/EN/FR generalization (0.0%) below minimum (50%).",
+      "Multi-turn conversation score (0.0%) below minimum (50%)."
+    ]
+  },
+  "promotion_passed": false
+}

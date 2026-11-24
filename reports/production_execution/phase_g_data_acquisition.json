@@ -1,0 +1,110 @@
+{
+  "acquired_at_utc": "2026-11-24T22:54:01Z",
+  "license_registry_summary": {
+    "total_sources_audited": 10,
+    "approved_for_training": [
+      "tatoeba_cc0",
+      "pleias_common_corpus",
+      "fineweb_2_multilingual",
+      "europarl_en_fr",
+      "qnl_arabic_ocr_v2",
+      "wto_public_corpus_en_fr"
+    ],
+    "needs_legal_review": [
+      "wikimedia_wikipedia_ar_en_fr"
+    ],
+    "rejected": [
+      "oscar_web",
+      "culturax_web",
+      "madar_parallel"
+    ]
+  },
+  "source": {
+    "dataset_id": "tatoeba_cc0",
+    "license_spdx": "CC0-1.0",
+    "commercial_use_allowed": true,
+    "redistribution_allowed": true,
+    "source_url": "https://downloads.tatoeba.org/exports/sentences_CC0.tar.bz2"
+  },
+  "archive_download": {
+    "path": "data/phase_g_pilot/raw/sentences_CC0.tar.bz2",
+    "size_bytes": 7963656,
+    "sha256": "ffece08afdd32f25cf1ae12040a41991e757df322eef93fbde40d51f0cd205bb",
+    "cached": true
+  },
+  "dedup_and_split": {
+    "splits_dir": "data/phase_g_pilot/splits",
+    "duplicates_removed": 19,
+    "invalid_removed": 0,
+    "unique_records_written": 39185,
+    "split_counts_by_language": {
+      "train": {
+        "ar": 2,
+        "en": 22406,
+        "fr": 12765
+      },
+      "validation": {
+        "en": 1322,
+        "fr": 685
+      },
+      "test": {
+        "en": 1259,
+        "fr": 746
+      }
+    }
+  },
+  "versioned_manifest": {
+    "manifest_path": "data/manifests/phase_g_tatoeba_cc0_pilot.v1.0.0.manifest.json",
+    "dataset_fingerprint_sha256": "00f7f6e6a7aa65b667b7a84db5de6788bf262020066a8fdc0af9026cbd98f43e",
+    "total_cross_split_contamination": 0,
+    "overall_pipeline_validation_gate": "DATA_READY",
+    "overall_production_readiness_gate": "DATA_NOT_READY"
+  },
+  "bpe_token_metering": {
+    "bpe_vocab_size": 2312,
+    "total_bpe_tokens": 1122564,
+    "total_by_language_tokens": {
+      "ar": 37,
+      "en": 754885,
+      "fr": 367642
+    },
+    "splits": {
+      "train": {
+        "total_bpe_tokens": 1006398,
+        "by_language_tokens": {
+          "ar": 37,
+          "en": 675892,
+          "fr": 330469
+        },
+        "by_language_docs": {
+          "ar": 2,
+          "en": 22406,
+          "fr": 12765
+        }
+      },
+      "validation": {
+        "total_bpe_tokens": 58661,
+        "by_language_tokens": {
+          "en": 40989,
+          "fr": 17672
+        },
+        "by_language_docs": {
+          "en": 1322,
+          "fr": 685
+        }
+      },
+      "test": {
+        "total_bpe_tokens": 57505,
+        "by_language_tokens": {
+          "en": 38004,
+          "fr": 19501
+        },
+        "by_language_docs": {
+          "en": 1259,
+          "fr": 746
+        }
+      }
+    }
+  },
+  "honest_scale_verdict": "DATA_NOT_READY for 125M/350M production pretraining: Tatoeba CC0-1.0 pilot proves end-to-end licensed acquisition, SHA-256 verification, 0-leakage splitting, and BPE metering, while full 3B-token pretraining requires streaming FineWeb-2 + Common Corpus into Cloudflare R2."
+}
