@@ -6,26 +6,26 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="NourAI" />
+  <meta name="apple-mobile-web-app-title" content="Jebrex AI" />
   <link rel="apple-touch-icon" href="/icon.svg" />
   <link rel="icon" href="/icon.svg" type="image/svg+xml" />
   <meta name="google-site-verification" content="googleba5e2e501ed82fe6" />
   <meta name="google-site-verification" content="d1hgHSrz7rNQO4_8yL8cb1md45P1GtW2ekbQQY0xELc" />
-  <meta name="description" content="NourAI — مساعد ذكاء اصطناعي متعدد اللغات يدعم العربية والإنجليزية والفرنسية" />
+  <meta name="description" content="Jebrex AI — مساعد ذكاء اصطناعي مستقل متعدد اللغات يدعم العربية والإنجليزية والفرنسية" />
   <link rel="canonical" href="https://ypyai-95ca7.web.app/" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="NourAI — مساعد الذكاء الاصطناعي الذكي" />
-  <meta property="og:description" content="منصة ذكاء اصطناعي متكاملة تدعم العربية والإنجليزية والفرنسية مع أدوات كتابة وتحليل وبرمجة متخصصة." />
+  <meta property="og:title" content="Jebrex AI — مساعد الذكاء الاصطناعي المستقل" />
+  <meta property="og:description" content="منصة ذكاء اصطناعي مستقلة متعددة اللغات (العربية والإنجليزية والفرنسية) بإفصاح علمي شفاف." />
   <meta property="og:url" content="https://ypyai-95ca7.web.app/" />
   <meta property="og:image" content="https://ypyai-95ca7.web.app/icon.svg" />
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="NourAI — مساعد الذكاء الاصطناعي الذكي" />
-  <meta name="twitter:description" content="مساعد ذكاء اصطناعي متعدد اللغات وأدوات متخصصة." />
+  <meta name="twitter:title" content="Jebrex AI — مساعد الذكاء الاصطناعي المستقل" />
+  <meta name="twitter:description" content="نموذج لغوي مستقل متعدد اللغات مع خصوصية محلية وشفافية علمية." />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    "name": "NourAI",
+    "name": "Jebrex AI",
     "url": "https://ypyai-95ca7.web.app/",
     "applicationCategory": "AIApplication",
     "operatingSystem": "Web",
@@ -34,7 +34,7 @@
   </script>
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#212121" />
-  <title>NourAI</title>
+  <title>Jebrex AI — مساعد الذكاء الاصطناعي المستقل</title>
   <style>
     :root {
       --bg-main: #212121;
@@ -821,7 +821,7 @@
 
   <aside class="sidebar" id="sidebar-panel" aria-label="Conversation History">
     <div class="sidebar-top">
-      <div class="brand"><span class="brand-logo">✦</span><span>NourAI</span></div>
+      <div class="brand"><span class="brand-logo">✦</span><span>Jebrex AI</span></div>
       <button class="icon-btn sidebar-close" onclick="toggleSidebar()" aria-label="إغلاق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     </div>
     <button class="new-chat-btn" id="new-session-btn" onclick="createNewSession(); closeSidebarMobile();">
@@ -834,6 +834,11 @@
       <button class="icon-btn" onclick="toggleFavoritesView()" id="fav-filter-btn" style="min-width:0;height:26px;font-size:0.75rem;padding:0 0.45rem;" title="عرض الإجابات المفضلة">⭐ المفضلة</button>
     </div>
     <ul class="session-list" id="session-history-list"></ul>
+    <nav class="sidebar-links" aria-label="روابط المشروع" style="margin-top:auto;padding-top:0.6rem;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;gap:0.45rem;font-size:0.76rem;">
+      <a href="/about.html" style="color:var(--text-muted);text-decoration:none;">ℹ️ عن النموذج</a>
+      <a href="/privacy.html" style="color:var(--text-muted);text-decoration:none;">🔒 الخصوصية</a>
+      <a href="/report-bug.html" style="color:var(--text-muted);text-decoration:none;">🐞 إبلاغ عن خطأ</a>
+    </nav>
   </aside>
 
   <main class="chat-area">
@@ -841,10 +846,10 @@
       <div class="hdr-start">
         <button class="icon-btn" onclick="toggleSidebar()" aria-label="القائمة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg></button>
         <select id="engine-mode-select" class="model-select" onchange="saveModeCookie()" aria-label="النموذج">
-          <option value="team_ai">NourAI فريق الـ 5 مساعدين</option>
-          <option value="web_ai">NourAI ويب</option>
-          <option value="neural">NourAI عصبي</option>
-          <option value="fallback">NourAI محلي</option>
+          <option value="neural" selected>Jebrex AI عصبي (النموذج المحلي المستقل)</option>
+          <option value="fallback">Jebrex AI محلي (مساعد قواعد احتياطي)</option>
+          <option value="web_ai">أداة البحث الويب (خارجي اختياري)</option>
+          <option value="team_ai">فريق الأدوات (خارجي اختياري)</option>
         </select>
         <span id="model-status-badge">متصل</span>
         <span id="stream-status-indicator" style="display:none;">جاهز</span>
@@ -870,8 +875,11 @@
     <div id="welcome-hero">
       <div class="hero-emblem">✦</div>
       <h1 class="hero-greeting" id="hero-title">كيف يمكنني مساعدتك اليوم؟</h1>
-      <p style="font-size:0.88rem;color:var(--text-muted);margin:0.25rem 0 0.85rem;text-align:center;max-width:520px;line-height:1.6;">
-        اكتب سؤالك مباشرةً للدردشة العامة، أو اضغط على <strong>✨ الأدوات</strong> لاختيار أداة متخصصة.
+      <div id="model-readiness-banner" style="max-width:640px;width:100%;margin:0.35rem 0 0.75rem;padding:0.65rem 0.9rem;border-radius:0.75rem;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.35);font-size:0.8rem;line-height:1.55;color:#fde68a;text-align:start;">
+        <strong>إفصاح الشفافية (Jebrex AI المستقل):</strong> يعمل النظام بدون استبدال سري بـ ChatGPT أو Gemini. النموذج العصبي الحالي في المرحلة البحثية والمخبرية (معمارية v2 الحديثة بحجم 125M–350M جاهزة للتدريب السحابي). <a href="/about.html" style="color:#34d399;text-decoration:underline;">تفاصيل الجاهزية والمعمارية</a> · <a href="/privacy.html" style="color:#34d399;text-decoration:underline;">الخصوصية</a> · <a href="/report-bug.html" style="color:#34d399;text-decoration:underline;">إبلاغ عن خطأ</a>
+      </div>
+      <p style="font-size:0.88rem;color:var(--text-muted);margin:0.15rem 0 0.75rem;text-align:center;max-width:520px;line-height:1.6;">
+        اكتب سؤالك مباشرةً للدردشة، أو اضغط على <strong>✨ الأدوات</strong> لاختيار أداة محلية متخصصة.
       </p>
       <div style="width:100%;max-width:640px;margin-bottom:0.4rem;">
         <div style="font-size:0.8rem;font-weight:700;color:var(--accent);margin-bottom:0.5rem;text-align:center;">🚀 ابدأ من هنا</div>
@@ -965,7 +973,7 @@
         <button class="send-circle-btn" id="send-btn" onclick="sendStreamingMessage()" aria-label="إرسال"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
         <button class="stop-circle-btn" id="stop-btn" onclick="stopGeneration()" aria-label="إيقاف"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg></button>
       </div>
-      <p class="disclaimer">قد يخطئ NourAI. تحقق من المعلومات المهمة.</p>
+      <p class="disclaimer">Jebrex AI — مشروع نموذج لغوي مستقل (النسخة البحثية). تحقق من المعلومات المهمة. · <a href="/about.html" style="color:var(--text-muted);">عن النموذج</a> · <a href="/privacy.html" style="color:var(--text-muted);">الخصوصية</a> · <a href="/report-bug.html" style="color:var(--text-muted);">إبلاغ عن خطأ</a></p>
     </footer>
   </main>
 
@@ -1036,8 +1044,8 @@
           <input type="number" id="max-tokens-input" value="160" min="4" max="256" step="8" />
         </div>
         <div class="control-group">
-          <label for="gemini-key-input">Gemini API Key (اختياري)</label>
-          <input type="password" id="gemini-key-input" placeholder="AIzaSy..." onchange="setCookie('nourai_gemini_key', this.value, 30)" />
+          <label for="gemini-key-input">مفتاح خارجي اختياري (للجلسة فقط — لا يُحفظ في Cookie)</label>
+          <input type="password" id="gemini-key-input" placeholder="اختياري — يُستخدم فقط في وضع البحث الخارجي" autocomplete="off" />
         </div>
       </div>
     </details>
@@ -1268,7 +1276,7 @@
       try { sessionStorage.setItem("nourai_serverless", "1"); } catch (e) {}
       authToken = "local-browser-session";
       const badge = document.getElementById("model-status-badge");
-      if (badge) badge.textContent = "سحابي";
+      if (badge) badge.textContent = "واجهة ثابتة 24/7 (بدون خادم خلفي)";
       hideError();
       return authToken;
     }
@@ -2027,72 +2035,9 @@ function downloadWebm() {
     }
 
     async function callCloudLLM(sysPrompt, userPrompt, geminiKey, includeHistory = false) {
-      const fullSys = `${NOURAI_MANDATORY_RULES}\n${sysPrompt}`;
-      const historyTurns = includeHistory ? getRecentChatHistory() : [];
-      if (geminiKey) {
-        try {
-          const contents = [];
-          for (const t of historyTurns) {
-            contents.push({
-              role: t.role === "assistant" ? "model" : "user",
-              parts: [{ text: String(t.content || "").slice(0, 800) }]
-            });
-          }
-          contents.push({ role: "user", parts: [{ text: userPrompt }] });
-          const gRes = await fetchWithTimeout(
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                "x-goog-api-key": geminiKey
-              },
-              body: JSON.stringify({
-                system_instruction: { parts: [{ text: fullSys }] },
-                contents,
-                generationConfig: getCloudGenerationConfig()
-              })
-            },
-            7500
-          );
-          if (gRes.ok) {
-            const gData = await gRes.json();
-            const gTxt = gData.candidates?.[0]?.content?.parts?.map(p => p.text || "").join("").trim();
-            if (gTxt) {
-              setActiveProviderBadge("Gemini 2.0");
-              return gTxt;
-            }
-          } else if (gRes.status === 401 || gRes.status === 403) {
-            showError("مفتاح Gemini API غير صالح أو مرفوض؛ تم التحويل للمزود الاحتياطي.");
-          } else if (gRes.status === 429) {
-            showError("تم بلوغ حد استخدام Gemini API مؤقتاً؛ تم التحويل للمزود الاحتياطي.");
-          }
-        } catch (e) {}
-      }
-      try {
-        const msgs = [{ role: "system", content: fullSys }];
-        for (const t of historyTurns) msgs.push({ role: t.role, content: String(t.content || "").slice(0, 500) });
-        msgs.push({ role: "user", content: userPrompt });
-        const cfg = getCloudGenerationConfig();
-        const pRes = await fetchWithTimeout(
-          "https://text.pollinations.ai/openai",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ model: "openai", messages: msgs, temperature: cfg.temperature })
-          },
-          5500
-        );
-        if (pRes.ok) {
-          const pData = await pRes.json();
-          const txt = pData.choices?.[0]?.message?.content?.trim();
-          if (txt) {
-            setActiveProviderBadge("Pollinations AI");
-            return txt;
-          }
-        }
-      } catch (e) {}
-      setActiveProviderBadge("احتياطي محلي");
+      // Independence & honesty invariant (Jebrex AI):
+      // Never substitute external LLMs (OpenAI / Gemini / Pollinations) as Jebrex AI's own model.
+      setActiveProviderBadge("واجهة محلية مستقلة");
       return "";
     }
 
@@ -2116,40 +2061,9 @@ function downloadWebm() {
       const mems = loadLocalMemories();
       const docs = loadLocalDocs();
 
-      // 1. Image Vision Analysis (if user attached an image)
+      // 1. Image attachment (honest disclosure: no secret external vision proxy)
       if (imgBase64) {
-        if (geminiKey) {
-          try {
-            const gRes = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent", {
-              method: "POST",
-              headers: { "Content-Type": "application/json", "x-goog-api-key": geminiKey },
-              body: JSON.stringify({
-                contents: [{ parts: [{ text: q || "اشرح وحلل محتوى هذه الصورة بالتفصيل باللغة العربية." }, { inline_data: { mime_type: imgMime || "image/jpeg", data: imgBase64 } }] }]
-              })
-            });
-            if (gRes.ok) {
-              const gData = await gRes.json();
-              const gTxt = gData.candidates?.[0]?.content?.parts?.map(p => p.text || "").join("").trim();
-              if (gTxt) return `🖼️ **تحليل الصورة:**\n\n${gTxt}`;
-            }
-          } catch (e) {}
-        }
-        try {
-          const pRes = await fetch("https://text.pollinations.ai/openai", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              model: "openai",
-              messages: [{ role: "user", content: [{ type: "text", text: q || "Describe and analyze this image in Arabic." }, { type: "image_url", image_url: { url: `data:${imgMime || "image/jpeg"};base64,${imgBase64}` } }] }]
-            })
-          });
-          if (pRes.ok) {
-            const pData = await pRes.json();
-            const txt = pData.choices?.[0]?.message?.content?.trim();
-            if (txt) return `🖼️ **تحليل الصورة:**\n\n${txt}`;
-          }
-        } catch (e) {}
-        return "🖼️ تم استلام الصورة بنجاح! للحصول على تحليل بصري فائق الدقة لأي صورة، أضف مفتاح **Gemini API المجاني** في الإعدادات (⚙️).";
+        return "🖼️ تم استلام الصورة محلياً داخل المتصفح. لا يملك النموذج العصبي المستقل لـ Jebrex AI قدرة رؤية بصرية (Vision) مدمجة حالياً، ولا يتم إرسال صورك سراً إلى أي مزود خارجي حفاظاً على الخصوصية والاستقلالية.";
       }
 
       // 2. Text-to-Video Storyboard Generator
@@ -2173,34 +2087,18 @@ function downloadWebm() {
           text: c,
           score: kws.reduce((acc, w) => acc + (c.toLowerCase().includes(w.toLowerCase()) ? 1 : 0), 0)
         })).sort((a, b) => b.score - a.score);
-        const topChunks = scored.slice(0, 2).map(s => `**[فقرة #${s.idx}]**: ${s.text}`).join("\n\n");
-        if (geminiKey) {
-          try {
-            const gRes = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent", {
-              method: "POST",
-              headers: { "Content-Type": "application/json", "x-goog-api-key": geminiKey },
-              body: JSON.stringify({ contents: [{ parts: [{ text: `Based on document "${latest.filename}":\n${topChunks}\n\nQuestion: ${q}` }] }] })
-            });
-            if (gRes.ok) {
-              const gData = await gRes.json();
-              const gTxt = gData.candidates?.[0]?.content?.parts?.map(p => p.text || "").join("").trim();
-              if (gTxt) return `📄 **من ملف \`${latest.filename}\`:**\n\n${gTxt}`;
-            }
-          } catch (e) {}
-        }
-        return `📄 **المحتوى المستخرج من \`${latest.filename}\`:**\n\n${topChunks}`;
+        const topChunks = scored.slice(0, 2).map(s => `**[${latest.filename} — فقرة #${s.idx}]**: ${s.text}`).join("\n\n");
+        return `📄 **المحتوى المسترجع من المستند المحلي (RAG) \`${latest.filename}\`:**\n\n${topChunks}`;
       }
 
       if (/^(مرحبا|اهلا|هلا|السلام عليكم|سلام|كيف حالك|كيفك|شلونك|اخبارك|صباح الخير|مساء الخير|hello|hi|hey|bonjour|salut)\b/i.test(normAr)) {
-        return "أهلاً بك في **NourAI**! أنا بخير وجاهز لمساعدتك. كيف يمكنني خدمتك اليوم؟";
+        return "أهلاً بك في **Jebrex AI**! تعمل الواجهة حالياً في وضع الاستضافة الثابتة المستقلة (بدون استبدال بنماذج خارجية). يمكنك استخدام الآلة الحاسبة، البحث في ويكيبيديا بالمصادر، وتحليل ملفاتك محلياً، أو ربط خادم Jebrex API محلي للتوليد العصبي.";
       }
       if (normAr.includes("ماذا يمكنك") || normAr.includes("قدراتك") || normAr.includes("what can you do")) {
-        return "أنا **NourAI**، أستطيع مساعدتك في 10 مهام ذكية سحابياً:\n\n1. **البحث الذكي** في الويب وويكيبيديا مع المصادر.\n2. **توليد الصور** (`ارسم لي...`) و**إنشاء الفيديو المتحرك** (`اصنع فيديو عن...`).\n3. **تحليل الصور** (ارفق صورة من `+`) و**تحليل ملفات PDF/DOCX**.\n4. **التحدث بالصوت** (`🎤` و`🔊`)، **الترجمة الفورية**، **البرمجة**، **وضع الدراسة**، و**الذاكرة الشخصية**.";
+        return "أنا **Jebrex AI** — مشروع نموذج لغوي مستقل متعدد اللغات (العربية، الإنجليزية، الفرنسية):\n\n1. **النموذج العصبي المحلي:** يعمل عبر خادم Jebrex API (معمارية v1 الحالية ومعمارية v2 الحديثة 125M–350M).\n2. **الاسترجاع المحلي بالمصادر (RAG):** تحليل مستندات PDF/TXT داخل المتصفح أو الخادم مع إظهار الفقرة المصدرية.\n3. **أدوات محلية شفافة:** الحساب الرياضي الدقيق، إدارة الجلسات والذاكرة، والبحث المفتوح في ويكيبيديا مع الروابط.\n\n*للتفاصيل الكاملة راجع صفحة «عن النموذج» (`/about.html`).*";
       }
       if (/^(ارسم|صمم صورة|اصنع صورة|draw |generate.*image)/i.test(q)) {
-        const subj = q.replace(/^(ارسم لي|ارسم|صمم صورة|اصنع صورة|draw|generate an image of)\s*/i, "").trim() || q;
-        const imgUrl = "https://image.pollinations.ai/prompt/" + encodeURIComponent(subj) + "?width=768&height=512&nologo=true";
-        return `🎨 **تم توليد الصورة لـ «${subj}»:**\n\n![${subj}](${imgUrl})\n\n[📥 فتح الصورة بالحجم الكامل](${imgUrl})`;
+        return "🎨 توليد الصور بالذكاء الاصطناعي غير مدمج في النموذج اللغوي المستقل لـ Jebrex AI حالياً، ولا نقوم باستدعاء خدمات توليد صور خارجية سراً.";
       }
       if (lower.includes("factorial") || lower.includes("مضروب")) {
         return "إليك دالة بايثون لحساب مضروب العدد:\n\n```python\ndef factorial(n):\n    return 1 if n <= 1 else n * factorial(n - 1)\n\nprint(factorial(5))\n```";
@@ -2221,47 +2119,7 @@ function downloadWebm() {
         const m = q.match(tm.re);
         if (m) {
           const payloadTxt = (m[1] || q).trim();
-          const toolSystemPrompts = {
-            improve: "Rewrite the user's question into 3 structured, highly professional, clear prompts in Arabic.",
-            eli5: "Explain this topic simply as if to a complete beginner using easy examples in Arabic.",
-            summarize: "Summarize this text concisely into clear bullet points in Arabic.",
-            style: "Rewrite this text in 3 styles: 1) Official/Formal, 2) Professional Business, 3) Simple Friendly.",
-            ideas: "Generate 5 innovative project ideas and 5 catchy brand names for this domain in Arabic.",
-            code_help: "Write clean, well-commented code for this request and explain each step clearly in Arabic.",
-            proofread: "Correct all spelling and grammar errors in this text and show the polished version in Arabic.",
-            quiz: "Create a 3-question multiple-choice quiz with answers from this lesson in Arabic."
-          };
-          if (geminiKey) {
-            try {
-              const gRes = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent", {
-                method: "POST",
-                headers: { "Content-Type": "application/json", "x-goog-api-key": geminiKey },
-                body: JSON.stringify({
-                  system_instruction: { parts: [{ text: `${NOURAI_MANDATORY_RULES}\n${toolSystemPrompts[tm.mode]}` }] },
-                  contents: [{ parts: [{ text: payloadTxt }] }],
-                  generationConfig: getCloudGenerationConfig()
-                })
-              });
-              if (gRes.ok) {
-                const gData = await gRes.json();
-                const gTxt = gData.candidates?.[0]?.content?.parts?.map(p => p.text || "").join("").trim();
-                if (gTxt) { setActiveProviderBadge("Gemini 2.0"); return gTxt; }
-              }
-            } catch (e) {}
-          }
-          try {
-            const pRes = await fetch("https://text.pollinations.ai/openai", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ model: "openai", messages: [{ role: "system", content: toolSystemPrompts[tm.mode] }, { role: "user", content: payloadTxt }] })
-            });
-            if (pRes.ok) {
-              const pData = await pRes.json();
-              const txt = pData.choices?.[0]?.message?.content?.trim();
-              if (txt) return txt;
-            }
-          } catch (e) {}
-
+          // Strictly local deterministic smart-tool processing (no silent external LLM proxy)
           if (tm.mode === "improve") {
             return `✨ **السؤال بعد التحسين الاحترافي:**\n\n1. **الصيغة الدقيقة:** «ما هي الخطوات العملية والأدوات الموصى بها لتنفيذ: ${payloadTxt} بأعلى جودة وأقل تكلفة؟»\n2. **صيغة للبحث المعمق:** «قدّم تحليلاً شاملاً حول ${payloadTxt} مع ذكر المزايا والتحديات وأمثلة واقعية.»`;
           }
@@ -2584,11 +2442,11 @@ function downloadWebm() {
         return `**${wikiTitle}**\n\n${wikiSnippet}\n\n🌐 [المصدر: ويكيبيديا](${wikiUrl})`;
       }
 
-      // If question is short or ambiguous and no verified answer was found, ask for clarification instead of guessing
-      if (q.split(/\s+/).length <= 3 || q.length < 10) {
-        return `سؤالك «**${q}**» غير واضح تماماً. هل يمكنك توضيح ما تقصده أو إضافة تفاصيل أكثر لأجيبك بدقة؟`;
+      if (docExcerpt) {
+        return `📄 **نتائج البحث المحلي في مستنداتك (RAG):**\n\n${docExcerpt}`;
       }
-      return "لم أتمكن من التحقق من معلومات مؤكدة حول هذا السؤال حالياً. يرجى توضيح السؤال أو إضافة مفتاح Gemini المجاني في الإعدادات (⚙️) للحصول على إجابة دقيقة.";
+
+      return "ℹ️ الواجهة تعمل حالياً في وضع الاستضافة الثابتة المستقلة (بدون خادم Jebrex API نشط) ولا نستخدم نماذج خارجية سراً. لتشغيل التوليد العصبي المستقل، شغّل خادم Jebrex محلياً أو اربط عنوان API عبر `?api=https://...`، أو استخدم البحث الموثق (مثال: `ابحث عن الذكاء الاصطناعي`) أو الحساب (`احسب 25 * 4`).";
     }
 
     async function sendStreamingMessage() {
@@ -2684,6 +2542,14 @@ function downloadWebm() {
             const container = document.getElementById("chat-messages");
             container.scrollTop = container.scrollHeight;
             await new Promise(r => setTimeout(r, 12));
+          }
+          if (Array.isArray(payload.citations) && payload.citations.length > 0) {
+            const citesMd = "\n\n---\n📚 **المصادر المرجعية (RAG / Citations):**\n" + payload.citations.map((c, idx) => {
+              const title = c.title || c.doc_id || ("مصدر #" + (idx + 1));
+              return c.url ? `- [${title}](${c.url})` : `- **${title}**`;
+            }).join("\n");
+            fullStreamed += citesMd;
+            renderFormattedContent(assistantObj.textNode, fullStreamed);
           }
           if (document.getElementById("auto-voice-toggle").checked) speakText(fullStreamed);
         } else {
@@ -3041,10 +2907,8 @@ function downloadWebm() {
       if (savedMode) {
         document.getElementById("engine-mode-select").value = savedMode;
       }
-      const savedKey = getCookie("nourai_gemini_key");
-      if (savedKey) {
-        document.getElementById("gemini-key-input").value = savedKey;
-      }
+      // Security hardening: never persist external API keys in plaintext browser cookies
+      setCookie("nourai_gemini_key", "", -1);
       const savedPersona = getCookie("nourai_persona");
       if (savedPersona) {
         document.getElementById("persona-select").value = savedPersona;

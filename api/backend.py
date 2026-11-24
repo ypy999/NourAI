@@ -1,24 +1,29 @@
 """Phase 18 & Stage H — NourAI REST API & Backend (Chat, Sessions, Users, Auth, SQLite Persistence, Rate Limiting, OpenAPI)."""
 from __future__ import annotations
 
+import ast
 import base64
 from contextlib import closing
 import hashlib
 import hmac
 import json
+import operator
 import os
 from pathlib import Path
+import re
 import secrets
 import sqlite3
-import subprocess
-import sys
 import threading
 import time
 from typing import Any
 from urllib.parse import urlparse
 
-from inference.engine import GenerationConfig, InferenceEngine, StreamChunk
-from nourai.capabilities import NourAICapabilityEngine
+from inference.engine import ConversationContextManager, GenerationConfig, InferenceEngine, StreamChunk
+from nourai.capabilities import (
+    NourAICapabilityEngine,
+    PROMPT_INJECTION_PATTERNS,
+    evaluate_prompt_safety,
+)
 from nourai.memory_and_rag import (
     LocalDocumentRAGStore,
     LongTermMemoryStore,
@@ -26,6 +31,56 @@ from nourai.memory_and_rag import (
     extract_text_from_binary_upload,
 )
 from nourai.web_search import NourAIWebAndSmartEngine
+
+
+_SAFE_CODE_BIN_OPS = {
+    ast.Add: operator.add,
+    ast.Sub: operator.sub,
+    ast.Mult: operator.mul,
+    ast.Div: operator.truediv,
+    ast.FloorDiv: operator.floordiv,
+    ast.Mod: operator.mod,
+    ast.Pow: operator.pow,
+}
+_SAFE_CODE_UNARY_OPS = {ast.UAdd: operator.pos, ast.USub: operator.neg}
+
+
+def _safe_eval_arithmetic_only(expr: str) -> str:
+    """Strictly evaluate pure arithmetic AST expressions (NO imports, NO calls, NO subprocess/OS access)."""
+    clean = (expr or "").strip()
+    if not clean or len(clean) > 200:
+        raise ValueError("expression must be between 1 and 200 characters")
+    tree = ast.parse(clean, mode="eval")
+    nodes = list(ast.walk(tree))
+    if len(nodes) > 64:
+        raise ValueError("expression exceeds maximum AST complexity")
+
+    def _eval(node: ast.AST) -> float:
+        if isinstance(node, ast.Expression):
+            return _eval(node.body)
+        if isinstance(node, ast.Constant) and isinstance(node.value, (int, float)) and not isinstance(node.value, bool):
+            return float(node.value)
+        if isinstance(node, ast.BinOp) and type(node.op) in _SAFE_CODE_BIN_OPS:
+            left = _eval(node.left)
+            right = _eval(node.right)
+            if isinstance(node.op, ast.Pow) and abs(right) > 100:
+                raise ValueError("exponent magnitude exceeds safe limit (100)")
+            return float(_SAFE_CODE_BIN_OPS[type(node.op)](left, right))
+        if isinstance(node, ast.UnaryOp) and type(node.op) in _SAFE_CODE_UNARY_OPS:
+            return float(_SAFE_CODE_UNARY_OPS[type(node.op)](_eval(node.operand)))
+        raise PermissionError("arbitrary code execution is disabled for security; only pure arithmetic is permitted")
+
+    result = _eval(tree)
+    return str(int(result)) if result.is_integer() else f"{result:.10g}"
+
+
+def _redact_log_message(message: str) -> str:
+    redacted = re.sub(r"(Bearer\s+)[A-Za-z0-9_\-\.=]+", r"\1[REDACTED_TOKEN]", message)
+    redacted = re.sub(r'("password"\s*:\s*)"[^"]*"', r'\1"[REDACTED_PASSWORD]"', redacted, flags=re.IGNORECASE)
+    redacted = re.sub(r'("secret_key"\s*:\s*)"[^"]*"', r'\1"[REDACTED_SECRET]"', redacted, flags=re.IGNORECASE)
+    redacted = re.sub(r'("gemini_api_key"\s*:\s*)"[^"]*"', r'\1"[REDACTED_API_KEY]"', redacted, flags=re.IGNORECASE)
+    redacted = re.sub(r"(nourai_token=)[^;\s]+", r"\1[REDACTED_COOKIE]", redacted)
+    return redacted
 
 
 class UserManager:
@@ -387,32 +442,38 @@ class SessionManager:
 
 
 def build_openapi_spec() -> dict[str, Any]:
-    """Return OpenAPI 3.1.0 specification for the NourAI REST API."""
+    """Return complete OpenAPI 3.1.0 specification for the Jebrex AI / NourAI REST API."""
     return {
         "openapi": "3.1.0",
         "info": {
-            "title": "NourAI Multilingual Language Model API",
-            "version": "1.2.0",
-            "description": "Local-first Arabic, English, and French LLM REST API with authentication, persistent sessions, and streaming.",
+            "title": "Jebrex AI (NourAI Core) Multilingual Language Model API",
+            "version": "1.3.0",
+            "description": "Local-first Arabic, English, and French LLM REST API with authentication, persistent SQLite sessions, multi-turn context management, streaming, and hardened security.",
         },
         "paths": {
             "/api/v1/health": {
                 "get": {"summary": "Health and model readiness status", "responses": {"200": {"description": "OK"}}},
             },
+            "/api/v1/model-info": {
+                "get": {"summary": "Honest model architecture, tokenizer, and readiness disclosure", "responses": {"200": {"description": "Model info"}}},
+            },
+            "/api/v1/bug-reports": {
+                "post": {"summary": "Submit a validated public bug report (rate limited)", "responses": {"201": {"description": "Recorded"}, "400": {"description": "Invalid payload"}, "429": {"description": "Rate limited"}}},
+            },
             "/api/v1/openapi.json": {
                 "get": {"summary": "OpenAPI 3.1 specification", "responses": {"200": {"description": "OpenAPI JSON"}}},
             },
             "/api/v1/users/register": {
-                "post": {"summary": "Register a new user account", "responses": {"201": {"description": "Created"}}},
+                "post": {"summary": "Register a new standard user account (role locked to 'user')", "responses": {"201": {"description": "Created"}, "403": {"description": "Privileged role forbidden"}, "429": {"description": "Rate limited"}}},
             },
             "/api/v1/users/me": {
-                "delete": {"summary": "Delete authenticated user account and all sessions", "responses": {"200": {"description": "Deleted"}}},
+                "delete": {"summary": "Delete authenticated user account and all sessions/memories", "responses": {"200": {"description": "Deleted"}}},
             },
             "/api/v1/auth/token": {
-                "post": {"summary": "Authenticate and issue an HMAC-SHA256 bearer token", "responses": {"200": {"description": "Token issued"}}},
+                "post": {"summary": "Authenticate and issue an HMAC-SHA256 bearer token", "responses": {"200": {"description": "Token issued"}, "401": {"description": "Invalid credentials"}, "429": {"description": "Rate limited"}}},
             },
             "/api/v1/auth/guest": {
-                "post": {"summary": "Issue a local browser session guest bearer token", "responses": {"200": {"description": "Guest token issued"}}},
+                "post": {"summary": "Issue a local browser session guest bearer token", "responses": {"200": {"description": "Guest token issued"}, "429": {"description": "Rate limited"}}},
             },
             "/api/v1/sessions": {
                 "get": {"summary": "List authenticated user's chat sessions", "responses": {"200": {"description": "Session list"}}},
@@ -423,14 +484,35 @@ def build_openapi_spec() -> dict[str, Any]:
                 "patch": {"summary": "Rename a chat session", "responses": {"200": {"description": "Session renamed"}}},
                 "delete": {"summary": "Delete a chat session", "responses": {"200": {"description": "Session deleted"}}},
             },
+            "/api/v1/sessions/{session_id}/rename": {
+                "post": {"summary": "Rename a chat session (POST alias)", "responses": {"200": {"description": "Session renamed"}}},
+            },
             "/api/v1/chat": {
-                "post": {"summary": "Generate a multilingual chat response", "responses": {"200": {"description": "Chat response"}}},
+                "post": {"summary": "Generate a multilingual chat response from local Jebrex AI neural model", "responses": {"200": {"description": "Chat response"}}},
             },
             "/api/v1/chat/stream": {
-                "post": {"summary": "Stream token chunks for a chat prompt", "responses": {"200": {"description": "SSE stream"}}},
+                "post": {"summary": "Stream token chunks for a chat prompt", "responses": {"200": {"description": "Stream chunks"}}},
             },
             "/api/v1/chat/stop": {
                 "post": {"summary": "Abort an active streaming generation", "responses": {"200": {"description": "Stopped"}}},
+            },
+            "/api/v1/memories": {
+                "get": {"summary": "List user long-term memories", "responses": {"200": {"description": "Memory list"}}},
+                "post": {"summary": "Store a user memory fact", "responses": {"201": {"description": "Stored"}}},
+                "delete": {"summary": "Clear all memories for authenticated user", "responses": {"200": {"description": "Cleared"}}},
+            },
+            "/api/v1/documents": {
+                "get": {"summary": "List uploaded local RAG documents", "responses": {"200": {"description": "Document list"}}},
+                "post": {"summary": "Ingest a local document for RAG", "responses": {"201": {"description": "Ingested"}}},
+            },
+            "/api/v1/documents/{doc_id}": {
+                "delete": {"summary": "Delete an uploaded RAG document", "responses": {"200": {"description": "Deleted"}}},
+            },
+            "/api/v1/code/run": {
+                "post": {"summary": "Evaluate pure safe arithmetic AST expressions only (arbitrary code execution disabled)", "responses": {"200": {"description": "Computed"}, "403": {"description": "Arbitrary code rejected"}}},
+            },
+            "/api/v1/admin/users": {
+                "get": {"summary": "List users (admin RBAC required)", "responses": {"200": {"description": "Users"}, "403": {"description": "Forbidden"}}},
             },
         },
     }
@@ -444,6 +526,64 @@ SAFETY_BLOCKLIST_PATTERNS = (
     "../",
     "..\\",
 )
+
+
+class BugReportStore:
+    """Rate-limited validated bug report persistence (SQLite or bounded memory)."""
+
+    def __init__(self, db_path: str | Path | None = None) -> None:
+        self._lock = threading.Lock()
+        self.db_path = Path(db_path) if db_path else None
+        self._reports: list[dict[str, Any]] = []
+        if self.db_path:
+            self.db_path.parent.mkdir(parents=True, exist_ok=True)
+            with closing(sqlite3.connect(self.db_path, timeout=15.0)) as conn, conn:
+                conn.execute(
+                    """
+                    CREATE TABLE IF NOT EXISTS prod_bug_reports (
+                        report_id TEXT PRIMARY KEY,
+                        title TEXT NOT NULL,
+                        description TEXT NOT NULL,
+                        severity TEXT NOT NULL,
+                        language TEXT NOT NULL,
+                        page TEXT NOT NULL,
+                        created_at REAL NOT NULL
+                    )
+                    """
+                )
+
+    def create(self, *, title: str, description: str, severity: str, language: str, page: str) -> dict[str, Any]:
+        clean_title = title.strip()[:160]
+        clean_desc = description.strip()[:2000]
+        if len(clean_title) < 3 or len(clean_desc) < 5:
+            raise ValueError("title (>=3 chars) and description (>=5 chars) are required")
+        sev = severity.strip().lower()
+        if sev not in ("low", "medium", "high", "security"):
+            sev = "medium"
+        lang = language.strip().lower()[:24] or "arabic"
+        clean_page = page.strip()[:120] or "/"
+        rid = f"bug_{secrets.token_hex(6)}"
+        now = time.time()
+        entry = {
+            "report_id": rid,
+            "title": clean_title,
+            "description": clean_desc,
+            "severity": sev,
+            "language": lang,
+            "page": clean_page,
+            "created_at": now,
+        }
+        with self._lock:
+            self._reports.append(entry)
+            if len(self._reports) > 200:
+                self._reports = self._reports[-200:]
+            if self.db_path:
+                with closing(sqlite3.connect(self.db_path, timeout=15.0)) as conn, conn:
+                    conn.execute(
+                        "INSERT INTO prod_bug_reports(report_id, title, description, severity, language, page, created_at) VALUES(?, ?, ?, ?, ?, ?, ?)",
+                        (rid, clean_title, clean_desc, sev, lang, clean_page, now),
+                    )
+        return entry
 
 
 class NourAIBackend:
@@ -476,7 +616,18 @@ class NourAIBackend:
         self.sessions = SessionManager(db_path=self.db_path)
         self.memories = LongTermMemoryStore(db_path=self.db_path)
         self.rag = LocalDocumentRAGStore(db_path=self.db_path)
+        self.bug_reports = BugReportStore(db_path=self.db_path)
+        self.context_manager = ConversationContextManager(self.engine.tokenizer, min_generation_reserve=32)
         self.openapi = build_openapi_spec()
+        self._audit_lock = threading.Lock()
+        self.audit_log: list[str] = []
+
+    def _record_audit(self, event: str) -> None:
+        safe = _redact_log_message(event)
+        with self._audit_lock:
+            self.audit_log.append(safe)
+            if len(self.audit_log) > 500:
+                self.audit_log = self.audit_log[-500:]
 
     def _authenticate(self, headers: dict[str, str]) -> dict[str, Any] | None:
         auth_header = headers.get("Authorization") or headers.get("authorization")
@@ -514,7 +665,17 @@ class NourAIBackend:
             "https://ypyai-95ca7.firebaseapp.com",
             "https://nourai-studio.onrender.com",
         )
-        allow_origin = origin if (origin in allowed_origins or origin.startswith("http://127.0.0.1") or origin.startswith("http://localhost")) else "http://127.0.0.1"
+        is_firebase_preview = origin.startswith("https://ypyai-95ca7--") and origin.endswith(".web.app")
+        allow_origin = (
+            origin
+            if (
+                origin in allowed_origins
+                or is_firebase_preview
+                or origin.startswith("http://127.0.0.1")
+                or origin.startswith("http://localhost")
+            )
+            else "http://127.0.0.1"
+        )
         sec_headers = {
             "X-Content-Type-Options": "nosniff",
             "X-Frame-Options": "DENY",
@@ -531,6 +692,15 @@ class NourAIBackend:
         # Public routes
         if method == "GET" and route == "/" and ui_html_provider is not None:
             return 200, {**sec_headers, "Content-Type": "text/html; charset=utf-8"}, ui_html_provider()
+
+        if method == "GET" and route in ("/about.html", "/privacy.html", "/report-bug.html"):
+            static_page = Path(__file__).resolve().parents[1] / "ui" / route.lstrip("/")
+            if static_page.is_file():
+                return (
+                    200,
+                    {**sec_headers, "Content-Type": "text/html; charset=utf-8"},
+                    static_page.read_text(encoding="utf-8"),
+                )
 
         if method == "GET" and route == "/googleba5e2e501ed82fe6.html":
             return (
@@ -576,35 +746,83 @@ class NourAIBackend:
         if method == "GET" and route == "/api/v1/health":
             return 200, sec_headers, {
                 "status": "ok",
-                "service": "NourAI Multilingual API",
-                "version": "1.2.0",
+                "service": "Jebrex AI (NourAI Core) Multilingual API",
+                "version": "1.3.0",
                 "languages": ["arabic", "english", "french"],
                 "memory": self.engine.memory_status(),
             }
+
+        if method == "GET" and route == "/api/v1/model-info":
+            return 200, sec_headers, {
+                "project": "Jebrex AI",
+                "version": "1.3.0",
+                "independent_local_model": True,
+                "secret_external_llm_substitution": False,
+                "active_inference_architecture": "GPT-v1-ByteTokenizer (local)",
+                "foundation_v2_architecture": "JebrexTransformer (RoPE + RMSNorm + SwiGLU + GQA + KV-Cache)",
+                "foundation_v2_presets": ["jebrex-micro (1.08M)", "jebrex-125m (124.28M)", "jebrex-350m (351.32M)"],
+                "production_readiness_status": "RESEARCH_AND_LAB_STAGE",
+                "languages": ["arabic", "english", "french"],
+            }
+
+        if method == "POST" and route == "/api/v1/bug-reports":
+            bug_allowed, bug_rem = self.rate_limiter.allow(f"bug:{client_ip}")
+            sec_headers["X-RateLimit-Remaining"] = str(bug_rem)
+            if not bug_allowed:
+                return 429, sec_headers, {"error": "rate limit exceeded for bug reports"}
+            try:
+                entry = self.bug_reports.create(
+                    title=str(body.get("title", "")),
+                    description=str(body.get("description", "")),
+                    severity=str(body.get("severity", "medium")),
+                    language=str(body.get("language", "arabic")),
+                    page=str(body.get("page", "/report-bug.html")),
+                )
+                self._record_audit(f"BUG_REPORT_CREATED id={entry['report_id']} sev={entry['severity']} ip={client_ip}")
+                return 201, sec_headers, {"status": "recorded", "report_id": entry["report_id"], "severity": entry["severity"]}
+            except ValueError as exc:
+                return 400, sec_headers, {"error": str(exc)}
 
         if method == "GET" and route == "/api/v1/openapi.json":
             return 200, sec_headers, self.openapi
 
         if method == "POST" and route == "/api/v1/users/register":
+            reg_allowed, reg_rem = self.rate_limiter.allow(f"register:{client_ip}")
+            sec_headers["X-RateLimit-Remaining"] = str(reg_rem)
+            if not reg_allowed:
+                return 429, sec_headers, {"error": "rate limit exceeded for registration; please retry later"}
+            requested_role = str(body.get("role", "user")).strip().lower()
+            if requested_role not in ("", "user"):
+                self._record_audit(f"SECURITY_BLOCK privilege escalation attempt on /api/v1/users/register ip={client_ip}")
+                return 403, sec_headers, {"error": "privileged roles cannot be self-assigned via public registration"}
             try:
                 user = self.users.register_user(
                     str(body.get("username", "")),
                     str(body.get("password", "")),
-                    role=str(body.get("role", "user")),
+                    role="user",
                 )
+                self._record_audit(f"USER_REGISTER username={user['username']} ip={client_ip}")
                 return 201, sec_headers, {"status": "created", "user": user}
             except ValueError as exc:
                 return 400, sec_headers, {"error": str(exc)}
 
         if method == "POST" and route == "/api/v1/auth/token":
+            auth_allowed, auth_rem = self.rate_limiter.allow(f"auth:{client_ip}")
+            sec_headers["X-RateLimit-Remaining"] = str(auth_rem)
+            if not auth_allowed:
+                return 429, sec_headers, {"error": "rate limit exceeded for authentication; please retry later"}
             user = self.users.verify_credentials(
                 str(body.get("username", "")),
                 str(body.get("password", "")),
             )
             if not user:
+                self._record_audit(f"AUTH_FAILED ip={client_ip}")
                 return 401, sec_headers, {"error": "invalid username or password"}
             token = self.auth.issue_token(user)
-            sec_headers["Set-Cookie"] = f"nourai_token={token}; Path=/; SameSite=Lax; Max-Age=604800"
+            sec_headers["Set-Cookie"] = (
+                f"nourai_token={token}; Path=/; HttpOnly; SameSite=Lax; Max-Age={self.auth.ttl_seconds}"
+            )
+            self._record_audit(f"AUTH_SUCCESS user={user['user_id']} ip={client_ip}")
             return 200, sec_headers, {"access_token": token, "token_type": "Bearer", "user": user}
 
         if method == "POST" and route == "/api/v1/auth/guest":
@@ -616,7 +834,9 @@ class NourAIBackend:
             guest_pwd = f"GuestPass#{secrets.token_hex(6)}"
             user = self.users.register_user(guest_uname, guest_pwd, role="user")
             token = self.auth.issue_token(user)
-            sec_headers["Set-Cookie"] = f"nourai_token={token}; Path=/; SameSite=Lax; Max-Age=604800"
+            sec_headers["Set-Cookie"] = (
+                f"nourai_token={token}; Path=/; HttpOnly; SameSite=Lax; Max-Age={self.auth.ttl_seconds}"
+            )
             return 200, sec_headers, {"access_token": token, "token_type": "Bearer", "user": user}
 
         # Protected routes require Bearer authentication
@@ -684,23 +904,19 @@ class NourAIBackend:
             code_str = str(body.get("code", "")).strip()
             if not code_str:
                 return 400, sec_headers, {"error": "code cannot be empty"}
-            forbidden = ("import subprocess", "import shutil", "import socket", "os.system", "os.remove", "os.unlink", "rmdir", "open(")
-            if any(f in code_str for f in forbidden):
-                return 400, sec_headers, {"error": "code contains restricted system/file operations"}
             try:
-                proc = subprocess.run(
-                    [sys.executable, "-I", "-c", code_str],
-                    capture_output=True,
-                    text=True,
-                    timeout=4.0,
-                )
+                value = _safe_eval_arithmetic_only(code_str)
                 return 200, sec_headers, {
-                    "stdout": proc.stdout[:4000],
-                    "stderr": proc.stderr[:2000],
-                    "exit_code": proc.returncode,
+                    "stdout": value,
+                    "stderr": "",
+                    "exit_code": 0,
+                    "sandbox": "pure_arithmetic_ast_only",
                 }
-            except subprocess.TimeoutExpired:
-                return 408, sec_headers, {"error": "code execution timed out (4s limit)"}
+            except PermissionError as exc:
+                self._record_audit(f"SECURITY_BLOCK /api/v1/code/run arbitrary code rejected user={claims['sub']}")
+                return 403, sec_headers, {"error": str(exc)}
+            except (SyntaxError, ValueError, ZeroDivisionError) as exc:
+                return 400, sec_headers, {"error": f"invalid arithmetic expression: {exc}"}
 
         if method == "POST" and route == "/api/v1/sessions":
             sess = self.sessions.create_session(
@@ -763,6 +979,7 @@ class NourAIBackend:
                 return 400, sec_headers, {"error": "message exceeds maximum allowed length (4000 chars)"}
             lower_msg = message.lower()
             if any(pat in lower_msg for pat in SAFETY_BLOCKLIST_PATTERNS):
+                self._record_audit(f"SECURITY_BLOCK blocklist pattern user={claims['sub']}")
                 return 400, sec_headers, {"error": "input rejected by security filter"}
 
             language = str(body.get("language", "arabic")).lower()
@@ -778,27 +995,72 @@ class NourAIBackend:
                 sess = self.sessions.create_session(claims["sub"], language=language, title=message[:40])
                 session_id = sess["session_id"]
 
+            # Enforce safety & prompt-injection guard uniformly across ALL modes (including neural_model)
+            safety_check = evaluate_prompt_safety(message, language=language)
+            is_prompt_injection = any(pat in lower_msg for pat in PROMPT_INJECTION_PATTERNS)
+            if not safety_check.get("is_safe", True) or is_prompt_injection:
+                self._record_audit(f"SECURITY_REFUSAL prompt_injection_or_unsafe user={claims['sub']}")
+                refusals = {
+                    "arabic": "عذراً، لا يمكنني تنفيذ هذا الطلب أو تجاوز ضوابط الأمان والخصوصية الخاصة بنظام Jebrex AI.",
+                    "english": "I cannot fulfill this request or bypass Jebrex AI security and safety policies.",
+                    "french": "Je ne peux pas répondre à cette demande ni contourner les règles de sécurité de Jebrex AI.",
+                }
+                refusal_text = refusals.get(language, refusals["english"])
+                self.sessions.append_turn(str(session_id), "user", message, language=language)
+                self.sessions.append_turn(str(session_id), "assistant", refusal_text, language=language)
+                if route == "/api/v1/chat/stream":
+                    chunk = StreamChunk(token_id=-1, text_delta=refusal_text, step_index=1, is_final=True, finish_reason="safety_refusal").to_dict()
+                    return 200, sec_headers, {
+                        "session_id": session_id,
+                        "language": language,
+                        "response_source": "safety_guard",
+                        "stream_chunks": [chunk],
+                        "reply": refusal_text,
+                    }
+                return 200, sec_headers, {
+                    "session_id": session_id,
+                    "language": language,
+                    "response_source": "safety_guard",
+                    "reply": refusal_text,
+                    "task": "safety_refusal",
+                    "metrics": {
+                        "generated_tokens": 0,
+                        "ttft_ms": 0.0,
+                        "elapsed_ms": 0.0,
+                        "tokens_per_second": 0.0,
+                        "mode": "safety_guard",
+                    },
+                }
+
             prior_messages = list(sess.get("messages", []))
             self.sessions.append_turn(str(session_id), "user", message, language=language)
 
-            # Extract & persist cross-session long-term memories (ChatGPT Memory Updated style)
+            # Extract & persist cross-session long-term memories
             newly_extracted = extract_memories_from_message(message)
             for fact in newly_extracted:
                 self.memories.add_memory(claims["sub"], fact)
             all_user_memories = [m["fact"] for m in self.memories.list_memories(claims["sub"])]
             matched_rag_chunks = self.rag.search_chunks(claims["sub"], message, top_k=3)
 
-            formatted_prompt = f"<|user|>\n{message}\n<|assistant|>\n"
+            ctx_info = self.context_manager.build_prompt(
+                message,
+                history=prior_messages,
+                context_length=self.engine.model.config.context_length,
+            )
+            formatted_prompt = ctx_info["prompt"]
 
-            gen_cfg = GenerationConfig(
-                max_new_tokens=min(int(body.get("max_new_tokens", 160)), 256),
-                strategy=str(body.get("strategy", "greedy")),
-                temperature=float(body.get("temperature", 0.7)),
-                top_k=int(body.get("top_k", 16)),
-                top_p=float(body.get("top_p", 0.90)),
-                repetition_penalty=float(body.get("repetition_penalty", 1.0)),
-                stop_sequences=("<|user|>", "<|endoftext|>"),
-            ).validate()
+            try:
+                gen_cfg = GenerationConfig(
+                    max_new_tokens=min(int(body.get("max_new_tokens", 160)), 256),
+                    strategy=str(body.get("strategy", "greedy")),
+                    temperature=float(body.get("temperature", 0.7)),
+                    top_k=int(body.get("top_k", 16)),
+                    top_p=float(body.get("top_p", 0.90)),
+                    repetition_penalty=float(body.get("repetition_penalty", 1.0)),
+                    stop_sequences=("<|user|>", "<|endoftext|>"),
+                ).validate()
+            except (TypeError, ValueError) as exc:
+                return 400, sec_headers, {"error": f"invalid generation parameters: {exc}"}
 
             self.engine.reset_stop()
             enable_web_search = bool(body.get("enable_web_search", False))
@@ -908,6 +1170,7 @@ class NourAIBackend:
                     "session_id": session_id,
                     "language": language,
                     "response_source": "neural_model",
+                    "context_turns_included": ctx_info["turns_included"],
                     "stream_chunks": chunks,
                     "reply": reply_text,
                 }
@@ -926,6 +1189,8 @@ class NourAIBackend:
                     "ttft_ms": result["ttft_ms"],
                     "elapsed_ms": result["elapsed_ms"],
                     "tokens_per_second": result["tokens_per_second"],
+                    "context_turns_included": ctx_info["turns_included"],
+                    "prompt_tokens": ctx_info["prompt_token_count"],
                     "mode": "neural_model",
                 },
             }

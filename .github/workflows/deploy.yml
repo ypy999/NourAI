@@ -1,0 +1,57 @@
+name: Jebrex AI — Gated Web Hosting Deployment
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: "Firebase Hosting target channel ('live' or preview channel ID)"
+        required: false
+        default: "jebrex-prod"
+
+jobs:
+  quality_and_security_gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - name: Install dependencies
+        run: |
+          pip install --no-cache-dir --extra-index-url https://download.pytorch.org/whl/cpu -r requirements/base.txt
+          pip install --no-cache-dir pytest
+      - name: Run blocking quality and independence tests
+        env:
+          PYTHONPATH: "."
+        run: |
+          pytest -v \
+            tests/test_jebrex_storage_and_versioning.py \
+            tests/test_jebrex_bpe_tokenizer.py \
+            tests/test_jebrex_foundation_v2.py \
+            tests/test_jebrex_conversational_and_web.py \
+            tests/test_jebrex_apps.py \
+            tests/test_phase19_user_interface.py \
+            -p no:cacheprovider
+      - name: Verify security gate (0 CRITICAL / 0 HIGH)
+        env:
+          PYTHONPATH: "."
+        run: |
+          python -c "import sys; from security.security_audit_v2 import run_comprehensive_security_audit; r = run_comprehensive_security_audit(); sys.exit(0 if r['security_gate'] == 'PASS_NO_OPEN_CRITICAL_OR_HIGH' else 1)"
+
+  deploy_firebase_hosting:
+    needs: quality_and_security_gates
+    runs-on: ubuntu-latest
+    if: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_YPYAI_95CA7 != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy static Web UI to Firebase Hosting (24/7 Global CDN)
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_YPYAI_95CA7 }}
+          channelId: ${{ github.event.inputs.channel || 'live' }}
+          projectId: ypyai-95ca7

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="html-root">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>الإبلاغ عن خطأ — Jebrex AI</title>
+  <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+  <style>
+    :root { --bg:#16181d; --card:#20232b; --text:#f1f3f5; --muted:#a8b0bd; --border:rgba(255,255,255,.12); --accent:#10a37f; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:"Segoe UI",system-ui,"Noto Sans Arabic",sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+    header { position:sticky; top:0; background:rgba(22,24,29,.92); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); padding:.85rem 1.25rem; display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:.75rem; }
+    .brand { display:flex; align-items:center; gap:.5rem; font-weight:800; font-size:1.05rem; color:var(--text); text-decoration:none; }
+    nav { display:flex; flex-wrap:wrap; gap:.6rem; }
+    nav a { color:var(--muted); text-decoration:none; padding:.35rem .7rem; border-radius:.5rem; border:1px solid transparent; font-size:.88rem; }
+    nav a:hover, nav a.active { color:var(--text); border-color:var(--border); background:var(--card); }
+    main { max-width:760px; margin:2rem auto; padding:0 1.15rem 3rem; }
+    .card { background:var(--card); border:1px solid var(--border); border-radius:1rem; padding:1.5rem; display:flex; flex-direction:column; gap:1rem; }
+    h1 { font-size:1.55rem; }
+    p { color:var(--muted); font-size:.92rem; }
+    label { display:block; font-size:.86rem; font-weight:600; margin-bottom:.3rem; color:#e5e7eb; }
+    input, select, textarea { width:100%; background:#14161b; color:var(--text); border:1px solid var(--border); border-radius:.6rem; padding:.6rem .75rem; font-family:inherit; font-size:.92rem; }
+    textarea { min-height:130px; resize:vertical; }
+    .actions { display:flex; flex-wrap:wrap; gap:.65rem; align-items:center; }
+    .btn-primary { background:var(--accent); color:#fff; border:none; padding:.6rem 1.15rem; border-radius:.6rem; font-weight:700; cursor:pointer; font-size:.9rem; }
+    .btn-secondary { background:transparent; color:#34d399; border:1px solid rgba(52,211,153,.4); padding:.55rem 1rem; border-radius:.6rem; text-decoration:none; font-size:.88rem; font-weight:600; }
+    #status-box { display:none; padding:.75rem 1rem; border-radius:.6rem; font-size:.88rem; border:1px solid var(--border); }
+    footer { text-align:center; padding:1.5rem; color:var(--muted); font-size:.82rem; border-top:1px solid var(--border); }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="brand" href="/">✦ Jebrex AI</a>
+    <nav aria-label="التنقل الرئيسي">
+      <a href="/">المحادثة</a>
+      <a href="/about.html">عن النموذج</a>
+      <a href="/privacy.html">الخصوصية</a>
+      <a href="/report-bug.html" class="active">الإبلاغ عن خطأ</a>
+    </nav>
+  </header>
+  <main>
+    <form class="card" id="bug-form" onsubmit="submitBugReport(event)">
+      <h1>الإبلاغ عن خطأ أو مشكلة — Report a Bug</h1>
+      <p>أرسل تقريراً تقنياً حول أي خلل في الواجهة أو النموذج أو الأمان. يرجى عدم تضمين كلمات مرور أو مفاتيح سرية.</p>
+
+      <div>
+        <label for="bug-title">عنوان المشكلة *</label>
+        <input id="bug-title" name="title" type="text" required maxlength="140" placeholder="مثال: تعذر تحميل جلسة سابقة على الهاتف" />
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;">
+        <div>
+          <label for="bug-severity">الأولوية</label>
+          <select id="bug-severity" name="severity">
+            <option value="low">منخفضة (Low)</option>
+            <option value="medium" selected>متوسطة (Medium)</option>
+            <option value="high">عالية (High)</option>
+            <option value="security">أمنية (Security)</option>
+          </select>
+        </div>
+        <div>
+          <label for="bug-language">اللغة</label>
+          <select id="bug-language" name="language">
+            <option value="arabic">العربية</option>
+            <option value="english">English</option>
+            <option value="french">Français</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label for="bug-description">تفاصيل المشكلة وخطوات إعادة الإنتاج *</label>
+        <textarea id="bug-description" name="description" required maxlength="2000" placeholder="اشرح ما حدث، وما النتيجة المتوقعة، ونوع الجهاز أو المتصفح..."></textarea>
+      </div>
+
+      <div id="status-box" role="status"></div>
+
+      <div class="actions">
+        <button class="btn-primary" type="submit">إرسال التقرير</button>
+        <a id="github-issue-link" class="btn-secondary" href="https://github.com/ypy999/NourAI/issues/new" target="_blank" rel="noopener">فتح تذكرة مباشرة على GitHub ↗</a>
+      </div>
+    </form>
+  </main>
+  <footer>Jebrex AI · Issue Tracking & Quality Assurance</footer>
+  <script>
+    function buildGithubIssueUrl(title, severity, desc) {
+      const t = encodeURIComponent(`[${severity.toUpperCase()}] ${title}`);
+      const b = encodeURIComponent(`### Description\n${desc}\n\n### Environment\n- Page: ${window.location.href}\n- UserAgent: ${navigator.userAgent}`);
+      return `https://github.com/ypy999/NourAI/issues/new?title=${t}&body=${b}`;
+    }
+
+    async function submitBugReport(ev) {
+      ev.preventDefault();
+      const title = document.getElementById("bug-title").value.trim();
+      const severity = document.getElementById("bug-severity").value;
+      const language = document.getElementById("bug-language").value;
+      const description = document.getElementById("bug-description").value.trim();
+      const box = document.getElementById("status-box");
+      const ghLink = document.getElementById("github-issue-link");
+      ghLink.href = buildGithubIssueUrl(title, severity, description);
+
+      const savedBase = (localStorage.getItem("nourai_api_base") || "").trim().replace(/\/+$/, "");
+      const isStatic = window.location.hostname.endsWith("web.app") || window.location.hostname.endsWith("firebaseapp.com");
+      const endpoint = (!isStatic || savedBase) ? (savedBase + "/api/v1/bug-reports") : "";
+
+      if (endpoint) {
+        try {
+          const res = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title, severity, language, description, page: window.location.pathname })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            box.style.display = "block";
+            box.style.background = "rgba(16,163,127,.14)";
+            box.style.color = "#6ee7b7";
+            box.textContent = `✅ تم تسجيل التقرير في خادم Jebrex API بنجاح (رقم التقرير: ${data.report_id}).`;
+            document.getElementById("bug-form").reset();
+            return;
+          }
+        } catch (e) {}
+      }
+
+      // Honest static-hosting fallback: store locally & offer pre-filled GitHub Issue
+      try {
+        const list = JSON.parse(localStorage.getItem("jebrex_local_bug_reports") || "[]");
+        list.unshift({ id: "local_" + Date.now(), title, severity, language, description, created_at: new Date().toISOString() });
+        localStorage.setItem("jebrex_local_bug_reports", JSON.stringify(list.slice(0, 20)));
+      } catch (e) {}
+      box.style.display = "block";
+      box.style.background = "rgba(245,158,11,.14)";
+      box.style.color = "#fde68a";
+      box.textContent = "ℹ️ الموقع يعمل حالياً في وضع الاستضافة الثابتة (بدون خادم API نشط). تم حفظ التقرير محلياً في متصفحك، ويمكنك الضغط على «فتح تذكرة مباشرة على GitHub ↗» لإرساله فوراً للفريق الهندسي.";
+    }
+  </script>
+</body>
+</html>

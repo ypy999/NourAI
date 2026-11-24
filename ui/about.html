@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="html-root">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>عن Jebrex AI — معلومات النموذج والشفافية العلمية</title>
+  <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+  <style>
+    :root { --bg:#16181d; --card:#20232b; --text:#f1f3f5; --muted:#a8b0bd; --border:rgba(255,255,255,.1); --accent:#10a37f; --warn:#f59e0b; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:"Segoe UI",system-ui,"Noto Sans Arabic",sans-serif; background:var(--bg); color:var(--text); line-height:1.75; }
+    header { position:sticky; top:0; background:rgba(22,24,29,.92); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); padding:.85rem 1.25rem; display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:.75rem; }
+    .brand { display:flex; align-items:center; gap:.5rem; font-weight:800; font-size:1.05rem; color:var(--text); text-decoration:none; }
+    nav { display:flex; flex-wrap:wrap; gap:.6rem; }
+    nav a { color:var(--muted); text-decoration:none; padding:.35rem .7rem; border-radius:.5rem; border:1px solid transparent; font-size:.88rem; }
+    nav a:hover, nav a.active { color:var(--text); border-color:var(--border); background:var(--card); }
+    main { max-width:920px; margin:2rem auto; padding:0 1.15rem 3rem; display:flex; flex-direction:column; gap:1.25rem; }
+    .card { background:var(--card); border:1px solid var(--border); border-radius:1rem; padding:1.35rem 1.5rem; }
+    h1 { font-size:1.7rem; margin-bottom:.4rem; }
+    h2 { font-size:1.15rem; margin-bottom:.65rem; color:#fff; }
+    p, li { color:var(--muted); font-size:.95rem; }
+    ul { padding-inline-start:1.25rem; display:flex; flex-direction:column; gap:.35rem; }
+    .badge { display:inline-block; font-size:.78rem; padding:.22rem .65rem; border-radius:999px; font-weight:700; }
+    .badge-ok { background:rgba(16,163,127,.18); color:#34d399; border:1px solid rgba(16,163,127,.4); }
+    .badge-warn { background:rgba(245,158,11,.16); color:#fbbf24; border:1px solid rgba(245,158,11,.4); }
+    table { width:100%; border-collapse:collapse; margin-top:.6rem; font-size:.88rem; }
+    th, td { text-align:start; padding:.55rem .65rem; border-bottom:1px solid var(--border); }
+    th { color:#fff; background:rgba(255,255,255,.03); }
+    .notice { border-inline-start:4px solid var(--warn); background:rgba(245,158,11,.08); padding:.9rem 1rem; border-radius:.5rem; color:#fde68a; font-size:.9rem; }
+    footer { text-align:center; padding:1.5rem; color:var(--muted); font-size:.82rem; border-top:1px solid var(--border); }
+    a.ext { color:#34d399; }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="brand" href="/">✦ Jebrex AI</a>
+    <nav aria-label="التنقل الرئيسي">
+      <a href="/">المحادثة</a>
+      <a href="/about.html" class="active">عن النموذج</a>
+      <a href="/privacy.html">الخصوصية</a>
+      <a href="/report-bug.html">الإبلاغ عن خطأ</a>
+      <a href="https://github.com/ypy999/NourAI" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+  </header>
+  <main>
+    <section class="card">
+      <div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:.75rem;">
+        <span class="badge badge-ok">100% مستقل هندسياً</span>
+        <span class="badge badge-warn">حالة النموذج العصبي: مرحلة بحثية ومخبرية</span>
+      </div>
+      <h1>عن Jebrex AI — نموذج لغوي مستقل متعدد اللغات</h1>
+      <p>
+        <strong>Jebrex AI</strong> (المبني امتداداً لمستودع NourAI) هو مشروع هندسي مفتوح وشفاف لبناء نظام ذكاء اصطناعي مستقل يدعم <strong>العربية والإنجليزية والفرنسية</strong> محلياً وسحابياً دون استبدال سري بنماذج خارجية مثل ChatGPT أو Gemini أو Claude.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>إفصاح علمي صريح حول الجاهزية الحالية</h2>
+      <div class="notice">
+        <strong>الشفافية أولاً:</strong> البنية الهندسية لـ Jebrex AI (المُرمّز BPE متعدد اللغات، معمارية Transformer الحديثة بحجم 125M–350M، التدريب السحابي القابل للاستئناف، خط SFT/DPO، والواجهة الآمنة) مكتملة ومختبرة آلياً. ومع ذلك، فإن الأوزان العصبية المتوفرة حالياً في المستودع هي أوزان صغيرة (<code>843K</code> – <code>4.87M</code> معامل) مُدرّبة على بيانات مخبرية، ولذلك <strong>لا يضاهي النموذج العصبي الحالي قدرات ChatGPT أو Google Gemini بعد</strong> حتى يتم تدريبه على مليارات التوكنات المرخّصة باستخدام بطاقات GPU سحابية.
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>المعمارية التقنية (Jebrex v2 Modern Foundation)</h2>
+      <table>
+        <thead>
+          <tr><th>المكوّن</th><th>المواصفات المعتمدة</th><th>الحالة الفعلية</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Tokenizer</td><td>Byte-Level Multilingual BPE (يدعم 32K–64K، ضغط 72.25% للعربية، دقة إعادة بناء 100%)</td><td>مُدرّب ومُختبر</td></tr>
+          <tr><td>العمود الفقري</td><td>Decoder-only Transformer: RoPE + RMSNorm + SwiGLU + Causal GQA + KV-Cache</td><td>مبني ومُختبر (Parity &lt; 1e-4)</td></tr>
+          <tr><td>أحجام النماذج</td><td><code>jebrex-micro</code> (1.08M) · <code>jebrex-125m</code> (124.28M) · <code>jebrex-350m</code> (351.32M)</td><td>تم التحقق عبر Meta Device</td></tr>
+          <tr><td>التدريب السحابي</td><td>استئناف دقيق (AdamW + Scheduler + RNG + BF16/FP16) + حزم SHA-256 محمولة (Colab/Kaggle)</td><td>مُختبر وموثّق</td></tr>
+          <tr><td>التخصيص والمحادثة</td><td>Response-Masked SFT + DPO Loss + Context Budget + Local Cited RAG + Safe AST Math</td><td>مبني ومُختبر</td></tr>
+          <tr><td>الاستضافة 24/7</td><td>واجهة الويب مستضافة 24/7 على Firebase Hosting CDN؛ الخادم الخلفي قابل للتشغيل محلياً أو عبر Docker</td><td>منشور ومتحقق</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>مبدأ الاستقلالية وعدم الخداع</h2>
+      <ul>
+        <li>لا يستدعي Jebrex AI أي نموذج خارجي (OpenAI / Gemini / Pollinations) سراً لتوليد ردود يدّعي أنها من نموذجه.</li>
+        <li>في وضع الواجهة الثابتة (عند عدم اتصال خادم Jebrex خلفي)، تعرض الواجهة حالة الاتصال بوضوح وتقتصر على الأدوات المحلية الآمنة والبحث المفتوح الموثق بالمصدر (Wikipedia) وتحليل الملفات محلياً في المتصفح.</li>
+        <li>جميع نتائج الاختبارات المرجعية (Benchmarks) وتقارير الأمان منشورة بشفافية في المستودع على <a class="ext" href="https://github.com/ypy999/NourAI" target="_blank" rel="noopener">GitHub</a>.</li>
+      </ul>
+    </section>
+  </main>
+  <footer>Jebrex AI · Open Independent Multilingual AI Engineering · <a class="ext" href="/privacy.html">الخصوصية</a> · <a class="ext" href="/report-bug.html">الإبلاغ عن خطأ</a></footer>
+</body>
+</html>
