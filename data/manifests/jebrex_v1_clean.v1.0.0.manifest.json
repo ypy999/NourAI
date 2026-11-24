@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "dataset_id": "jebrex_v1_clean",
+  "version": "v1.0.0",
+  "dataset_fingerprint_sha256": "44c653e205a9180d5361e5cc46dbf4c46b592d7446f9a888c9a3f57a3a23e629",
+  "created_at_utc": "2026-11-24T22:03:36Z",
+  "splits": {
+    "train": {
+      "path": "data/processed/jebrex_v1_clean/splits/train.jsonl",
+      "size_bytes": 858050,
+      "sha256": "166dc272397b8292919386d1780972656f260b651c51b30359b1104b8b1067b4",
+      "line_count": 1234
+    },
+    "validation": {
+      "path": "data/processed/jebrex_v1_clean/splits/validation.jsonl",
+      "size_bytes": 151738,
+      "sha256": "b8faa698c8542507bb58f83e67fc1a23df42cfc99d3a490a2b91d9825483e20c",
+      "line_count": 213
+    },
+    "test": {
+      "path": "data/processed/jebrex_v1_clean/splits/test.jsonl",
+      "size_bytes": 174742,
+      "sha256": "2c7cc8a76d511755f0f21ddfe25a082714b78b3cf6cb9abfd1d0e3ecd324bbf8",
+      "line_count": 252
+    }
+  },
+  "contamination": {
+    "cross_split_exact_duplicates": {
+      "train_val": 0,
+      "train_test": 0,
+      "val_test": 0
+    },
+    "cross_split_normalized_duplicates": {
+      "train_val": 0,
+      "train_test": 0,
+      "val_test": 0
+    },
+    "cross_split_document_overlap": {
+      "train_val": 0,
+      "train_test": 0,
+      "val_test": 0
+    },
+    "cross_split_near_duplicates": {
+      "train_val": 0,
+      "train_test": 0,
+      "val_test": 0
+    },
+    "total_cross_split_contamination": 0,
+    "intra_split_exact_duplicates": {
+      "train": 0,
+      "validation": 0,
+      "test": 0
+    },
+    "intra_split_normalized_duplicates": {
+      "train": 0,
+      "validation": 0,
+      "test": 0
+    }
+  },
+  "overall_pipeline_validation_gate": "DATA_READY",
+  "overall_production_readiness_gate": "DATA_NOT_READY",
+  "per_language_readiness_and_gap": {
+    "ar": {
+      "actual_train_tokens": 31701,
+      "level_1_target_tokens": 1000000000,
+      "coverage_pct": 0.0031701,
+      "pipeline_validation_gate": "DATA_READY",
+      "production_readiness_gate": "DATA_NOT_READY"
+    },
+    "en": {
+      "actual_train_tokens": 44537,
+      "level_1_target_tokens": 1000000000,
+      "coverage_pct": 0.0044537,
+      "pipeline_validation_gate": "DATA_READY",
+      "production_readiness_gate": "DATA_NOT_READY"
+    },
+    "fr": {
+      "actual_train_tokens": 45046,
+      "level_1_target_tokens": 1000000000,
+      "coverage_pct": 0.0045046,
+      "pipeline_validation_gate": "DATA_READY",
+      "production_readiness_gate": "DATA_NOT_READY"
+    }
+  },
+  "production_scale_targets": {
+    "level_1_working_lm": {
+      "target_tokens_total": 3000000000,
+      "target_tokens_per_lang": {
+        "ar": 1000000000,
+        "en": 1000000000,
+        "fr": 1000000000
+      },
+      "storage_tier": "GCS / Cloudflare R2 (Parquet/JSONL zstd shards)",
+      "recommended_licensed_sources": [
+        {
+          "id": "wikimedia_ar_en_fr",
+          "license": "CC-BY-SA-4.0 (attribution + share-alike review required)"
+        },
+        {
+          "id": "tatoeba_cc0",
+          "license": "CC0-1.0 (verified)"
+        },
+        {
+          "id": "wto_public_corpus_en_fr",
+          "license": "WTO Public Terms (verified, attribution required)"
+        },
+        {
+          "id": "qnl_arabic_ocr_v2_filtered",
+          "license": "Public Domain + CC0 metadata (strict OCR filter required)"
+        },
+        {
+          "id": "open_books_cc_by_public_domain",
+          "license": "CC0 / Public Domain / CC-BY-4.0 (per-source audit required)"
+        }
+      ]
+    },
+    "level_2_instruction_chat": {
+      "target_pretrain_tokens": 50000000000,
+      "target_sft_conversations": 100000,
+      "target_dpo_preference_pairs": 30000,
+      "human_review_requirement": "Mandatory human quality verification for Arabic, English, and French; never label synthetic templates as human dialogue."
+    }
+  }
+}

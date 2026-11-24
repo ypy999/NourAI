@@ -45,6 +45,9 @@ data/raw/
 data/processed/*
 !data/processed/v1_2_corpus/
 !data/processed/v1_2_sft/
+!data/processed/jebrex_v1_clean/
+!data/processed/jebrex_v1_clean_sft/
+data/cache/
 data/metadata/
 data/rejected/
 data/tmp/
@@ -54,6 +57,12 @@ data/*.sqlite3
 data/*.sqlite3-shm
 data/*.sqlite3-wal
 checkpoints/**/history/
+checkpoints/jebrex_v1_sanity/
+checkpoints/jebrex_v2_micro_sanity/
+checkpoints/**/portable_bundle*/
+*.safetensors
+*.gguf
+*.bin
 reports/pytest_tmp/
 
 # --- Download / processing temporaries ---------------------------------------

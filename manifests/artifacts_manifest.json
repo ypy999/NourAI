@@ -1,0 +1,396 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-11-24T22:17:00Z",
+  "artifact_count": 40,
+  "total_indexed_mib": 314.6817,
+  "duplicate_bytes": 45643095,
+  "duplicate_mib": 43.5286,
+  "duplicates_detected": [
+    {
+      "path": "checkpoints/jebrex_v2_micro_sanity/run/step_000015.pt",
+      "duplicate_of": "checkpoints/jebrex_v2_micro_sanity/portable_bundle_step15/checkpoint.pt",
+      "size_bytes": 13064806,
+      "sha256": "068d024cc5a2ca997b41e0b20b9d992ac228427a37100738fb8a8b92bf3059b0"
+    },
+    {
+      "path": "checkpoints/jebrex_v2_micro_sanity/run/step_000030.pt",
+      "duplicate_of": "checkpoints/jebrex_v2_micro_sanity/run/latest.pt",
+      "size_bytes": 13065894,
+      "sha256": "5a65479b2b1d1fcf6193f700cb107509a57fa32b3eb05f1ab68ade5a429e2f43"
+    },
+    {
+      "path": "releases/v1.2.0/nourai_v1_2_model.pt",
+      "duplicate_of": "checkpoints/v1_2/nourai_v1_2_model.pt",
+      "size_bytes": 19512395,
+      "sha256": "695da3c353ad606a3f941279505039862c7e1dac3c63ea263ee085271dea6e87"
+    }
+  ],
+  "local_disk_free_gib": 6.712,
+  "retention_policy": {
+    "always_preserve_last_healthy_checkpoint": true,
+    "max_history_snapshots_per_run": 2,
+    "never_delete_original_datasets": true
+  },
+  "artifacts": [
+    {
+      "path": "checkpoints/jebrex_v1_sanity/best.pt",
+      "kind": "checkpoint",
+      "size_bytes": 10192069,
+      "size_mib": 9.7199,
+      "sha256": "c36e6beb82fcac3f1e53c42a6d12181c026b8d37f6229d683dd20754a08f3b49",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "checkpoints/jebrex_v1_sanity/history/best-20261124-222912-1795555752472589500.pt",
+      "kind": "checkpoint",
+      "size_bytes": 10192069,
+      "size_mib": 9.7199,
+      "sha256": "f48dcc2e023118b1058cbafdd5badc4026de25331dbae2654cef38d6e675cb33",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "checkpoints/jebrex_v1_sanity/history/best-20261124-222924-1795555764591530000.pt",
+      "kind": "checkpoint",
+      "size_bytes": 10192069,
+      "size_mib": 9.7199,
+      "sha256": "dcebab458844b51e55bd8717ac7a24836d882b2e6c24be58b1d995cae2ceae83",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "checkpoints/jebrex_v1_sanity/history/best-20261124-222935-1795555775422594900.pt",
+      "kind": "checkpoint",
+      "size_bytes": 10192069,
+      "size_mib": 9.7199,
+      "sha256": "fa77eed30054c5b54c302c8afe8d1819c4a76203bd165059ea5c580a371a9c46",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "checkpoints/jebrex_v1_sanity/history/last-20261124-222935-1795555775355736200.pt",
+      "kind": "checkpoint",
+      "size_bytes": 10192069,
+      "size_mib": 9.7199,
+      "sha256": "0d876d36c31f247930336fa7f5b405a9863e48ce6af6121993ea3c4f79aed37c",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "checkpoints/jebrex_v1_sanity/history/last-20261124-222935-1795555775492157400.pt",
+      "kind": "checkpoint",
+      "size_bytes": 10192069,
+      "size_mib": 9.7199,
+      "sha256": "08ae2b7782c8ca75b523b397e03d5948c0f73d5a67069fe852e51c22456bc11d",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "checkpoints/jebrex_v1_sanity/history/last-20261124-222935-1795555775560480500.pt",
+      "kind": "checkpoint",
+      "size_bytes": 10192069,
+      "size_mib": 9.7199,
+      "sha256": "3f49ed479683d8b8bd2db1d80ed0af7f0407d702e7e20d995b3266922973832e",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "checkpoints/jebrex_v1_sanity/jebrex_v1_sanity_model.pt",
+      "kind": "checkpoint",
+      "size_bytes": 3391589,
+      "size_mib": 3.2345,
+      "sha256": "421059bf0341cdfae2c3dbbe7766044e5380bf55d4f1d6f75f8aee7a0f0c887d",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "checkpoints/jebrex_v1_sanity/last.pt",
+      "kind": "checkpoint",
+      "size_bytes": 10192069,
+      "size_mib": 9.7199,
+      "sha256": "0023684e837da4a6921bc7b0c4170a00d47ad53ee4c8feab1a98ce27b19cfc63",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "checkpoints/jebrex_v2_micro_sanity/portable_bundle_step15/checkpoint.pt",
+      "kind": "checkpoint",
+      "size_bytes": 13064806,
+      "size_mib": 12.4596,
+      "sha256": "068d024cc5a2ca997b41e0b20b9d992ac228427a37100738fb8a8b92bf3059b0",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "checkpoints/jebrex_v2_micro_sanity/run/best.pt",
+      "kind": "checkpoint",
+      "size_bytes": 13064077,
+      "size_mib": 12.4589,
+      "sha256": "e0c1c82f5f3748706730e1631f9c8ddb942b9cd25e69a41d5684be36d495bfcf",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "checkpoints/jebrex_v2_micro_sanity/run/latest.pt",
+      "kind": "checkpoint",
+      "size_bytes": 13065894,
+      "size_mib": 12.4606,
+      "sha256": "5a65479b2b1d1fcf6193f700cb107509a57fa32b3eb05f1ab68ade5a429e2f43",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "checkpoints/jebrex_v2_micro_sanity/run/step_000015.pt",
+      "kind": "checkpoint",
+      "size_bytes": 13064806,
+      "size_mib": 12.4596,
+      "sha256": "068d024cc5a2ca997b41e0b20b9d992ac228427a37100738fb8a8b92bf3059b0",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "checkpoints/jebrex_v2_micro_sanity/run/step_000030.pt",
+      "kind": "checkpoint",
+      "size_bytes": 13065894,
+      "size_mib": 12.4606,
+      "sha256": "5a65479b2b1d1fcf6193f700cb107509a57fa32b3eb05f1ab68ade5a429e2f43",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "checkpoints/phase13/best.pt",
+      "kind": "checkpoint",
+      "size_bytes": 10191854,
+      "size_mib": 9.7197,
+      "sha256": "ff662863977501379a20dbd06eea38102cd66f66b932680ccecaeb911c973a91",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "checkpoints/phase13/last.pt",
+      "kind": "checkpoint",
+      "size_bytes": 10191854,
+      "size_mib": 9.7197,
+      "sha256": "9f29df9409af70f46489095abd4c5ab97c8f08b07c2dc6b766ba5f4892f85f87",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "checkpoints/phase13/phase13_model.pt",
+      "kind": "checkpoint",
+      "size_bytes": 3391067,
+      "size_mib": 3.234,
+      "sha256": "b83003672e6cdc9b22a1afd9eeb72c3dc52f231a550b618d4fed7db35a47185a",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "checkpoints/phase14/best.pt",
+      "kind": "checkpoint",
+      "size_bytes": 10191639,
+      "size_mib": 9.7195,
+      "sha256": "33d5aabc4f032032c2492dccc96a2a2a416fbd18260469e9f89a51eeee346b55",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "checkpoints/phase14/last.pt",
+      "kind": "checkpoint",
+      "size_bytes": 10191639,
+      "size_mib": 9.7195,
+      "sha256": "26ef0380e8ecf3c033e33f1110ca47059bd4c26b308387ea435839934094a7e1",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "checkpoints/phase14/phase14_optimized_model.pt",
+      "kind": "checkpoint",
+      "size_bytes": 3391647,
+      "size_mib": 3.2345,
+      "sha256": "7cd636934f2559b3865371a60eda512d7b7b4f7f00ca77aa8fc4dac9cd4e22af",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "checkpoints/phase16/best.pt",
+      "kind": "checkpoint",
+      "size_bytes": 10191854,
+      "size_mib": 9.7197,
+      "sha256": "946128fd06de818fc0bba00744e06d1acb87cb1f1385c46332f991929351da91",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "checkpoints/phase16/last.pt",
+      "kind": "checkpoint",
+      "size_bytes": 10191854,
+      "size_mib": 9.7197,
+      "sha256": "29d63c73635add55967e110d84b31d03aec9757ff79c4f488b035c214029582a",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "checkpoints/phase16/phase16_sft_aligned_model.pt",
+      "kind": "checkpoint",
+      "size_bytes": 3391763,
+      "size_mib": 3.2346,
+      "sha256": "8118cea64f080842a5ab68114b5833ebddf6b36fc441200c52f53c2a46d1c196",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "checkpoints/phase24/best.pt",
+      "kind": "checkpoint",
+      "size_bytes": 10191854,
+      "size_mib": 9.7197,
+      "sha256": "032edf8a2a6dbec1f5d5979f2f8e1ebd2bb615140a77c7067181563d45a04384",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "checkpoints/phase24/last.pt",
+      "kind": "checkpoint",
+      "size_bytes": 10191854,
+      "size_mib": 9.7197,
+      "sha256": "73a26c1816391230c8a43cd7955d8ce409ce42381d13940e4e4a6bfa88233d96",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "checkpoints/phase24/phase24_v1_1_continual_model.pt",
+      "kind": "checkpoint",
+      "size_bytes": 3391937,
+      "size_mib": 3.2348,
+      "sha256": "07a09212fcf46af2ec1b330e726b8015b7814f9e6733296df89d4d3f53272003",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "checkpoints/v1_2/nourai_v1_2_model.pt",
+      "kind": "checkpoint",
+      "size_bytes": 19512395,
+      "size_mib": 18.6085,
+      "sha256": "695da3c353ad606a3f941279505039862c7e1dac3c63ea263ee085271dea6e87",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "checkpoints/v1_2/pretrain/best.pt",
+      "kind": "checkpoint",
+      "size_bytes": 10191854,
+      "size_mib": 9.7197,
+      "sha256": "a616987155dffeaba51b9b6875dc281e2bd231ee1d88d3b4a14bf2e2783f7cab",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "checkpoints/v1_2/pretrain/last.pt",
+      "kind": "checkpoint",
+      "size_bytes": 10191854,
+      "size_mib": 9.7197,
+      "sha256": "a1cf8d2521b116b85997557dcee5717be96365b94159880adf6e2cfe14da20bb",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "checkpoints/v1_2/pretrain/v1_2_pretrained_model.pt",
+      "kind": "checkpoint",
+      "size_bytes": 3391531,
+      "size_mib": 3.2344,
+      "sha256": "5075d26cd964527de8fc9ca8143fb01bace62a78b0070a0448a9d40728c3523e",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "checkpoints/v1_2/sft_aligned/best.pt",
+      "kind": "checkpoint",
+      "size_bytes": 10191854,
+      "size_mib": 9.7197,
+      "sha256": "6f335b9edb8fd42a83704441ebafae71de76efc9c0c1892547833bdd3a74a2d7",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "checkpoints/v1_2/sft_aligned/last.pt",
+      "kind": "checkpoint",
+      "size_bytes": 10191854,
+      "size_mib": 9.7197,
+      "sha256": "34a1cab3cf9ab6d15ce89c2b8d85feee7ae405dffabef1af2edf95a18b944f2a",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "releases/v1.2.0/nourai_v1_2_model.pt",
+      "kind": "release_weight",
+      "size_bytes": 19512395,
+      "size_mib": 18.6085,
+      "sha256": "695da3c353ad606a3f941279505039862c7e1dac3c63ea263ee085271dea6e87",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "tokenizer/artifacts/jebrex_bpe_v1.json",
+      "kind": "tokenizer_artifact",
+      "size_bytes": 78835,
+      "size_mib": 0.0752,
+      "sha256": "4059ea220a5664dcc613c79d681d00a21a58b89299f66aaba37fa379851685d5",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "data/processed/jebrex_v1_clean/splits/test.jsonl",
+      "kind": "clean_dataset",
+      "size_bytes": 174742,
+      "size_mib": 0.1666,
+      "sha256": "2c7cc8a76d511755f0f21ddfe25a082714b78b3cf6cb9abfd1d0e3ecd324bbf8",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "data/processed/jebrex_v1_clean/splits/train.jsonl",
+      "kind": "clean_dataset",
+      "size_bytes": 858050,
+      "size_mib": 0.8183,
+      "sha256": "166dc272397b8292919386d1780972656f260b651c51b30359b1104b8b1067b4",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "data/processed/jebrex_v1_clean/splits/validation.jsonl",
+      "kind": "clean_dataset",
+      "size_bytes": 151738,
+      "size_mib": 0.1447,
+      "sha256": "b8faa698c8542507bb58f83e67fc1a23df42cfc99d3a490a2b91d9825483e20c",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "data/processed/jebrex_v1_clean_sft/splits/test.jsonl",
+      "kind": "clean_sft",
+      "size_bytes": 42292,
+      "size_mib": 0.0403,
+      "sha256": "0ef9b84d3a09a92142e14c41e952d9d68c01257bc99c63ef06f696ed64d9bb63",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "data/processed/jebrex_v1_clean_sft/splits/train.jsonl",
+      "kind": "clean_sft",
+      "size_bytes": 82464,
+      "size_mib": 0.0786,
+      "sha256": "3c3486d1d0829848f80b28649ddbf61a4a38854dd4dfac65babd5b56ca02df11",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    },
+    {
+      "path": "data/processed/jebrex_v1_clean_sft/splits/validation.jsonl",
+      "kind": "clean_sft",
+      "size_bytes": 41384,
+      "size_mib": 0.0395,
+      "sha256": "dace49cb9c424d4accd81a0623d04b462b685d1cb2589d0459f856a4eff07595",
+      "cloud_uri": null,
+      "storage_tier": "local_workspace_indexed"
+    }
+  ]
+}
