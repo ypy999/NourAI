@@ -96,8 +96,9 @@ reports/**/restore_test/
 reports/**/splits_v2_verified/
 reports/**/migration_map.jsonl
 
-# --- Local backups ------------------------------------------------------------
+# --- Local backups & deploy caches -------------------------------------------
 .backup/
 backups/
+.firebase/
 *.bak
 *.orig
