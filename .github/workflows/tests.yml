@@ -57,6 +57,7 @@ jobs:
             tests/test_jebrex_phase_f.py \
             tests/test_jebrex_phase_g.py \
             tests/test_jebrex_phase_h.py \
+            tests/test_jebrex_phase_i_identity.py \
             tests/test_jebrex_apps.py \
             tests/test_jebrex_security.py \
             tests/test_jebrex_benchmark.py \

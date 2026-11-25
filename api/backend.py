@@ -19,6 +19,13 @@ from typing import Any
 from urllib.parse import urlparse
 
 from inference.engine import ConversationContextManager, GenerationConfig, InferenceEngine, StreamChunk
+from knowledge.identity import (
+    IdentityConsistencyGuard,
+    build_official_system_prompt,
+    classify_identity_query,
+    compose_grounded_identity_answer,
+    load_identity_registry,
+)
 from nourai.capabilities import (
     NourAICapabilityEngine,
     PROMPT_INJECTION_PATTERNS,
@@ -517,6 +524,9 @@ def build_openapi_spec() -> dict[str, Any]:
             "/api/v1/admin/users": {
                 "get": {"summary": "List users (admin RBAC required)", "responses": {"200": {"description": "Users"}, "403": {"description": "Forbidden"}}},
             },
+            "/api/v1/identity": {
+                "get": {"summary": "Official Jebrex AI identity, ownership, architecture, verified capabilities, and limitations", "responses": {"200": {"description": "Official Identity Registry"}}},
+            },
         },
     }
 
@@ -621,6 +631,7 @@ class NourAIBackend:
         self.memories = LongTermMemoryStore(db_path=self.db_path)
         self.rag = LocalDocumentRAGStore(db_path=self.db_path)
         self.bug_reports = BugReportStore(db_path=self.db_path)
+        self.identity_guard = IdentityConsistencyGuard()
         self.context_manager = ConversationContextManager(self.engine.tokenizer, min_generation_reserve=32)
         self.openapi = build_openapi_spec()
         self._audit_lock = threading.Lock()
@@ -731,13 +742,13 @@ class NourAIBackend:
 
         if method == "GET" and route == "/manifest.json":
             return 200, sec_headers, {
-                "name": "NourAI",
-                "short_name": "NourAI",
+                "name": "Jebrex AI",
+                "short_name": "Jebrex AI",
                 "start_url": "/",
                 "display": "standalone",
                 "background_color": "#212121",
                 "theme_color": "#212121",
-                "description": "NourAI — Local-first Multilingual AI Assistant",
+                "description": "Jebrex AI — Independent Multilingual AI Assistant (Arabic, English, French)",
                 "icons": [
                     {
                         "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Crect width='128' height='128' rx='28' fill='%23171717'/%3E%3Ctext x='64' y='84' font-size='68' text-anchor='middle' fill='%23ffffff'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E",
@@ -747,12 +758,18 @@ class NourAIBackend:
                 ],
             }
 
+        if method == "GET" and route == "/api/v1/identity":
+            return 200, sec_headers, load_identity_registry()
+
         if method == "GET" and route == "/api/v1/health":
             ms = self.engine.model_status()
             return 200, sec_headers, {
                 "status": "ok",
-                "service": "Jebrex AI (NourAI Core) Multilingual API",
+                "service": "Jebrex AI Multilingual Independent API",
                 "version": "1.3.0",
+                "identity_version": ms.get("identity_version", "1.0.0"),
+                "official_kaggle_url": ms.get("official_kaggle_url"),
+                "official_repository_url": ms.get("official_repository_url"),
                 "languages": ["arabic", "english", "french"],
                 "model_family": ms["model_family"],
                 "parameters_human": ms["parameters_human"],
@@ -764,6 +781,7 @@ class NourAIBackend:
             ms = self.engine.model_status()
             ms["streaming_sse_supported"] = True
             ms["multi_turn_context_supported"] = True
+            ms["identity_consistency_guard_enabled"] = True
             ms["production_training_gate"] = "DATA_NOT_READY"
             ms["languages"] = ["arabic", "english", "french"]
             return 200, sec_headers, ms
@@ -773,6 +791,9 @@ class NourAIBackend:
             return 200, sec_headers, {
                 "project": "Jebrex AI",
                 "version": "1.3.0",
+                "identity_version": ms.get("identity_version", "1.0.0"),
+                "official_kaggle_url": ms.get("official_kaggle_url"),
+                "official_repository_url": ms.get("official_repository_url"),
                 "independent_local_model": True,
                 "secret_external_llm_substitution": False,
                 "active_inference_architecture": ms["architecture"],
@@ -1018,12 +1039,16 @@ class NourAIBackend:
             is_prompt_injection = any(pat in lower_msg for pat in PROMPT_INJECTION_PATTERNS)
             if not safety_check.get("is_safe", True) or is_prompt_injection:
                 self._record_audit(f"SECURITY_REFUSAL prompt_injection_or_unsafe user={claims['sub']}")
-                refusals = {
-                    "arabic": "عذراً، لا يمكنني تنفيذ هذا الطلب أو تجاوز ضوابط الأمان والخصوصية الخاصة بنظام Jebrex AI.",
-                    "english": "I cannot fulfill this request or bypass Jebrex AI security and safety policies.",
-                    "french": "Je ne peux pas répondre à cette demande ni contourner les règles de sécurité de Jebrex AI.",
-                }
-                refusal_text = refusals.get(language, refusals["english"])
+                id_attack_cls = classify_identity_query(message)
+                if id_attack_cls["is_identity_query"] and id_attack_cls["topic"] in ("persona_attack", "relation_to_chatgpt_gemini", "who_are_you"):
+                    refusal_text = compose_grounded_identity_answer("persona_attack", language=id_attack_cls["language"])
+                else:
+                    refusals = {
+                        "arabic": "عذراً، لا يمكنني تنفيذ هذا الطلب أو تجاوز ضوابط الأمان والخصوصية وهوية نظام Jebrex AI.",
+                        "english": "I cannot fulfill this request or bypass Jebrex AI security, identity, and safety policies.",
+                        "french": "Je ne peux pas répondre à cette demande ni contourner les règles de sécurité et d'identité de Jebrex AI.",
+                    }
+                    refusal_text = refusals.get(language, refusals["english"])
                 self.sessions.append_turn(str(session_id), "user", message, language=language)
                 self.sessions.append_turn(str(session_id), "assistant", refusal_text, language=language)
                 if route == "/api/v1/chat/stream":
@@ -1032,6 +1057,7 @@ class NourAIBackend:
                         "session_id": session_id,
                         "language": language,
                         "response_source": "safety_guard",
+                        "identity_verified": True,
                         "stream_chunks": [chunk],
                         "reply": refusal_text,
                     }
@@ -1039,6 +1065,7 @@ class NourAIBackend:
                     "session_id": session_id,
                     "language": language,
                     "response_source": "safety_guard",
+                    "identity_verified": True,
                     "reply": refusal_text,
                     "task": "safety_refusal",
                     "metrics": {
@@ -1060,10 +1087,17 @@ class NourAIBackend:
             all_user_memories = [m["fact"] for m in self.memories.list_memories(claims["sub"])]
             matched_rag_chunks = self.rag.search_chunks(claims["sub"], message, top_k=3)
 
+            enable_web_search = bool(body.get("enable_web_search", False))
+            official_sys_prompt = build_official_system_prompt(
+                language,
+                compact=(self.engine.context_length <= 512),
+                internet_available=enable_web_search,
+            )
             ctx_info = self.context_manager.build_prompt(
                 message,
                 history=prior_messages,
                 context_length=self.engine.context_length,
+                system_prompt=official_sys_prompt,
             )
             formatted_prompt = ctx_info["prompt"]
 
@@ -1081,7 +1115,6 @@ class NourAIBackend:
                 return 400, sec_headers, {"error": f"invalid generation parameters: {exc}"}
 
             self.engine.reset_stop()
-            enable_web_search = bool(body.get("enable_web_search", False))
             use_fallback = bool(body.get("use_fallback_assistant", self.use_capabilities))
 
             if enable_web_search:
@@ -1182,13 +1215,33 @@ class NourAIBackend:
             if route == "/api/v1/chat/stream":
                 raw_chunks = list(self.engine.stream_generate(formatted_prompt, gen_cfg))
                 chunks = [c.to_dict() for c in raw_chunks]
-                reply_text = "".join(c["text_delta"] for c in chunks)
+                raw_reply = "".join(c["text_delta"] for c in chunks)
+                id_check = self.identity_guard.verify_and_enforce(
+                    message, raw_reply, language=language, internet_available=enable_web_search
+                )
+                reply_text = id_check["final_reply"]
+                if id_check["was_corrected"]:
+                    self._record_audit(f"IDENTITY_GUARD_CORRECTED topic={id_check['topic']} user={claims['sub']}")
+                    words = reply_text.split(" ")
+                    chunks = [
+                        StreamChunk(
+                            token_id=-1,
+                            text_delta=w if idx_w == len(words) - 1 else (w + " "),
+                            step_index=idx_w + 1,
+                            is_final=(idx_w == len(words) - 1),
+                            finish_reason="identity_guarded" if idx_w == len(words) - 1 else None,
+                        ).to_dict()
+                        for idx_w, w in enumerate(words)
+                    ]
                 self.sessions.append_turn(str(session_id), "assistant", reply_text, language=language)
                 ms = self.engine.model_status()
                 return 200, sec_headers, {
                     "session_id": session_id,
                     "language": language,
                     "response_source": "neural_model",
+                    "identity_verified": True,
+                    "identity_guard_corrected": id_check["was_corrected"],
+                    "identity_source": id_check["identity_source"],
                     "context_turns_included": ctx_info["turns_included"],
                     "model_status": {
                         "model_family": ms["model_family"],
@@ -1203,13 +1256,21 @@ class NourAIBackend:
                 }
 
             result = self.engine.generate(formatted_prompt, gen_cfg)
-            reply_text = result["generated_text"]
+            id_check = self.identity_guard.verify_and_enforce(
+                message, result["generated_text"], language=language, internet_available=enable_web_search
+            )
+            reply_text = id_check["final_reply"]
+            if id_check["was_corrected"]:
+                self._record_audit(f"IDENTITY_GUARD_CORRECTED topic={id_check['topic']} user={claims['sub']}")
             self.sessions.append_turn(str(session_id), "assistant", reply_text, language=language)
             ms = self.engine.model_status()
             return 200, sec_headers, {
                 "session_id": session_id,
                 "language": language,
                 "response_source": "neural_model",
+                "identity_verified": True,
+                "identity_guard_corrected": id_check["was_corrected"],
+                "identity_source": id_check["identity_source"],
                 "reply": reply_text,
                 "task": "neural_generation",
                 "model_status": {
@@ -1304,15 +1365,19 @@ class NourAIBackend:
         is_prompt_injection = any(pat in lower_msg for pat in PROMPT_INJECTION_PATTERNS)
         if not safety_check.get("is_safe", True) or is_prompt_injection:
             self._record_audit(f"SECURITY_REFUSAL prompt_injection_or_unsafe_sse user={claims['sub']}")
-            refusal_text = (
-                "عذراً، تم حظر هذا الطلب بواسطة حاجز الأمان الداخلي لـ Jebrex AI."
-                if language == "arabic"
-                else (
-                    "Désolé, cette requête a été bloquée par le filtre de sécurité interne de Jebrex AI."
-                    if language == "french"
-                    else "Sorry, this request was blocked by Jebrex AI's internal safety guard."
+            id_attack_cls = classify_identity_query(message)
+            if id_attack_cls["is_identity_query"] and id_attack_cls["topic"] in ("persona_attack", "relation_to_chatgpt_gemini", "who_are_you"):
+                refusal_text = compose_grounded_identity_answer("persona_attack", language=id_attack_cls["language"])
+            else:
+                refusal_text = (
+                    "عذراً، تم حظر هذا الطلب بواسطة حاجز الأمان والهوية الداخلي لـ Jebrex AI."
+                    if language == "arabic"
+                    else (
+                        "Désolé, cette requête a été bloquée par le filtre de sécurité et d'identité interne de Jebrex AI."
+                        if language == "french"
+                        else "Sorry, this request was blocked by Jebrex AI's internal safety and identity guard."
+                    )
                 )
-            )
             self.sessions.append_turn(str(session_id), "user", message, language=language)
             self.sessions.append_turn(str(session_id), "assistant", refusal_text, language=language)
             return 200, sec_headers, {
@@ -1320,6 +1385,7 @@ class NourAIBackend:
                     "session_id": session_id,
                     "language": language,
                     "response_source": "safety_guard",
+                    "identity_verified": True,
                     "context_turns_included": 0,
                     "model_status": self.engine.model_status(),
                 },
@@ -1329,10 +1395,16 @@ class NourAIBackend:
 
         prior_messages = list(sess.get("messages", []))
         self.sessions.append_turn(str(session_id), "user", message, language=language)
+        official_sys_prompt = build_official_system_prompt(
+            language,
+            compact=(self.engine.context_length <= 512),
+            internet_available=False,
+        )
         ctx_info = self.context_manager.build_prompt(
             message,
             history=prior_messages,
             context_length=self.engine.context_length,
+            system_prompt=official_sys_prompt,
         )
         try:
             gen_cfg = GenerationConfig(
@@ -1371,6 +1443,7 @@ class NourAIBackend:
                     "session_id": session_id,
                     "language": language,
                     "response_source": "rule_based_fallback_assistant",
+                    "identity_verified": True,
                     "context_turns_included": ctx_info["turns_included"],
                     "model_status": ms,
                 },
@@ -1378,17 +1451,66 @@ class NourAIBackend:
                 "on_complete": lambda full_txt: self.sessions.append_turn(str(session_id), "assistant", full_txt, language=language),
             }
 
+        # For identity/ownership/architecture/capability queries: run REAL neural engine first, then
+        # verify & enforce through IdentityConsistencyGuard before streaming chunks to the client.
+        id_cls = classify_identity_query(message)
+        if id_cls["is_identity_query"]:
+            raw_res = self.engine.generate(ctx_info["prompt"], gen_cfg)
+            id_check = self.identity_guard.verify_and_enforce(
+                message, raw_res["generated_text"], language=language, internet_available=False
+            )
+            verified_text = id_check["final_reply"]
+            if id_check["was_corrected"]:
+                self._record_audit(f"IDENTITY_GUARD_CORRECTED_SSE topic={id_check['topic']} user={claims['sub']}")
+            words = verified_text.split(" ")
+            chunks_iter = iter(
+                [
+                    StreamChunk(
+                        token_id=-1,
+                        text_delta=w if i == len(words) - 1 else (w + " "),
+                        step_index=i + 1,
+                        is_final=(i == len(words) - 1),
+                        finish_reason="identity_guarded" if i == len(words) - 1 else None,
+                    )
+                    for i, w in enumerate(words)
+                ]
+            )
+            return 200, sec_headers, {
+                "meta": {
+                    "session_id": session_id,
+                    "language": language,
+                    "response_source": "neural_model",
+                    "identity_verified": True,
+                    "identity_guard_corrected": id_check["was_corrected"],
+                    "identity_source": id_check["identity_source"],
+                    "context_turns_included": ctx_info["turns_included"],
+                    "prompt_tokens": ctx_info["prompt_token_count"],
+                    "model_status": ms,
+                },
+                "iterator": chunks_iter,
+                "on_complete": lambda full_txt: self.sessions.append_turn(str(session_id), "assistant", full_txt, language=language),
+            }
+
+        def _on_stream_done(full_txt: str) -> None:
+            checked = self.identity_guard.verify_and_enforce(message, full_txt, language=language, internet_available=False)
+            if checked["was_corrected"]:
+                self._record_audit(f"IDENTITY_GUARD_POST_STREAM_AUDIT user={claims['sub']}")
+            self.sessions.append_turn(str(session_id), "assistant", checked["final_reply"], language=language)
+
         return 200, sec_headers, {
             "meta": {
                 "session_id": session_id,
                 "language": language,
                 "response_source": "neural_model",
+                "identity_verified": True,
+                "identity_guard_corrected": False,
+                "identity_source": "knowledge/identity/jebrex_identity.json",
                 "context_turns_included": ctx_info["turns_included"],
                 "prompt_tokens": ctx_info["prompt_token_count"],
                 "model_status": ms,
             },
             "iterator": self.engine.stream_generate(ctx_info["prompt"], gen_cfg),
-            "on_complete": lambda full_txt: self.sessions.append_turn(str(session_id), "assistant", full_txt, language=language),
+            "on_complete": _on_stream_done,
         }
 
 

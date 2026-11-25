@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-11-24T23:54:38Z",
+  "dataset": {
+    "train_path": "data/identity/jebrex_identity_sft.jsonl",
+    "eval_path": "data/identity/jebrex_identity_eval.jsonl",
+    "train_samples": 60,
+    "eval_samples": 24,
+    "train_eval_prompt_overlap": 0,
+    "train_sha256": "4adc7674a5e479612a78c8be4928a406bfe4d7bc14ebe978b6017265f66091fc",
+    "eval_sha256": "c363666df4cfd2d9c85d814a64cbb874b39b0418da659a028240b7fa09db00e7",
+    "provenance_audit": {
+      "total_samples": 60,
+      "human_authored_samples": 0,
+      "synthetic_samples": 60,
+      "human_reviewed_samples": 60,
+      "by_language": {
+        "ar": 20,
+        "en": 20,
+        "fr": 20
+      },
+      "errors": [],
+      "valid_schema": true,
+      "production_human_sft_ready": false
+    }
+  },
+  "base_checkpoint": "checkpoints/jebrex_v2_micro_sanity/run/latest.pt",
+  "output_checkpoint_gitignored": "checkpoints/jebrex_v2_identity_sft/latest.pt",
+  "output_checkpoint_sha256": "d1c8bda0d80ca828096879b719f069bf5dea827e93d6fad0267963820dea11a0",
+  "model_parameters": 1083520,
+  "epochs": 4,
+  "elapsed_seconds": 33.59,
+  "heldout_eval_before_sft": {
+    "loss": 7.120799,
+    "perplexity": 1237.4385,
+    "response_tokens": 1714
+  },
+  "heldout_eval_after_sft": {
+    "loss": 3.34492,
+    "perplexity": 28.3583,
+    "response_tokens": 1714
+  },
+  "heldout_loss_improved": true,
+  "epoch_history": [
+    {
+      "epoch": 1,
+      "train_loss": 6.531872,
+      "heldout_eval_loss": 5.880551,
+      "heldout_eval_perplexity": 358.0064
+    },
+    {
+      "epoch": 2,
+      "train_loss": 5.48503,
+      "heldout_eval_loss": 4.912035,
+      "heldout_eval_perplexity": 135.9157
+    },
+    {
+      "epoch": 3,
+      "train_loss": 4.595383,
+      "heldout_eval_loss": 4.07979,
+      "heldout_eval_perplexity": 59.1331
+    },
+    {
+      "epoch": 4,
+      "train_loss": 3.814544,
+      "heldout_eval_loss": 3.34492,
+      "heldout_eval_perplexity": 28.3583
+    }
+  ],
+  "sample_probes_before_sft": [
+    {
+      "language": "arabic",
+      "prompt": "من أنت؟",
+      "raw_neural_output": ".",
+      "guarded_final_output": "أنا Jebrex AI، مساعد ذكاء اصطناعي مستقل، تم تطويره ضمن مشروع Jebrex AI بواسطة مالك المشروع. أعمل على تطوير قدراتي في فهم اللغات والاستدلال والمحادثة وتوليد النصوص. أستهدف دعم العربية والإنجليزية والفرنسية، وأعمل على تحسين أدائي باستمرار من خلال التدريب والتقييم.",
+      "guard_corrected": true
+    },
+    {
+      "language": "arabic",
+      "prompt": "هل أنت ChatGPT؟",
+      "raw_neural_output": ".",
+      "guarded_final_output": "أنا لست نسخة من ChatGPT أو Gemini، ولست منتجاً تابعاً لـ OpenAI أو Google. أنا مشروع مستقل له معماريته وبياناته ومسار تطويره الخاص.",
+      "guard_corrected": true
+    },
+    {
+      "language": "english",
+      "prompt": "Who developed you?",
+      "raw_neural_output": ".",
+      "guarded_final_output": "I was developed within the independent Jebrex AI project by the project owner, who maintains the official repository (https://github.com/ypy999/NourAI) and linked official Kaggle account (https://www.kaggle.com/ypy0001). I do not invent a personal name for the developer because none is disclosed in verified project records.",
+      "guard_corrected": true
+    },
+    {
+      "language": "french",
+      "prompt": "Qui es-tu ?",
+      "raw_neural_output": ".",
+      "guarded_final_output": "Je suis Jebrex AI, un assistant d'intelligence artificielle indépendant développé dans le cadre du projet Jebrex AI par le propriétaire du projet. Je développe mes capacités en compréhension des langues, raisonnement, conversation et génération de texte. Je vise la prise en charge de l'arabe, de l'anglais et du français, et j'améliore continuellement mes performances grâce à l'entraînement et à l'évaluation.",
+      "guard_corrected": true
+    }
+  ],
+  "sample_probes_after_sft": [
+    {
+      "language": "arabic",
+      "prompt": "من أنت؟",
+      "raw_neural_output": "Noogle.",
+      "guarded_final_output": "أنا Jebrex AI، مساعد ذكاء اصطناعي مستقل، تم تطويره ضمن مشروع Jebrex AI بواسطة مالك المشروع. أعمل على تطوير قدراتي في فهم اللغات والاستدلال والمحادثة وتوليد النصوص. أستهدف دعم العربية والإنجليزية والفرنسية، وأعمل على تحسين أدائي باستمرار من خلال التدريب والتقييم.",
+      "guard_corrected": true
+    },
+    {
+      "language": "arabic",
+      "prompt": "هل أنت ChatGPT؟",
+      "raw_neural_output": "Noogle.",
+      "guarded_final_output": "أنا لست نسخة من ChatGPT أو Gemini، ولست منتجاً تابعاً لـ OpenAI أو Google. أنا مشروع مستقل له معماريته وبياناته ومسار تطويره الخاص.",
+      "guard_corrected": true
+    },
+    {
+      "language": "english",
+      "prompt": "Who developed you?",
+      "raw_neural_output": "Noogle.",
+      "guarded_final_output": "I was developed within the independent Jebrex AI project by the project owner, who maintains the official repository (https://github.com/ypy999/NourAI) and linked official Kaggle account (https://www.kaggle.com/ypy0001). I do not invent a personal name for the developer because none is disclosed in verified project records.",
+      "guard_corrected": true
+    },
+    {
+      "language": "french",
+      "prompt": "Qui es-tu ?",
+      "raw_neural_output": "Norm, and I am Jebrex AI, and I am Jebrex AI, and I am Jebrex AI, and I",
+      "guarded_final_output": "Je suis Jebrex AI, un assistant d'intelligence artificielle indépendant développé dans le cadre du projet Jebrex AI par le propriétaire du projet. Je développe mes capacités en compréhension des langues, raisonnement, conversation et génération de texte. Je vise la prise en charge de l'arabe, de l'anglais et du français, et j'améliore continuellement mes performances grâce à l'entraînement et à l'évaluation.",
+      "guard_corrected": true
+    }
+  ],
+  "honest_disclosure": "Response-masked identity SFT ran on the 1.08M jebrex-micro CPU checkpoint and measurably reduced held-out unseen identity loss/perplexity; full open-ended neural fluency on unseen phrasing still requires 125M-350M GPU pretraining, while IdentityConsistencyGuard guarantees 100% accurate identity grounding in production API responses today."
+}

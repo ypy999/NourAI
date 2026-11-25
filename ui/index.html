@@ -838,6 +838,8 @@
       <a href="/about.html" style="color:var(--text-muted);text-decoration:none;">ℹ️ عن النموذج</a>
       <a href="/privacy.html" style="color:var(--text-muted);text-decoration:none;">🔒 الخصوصية</a>
       <a href="/report-bug.html" style="color:var(--text-muted);text-decoration:none;">🐞 إبلاغ عن خطأ</a>
+      <a href="https://github.com/ypy999/NourAI" target="_blank" rel="noopener" style="color:var(--text-muted);text-decoration:none;">💻 GitHub</a>
+      <a href="https://www.kaggle.com/ypy0001" target="_blank" rel="noopener" style="color:var(--text-muted);text-decoration:none;">📊 Kaggle</a>
     </nav>
   </aside>
 
@@ -853,7 +855,7 @@
         </select>
         <span id="model-status-badge">متصل</span>
         <span id="stream-status-indicator" style="display:none;">جاهز</span>
-        <span id="ui-app-title" style="display:none;">NourAI</span>
+        <span id="ui-app-title" style="display:none;">Jebrex AI</span>
       </div>
       <div class="hdr-end">
         <select id="language-selector" class="lang-select" onchange="switchLanguage(this.value)" aria-label="اللغة">
@@ -884,7 +886,7 @@
       <div class="hero-emblem">✦</div>
       <h1 class="hero-greeting" id="hero-title">كيف يمكنني مساعدتك اليوم؟</h1>
       <div id="model-readiness-banner" style="max-width:640px;width:100%;margin:0.35rem 0 0.75rem;padding:0.65rem 0.9rem;border-radius:0.75rem;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.35);font-size:0.8rem;line-height:1.55;color:#fde68a;text-align:start;">
-        <strong>إفصاح الشفافية (Jebrex AI المستقل):</strong> يعمل النظام بدون استبدال سري بـ ChatGPT أو Gemini. النموذج العصبي الحالي في المرحلة البحثية والمخبرية (معمارية v2 الحديثة بحجم 125M–350M جاهزة للتدريب السحابي). <a href="/about.html" style="color:#34d399;text-decoration:underline;">تفاصيل الجاهزية والمعمارية</a> · <a href="/privacy.html" style="color:#34d399;text-decoration:underline;">الخصوصية</a> · <a href="/report-bug.html" style="color:#34d399;text-decoration:underline;">إبلاغ عن خطأ</a>
+        <strong>الهوية الرسمية والإفصاح العلمي (Jebrex AI المستقل):</strong> طوّره مالك المشروع (<a href="https://github.com/ypy999/NourAI" target="_blank" rel="noopener" style="color:#34d399;text-decoration:underline;">GitHub</a> · <a href="https://www.kaggle.com/ypy0001" target="_blank" rel="noopener" style="color:#34d399;text-decoration:underline;">Kaggle</a>) بدون أي تبعية أو استبدال سري بـ OpenAI أو ChatGPT أو Google Gemini. النموذج العصبي الحالي في المرحلة البحثية والمخبرية (معمارية v2 بحجم 125M–350M جاهزة للتدريب السحابي). <a href="/about.html" style="color:#34d399;text-decoration:underline;">عن النموذج والهوية</a> · <a href="/privacy.html" style="color:#34d399;text-decoration:underline;">الخصوصية</a> · <a href="/report-bug.html" style="color:#34d399;text-decoration:underline;">إبلاغ عن خطأ</a>
       </div>
       <p style="font-size:0.88rem;color:var(--text-muted);margin:0.15rem 0 0.75rem;text-align:center;max-width:520px;line-height:1.6;">
         اكتب سؤالك مباشرةً للدردشة، أو اضغط على <strong>✨ الأدوات</strong> لاختيار أداة محلية متخصصة.
@@ -1318,13 +1320,21 @@
         liveModelStatus = st;
         backendOnline = true;
         try { sessionStorage.removeItem("nourai_serverless"); } catch (e) {}
+        let idVer = st.identity_version || "1.0.0";
+        try {
+          const idRes = await fetchWithTimeout(API_BASE + "/api/v1/identity", { method: "GET" }, 2500);
+          if (idRes.ok) {
+            const idObj = await idRes.json();
+            if (idObj && idObj.identity_version) idVer = idObj.identity_version;
+          }
+        } catch (e) {}
         const badge = document.getElementById("model-status-badge");
-        if (badge) badge.textContent = `متصل · ${st.parameters_human || "محلي"}`;
+        if (badge) badge.textContent = `Jebrex AI · ${st.parameters_human || "محلي"}`;
         if (bar) {
           const kvTag = st.kv_cache_enabled ? "KV-Cache" : "No-KV";
           const verTag = st.model_version_id || st.model_family;
           const readyTag = st.production_ready ? "جاهز للإنتاج" : "أوزان بحثية مخبرية (ليست بمستوى ChatGPT/Gemini بعد)";
-          bar.textContent = `🟢 متصل بالنموذج العصبي المستقل: ${verTag} (${st.parameters_human}, ${st.tokenizer_type}, ${kvTag}, ${String(st.device || "cpu").toUpperCase()}) · ${readyTag}`;
+          bar.textContent = `🟢 متصل بـ Jebrex AI المستقل (هوية v${idVer}): ${verTag} (${st.parameters_human}, ${st.tokenizer_type}, ${kvTag}, ${String(st.device || "cpu").toUpperCase()}) · ${readyTag}`;
         }
         return st;
       } catch (e) {
@@ -2136,6 +2146,33 @@ function downloadWebm() {
       updateDigitalTwinProfile(q);
       const mems = loadLocalMemories();
       const docs = loadLocalDocs();
+
+      // 0. Official Verified Jebrex AI Self-Knowledge Lookup (synced with knowledge/identity/jebrex_identity.json)
+      // Strictly disclosed as verified static identity metadata when backend is offline — NEVER disguised as neural generation.
+      const isWhoQ = /(من انت|مين انت|عرفني بنفسك|عرف عن نفسك|ما اسمك|ما هو jebrex|who are you|what is jebrex|introduce yourself|qui es-tu|qui êtes-vous|présente-toi)/i.test(normAr) || /(who are you|what is jebrex|introduce yourself|qui es-tu|qui êtes-vous|présente-toi)/i.test(lower);
+      const isCompetitorQ = /(chatgpt|openai|gemini|google|gpt-4|شات جي بي تي|جيميني|اوبن)/i.test(normAr) || /(chatgpt|openai|gemini|google|gpt-4)/i.test(lower);
+      const isDevQ = /(من طورك|من صنعك|من بناك|من المطور|حساب kaggle|مستودع|who developed you|who created you|who owns you|kaggle|qui t'a développé|qui t'a créé)/i.test(normAr) || /(who developed you|who created you|who owns you|kaggle|qui t'a développé|qui t'a créé)/i.test(lower);
+      if (isCompetitorQ && (isWhoQ || /(هل انت|فرق|علاق|نسخه|تابع|تظاهر|are you|difference|powered|clone|es-tu|différence|copie)/i.test(normAr) || /(are you|difference|powered|clone|es-tu|différence|copie)/i.test(lower))) {
+        const isFr = /(qui|es-tu|différence|copie|français|êtes-vous)/i.test(lower);
+        const isAr = /[\u0600-\u06FF]/.test(q);
+        if (isAr) return "🪪 *(سجل الهوية الرسمي الموثّق — knowledge/identity/jebrex_identity.json)*\n\nأنا لست نسخة من ChatGPT أو Gemini، ولست منتجاً تابعاً لـ OpenAI أو Google. أنا مشروع مستقل له معماريته وبياناته ومسار تطويره الخاص.";
+        if (isFr) return "🪪 *(Registre d'identité officiel vérifié — knowledge/identity/jebrex_identity.json)*\n\nJe ne suis pas une copie ni une version de ChatGPT ou de Gemini, et je ne suis pas un produit d'OpenAI ou de Google. Je suis un projet indépendant disposant de sa propre architecture, de ses propres données et de sa propre feuille de route.";
+        return "🪪 *(Verified Official Identity Record — knowledge/identity/jebrex_identity.json)*\n\nI am not a copy or version of ChatGPT or Gemini, and I am not a product of OpenAI or Google. I am an independent project with my own architecture, datasets, and development roadmap.";
+      }
+      if (isDevQ) {
+        const isFr = /(qui|développé|créé|propriétaire|dépôt)/i.test(lower);
+        const isAr = /[\u0600-\u06FF]/.test(q);
+        if (isAr) return "🪪 *(سجل الهوية الرسمي الموثّق — knowledge/identity/jebrex_identity.json)*\n\nتم تطويري ضمن مشروع Jebrex AI المستقل بواسطة مالك المشروع، صاحب المستودع البرمجي الرسمي (https://github.com/ypy999/NourAI) وحساب Kaggle الرسمي المرتبط به (https://www.kaggle.com/ypy0001). لا أختلق اسماً شخصياً للمطور لأن ذلك غير موثّق في سجلات المشروع.";
+        if (isFr) return "🪪 *(Registre d'identité officiel vérifié — knowledge/identity/jebrex_identity.json)*\n\nJ'ai été développé dans le cadre du projet indépendant Jebrex AI par le propriétaire du projet, titulaire du dépôt officiel (https://github.com/ypy999/NourAI) et du compte Kaggle officiel associé (https://www.kaggle.com/ypy0001). Je n'invente aucun nom personnel non documenté.";
+        return "🪪 *(Verified Official Identity Record — knowledge/identity/jebrex_identity.json)*\n\nI was developed within the independent Jebrex AI project by the project owner, who maintains the official repository (https://github.com/ypy999/NourAI) and linked official Kaggle account (https://www.kaggle.com/ypy0001). I do not invent any undocumented personal developer name.";
+      }
+      if (isWhoQ) {
+        const isFr = /(qui|présente-toi|êtes-vous|ton nom)/i.test(lower);
+        const isAr = /[\u0600-\u06FF]/.test(q);
+        if (isAr) return "🪪 *(سجل الهوية الرسمي الموثّق — knowledge/identity/jebrex_identity.json)*\n\nأنا Jebrex AI، مساعد ذكاء اصطناعي مستقل، تم تطويره ضمن مشروع Jebrex AI بواسطة مالك المشروع. أعمل على تطوير قدراتي في فهم اللغات والاستدلال والمحادثة وتوليد النصوص. أستهدف دعم العربية والإنجليزية والفرنسية، وأعمل على تحسين أدائي باستمرار من خلال التدريب والتقييم.";
+        if (isFr) return "🪪 *(Registre d'identité officiel vérifié — knowledge/identity/jebrex_identity.json)*\n\nJe suis Jebrex AI, un assistant d'intelligence artificielle indépendant développé dans le cadre du projet Jebrex AI par le propriétaire du projet. Je vise l'arabe, l'anglais et le français, et j'améliore continuellement mes performances par l'entraînement et l'évaluation.";
+        return "🪪 *(Verified Official Identity Record — knowledge/identity/jebrex_identity.json)*\n\nI am Jebrex AI, an independent AI assistant developed within the Jebrex AI project by the project owner. I target Arabic, English, and French, and I continuously improve through disciplined training and evaluation.";
+      }
 
       // 1. Image attachment (honest disclosure: no secret external vision proxy)
       if (imgBase64) {

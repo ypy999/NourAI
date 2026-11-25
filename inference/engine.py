@@ -14,6 +14,7 @@ import torch.nn.functional as F
 
 from model.jebrex_transformer import JebrexConfig, JebrexTransformer
 from model.transformer import GPT, GPTConfig
+from knowledge.identity.manager import load_identity_registry
 from tokenizer.bpe_tokenizer import MultilingualBPETokenizer
 from tokenizer.byte_tokenizer import ByteTokenizer
 from training.metrics import memory_usage_mb
@@ -317,8 +318,21 @@ class InferenceEngine:
             f"{'jebrex-v2' if self.is_v2 else 'nourai-v1'}-{ckpt_stem}-"
             f"{(f'{params / 1_000_000:.2f}m' if params >= 1_000_000 else f'{params / 1_000:.0f}k')}-{short_sha}"
         )
+        try:
+            id_reg = load_identity_registry()
+            id_ver = id_reg["identity_version"]
+            kaggle_url = id_reg["ownership_and_development"]["official_kaggle_url"]
+            repo_url = id_reg["ownership_and_development"]["official_repository_url"]
+        except Exception:
+            id_ver = "1.0.0"
+            kaggle_url = "https://www.kaggle.com/ypy0001"
+            repo_url = "https://github.com/ypy999/NourAI"
         return {
             "project": "Jebrex AI",
+            "identity_version": id_ver,
+            "identity_registry_path": "knowledge/identity/jebrex_identity.json",
+            "official_kaggle_url": kaggle_url,
+            "official_repository_url": repo_url,
             "model_version_id": model_version_id,
             "independent_local_model": True,
             "secret_external_llm_substitution": False,

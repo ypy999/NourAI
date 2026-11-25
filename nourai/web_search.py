@@ -11,10 +11,11 @@ from urllib.parse import quote_plus
 from urllib.request import Request, urlopen
 import xml.etree.ElementTree as ET
 
+from knowledge.identity.guard import classify_identity_query, compose_grounded_identity_answer
 from nourai.capabilities import NourAICapabilityEngine, detect_text_language, evaluate_prompt_safety
 
 
-USER_AGENT = "NourAI/1.2.0 (https://github.com/ypy999/NourAI; Local-First Multilingual Assistant)"
+USER_AGENT = "JebrexAI/1.3.0 (https://github.com/ypy999/NourAI; Independent Multilingual AI Assistant)"
 
 
 def _strip_html(raw: str) -> str:
@@ -175,68 +176,11 @@ def _answer_conversational_or_identity(prompt: str, lang_code: str, newly_saved_
         .replace("مادا", "ماذا")
     )
 
-    capability_triggers = (
-        "ماذا يمكنك",
-        "ماذا تستطيع",
-        "ما هي قدراتك",
-        "ماهي قدراتك",
-        "ما الذي يمكنك",
-        "كيف تساعدني",
-        "كيف يمكنك مساعدتي",
-        "وش تقدر",
-        "شو بتعمل",
-        "ماذا تفعل",
-        "ايش تسوي",
-        "what can you do",
-        "what are your capabilities",
-        "how can you help",
-        "que peux-tu faire",
-        "que pouvez-vous faire",
-    )
-    if any(t in norm_ar or t in clean for t in capability_triggers):
-        if lang_code == "ar":
-            return (
-                "أنا **NourAI**، مساعدك الذكي متعدد اللغات (العربية، الإنجليزية، والفرنسية). إليك ما يمكنني فعله لك:\n\n"
-                "1. **الإجابة عن الأسئلة والبحث الحي في الويب وقوقل:** اسألني عن أي شخصية، دولة، علم، أو خبر حديث.\n"
-                "2. **البرمجة والمعاينة الحية (Live Code Canvas):** أكتب أكواد Python وHTML/JS مع زر **▶️ معاينة** لتشغيلها مباشرة.\n"
-                "3. **تحليل الملفات المرفقة (📎 Local RAG):** ارفع أي ملف نصي أو برمجي واسألني عما بداخله.\n"
-                "4. **الترجمة والتلخيص والرياضيات:** أترجم بين العربية والإنجليزية والفرنسية، وألخص النصوص، وأحل المسائل الرياضية.\n"
-                "5. **الذاكرة الدائمة (🧠 Memory):** أتذكر اسمك وتفضيلاتك عبر جميع المحادثات."
-            )
-        if lang_code == "fr":
-            return (
-                "Je suis **NourAI**, votre assistant IA multilingue (arabe, anglais, français). Je peux :\n"
-                "1. Répondre à vos questions et chercher en direct sur le Web / Wikipédia.\n"
-                "2. Écrire du code Python/HTML avec aperçu en direct (▶️).\n"
-                "3. Analyser vos fichiers joints (📎), traduire, résumer et calculer."
-            )
-        return (
-            "I am **NourAI**, your multilingual AI assistant (Arabic, English, French). Here is what I can do:\n"
-            "1. **Live Web & Wikipedia Q&A:** Answer general questions with live sources.\n"
-            "2. **Coding & Live HTML Preview (▶️):** Write Python and interactive HTML/JS widgets.\n"
-            "3. **Document Analysis (📎), Translation, Summarization, Math & Persistent Memory (🧠).**"
-        )
-
-    identity_triggers = (
-        "من انت",
-        "ما هو nourai",
-        "ماهو nourai",
-        "عرف عن نفسك",
-        "عرفني بنفسك",
-        "ما اسمك",
-        "شو اسمك",
-        "who are you",
-        "what is nourai",
-        "what is your name",
-        "qui es-tu",
-        "qu'est-ce que nourai",
-    )
-    if any(t in norm_ar or t in clean for t in identity_triggers):
-        if lang_code == "ar":
-            return "أنا **NourAI (`v1.2.0`)**، نموذج ومساعد ذكاء اصطناعي متعدد اللغات يعمل باللغات العربية والإنجليزية والفرنسية، ومزوّد بشبكة عصبية (`4.87M` معامل) وبحث ويب حي وذاكرة دائمة."
-        if lang_code == "fr":
-            return "Je suis **NourAI (`v1.2.0`)**, un modèle et assistant IA multilingue prenant en charge l'arabe, l'anglais et le français."
-        return "I am **NourAI (`v1.2.0`)**, a multilingual AI model and assistant supporting Arabic, English, and French."
+    # Route ALL identity, ownership, architecture, capability, limitation, and evolution queries
+    # to the single central registry: knowledge/identity/jebrex_identity.json
+    id_cls = classify_identity_query(prompt)
+    if id_cls["is_identity_query"]:
+        return compose_grounded_identity_answer(str(id_cls["topic"]), language=id_cls["language"])
 
     greeting_triggers = (
         "مرحبا",
@@ -661,76 +605,7 @@ def query_free_llm_with_context(
     user_memories: list[str] | None = None,
     rag_chunks: list[dict[str, Any]] | None = None,
 ) -> str | None:
-    """Synthesize a ChatGPT/Gemini-grade answer using optional Gemini/Groq API key or free Pollinations AI endpoint."""
-    context_lines = []
-    for idx, r in enumerate(web_results[:5], 1):
-        context_lines.append(f"[Web {idx}] {r['source']} - {r['title']}: {r['snippet']} ({r['url']})")
-    if rag_chunks:
-        for ch in rag_chunks[:3]:
-            context_lines.append(f"[Document {ch['filename']} #{ch['chunk_index']}]: {ch['content']}")
-    if user_memories:
-        context_lines.append("User Saved Memories: " + " | ".join(user_memories))
-    web_context = "\n".join(context_lines) if context_lines else "No external web snippets needed."
-
-    sys_instruction = (
-        "You are NourAI v1.2.0, an intelligent, helpful multilingual AI assistant (like ChatGPT and Google Gemini) "
-        "supporting Arabic, English, and French. Answer accurately, clearly, and politely in the user's language. "
-        "If live web search context is provided below, use it to ground your answer and cite the sources."
-    )
-    user_payload = f"User Question: {prompt}\n\nLive Web Search Results:\n{web_context}"
-
-    # 1. Try Google Gemini Official API if GEMINI_API_KEY is provided
-    gemini_key = api_key or os.environ.get("GEMINI_API_KEY")
-    if gemini_key:
-        try:
-            g_url = (
-                f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={gemini_key}"
-            )
-            body = {
-                "contents": [{"parts": [{"text": f"{sys_instruction}\n\n{user_payload}"}]}],
-                "generationConfig": {"temperature": 0.4, "maxOutputTokens": 700},
-            }
-            req = Request(
-                g_url,
-                data=json.dumps(body).encode("utf-8"),
-                headers={"Content-Type": "application/json", "User-Agent": USER_AGENT},
-                method="POST",
-            )
-            with urlopen(req, timeout=8.0) as resp:
-                data = json.loads(resp.read().decode("utf-8", errors="replace"))
-            parts = data["candidates"][0]["content"]["parts"]
-            text = "".join(p.get("text", "") for p in parts).strip()
-            if text:
-                return text
-        except Exception:
-            pass
-
-    # 2. Try zero-key free Pollinations OpenAI-compatible text endpoint ($0, no API key required)
-    try:
-        messages = [{"role": "system", "content": sys_instruction}]
-        for turn in (history or [])[-4:]:
-            messages.append({"role": turn.get("role", "user"), "content": turn.get("content", "")})
-        messages.append({"role": "user", "content": user_payload})
-        req = Request(
-            "https://text.pollinations.ai/openai",
-            data=json.dumps({"model": "openai", "messages": messages, "seed": 42}).encode("utf-8"),
-            headers={"Content-Type": "application/json", "User-Agent": USER_AGENT},
-            method="POST",
-        )
-        with urlopen(req, timeout=8.5) as resp:
-            raw = resp.read().decode("utf-8", errors="replace").strip()
-        if raw.startswith("{"):
-            parsed = json.loads(raw)
-            choice_txt = (
-                parsed.get("choices", [{}])[0].get("message", {}).get("content", "").strip()
-            )
-            if choice_txt:
-                return choice_txt
-        elif len(raw) > 10:
-            return raw
-    except Exception:
-        pass
-
+    """Disabled by Jebrex AI Independence Policy (Phase I): never substitute external OpenAI/Gemini LLMs."""
     return None
 
 

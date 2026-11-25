@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>عن Jebrex AI — معلومات النموذج والشفافية العلمية</title>
+  <title>عن Jebrex AI — الهوية الرسمية، الملكية والشفافية العلمية</title>
   <link rel="icon" href="/icon.svg" type="image/svg+xml" />
   <style>
     :root { --bg:#16181d; --card:#20232b; --text:#f1f3f5; --muted:#a8b0bd; --border:rgba(255,255,255,.1); --accent:#10a37f; --warn:#f59e0b; }
@@ -27,6 +27,7 @@
     th, td { text-align:start; padding:.55rem .65rem; border-bottom:1px solid var(--border); }
     th { color:#fff; background:rgba(255,255,255,.03); }
     .notice { border-inline-start:4px solid var(--warn); background:rgba(245,158,11,.08); padding:.9rem 1rem; border-radius:.5rem; color:#fde68a; font-size:.9rem; }
+    .identity-box { border-inline-start:4px solid var(--accent); background:rgba(16,163,127,.08); padding:.95rem 1.1rem; border-radius:.5rem; color:#d1fae5; font-size:.93rem; margin-top:.75rem; }
     footer { text-align:center; padding:1.5rem; color:var(--muted); font-size:.82rem; border-top:1px solid var(--border); }
     a.ext { color:#34d399; }
   </style>
@@ -40,53 +41,69 @@
       <a href="/privacy.html">الخصوصية</a>
       <a href="/report-bug.html">الإبلاغ عن خطأ</a>
       <a href="https://github.com/ypy999/NourAI" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.kaggle.com/ypy0001" target="_blank" rel="noopener">Kaggle</a>
     </nav>
   </header>
   <main>
     <section class="card">
       <div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:.75rem;">
-        <span class="badge badge-ok">100% مستقل هندسياً</span>
-        <span class="badge badge-warn">حالة النموذج العصبي: مرحلة بحثية ومخبرية</span>
+        <span class="badge badge-ok">الهوية الرسمية الموثّقة v1.0.0</span>
+        <span class="badge badge-ok">مشروع ذكاء اصطناعي مستقل</span>
+        <span class="badge badge-warn">قيد التطوير والتدريب</span>
       </div>
-      <h1>عن Jebrex AI — نموذج لغوي مستقل متعدد اللغات</h1>
-      <p>
-        <strong>Jebrex AI</strong> (المبني امتداداً لمستودع NourAI) هو مشروع هندسي مفتوح وشفاف لبناء نظام ذكاء اصطناعي مستقل يدعم <strong>العربية والإنجليزية والفرنسية</strong> محلياً وسحابياً دون استبدال سري بنماذج خارجية مثل ChatGPT أو Gemini أو Claude.
-      </p>
-    </section>
-
-    <section class="card">
-      <h2>إفصاح علمي صريح حول الجاهزية الحالية</h2>
-      <div class="notice">
-        <strong>الشفافية أولاً:</strong> البنية الهندسية لـ Jebrex AI (المُرمّز BPE متعدد اللغات، معمارية Transformer الحديثة بحجم 125M–350M، التدريب السحابي القابل للاستئناف، خط SFT/DPO، والواجهة الآمنة) مكتملة ومختبرة آلياً. ومع ذلك، فإن الأوزان العصبية المتوفرة حالياً في المستودع هي أوزان صغيرة (<code>843K</code> – <code>4.87M</code> معامل) مُدرّبة على بيانات مخبرية، ولذلك <strong>لا يضاهي النموذج العصبي الحالي قدرات ChatGPT أو Google Gemini بعد</strong> حتى يتم تدريبه على مليارات التوكنات المرخّصة باستخدام بطاقات GPU سحابية.
+      <h1>عن Jebrex AI — الهوية الرسمية والملكية</h1>
+      <div class="identity-box">
+        أنا <strong>Jebrex AI</strong>، مساعد ذكاء اصطناعي مستقل، تم تطويره ضمن مشروع Jebrex AI بواسطة مالك المشروع. أعمل على تطوير قدراتي في فهم اللغات والاستدلال والمحادثة وتوليد النصوص. أستهدف دعم <strong>العربية والإنجليزية والفرنسية</strong>، وأعمل على تحسين أدائي باستمرار من خلال التدريب والتقييم.<br/><br/>
+        <strong>الاستقلالية التامة:</strong> أنا لست نسخة من ChatGPT أو Gemini، ولست منتجاً تابعاً لـ OpenAI أو Google. أنا مشروع مستقل له معماريته وبياناته ومسار تطويره الخاص.
       </div>
-    </section>
-
-    <section class="card">
-      <h2>المعمارية التقنية (Jebrex v2 Modern Foundation)</h2>
       <table>
         <thead>
-          <tr><th>المكوّن</th><th>المواصفات المعتمدة</th><th>الحالة الفعلية</th></tr>
+          <tr><th>البند الرسمي</th><th>القيمة الموثّقة (<code>knowledge/identity/jebrex_identity.json</code>)</th></tr>
         </thead>
         <tbody>
-          <tr><td>Tokenizer</td><td>Byte-Level Multilingual BPE (يدعم 32K–64K، ضغط 72.25% للعربية، دقة إعادة بناء 100%)</td><td>مُدرّب ومُختبر</td></tr>
-          <tr><td>العمود الفقري</td><td>Decoder-only Transformer: RoPE + RMSNorm + SwiGLU + Causal GQA + KV-Cache</td><td>مبني ومُختبر (Parity &lt; 1e-4)</td></tr>
-          <tr><td>أحجام النماذج</td><td><code>jebrex-micro</code> (1.08M) · <code>jebrex-125m</code> (124.28M) · <code>jebrex-350m</code> (351.32M)</td><td>تم التحقق عبر Meta Device</td></tr>
-          <tr><td>التدريب السحابي</td><td>استئناف دقيق (AdamW + Scheduler + RNG + BF16/FP16) + حزم SHA-256 محمولة (Colab/Kaggle)</td><td>مُختبر وموثّق</td></tr>
-          <tr><td>التخصيص والمحادثة</td><td>Response-Masked SFT + DPO Loss + Context Budget + Local Cited RAG + Safe AST Math</td><td>مبني ومُختبر</td></tr>
-          <tr><td>الاستضافة 24/7</td><td>واجهة الويب مستضافة 24/7 على Firebase Hosting CDN؛ الخادم الخلفي قابل للتشغيل محلياً أو عبر Docker</td><td>منشور ومتحقق</td></tr>
+          <tr><td>الاسم الرسمي</td><td><strong>Jebrex AI</strong></td></tr>
+          <tr><td>المطور والمالك</td><td>مالك مستودع المشروع وحساب Kaggle الرسمي المرتبط به (لا يتم اختلاق اسم شخصي غير موثّق)</td></tr>
+          <tr><td>حساب Kaggle الرسمي</td><td><a class="ext" href="https://www.kaggle.com/ypy0001" target="_blank" rel="noopener">https://www.kaggle.com/ypy0001</a></td></tr>
+          <tr><td>المستودع البرمجي الرسمي</td><td><a class="ext" href="https://github.com/ypy999/NourAI" target="_blank" rel="noopener">https://github.com/ypy999/NourAI</a></td></tr>
+          <tr><td>اللغات المستهدفة</td><td>العربية، الإنجليزية، والفرنسية</td></tr>
+          <tr><td>البنية المعمارية</td><td><code>JebrexTransformer v2</code>: Multilingual BPE + RoPE + RMSNorm + SwiGLU + GQA + KV-Cache</td></tr>
         </tbody>
       </table>
     </section>
 
     <section class="card">
-      <h2>مبدأ الاستقلالية وعدم الخداع</h2>
+      <h2>إفصاح علمي صريح حول الجاهزية الحالية</h2>
+      <div class="notice">
+        <strong>الشفافية أولاً:</strong> البنية الهندسية لـ Jebrex AI (المُرمّز BPE متعدد اللغات، معمارية Transformer الحديثة بحجم 125M–350M، التدريب السحابي القابل للاستئناف عبر SHA-256، تحسينات سرعة الاستدلال، حارس اتساق الهوية، والواجهة الآمنة) مكتملة ومختبرة آلياً. ومع ذلك، فإن الأوزان العصبية المتوفرة حالياً في المستودع هي أوزان صغيرة ومخبرية (<code>1.08M</code> – <code>4.87M</code> معامل)، ولذلك <strong>لا يضاهي النموذج العصبي الحالي قدرات ChatGPT أو Google Gemini بعد</strong> حتى يكتمل التدريب واسع النطاق على مليارات التوكنات المرخّصة باستخدام GPU سحابية.
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>القدرات المؤكدة بالاختبارات مقابل القدرات قيد التطوير</h2>
+      <table>
+        <thead>
+          <tr><th>الفئة</th><th>التفاصيل الموثّقة</th><th>الحالة</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>الاستدلال المحلي وبث SSE</td><td>محرك استدلال مستقل (v1/v2) مع KV-Cache وبث SSE حي وإدارة سياق متعدد الأدوار</td><td><span class="badge badge-ok">مؤكد بالاختبارات</span></td></tr>
+          <tr><td>الهوية والأمان</td><td>سجل معرفة ذاتية مركزي، <code>System Prompt</code> رسمي، وحارس اتساق الهوية ومقاومة حقن التعليمات</td><td><span class="badge badge-ok">مؤكد بالاختبارات</span></td></tr>
+          <tr><td>تحسينات سرعة الاستدلال</td><td>SDPA، GQA، KV-Cache، Paged KV-Cache، INT8/INT4، Speculative Decoding، Prefix Caching، وContinuous Batching</td><td><span class="badge badge-ok">مقاس ومتحقق</span></td></tr>
+          <tr><td>الأدوات الآمنة وRAG</td><td>حاسبة رياضية آمنة عبر AST واسترجاع محلي موثّق بالمصدر من مستندات المستخدم</td><td><span class="badge badge-ok">مؤكد بالاختبارات</span></td></tr>
+          <tr><td>التدريب الإنتاجي 125M–350M</td><td>التدريب واسع النطاق على &ge;3 مليارات توكن مرخّص متوازن (AR/EN/FR) على GPU مجانية</td><td><span class="badge badge-warn">قيد التطوير</span></td></tr>
+          <tr><td>الطلاقة العامة والرؤية البصرية</td><td>المحادثة المفتوحة عالية الطلاقة؛ ولا توجد رؤية بصرية مدمجة للصور حالياً</td><td><span class="badge badge-warn">قيد التطوير / قيد حالي</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>مبدأ الاستقلالية وحماية خصوصية المحادثات</h2>
       <ul>
-        <li>لا يستدعي Jebrex AI أي نموذج خارجي (OpenAI / Gemini / Pollinations) سراً لتوليد ردود يدّعي أنها من نموذجه.</li>
-        <li>في وضع الواجهة الثابتة (عند عدم اتصال خادم Jebrex خلفي)، تعرض الواجهة حالة الاتصال بوضوح وتقتصر على الأدوات المحلية الآمنة والبحث المفتوح الموثق بالمصدر (Wikipedia) وتحليل الملفات محلياً في المتصفح.</li>
-        <li>جميع نتائج الاختبارات المرجعية (Benchmarks) وتقارير الأمان منشورة بشفافية في المستودع على <a class="ext" href="https://github.com/ypy999/NourAI" target="_blank" rel="noopener">GitHub</a>.</li>
+        <li>لا يستدعي Jebrex AI أي نموذج خارجي (OpenAI / ChatGPT / Google Gemini / Pollinations) سراً لتوليد ردود يدّعي أنها من نموذجه.</li>
+        <li>لا تُستخدم محادثات المستخدمين أبداً في التدريب دون موافقة صريحة وإزالة كاملة للبيانات الشخصية (PII).</li>
+        <li>يمكن فحص سجل الهوية الرسمي برمجياً عبر <code>GET /api/v1/identity</code> وحالة النموذج عبر <code>GET /api/v1/model/status</code>.</li>
       </ul>
     </section>
   </main>
-  <footer>Jebrex AI · Open Independent Multilingual AI Engineering · <a class="ext" href="/privacy.html">الخصوصية</a> · <a class="ext" href="/report-bug.html">الإبلاغ عن خطأ</a></footer>
+  <footer>Jebrex AI · Independent Multilingual AI · <a class="ext" href="https://github.com/ypy999/NourAI" target="_blank" rel="noopener">GitHub</a> · <a class="ext" href="https://www.kaggle.com/ypy0001" target="_blank" rel="noopener">Kaggle</a> · <a class="ext" href="/privacy.html">الخصوصية</a> · <a class="ext" href="/report-bug.html">الإبلاغ عن خطأ</a></footer>
 </body>
 </html>

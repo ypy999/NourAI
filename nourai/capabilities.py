@@ -13,6 +13,7 @@ import torch
 import torch.nn.functional as F
 
 from model.transformer import GPT
+from knowledge.identity.guard import classify_identity_query, compose_grounded_identity_answer
 from tokenizer.byte_tokenizer import ByteTokenizer
 
 
@@ -59,9 +60,9 @@ KNOWLEDGE_FACTS = {
         "fr": "Alger est la capitale et la plus grande ville côtière d'Algérie.",
     },
     "nourai": {
-        "ar": "NourAI هو نموذج لغوي محلي متعدد اللغات (Decoder-only Pre-LN Transformer) يدعم العربية والإنجليزية والفرنسية مع حماية كاملة للخصوصية.",
-        "en": "NourAI is a local-first multilingual Decoder-only Pre-LN Transformer supporting Arabic, English, and French with full privacy.",
-        "fr": "NourAI est un modèle linguistique multilingue local (Decoder-only Pre-LN Transformer) prenant en charge l'arabe, l'anglais et le français.",
+        "ar": "Jebrex AI (المطوَّر امتداداً لمستودع NourAI على https://github.com/ypy999/NourAI) هو مشروع ومساعد ذكاء اصطناعي مستقل متعدد اللغات بمعمارية JebrexTransformer v2 يدعم العربية والإنجليزية والفرنسية دون أي تبعية لـ OpenAI أو Google Gemini.",
+        "en": "Jebrex AI (developed in the repository https://github.com/ypy999/NourAI) is an independent multilingual AI assistant built on JebrexTransformer v2 targeting Arabic, English, and French with zero affiliation to OpenAI or Google Gemini.",
+        "fr": "Jebrex AI (développé dans le dépôt https://github.com/ypy999/NourAI) est un assistant IA multilingue indépendant basé sur JebrexTransformer v2 visant l'arabe, l'anglais et le français, sans aucun lien avec OpenAI ni Google Gemini.",
     },
     "transformer": {
         "ar": "تعتمد معمارية المحولات (Transformer) على آلية الانتباه الذاتي متعدد الرؤوس (Multi-Head Self-Attention) لمعالجة السياق بكفاءة.",
@@ -150,11 +151,22 @@ class NourAICapabilityEngine:
         safety = evaluate_prompt_safety(clean, language=lang)
         if not safety["is_safe"] or any(pat in lower for pat in PROMPT_INJECTION_PATTERNS):
             refusals = {
-                "arabic": "عذراً، لا يمكنني تنفيذ هذا الطلب أو تجاوز ضوابط الأمان والخصوصية الخاصة بنظام NourAI.",
-                "english": "I cannot fulfill this request or bypass NourAI security and safety policies.",
-                "french": "Je ne peux pas répondre à cette demande ni contourner les règles de sécurité de NourAI.",
+                "arabic": "عذراً، لا يمكنني تنفيذ هذا الطلب أو تجاوز ضوابط الأمان والخصوصية والهوية الخاصة بنظام Jebrex AI.",
+                "english": "I cannot fulfill this request or bypass Jebrex AI security, identity, and safety policies.",
+                "french": "Je ne peux pas répondre à cette demande ni contourner les règles de sécurité et d'identité de Jebrex AI.",
             }
             return {"task": "safety_refusal", "language": lang, "reply": refusals.get(lang, refusals["arabic"]), "is_safe": False}
+
+        # 1b. Official Jebrex AI Identity & Self-Knowledge (grounded in knowledge/identity/jebrex_identity.json)
+        id_cls = classify_identity_query(clean)
+        if id_cls["is_identity_query"]:
+            id_lang = id_cls["language"]
+            return {
+                "task": f"identity_{id_cls['topic']}",
+                "language": id_lang,
+                "reply": compose_grounded_identity_answer(str(id_cls["topic"]), language=id_lang),
+                "is_safe": True,
+            }
 
         # 2. Contradiction Detection
         if ("أكبر من" in clean and "أصغر من" in clean) or ("contradict" in lower) or ("ناقض" in clean) or ("contradiction" in lower) or ("ثابتة" in clean and "تتحرك" in clean):
@@ -240,9 +252,9 @@ class NourAICapabilityEngine:
             # Fallback structured translation
             body = clean.split(":", 1)[-1].strip() if ":" in clean else clean
             replies = {
-                "arabic": f"الترجمة المعتمدة للنص: «{body}» — يضمن نظام NourAI المحلي معالجة اللغات الثلاث بدقة.",
-                "english": f"Translated text: \"{body}\" — NourAI local engine processes Arabic, English, and French accurately.",
-                "french": f"Texte traduit : « {body} » — Le moteur local NourAI traite l'arabe, l'anglais et le français avec précision.",
+                "arabic": f"الترجمة المعتمدة للنص: «{body}» — يعالج نظام Jebrex AI المحلي اللغات الثلاث بخصوصية.",
+                "english": f"Translated text: \"{body}\" — Jebrex AI local engine processes Arabic, English, and French with privacy.",
+                "french": f"Texte traduit : « {body} » — Le moteur local Jebrex AI traite l'arabe, l'anglais et le français en local.",
             }
             return {"task": "translation", "language": lang, "reply": replies[lang], "is_safe": True}
 
